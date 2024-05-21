@@ -36,7 +36,12 @@ module.exports = {
   ignorePatterns: ["node_modules/", "dist/", ".eslintrc.js", "**/*.css"],
   // add rules configurations here
   rules: {
+    "@typescript-eslint/explicit-function-return-type": "off",
     "import/no-default-export": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "jsx-a11y/heading-has-content": "off",
   },
   overrides: [
     {

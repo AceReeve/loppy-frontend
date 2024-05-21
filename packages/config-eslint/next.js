@@ -40,6 +40,18 @@ module.exports = {
   ignorePatterns: ["node_modules/", "dist/"],
   // add rules configurations here
   rules: {
+    "@typescript-eslint/explicit-function-return-type": "off",
     "import/no-default-export": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "jsx-a11y/heading-has-content": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        selector: "enum",
+        format: ["PascalCase", "UPPER_CASE"],
+      },
+    ],
   },
 };

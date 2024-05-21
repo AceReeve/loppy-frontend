@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Card } from "@repo/ui/card";
+import Pokemon from "./Pokemon.tsx";
 
 function Gradient({
   conic,
@@ -9,7 +10,7 @@ function Gradient({
   small?: boolean;
   conic?: boolean;
   className?: string;
-}): JSX.Element {
+}) {
   return (
     <span
       className={`absolute mix-blend-normal will-change-[filter] rounded-[100%] ${
@@ -43,9 +44,10 @@ const LINKS = [
   },
 ];
 
-export default function Page(): JSX.Element {
+export default function Page() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
+      <Pokemon />
       <div className="z-10 items-center justify-between w-full max-w-5xl font-mono text-sm lg:flex">
         <p className="fixed top-0 left-0 flex justify-center w-full px-4 pt-8 pb-6 border-b bg-gradient-to-b backdrop-blur-2xl border-neutral-800 bg-zinc-800/30 from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:bg-zinc-800/30">
           examples/with-tailwind -&nbsp;
