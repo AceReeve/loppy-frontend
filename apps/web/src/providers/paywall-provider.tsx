@@ -1,0 +1,181 @@
+"use client";
+
+import React, { createContext, useContext, useEffect, useState } from "react";
+import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
+import { useElements, useStripe } from "@stripe/react-stripe-js";
+import type { PlanDetails } from "@/src/data/payment-plan-details";
+import type { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
+import { useCreatePaymentIntentMutation } from "@/src/endpoints/payment.ts";
+
+interface ContextType {
+  isLoading: boolean;
+  viewIndex: number;
+  stepIndex: number;
+  paymentPlan: PlanDetails | undefined;
+  toNextView: () => void;
+  toNextStep: () => void;
+  toStepIndex: (_index: number) => void;
+  setViewIndex: (_index: number) => void;
+  onPlanSelect: (_plan: PlanDetails) => void;
+  onSubmit: (_e: React.SyntheticEvent) => void;
+  onPromoCodeSubmit: (_e: React.SyntheticEvent) => void;
+  clientSecret: string | undefined;
+  confirmationToken: string | undefined;
+  storage: { plan: PaymentPlan } | undefined;
+  setStorage: ({ plan }: { plan: PaymentPlan }) => void;
+}
+
+const PaywallContext = createContext<ContextType | null>(null);
+
+export default function PaywallProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [createPaymentIntent, { data: clientSecret, isLoading }] =
+    useCreatePaymentIntentMutation();
+
+  const stripe = useStripe();
+  const elements = useElements();
+
+  // Record last index visited so that the user can freely move across payment steppers
+  const [viewIndex, setViewIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [paymentPlan, setPaymentPlan] = useState<PlanDetails>();
+
+  const [mounted, setMounted] = useState(false);
+
+  const [confirmationToken, setConfirmationToken] = useState<string>();
+
+  const toNextView = () => {
+    setViewIndex(viewIndex + 1);
+  };
+
+  const toNextStep = () => {
+    toStepIndex(stepIndex + 1);
+  };
+
+  const toStepIndex = (index: number) => {
+    setStepIndex(index);
+  };
+
+  const onPlanSelect = (plan: PlanDetails) => {
+    setPaymentPlan(plan);
+    elements?.update({
+      amount: plan.cost,
+    });
+    toNextView();
+  };
+
+  const onUserInformationSubmit = (_e: React.SyntheticEvent) => {
+    elements?.submit().then((res) => {
+      if (!res.error) {
+        toNextStep();
+      }
+    });
+  };
+  const onPaymentMethodSubmit = (_e: React.SyntheticEvent) => {
+    elements?.submit().then((res) => {
+      if (!res.error) {
+        toNextStep();
+        stripe
+          ?.createConfirmationToken({
+            elements,
+          })
+          .then((res) => {
+            if (res.error) {
+              throw new Error(res.error.message);
+            }
+            setConfirmationToken(res.confirmationToken.id);
+          });
+      }
+    });
+  };
+
+  const onFinalSubmit = (_e: React.SyntheticEvent) => {
+    if (!confirmationToken) return;
+    createPaymentIntent({
+      type: paymentPlan?.plan!,
+      confirmationToken,
+    })
+      .then((res) => {
+        console.log(res);
+        toNextView();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const onPromoCodeSubmit = (e: React.SyntheticEvent) => {
+    // console.log(data);
+    e.preventDefault();
+  };
+
+  const onSubmit = (e: React.SyntheticEvent) => {
+    switch (stepIndex) {
+      case 0:
+        onUserInformationSubmit(e);
+        break;
+      case 1:
+        onPaymentMethodSubmit(e);
+        break;
+      case 2:
+        onFinalSubmit(e);
+        break;
+    }
+  };
+
+  // Temporary local storage
+  const [storage, setStorage] = useState<{
+    plan: PaymentPlan;
+  }>();
+  console.log(storage);
+
+  useEffect(() => {
+    if (storage) {
+      localStorage.setItem("storage", JSON.stringify(storage));
+    }
+  }, [storage]);
+
+  useEffect(() => {
+    const items = localStorage.getItem("storage");
+    if (items) {
+      setStorage(JSON.parse(items));
+    }
+    setMounted(true);
+  }, []);
+
+  return (
+    <PaywallContext.Provider
+      value={{
+        viewIndex,
+        stepIndex,
+        paymentPlan,
+        toStepIndex,
+        setViewIndex,
+        toNextView,
+        toNextStep,
+        onPlanSelect,
+        onSubmit,
+        onPromoCodeSubmit,
+        clientSecret: clientSecret?.client_secret,
+        confirmationToken,
+        isLoading,
+        storage,
+        setStorage,
+      }}
+    >
+      {isLoading ? <LoadingOverlay /> : null}
+      {mounted && !storage?.plan ? children : null}
+    </PaywallContext.Provider>
+  );
+}
+
+export const usePaywallState = () => {
+  const context = useContext(PaywallContext);
+  if (!context) {
+    throw new Error("usePaywallState must be used within a PaywallProvider");
+  }
+  return context;
+};
