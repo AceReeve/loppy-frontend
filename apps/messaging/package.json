@@ -19,6 +19,7 @@
     "@repo/hooks-and-utils": "*",
     "@repo/redux-utils": "*",
     "@repo/ui": "*",
+    "@twilio/conversations": "^2.5.0",
     "iconsax-react": "^0.0.8",
     "lucide-react": "^0.378.0",
     "moment": "^2.30.1",

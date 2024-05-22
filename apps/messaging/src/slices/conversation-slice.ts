@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { Conversation } from "@twilio/conversations";
 
 export interface ReduxConversation {
   sid: string;
@@ -60,6 +61,6 @@ export const conversationSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { upsertConversation } = conversationSlice.actions;
 
-export default counterSlice.reducer;
+export default conversationSlice.reducer;
