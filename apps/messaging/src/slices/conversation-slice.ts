@@ -25,7 +25,7 @@ export const conversationSlice = createSlice({
   name: "conversation",
   initialState,
   reducers: {
-    upsertConversation: (state, action: PayloadAction<Conversation>) => {
+    upsertConversation: (state , action: PayloadAction<Conversation>) => {
       const {
         sid,
         friendlyName,
