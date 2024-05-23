@@ -1,5 +1,5 @@
 import { AddressElement } from "@stripe/react-stripe-js";
-import { StripeAddressElementOptions } from "@stripe/stripe-js";
+import type { StripeAddressElementOptions } from "@stripe/stripe-js";
 
 export default function PaywallUserInformation() {
   const addressElementOptions: StripeAddressElementOptions = {

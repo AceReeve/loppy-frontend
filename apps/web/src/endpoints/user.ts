@@ -15,7 +15,7 @@ const userApi = baseApi
           return {
             url: `/user/invite-user`,
             method: "POST",
-            data: payload,
+            body: payload,
           };
         },
       }),

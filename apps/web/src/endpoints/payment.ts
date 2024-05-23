@@ -20,9 +20,10 @@ const paymentApi = baseApi
           return {
             url: `/payment/summarize-payment`,
             method: "POST",
-            data: payload,
+            body: payload,
           };
         },
+        invalidatesTags: ["payment"],
       }),
       createPaymentIntent: builder.mutation<
         CreatePaymentIntentResponse,
@@ -32,9 +33,10 @@ const paymentApi = baseApi
           return {
             url: `/payment/create-payment-intent`,
             method: "POST",
-            data: payload,
+            body: payload,
           };
         },
+        invalidatesTags: ["payment"],
       }),
     }),
   });

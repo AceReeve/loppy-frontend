@@ -10,9 +10,17 @@ export default function PaywallOrderSummary() {
 
   useEffect(() => {
     if (confirmationToken) {
+      console.log("Confirmation token", confirmationToken);
       summarizePayment({
         confirmationToken,
-      });
+      })
+        .unwrap()
+        .then((res) => {
+          console.log("res", res);
+        })
+        .catch((e) => {
+          console.log("e", e);
+        });
     }
   }, [confirmationToken]);
 
