@@ -8,12 +8,14 @@ import TeamsVerify from "@/src/app/dashboard/_components/paywall/paywall-section
 import TeamsSubmit from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-submit";
 import { useInviteUserMutation } from "@/src/endpoints/user.ts";
 import { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 export default function PaywallTeamSetup() {
   const [stepIndex, setStepIndex] = useState(0);
   const { setStorage, paymentPlan } = usePaywallState();
   const [inviteUser, { data: invitedUsersData, isLoading }] =
     useInviteUserMutation();
+  console.log("Paywall team setup");
 
   const handleSubmitInvitedList = (invitesList: string[]) => {
     // if (paymentPlan) {
@@ -23,13 +25,16 @@ export default function PaywallTeamSetup() {
     inviteUser({
       email: invitesList,
     })
-      .then(() => {
+      .unwrap()
+      .then((res) => {
+        console.log(res);
         setStepIndex(stepIndex + 1);
       })
       .catch((e: Error) => {
+        console.log("error", e);
         toast({
           title: "Send Invite Error",
-          description: e.message,
+          description: getErrorMessage(e),
           variant: "destructive",
         });
       });

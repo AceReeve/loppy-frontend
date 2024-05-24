@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
@@ -48,10 +50,9 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
               className="relative inline-flex flex-col items-center justify-center gap-3 rounded-3xl bg-neutral-100 px-[22px] py-4"
               key={index}
             >
-              <img
-                alt=""
-                className="h-16 w-16 rounded-[32px]"
-                src="https://via.placeholder.com/64x64"
+              <div
+                className="h-16 w-16 rounded-[32px] bg-gray-400"
+                // src="https://via.placeholder.com/64x64"
               />
               <div className="text-center font-nunito text-sm font-normal text-zinc-700">
                 Mike <br />
