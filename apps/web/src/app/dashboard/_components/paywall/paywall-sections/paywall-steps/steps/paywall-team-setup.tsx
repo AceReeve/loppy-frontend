@@ -58,11 +58,6 @@ export default function PaywallTeamSetup() {
       component: TeamsPermissionSetup,
     },
     {
-      label: "Verify",
-      id: "verify",
-      component: TeamsVerify,
-    },
-    {
       label: "Submit",
       id: "submit",
       component: TeamsSubmit,
@@ -87,7 +82,7 @@ export default function PaywallTeamSetup() {
               width: `${(stepIndex / (steps.length - 1)) * 100}%`,
             }}
           />
-          {Array.from({ length: 4 }).map((_item, index) => (
+          {Array.from({ length: 3 }).map((_item, index) => (
             <div
               className={`relative size-[70px] rounded-full p-3 ${index <= stepIndex ? "bg-primary text-red-500" : "bg-gray-300 text-black"}`}
               key={index}

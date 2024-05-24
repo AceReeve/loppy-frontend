@@ -3,9 +3,15 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
+import { toast, ToastAction } from "@repo/ui/components/ui";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import type { PlanDetails } from "@/src/data/payment-plan-details";
 import type { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
-import { useCreatePaymentIntentMutation } from "@/src/endpoints/payment.ts";
+import {
+  useCreatePaymentIntentMutation,
+  useGetPaymentStatusQuery,
+} from "@/src/endpoints/payment.ts";
+import type { GetPaymentStatusResponse } from "@/src/endpoints/types/payment";
 
 interface ContextType {
   isLoading: boolean;
@@ -23,6 +29,8 @@ interface ContextType {
   confirmationToken: string | undefined;
   storage: { plan: PaymentPlan } | undefined;
   setStorage: ({ plan }: { plan: PaymentPlan }) => void;
+  paymentStatus: GetPaymentStatusResponse | null | undefined;
+  isPaymentProcessing: boolean;
 }
 
 const PaywallContext = createContext<ContextType | null>(null);
@@ -35,6 +43,8 @@ export default function PaywallProvider({
   const [createPaymentIntent, { data: clientSecret, isLoading }] =
     useCreatePaymentIntentMutation();
 
+  const { data: paymentStatus, refetch } = useGetPaymentStatusQuery(undefined);
+
   const stripe = useStripe();
   const elements = useElements();
 
@@ -42,6 +52,7 @@ export default function PaywallProvider({
   const [viewIndex, setViewIndex] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
   const [paymentPlan, setPaymentPlan] = useState<PlanDetails>();
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
@@ -93,19 +104,53 @@ export default function PaywallProvider({
   };
 
   const onFinalSubmit = (_e: React.SyntheticEvent) => {
+    // TODO: Add loading
     if (!confirmationToken) return;
     createPaymentIntent({
       type: paymentPlan?.plan!,
       confirmationToken,
     })
-      .then((res) => {
-        console.log(res);
-        toNextView();
+      .then(async () => {
+        await refetchPaymentStatus();
       })
       .catch((e) => {
-        console.log(e);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: getErrorMessage(e),
+          action: (
+            <ToastAction
+              altText="Try again"
+              onClick={() => {
+                onFinalSubmit(_e);
+              }}
+            >
+              Try again
+            </ToastAction>
+          ),
+        });
       });
   };
+
+  async function refetchPaymentStatus() {
+    console.log("refetching");
+    setIsPaymentProcessing(true);
+    // TODO: Add retries limit for refetching
+    const res = await refetch();
+    await new Promise((r) => {
+      setTimeout(r, 2000);
+    });
+
+    if (res.data) {
+      setIsPaymentProcessing(false);
+      toast({
+        title: "Payment Successful!",
+        description: "Thanks for signing up! Let's setup your team.",
+      });
+    } else {
+      await refetchPaymentStatus();
+    }
+  }
 
   const onPromoCodeSubmit = (e: React.SyntheticEvent) => {
     // console.log(data);
@@ -130,7 +175,6 @@ export default function PaywallProvider({
   const [storage, setStorage] = useState<{
     plan: PaymentPlan;
   }>();
-  console.log(storage);
 
   useEffect(() => {
     if (storage) {
@@ -164,6 +208,8 @@ export default function PaywallProvider({
         isLoading,
         storage,
         setStorage,
+        paymentStatus,
+        isPaymentProcessing,
       }}
     >
       {isLoading ? <LoadingOverlay /> : null}

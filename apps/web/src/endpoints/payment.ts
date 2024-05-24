@@ -1,7 +1,8 @@
 import { baseApi } from "@repo/redux-utils/src/api.ts";
-import {
+import type {
   CreatePaymentIntentPayload,
   CreatePaymentIntentResponse,
+  GetPaymentStatusResponse,
   SummarizePaymentPayload,
   SummarizePaymentResponse,
 } from "@/src/endpoints/types/payment";
@@ -38,8 +39,22 @@ const paymentApi = baseApi
         },
         invalidatesTags: ["payment"],
       }),
+      getPaymentStatus: builder.query<
+        GetPaymentStatusResponse | null,
+        undefined
+      >({
+        query: () => {
+          return {
+            url: `/payment/payment-status`,
+          };
+        },
+        providesTags: ["payment"],
+      }),
     }),
   });
 
-export const { useCreatePaymentIntentMutation, useSummarizePaymentMutation } =
-  paymentApi;
+export const {
+  useCreatePaymentIntentMutation,
+  useSummarizePaymentMutation,
+  useGetPaymentStatusQuery,
+} = paymentApi;
