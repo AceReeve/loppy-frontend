@@ -11,11 +11,10 @@ const userApi = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getContacts: builder.query<Contacts[],GetContactsPayload>({
-        query: (payload) => {
+      getContacts: builder.query<GetContactsResponse,undefined>({
+        query: () => {
           return {
-            url: `/Contacts/get-all`,
-            body:payload
+            url: `/Contacts/get-all?skip=0`,
           };
         },
       }),
@@ -26,11 +25,22 @@ const userApi = baseApi
             method:"POST",
             body: payload,
           };
+
         },
           }
-      )
 
+      ),
+      importContacts: builder.mutation<null, null>({
+            query: () => {
+              return {
+                url: `/Contacts/import`,
+                method:"POST",
+              };
+            },
+          }
+      )
     }),
+
   });
 
-export const { useContactsQuery ,useGetContactsQuery, useCreateContactMutation} = userApi;
+export const {  useGetContactsQuery, useCreateContactMutation} = userApi;

@@ -24,12 +24,19 @@ export interface GetContactsResponse{
       tag:[
         {
           tag_name: string;
+          _id: string
         }
       ]
       created_at:string;
       updated_at:string;
     }
   ]
+  meta: {
+    total: number;
+    limit:number;
+    page: number;
+    pages:number;
+  }
 }
 
 export interface Contacts {
@@ -62,19 +69,6 @@ export interface Tag {
   _id: string;
 }
 
-export interface Meta {
-  total: number;
-  limit: number;
-  page: number;
-  pages: number;
-}
-
-export interface ApiResponse {
-  data: Contact[];
-  meta: Meta;
-}
-
-
 
 
 
@@ -83,15 +77,5 @@ export interface CreateContactPayload {
   last_name:string;
   email:string;
   phone_number:number;
-  source: string;
-  lifetime_value:number;
-  last_campaign_ran:string;
-  last_interaction:string;
-  tag:[
-    {
-      tag_name: string;
-    }
-  ]
-
 
 }

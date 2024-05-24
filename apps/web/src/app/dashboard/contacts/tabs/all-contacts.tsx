@@ -38,25 +38,25 @@ const NoResultsComponent = (
 
 
 function AllContacts() {
-    const { data: contacts, isError, isLoading } = useGetContactsQuery({skip:0});
+    const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
 
 
     if (isLoading) {
         return <div>Loading...</div>;
     }
 
-    if (isError) {
-        return <div>Error: {isError.message}</div>;
+    if (error) {
+        return <div>Error: </div>;
     }
 
-    if (!contacts || contacts.length === 0) {
+    if (!contacts || contacts.data.length === 0) {
         return <div>No contacts found.</div>;
     }
 
     return (
         <DataTable
             columns={columns}
-            data={contacts} // Just use 'contacts' directly
+            data={contacts.data} // Just use 'contacts' directly
             noResultsComponent={NoResultsComponent}
         />
     );
