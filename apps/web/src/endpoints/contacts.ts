@@ -3,6 +3,7 @@ import {
   InviteUserPayload,
   InviteUserResponse,
 } from "@/src/endpoints/types/user";
+import {Contacts, CreateContactPayload, GetContactsPayload, GetContactsResponse} from "@/src/endpoints/types/contacts";
 
 const userApi = baseApi
   .enhanceEndpoints({
@@ -10,14 +11,26 @@ const userApi = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      inviteUser: builder.query<InviteUserResponse, null>({
-        query: () => {
+      getContacts: builder.query<Contacts[],GetContactsPayload>({
+        query: (payload) => {
           return {
             url: `/Contacts/get-all`,
+            body:payload
           };
         },
       }),
+      createContact: builder.mutation<null, CreateContactPayload>({
+        query: (payload) => {
+          return {
+            url: `/Contacts`,
+            method:"POST",
+            body: payload,
+          };
+        },
+          }
+      )
+
     }),
   });
 
-export const { useInviteUserQuery } = userApi;
+export const { useContactsQuery ,useGetContactsQuery, useCreateContactMutation} = userApi;

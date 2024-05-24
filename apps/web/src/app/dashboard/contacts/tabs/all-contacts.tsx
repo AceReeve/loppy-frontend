@@ -4,6 +4,7 @@ import React from "react";
 // import type { Contacts } from "@/src/app/dashboard/contacts/columns";
 import { columns } from "@/src/app/dashboard/contacts/columns";
 import { DataTable } from "@/src/components/data-table";
+import {useGetContactsQuery} from "@/src/endpoints/contacts.ts";
 
 // const GET_USERS = gql`
 //   query GetUsers {
@@ -35,17 +36,30 @@ const NoResultsComponent = (
   </div>
 );
 
+
 function AllContacts() {
-  const { data, error, loading } = {};
-  console.log("data", data);
-  if (!data?.users) return <></>;
-  return (
-    <DataTable
-      columns={columns}
-      data={data.users}
-      noResultsComponent={NoResultsComponent}
-    />
-  );
+    const { data: contacts, isError, isLoading } = useGetContactsQuery({skip:0});
+
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (isError) {
+        return <div>Error: {isError.message}</div>;
+    }
+
+    if (!contacts || contacts.length === 0) {
+        return <div>No contacts found.</div>;
+    }
+
+    return (
+        <DataTable
+            columns={columns}
+            data={contacts} // Just use 'contacts' directly
+            noResultsComponent={NoResultsComponent}
+        />
+    );
 }
 
 export default AllContacts;
