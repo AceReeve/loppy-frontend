@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 export interface Pokemon {}
 
@@ -27,12 +27,14 @@ const baseQueryWithReauth: BaseQueryFn = async (
   extraOptions: any,
 ) => {
   let result = await baseQuery(args, api, extraOptions);
+  console.log("result", result);
 
   if (result?.error?.status === 403) {
     // Implement logic for restricted access
   } else if (result?.error?.status === 401) {
     //Logout the user
     //Or redirect to unauthorized page
+    signOut({ callbackUrl: "/" });
   } else {
     //Allow the user to access the route.
   }

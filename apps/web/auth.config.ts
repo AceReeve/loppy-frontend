@@ -38,7 +38,7 @@ export const authConfig = {
 
           // Throw proper error response from backend server
           if (authResponse.ok) {
-            return await authResponse.json();
+            return authResponse.json();
           }
           const res = await authResponse.json();
           if (res.errors) {

@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { signJwt } from "@repo/hooks-and-utils/jwt-utils";
 import { authConfig } from "@/auth.config";
+import { saveGoogleInfo } from "@/src/actions/login-actions.ts";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
@@ -8,12 +9,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/auth/error",
   },
   callbacks: {
-    async authorized({ auth }) {
-      return Boolean(auth);
+    authorized({ auth: mAuth }) {
+      return Boolean(mAuth);
     },
-    async jwt({ token, account, user }) {
-      if (account && user) {
-        if (account.provider === "google") {
+    async jwt({ token, account, user, profile }) {
+      if (account) {
+        if (account.provider === "google" && profile) {
           const jwt = await signJwt({
             sub: token.sub,
             id_token: account.id_token,
@@ -23,17 +24,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             image: user.image,
           });
 
-          console.log("jwt", jwt);
-          console.log("user", user);
-          console.log("sub", token.sub);
-          console.log("id_token", account.id_token);
-          console.log("access_token", account.access_token);
-          console.log("expires_at", account.expires_at);
+          // console.log("token", token);
+          // console.log("jwt", jwt);
+          // console.log("user", user);
+          // console.log("profile", profile);
+          // console.log("sub", token.sub);
+          // console.log("id_token", account.id_token);
+          // console.log("access_token", account.access_token);
+          // console.log("expires_at", account.expires_at);
+
+          const res = await saveGoogleInfo({
+            email: profile.email,
+            first_name: profile.given_name,
+            last_name: profile.family_name,
+            picture: profile.picture,
+            token: jwt,
+          });
+          console.log("res", res);
 
           // TODO: Implement BE signin here
           return {
             ...token,
-            jwt,
+            jwt: res.access_token,
           };
         } else if (account.provider === "credentials") {
           return { ...token, jwt: user.access_token };
@@ -41,7 +53,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       session.jwt = token.jwt as string;
       return session;
     },
