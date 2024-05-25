@@ -34,7 +34,7 @@ const baseQueryWithReauth: BaseQueryFn = async (
   } else if (result?.error?.status === 401) {
     //Logout the user
     //Or redirect to unauthorized page
-    // signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: "/" });
   } else {
     //Allow the user to access the route.
   }

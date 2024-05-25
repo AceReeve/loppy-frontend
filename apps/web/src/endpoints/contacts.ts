@@ -1,46 +1,50 @@
 import { baseApi } from "@repo/redux-utils/src/api.ts";
+
 import {
-  InviteUserPayload,
-  InviteUserResponse,
-} from "@/src/endpoints/types/user";
-import {Contacts, CreateContactPayload, GetContactsPayload, GetContactsResponse} from "@/src/endpoints/types/contacts";
+  CreateContactPayload,
+  GetContactsResponse,
+  ImportContactsResponse,
+} from "@/src/endpoints/types/contacts";
 
 const userApi = baseApi
   .enhanceEndpoints({
-    addTagTypes: ["user"],
+    addTagTypes: ["contacts"],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getContacts: builder.query<GetContactsResponse,undefined>({
+      getContacts: builder.query<GetContactsResponse, undefined>({
         query: () => {
           return {
             url: `/Contacts/get-all?skip=0`,
           };
         },
+        providesTags: ["contacts"],
       }),
       createContact: builder.mutation<null, CreateContactPayload>({
         query: (payload) => {
           return {
             url: `/Contacts`,
-            method:"POST",
+            method: "POST",
             body: payload,
           };
-
         },
-          }
-
-      ),
-      importContacts: builder.mutation<null, null>({
-            query: () => {
-              return {
-                url: `/Contacts/import`,
-                method:"POST",
-              };
-            },
-          }
-      )
+        invalidatesTags: ["contacts"],
+      }),
+      importContacts: builder.mutation<ImportContactsResponse, FormData>({
+        query: (payload) => {
+          return {
+            url: `/Contacts/import`,
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["contacts"],
+      }),
     }),
-
   });
 
-export const {  useGetContactsQuery, useCreateContactMutation} = userApi;
+export const {
+  useGetContactsQuery,
+  useCreateContactMutation,
+  useImportContactsMutation,
+} = userApi;

@@ -157,6 +157,7 @@ export const FileUploader = forwardRef<
 
         if (!files) {
           toast({
+            variant: "destructive",
             title: "File Upload Error",
             description: "Probably too big",
           });
@@ -181,6 +182,7 @@ export const FileUploader = forwardRef<
           for (let i = 0; i < rejectedFiles.length; i++) {
             if (rejectedFiles[i].errors[0]?.code === "file-too-large") {
               toast({
+                variant: "destructive",
                 title: "File Upload Error",
                 description:
                   "File is too large. Max size is ${maxSize / 1024 / 1024}MB",
@@ -189,6 +191,7 @@ export const FileUploader = forwardRef<
             }
             if (rejectedFiles[i].errors[0]?.message) {
               toast({
+                variant: "destructive",
                 title: "File Upload Error",
                 description: rejectedFiles[i].errors[0].message,
               });
