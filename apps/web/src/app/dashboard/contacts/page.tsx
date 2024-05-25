@@ -1,13 +1,14 @@
+"use client"
 import {
-  Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
+    Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger, Input,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
 } from "@repo/ui/components/ui";
 import AllContacts from "./tabs/all-contacts";
 import MyContacts from "./tabs/my-contacts";
@@ -15,6 +16,10 @@ import UnassignedContacts from "./tabs/unassigned-contacts";
 
 import { ArrowDown2 } from "iconsax-react";
 import {useCreateContactMutation} from "@/src/endpoints/contacts.ts";
+import {z} from "zod";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/src/components/ui/form.tsx";
 
 function Page() {
   const tabs = [
@@ -34,6 +39,65 @@ function Page() {
       component: UnassignedContacts,
     },
   ];
+
+
+
+    const formSchema = z.object({
+        firstName: z.string().min(2, {
+            message: "First Name must be at least 2 characters.",
+        }),
+        lastName: z.string().min(2, {
+            message: "Last Name must be at least 2 characters.",
+        }),
+        email: z.string().min(2, {
+            message: "Invalid Email Address",
+        }),
+        phone_number: z.number().min(11, {
+            message: "Invalid Phone Number",
+        }),
+        source: z.string().min(2, {
+            message: "Source must be ",
+        }),
+        lifetime_value: z.number().min(1, {
+            message: "Life Time Value is Invalid must be at least 2 characters.",
+        }),
+        last_campaign_ran: z.string().min(1, {
+            message: "Invalid must be at least 2 characters.",
+        }),
+        last_interaction: z.string().min(1, {
+            message: "Invalid must be at least 2 characters.",
+        }),
+        tag_name: z.string().min(1, {
+            message: "Invalid must be at least 2 characters.",
+        }),
+
+    })
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+            email: "",
+            phone_number:0,
+            source:'',
+            lifetime_value:0,
+            last_campaign_ran:'',
+            last_interaction:'',
+            tags: [{
+                tag_name:''
+            }]
+
+        },
+    })
+
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+        console.log(values)
+    }
+
+    const handleSubmit = () =>{};
 
 
 
@@ -75,34 +139,86 @@ function Page() {
                     <DialogTitle>
                       Create New Contact
                     </DialogTitle>
-                    <form>
-                      <div className="mb-4">
-                        <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">First Name</label>
-                        <input type="text" id="first_name" name="first_name"  className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                      </div>
-                      <div className="mb-4">
-                        <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Last Name</label>
-                        <input type="text" id="last_name" name="last_name"  className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                      </div>
-                      <div className="mb-4">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="email" name="email"  className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                      </div>
-                      <div className="mb-4">
-                        <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                        <input type="tel" id="phone_number" name="phone_number"  className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                      </div>
-                      <div className="mt-4">
-                        <button type="submit"
-                                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">
 
-                        </button>
-                      </div>
-
-                    </form>
 
                   </DialogHeader>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(handleSubmit)}>
+                            <div className = 'grid gap-2 max-h-[300px] px-5 overflow-auto'>
 
+                                <FormField control = {form.control} name = 'firstName' render={({field}) => {return <FormItem>
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="First Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+                                <FormField control = {form.control} name = 'lastName' render={({field}) => {return <FormItem>
+                                    <FormLabel>Last Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Last Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+                                <FormField control = {form.control} name = 'phone_number' render={({field}) => {return <FormItem>
+                                    <FormLabel>Phone Number</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Phone Number" {...field} type = "number" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+                                <FormField control = {form.control} name = 'source' render={({field}) => {return <FormItem>
+                                    <FormLabel>Source</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Source" {...field}  />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+                                <FormField control = {form.control} name = 'lifetime_value' render={({field}) => {return <FormItem>
+                                    <FormLabel>Lifetime Value</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Lifetime Value" {...field} type = "number" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+
+                                <FormField control = {form.control} name = 'last_camapign_ran' render={({field}) => {return <FormItem>
+                                    <FormLabel>Last Campaign Ran</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Lifetime Value" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+
+                                <FormField control = {form.control} name = 'last_interaction' render={({field}) => {return <FormItem>
+                                    <FormLabel>Last Interaction</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Last Interaction" {...field}  />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+
+                                <FormField control = {form.control} name = 'tagName' render={({field}) => {return <FormItem>
+                                    <FormLabel>Tag Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Tag Name" {...field} type = "number" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>}}></FormField>
+
+                            </div>
+
+                            <Button type="submit" className ="mt-2">Submit</Button>
+
+                        </form>
+                    </Form>
                 </DialogContent>
               </Dialog>
             </div>
