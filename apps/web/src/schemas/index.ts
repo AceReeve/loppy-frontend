@@ -55,3 +55,12 @@ export const TwilioCredentialsSchema = z.object({
     message: "Twilio Number is required",
   }),
 });
+
+export const SendInviteSingleItemSchema = z
+  .string()
+  .min(1, {
+    message: "Email is required",
+  })
+  .email({
+    message: "Email is invalid",
+  });

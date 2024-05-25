@@ -1,5 +1,3 @@
-
-
 export interface GetContactsPayload {
   search_key?: string;
   status?: string;
@@ -8,44 +6,44 @@ export interface GetContactsPayload {
   sort_dir?: string;
 }
 
-export interface GetContactsResponse{
-  data:[
+export interface GetContactsResponse {
+  data: [
     {
-      _id:string;
-      user_id:string;
+      _id: string;
+      user_id: string;
       first_name: string;
-      last_name:string;
-      email:string;
-      phone_number:number;
+      last_name: string;
+      email: string;
+      phone_number: number;
       source: string;
-      lifetime_value:number;
-      last_campaign_ran:string;
-      last_interaction:string;
-      tag:[
+      lifetime_value: number;
+      last_campaign_ran: string;
+      last_interaction: string;
+      tag: [
         {
           tag_name: string;
-          _id: string
-        }
-      ]
-      created_at:string;
-      updated_at:string;
-    }
-  ]
+          _id: string;
+        },
+      ];
+      created_at: string;
+      updated_at: string;
+    },
+  ];
   meta: {
     total: number;
-    limit:number;
+    limit: number;
     page: number;
-    pages:number;
-  }
+    pages: number;
+  };
 }
 
 export interface Contacts {
-  _id:string;
-  user_id:string;
+  _id: string;
+  user_id: string;
   first_name: string;
-  last_name:string;
-  email:string;
-  phone_number:number;
+  last_name: string;
+  email: string;
+  phone_number: number;
 }
 
 export interface APIContact {
@@ -69,13 +67,9 @@ export interface Tag {
   _id: string;
 }
 
-
-
-
 export interface CreateContactPayload {
   first_name: string;
-  last_name:string;
-  email:string;
-  phone_number:number;
-
+  last_name: string;
+  email: string;
+  phone_number: number;
 }

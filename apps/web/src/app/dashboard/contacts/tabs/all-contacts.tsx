@@ -4,7 +4,11 @@ import React from "react";
 // import type { Contacts } from "@/src/app/dashboard/contacts/columns";
 import { columns } from "@/src/app/dashboard/contacts/columns";
 import { DataTable } from "@/src/components/data-table";
-import {useGetContactsQuery} from "@/src/endpoints/contacts.ts";
+import { useGetContactsQuery } from "@/src/endpoints/contacts.ts";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
 
 // const GET_USERS = gql`
 //   query GetUsers {
@@ -36,30 +40,32 @@ const NoResultsComponent = (
   </div>
 );
 
-
 function AllContacts() {
-    const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
+  const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: </div>;
-    }
-
-    if (!contacts || contacts.data.length === 0) {
-        return <div>No contacts found.</div>;
-    }
-
+  if (error) {
     return (
-        <DataTable
-            columns={columns}
-            data={contacts.data} // Just use 'contacts' directly
-            noResultsComponent={NoResultsComponent}
-        />
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{getErrorMessage(error)}</AlertDescription>
+      </Alert>
     );
+  }
+
+  if (!contacts) return null;
+
+  return (
+    <DataTable
+      columns={columns}
+      data={contacts.data} // Just use 'contacts' directly
+      noResultsComponent={NoResultsComponent}
+    />
+  );
 }
 
 export default AllContacts;

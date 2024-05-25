@@ -9,17 +9,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/auth/error",
   },
   callbacks: {
+    authorized({ auth: mAuth }) {
+      return Boolean(mAuth);
+    },
     async jwt({ token, account, user, profile }) {
-      if (account && profile) {
-        if (account.provider === "google") {
-          // const jwt = await signJwt({
-          //   sub: token.sub,
-          //   id_token: account.id_token,
-          //   access_token: account.access_token,
-          //   expires_at: account.expires_at,
-          //   email: user.email,
-          //   image: user.image,
-          // });
+      if (account) {
+        if (account.provider === "google" && profile) {
+          const jwt = await signJwt({
+            sub: token.sub,
+            id_token: account.id_token,
+            access_token: account.access_token,
+            expires_at: account.expires_at,
+            email: user.email,
+            image: user.image,
+          });
 
           // console.log("token", token);
           // console.log("jwt", jwt);
@@ -35,6 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             first_name: profile.given_name,
             last_name: profile.family_name,
             picture: profile.picture,
+            token: jwt,
           });
           console.log("res", res);
 

@@ -9,6 +9,8 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@repo/ui/components/ui";
 import { ThemeProvider } from "@/src/providers/theme-provider";
 import { auth } from "@/auth.ts";
+import NextTopLoader from "nextjs-toploader";
+import themeColors from "@repo/tailwind-config/theme-colors.ts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +29,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <NextTopLoader color="rgb(var(--color-primary))" showSpinner={false} />
         <SessionProvider session={session}>
           <StoreProvider>
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
