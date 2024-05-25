@@ -14,7 +14,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuGroup,
-  DropdownMenuSeparator, Dialog, DialogTrigger, DialogContent, Avatar, AvatarFallback,
+  DropdownMenuSeparator,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  Avatar,
+  AvatarFallback,
 } from "@repo/ui/components/ui";
 import React from "react";
 import WorkspaceButton from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/dashboard-sidebar-workspace";
@@ -181,8 +186,8 @@ export default function SidebarContent(props: Props) {
   );
 
   return (
-      <>
-   {/*     <DropdownMenu>
+    <>
+      {/*     <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
                 variant="outline"
@@ -290,83 +295,83 @@ export default function SidebarContent(props: Props) {
           </DropdownMenuContent>
         </DropdownMenu>
 */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-                variant="outline"
-                className="inline-flex h-[47px] w-full items-center justify-start gap-2 rounded-lg bg-card px-3 py-3.5 shadow"
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="inline-flex h-[47px] w-full items-center justify-start gap-2 rounded-lg bg-card px-3 py-3.5 shadow"
+          >
+            <Image
+              src="/assets/images/logo.png"
+              alt=""
+              width={138}
+              height={141}
+              className="size-[25px]"
+            />
+            <div
+              className={`shrink grow basis-0 whitespace-nowrap font-nunito text-base font-bold text-gray-800`}
             >
-              <Image
-                  src="/assets/images/logo.png"
-                  alt=""
-                  width={138}
-                  height={141}
-                  className="size-[25px]"
-              />
-              <div
-                  className={`shrink grow basis-0 whitespace-nowrap font-nunito text-base font-bold text-gray-800`}
-              >
-                Service Hero
-              </div>
-              <div className="relative flex h-[18px] w-[18px] flex-col">
-                <ArrowUp2/>
-                <ArrowDown2/>
-              </div>
-            </Button>
-          </DialogTrigger>
-          <DialogContent
-              className="block min-w-[600px] w-[1000px] max-w-[1000px] h-min-[600px] h-auto max-h-[900px] px-16 py-5 overflow-y-auto bg-[#2E1249] rounded-3xl">
-            <div className=" h-auto flex justify-between w-full content-center">
-              <p className='font-nunito text-[48px] font-bold content-center text-white'>Workspaces</p>
-              <div className='items-center flex w-auto gap-2'>
-                <Button className = ' text-xl'>Create</Button>
-                <div className="relative w-70 ">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
-                    <svg
-                        className="h-5 w-5 text-gray-500 "
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                          fillRule="evenodd"
-                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                          clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </div>
-                  <input
-                      type="text"
-                      name="email"
-                      id="topbar-search"
-                      className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-20 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
-                      placeholder="Search Workspace"
-                  />
+              Service Hero
+            </div>
+            <div className="relative flex h-[18px] w-[18px] flex-col">
+              <ArrowUp2 />
+              <ArrowDown2 />
+            </div>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="block min-w-[600px] w-[1000px] max-w-[1000px] h-min-[600px] h-auto max-h-[900px] px-16 py-5 overflow-y-auto bg-[#2E1249] rounded-3xl">
+          <div className=" h-auto flex justify-between w-full content-center">
+            <p className="font-nunito text-[48px] font-bold content-center text-white">
+              Workspaces
+            </p>
+            <div className="items-center flex w-auto gap-2">
+              <Button className=" text-xl">Create</Button>
+              <div className="relative w-70 ">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                  <svg
+                    className="h-5 w-5 text-gray-500 "
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
                 </div>
-
+                <input
+                  type="text"
+                  name="email"
+                  id="topbar-search"
+                  className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-20 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                  placeholder="Search Workspace"
+                />
               </div>
             </div>
-            <div className="h-[1px] w-full bg-white"/>
-            <div className='grid-cols-2 gap-x-20 grid gap-y-4 my-5 '>
-              {Array.from({length: 4}).map((_item, index) => (
-                  <WorkspaceButton/>
-              ))}
-            </div>
-            <p className='text-white font-semibold tracking-wider ml-5 h-8'>RECENT</p>
-            <div className="h-[1px] w-full bg-white"/>
-            <div className='grid-cols-2 gap-x-20 grid gap-y-4 my-5 '>
-              {Array.from({length: 4}).map((_item, index) => (
-                  <WorkspaceButton/>
-              ))}
-            </div>
+          </div>
+          <div className="h-[1px] w-full bg-white" />
+          <div className="grid-cols-2 gap-x-20 grid gap-y-4 my-5 ">
+            {Array.from({ length: 4 }).map((_item, index) => (
+              <WorkspaceButton key={index} />
+            ))}
+          </div>
+          <p className="text-white font-semibold tracking-wider ml-5 h-8">
+            RECENT
+          </p>
+          <div className="h-[1px] w-full bg-white" />
+          <div className="grid-cols-2 gap-x-20 grid gap-y-4 my-5 ">
+            {Array.from({ length: 4 }).map((_item, index) => (
+              <WorkspaceButton key={index} />
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
-          </DialogContent>
-        </Dialog>
-
-
-        <nav className="mt-6 text-[#fff]">
-          <ul>{navItems}</ul>
-        </nav>
-      </>
+      <nav className="mt-6 text-[#fff]">
+        <ul>{navItems}</ul>
+      </nav>
+    </>
   );
 }
