@@ -12,10 +12,11 @@ import {
 } from "react";
 import { useDropzone } from "react-dropzone";
 import type {
+  DropzoneOptions,
   DropzoneState,
   FileRejection,
-  DropzoneOptions,
 } from "react-dropzone";
+export type { DropzoneOptions } from "react-dropzone";
 import { Trash2 as RemoveIcon } from "lucide-react";
 import { buttonVariants } from "@/src/components/ui/button.tsx";
 import { toast } from "@/src/components/ui/use-toast.ts";

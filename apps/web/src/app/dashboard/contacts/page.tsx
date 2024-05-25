@@ -20,6 +20,7 @@ import UnassignedContacts from "./tabs/unassigned-contacts";
 
 import { ArrowDown2 } from "iconsax-react";
 import { useCreateContactMutation } from "@/src/endpoints/contacts.ts";
+import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
 
 function Page() {
   const tabs = [
@@ -66,9 +67,14 @@ function Page() {
               <DropdownMenuItem>Subscription</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" className="rounded-xl">
-            Import
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="rounded-xl">
+                Import
+              </Button>
+            </DialogTrigger>
+            <ImportContactsDialogContent />
+          </Dialog>
           <Dialog>
             <DialogTrigger asChild>
               <Button className="rounded-xl">Create Contact</Button>
