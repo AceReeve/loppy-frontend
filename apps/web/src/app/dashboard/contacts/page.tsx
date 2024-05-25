@@ -28,6 +28,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form.tsx";
+
+import {
+  MultiSelector,
+  MultiSelectorTrigger,
+  MultiSelectorInput,
+  MultiSelectorContent,
+  MultiSelectorList,
+  MultiSelectorItem,
+} from "@/src/components/ui/multiselect.tsx";
 import { useState } from "react";
 import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
 import { useCreateContactMutation } from "@/src/endpoints/contacts.ts";
@@ -105,6 +114,13 @@ function Page() {
     },
   });
 
+  const [value, setValue] = useState<string[]>([]);
+  const options = [
+    { label: "ChatGPT", value: "ChatGPT" },
+    { label: "Facebook", value: "Facebook" },
+    { label: "Twitter", value: "Twitter" },
+  ];
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -156,7 +172,7 @@ function Page() {
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)}>
-                  <div className="grid gap-2 max-h-[300px] px-5 overflow-auto">
+                  <div className="grid gap-2 max-h-[500px] px-5 overflow-auto custom-scrollbar">
                     <FormField
                       control={form.control}
                       name="firstName"
@@ -247,7 +263,7 @@ function Page() {
 
                     <FormField
                       control={form.control}
-                      name="last_camapign_ran"
+                      name="last_campaign_ran"
                       render={({ field }) => {
                         return (
                           <FormItem>
@@ -280,25 +296,24 @@ function Page() {
                       }}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="tagName"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Tag Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Tag Name"
-                                {...field}
-                                type="number"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
+                    <MultiSelector
+                      values={value}
+                      onValuesChange={setValue}
+                      loop={false}
+                    >
+                      <MultiSelectorTrigger>
+                        <MultiSelectorInput placeholder="Select your framework" />
+                      </MultiSelectorTrigger>
+                      <MultiSelectorContent>
+                        <MultiSelectorList>
+                          {options.map((option, i) => (
+                            <MultiSelectorItem key={i} value={option.value}>
+                              {option.label}
+                            </MultiSelectorItem>
+                          ))}
+                        </MultiSelectorList>
+                      </MultiSelectorContent>
+                    </MultiSelector>
                   </div>
 
                   <Button className="mt-2" type="submit">
