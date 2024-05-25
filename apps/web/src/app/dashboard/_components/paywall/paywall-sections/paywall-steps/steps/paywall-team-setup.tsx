@@ -1,34 +1,41 @@
 import { Fragment, useState } from "react";
 import { toast } from "@repo/ui/components/ui";
 import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 import TeamsAddTeam from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-add-team";
 import TeamsPermissionSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-permission-setup";
-import TeamsVerify from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-verify";
 import TeamsSubmit from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-submit";
-import { useInviteUserMutation } from "@/src/endpoints/user.ts";
+import {
+  useInviteUserMutation,
+  useValidateInviteUserMutation,
+} from "@/src/endpoints/user.ts";
 import { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
-import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { signOut } from "next-auth/react";
 
 export default function PaywallTeamSetup() {
   const [stepIndex, setStepIndex] = useState(0);
   const { setStorage, paymentPlan } = usePaywallState();
-  const [inviteUser, { data: invitedUsersData, isLoading }] =
-    useInviteUserMutation();
-  console.log("Paywall team setup");
+  const [validateInviteUser, { data: invitedUsersData, isLoading }] =
+    useValidateInviteUserMutation();
 
   const handleSubmitInvitedList = (invitesList: string[]) => {
     // if (paymentPlan) {
     // setStorage({
     //   plan: paymentPlan.plan,
     // });
-    inviteUser({
+    validateInviteUser({
       email: invitesList,
     })
       .unwrap()
       .then((res) => {
         console.log(res);
-        setStepIndex(stepIndex + 1);
+        if (res.emails && res.emails.length > 0) {
+          setStepIndex(stepIndex + 1);
+        } else {
+          // Skip permissions setup if no emails entered
+          setStepIndex(2);
+        }
       })
       .catch((e: Error) => {
         console.log("error", e);
@@ -42,6 +49,10 @@ export default function PaywallTeamSetup() {
   };
 
   const handleSubmitPermissions = () => {
+    setStepIndex(stepIndex + 1);
+  };
+
+  const handleFinalSubmit = () => {
     if (stepIndex < steps.length - 1) {
       setStepIndex(stepIndex + 1);
     } else {
@@ -75,10 +86,25 @@ export default function PaywallTeamSetup() {
     <div className="m-auto p-5">
       {isLoading ? <LoadingOverlay /> : null}
       <div className="flex max-w-[668px] flex-col items-center gap-7 text-center">
-        <div className="text-center font-nunito text-[35px] font-bold text-card">
-          Thanks for Signing up To Service Hero! <br />
-          Now, Let’s Setup Your Team!
-        </div>
+        {stepIndex < steps.length - 1 ? (
+          <div className="text-center font-nunito text-[35px] font-bold text-card">
+            Thanks for Signing up To Service Hero! <br />
+            Now, Let’s Setup Your Team!
+          </div>
+        ) : (
+          <div>
+            <div className="text-center font-nunito text-[35px] font-bold text-card">
+              Thanks for Signing up To Service Hero!
+            </div>
+            <div className="text-center text-md text-card mt-4">
+              Manage your clients and streamline your workflow all in one place.
+              <br />
+              We&apos;re excited to help you enhance your productivity and
+              elevate your service!
+            </div>
+          </div>
+        )}
+
         <div className="relative flex w-full justify-between">
           <div className="absolute top-[50%] -mt-[3px] h-1.5 w-full bg-gray-300" />
           <div
@@ -102,7 +128,12 @@ export default function PaywallTeamSetup() {
           {steps.map((item, index) => (
             <Fragment key={item.id}>
               <button
-                className={`h-full flex-1 rounded-none bg-white font-medium hover:bg-gray-200 ${index === stepIndex ? "text-primary" : "text-black"}`}
+                className={`h-full flex-1 rounded-none bg-white font-medium ${index === stepIndex ? "text-primary" : "text-black"}
+                ${index < stepIndex ? "hover:bg-gray-200" : "pointer-events-none"}
+                `}
+                onClick={() => {
+                  index >= stepIndex ? null : setStepIndex(index);
+                }}
               >
                 {item.label}
               </button>
@@ -114,8 +145,10 @@ export default function PaywallTeamSetup() {
         </div>
         <StepComponent
           emails={invitedUsersData?.emails}
+          handleFinalSubmit={handleFinalSubmit}
           handleSubmitInvitedList={handleSubmitInvitedList}
           handleSubmitPermissions={handleSubmitPermissions}
+          setStepIndex={setStepIndex}
         />
       </div>
     </div>

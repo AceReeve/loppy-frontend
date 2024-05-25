@@ -19,7 +19,19 @@ const userApi = baseApi
           };
         },
       }),
+      validateInviteUser: builder.mutation<
+        InviteUserResponse,
+        InviteUserPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/user/validate-invite-user`,
+            method: "POST",
+            body: payload,
+          };
+        },
+      }),
     }),
   });
 
-export const { useInviteUserMutation } = userApi;
+export const { useInviteUserMutation, useValidateInviteUserMutation } = userApi;
