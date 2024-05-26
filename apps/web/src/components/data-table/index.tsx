@@ -181,8 +181,8 @@ export function DataTable<TData, TValue>({
                     className=" h-auto w-full"
                   >
                     <AccordionItem value="item-1">
-                      <AccordionTrigger>Business Name</AccordionTrigger>
-                      <AccordionContent>
+                      <AccordionTrigger>Company Name</AccordionTrigger>
+                      <AccordionContent className="min-h-[100px] h-auto ">
                         <MultiSelector
                           values={value}
                           onValuesChange={setValue}
@@ -192,7 +192,7 @@ export function DataTable<TData, TValue>({
                             <MultiSelectorInput placeholder="Select your framework" />
                           </MultiSelectorTrigger>
                           <MultiSelectorContent>
-                            <MultiSelectorList>
+                            <MultiSelectorList className="relative">
                               {options.map((option, i) => (
                                 <MultiSelectorItem key={i} value={option.value}>
                                   {option.label}
@@ -203,16 +203,10 @@ export function DataTable<TData, TValue>({
                         </MultiSelector>
                       </AccordionContent>
                     </AccordionItem>
-                  </Accordion>
 
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className=" h-auto w-full"
-                  >
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>Business Name</AccordionTrigger>
-                      <AccordionContent>
+                    <AccordionItem value="item-2">
+                      <AccordionTrigger>Email</AccordionTrigger>
+                      <AccordionContent className="min-h-[100px] h-auto ">
                         <MultiSelector
                           values={value}
                           onValuesChange={setValue}
@@ -222,7 +216,7 @@ export function DataTable<TData, TValue>({
                             <MultiSelectorInput placeholder="Select your framework" />
                           </MultiSelectorTrigger>
                           <MultiSelectorContent>
-                            <MultiSelectorList>
+                            <MultiSelectorList className="relative">
                               {options.map((option, i) => (
                                 <MultiSelectorItem key={i} value={option.value}>
                                   {option.label}
@@ -233,16 +227,10 @@ export function DataTable<TData, TValue>({
                         </MultiSelector>
                       </AccordionContent>
                     </AccordionItem>
-                  </Accordion>
 
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className=" h-auto w-full"
-                  >
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>Business Name</AccordionTrigger>
-                      <AccordionContent>
+                    <AccordionItem value="item-3">
+                      <AccordionTrigger>First Name</AccordionTrigger>
+                      <AccordionContent className="min-h-[100px] h-auto ">
                         <MultiSelector
                           values={value}
                           onValuesChange={setValue}
@@ -252,7 +240,7 @@ export function DataTable<TData, TValue>({
                             <MultiSelectorInput placeholder="Select your framework" />
                           </MultiSelectorTrigger>
                           <MultiSelectorContent>
-                            <MultiSelectorList>
+                            <MultiSelectorList className="relative">
                               {options.map((option, i) => (
                                 <MultiSelectorItem key={i} value={option.value}>
                                   {option.label}
@@ -263,16 +251,10 @@ export function DataTable<TData, TValue>({
                         </MultiSelector>
                       </AccordionContent>
                     </AccordionItem>
-                  </Accordion>
 
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className=" h-auto w-full"
-                  >
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>Business Name</AccordionTrigger>
-                      <AccordionContent>
+                    <AccordionItem value="item-4">
+                      <AccordionTrigger>Last Name</AccordionTrigger>
+                      <AccordionContent className="min-h-[100px] h-auto ">
                         <MultiSelector
                           values={value}
                           onValuesChange={setValue}
@@ -282,7 +264,7 @@ export function DataTable<TData, TValue>({
                             <MultiSelectorInput placeholder="Select your framework" />
                           </MultiSelectorTrigger>
                           <MultiSelectorContent>
-                            <MultiSelectorList>
+                            <MultiSelectorList className="relative">
                               {options.map((option, i) => (
                                 <MultiSelectorItem key={i} value={option.value}>
                                   {option.label}
@@ -293,16 +275,10 @@ export function DataTable<TData, TValue>({
                         </MultiSelector>
                       </AccordionContent>
                     </AccordionItem>
-                  </Accordion>
 
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className=" h-auto w-full"
-                  >
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>Business Name</AccordionTrigger>
-                      <AccordionContent>
+                    <AccordionItem value="item-5">
+                      <AccordionTrigger>Tag</AccordionTrigger>
+                      <AccordionContent className="min-h-[100px] h-auto ">
                         <MultiSelector
                           values={value}
                           onValuesChange={setValue}
@@ -312,7 +288,7 @@ export function DataTable<TData, TValue>({
                             <MultiSelectorInput placeholder="Select your framework" />
                           </MultiSelectorTrigger>
                           <MultiSelectorContent>
-                            <MultiSelectorList>
+                            <MultiSelectorList className="relative">
                               {options.map((option, i) => (
                                 <MultiSelectorItem key={i} value={option.value}>
                                   {option.label}
@@ -323,16 +299,10 @@ export function DataTable<TData, TValue>({
                         </MultiSelector>
                       </AccordionContent>
                     </AccordionItem>
-                  </Accordion>
 
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className=" h-auto w-full"
-                  >
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>Business Name</AccordionTrigger>
-                      <AccordionContent>
+                    <AccordionItem value="item-6">
+                      <AccordionTrigger>Wildcard Name</AccordionTrigger>
+                      <AccordionContent className="min-h-[100px] h-auto ">
                         <MultiSelector
                           values={value}
                           onValuesChange={setValue}
@@ -342,7 +312,7 @@ export function DataTable<TData, TValue>({
                             <MultiSelectorInput placeholder="Select your framework" />
                           </MultiSelectorTrigger>
                           <MultiSelectorContent>
-                            <MultiSelectorList>
+                            <MultiSelectorList className="relative">
                               {options.map((option, i) => (
                                 <MultiSelectorItem key={i} value={option.value}>
                                   {option.label}

@@ -90,9 +90,11 @@ function Page() {
     last_interaction: z.string().min(1, {
       message: "Invalid must be at least 2 characters.",
     }),
-    tag_name: z.string().min(1, {
-      message: "Invalid must be at least 2 characters.",
-    }),
+    tags: z.array(
+      z.object({
+        tag_name: z.string(), // Assuming tag_name is a string
+      }),
+    ),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
