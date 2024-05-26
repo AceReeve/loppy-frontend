@@ -34,6 +34,7 @@ import {
   SheetHeader,
   SheetTitle,
   Separator,
+  SheetFooter,
 } from "@repo/ui/components/ui";
 import React, { useState } from "react";
 import {
@@ -61,6 +62,12 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from "@/src/components/ui/multiselect.tsx";
+import {
+  useCreateContactMutation,
+  useGetContactsQuery,
+} from "@/src/endpoints/contacts.ts";
+import { useCreatePaymentIntentMutation } from "@/src/endpoints/payment.ts";
+import events from "node:events";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -71,6 +78,17 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchChange = (e: events) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Function to filter items based on search term
+  const filterItems = (item: string) => {
+    return item.toLowerCase().includes(searchTerm.toLowerCase());
+  };
 
   const [value, setValue] = useState<string[]>([]);
   const options = [
@@ -166,9 +184,12 @@ export function DataTable<TData, TValue>({
                     </svg>
                   </div>
                   <input
+                    autoComplete={"off"}
                     type="text"
                     name="email"
                     id="topbar-search"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
                     className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
                     placeholder="Search Filters"
                   />
@@ -182,97 +203,121 @@ export function DataTable<TData, TValue>({
                   >
                     <AccordionItem value="item-1">
                       <AccordionTrigger>Company Name</AccordionTrigger>
-                      <AccordionContent className="min-h-[100px] h-auto ">
-                        <MultiSelector
-                          values={value}
-                          onValuesChange={setValue}
-                          loop={false}
-                        >
-                          <MultiSelectorTrigger>
-                            <MultiSelectorInput placeholder="Select your framework" />
-                          </MultiSelectorTrigger>
-                          <MultiSelectorContent>
-                            <MultiSelectorList className="relative">
-                              {options.map((option, i) => (
-                                <MultiSelectorItem key={i} value={option.value}>
-                                  {option.label}
-                                </MultiSelectorItem>
-                              ))}
-                            </MultiSelectorList>
-                          </MultiSelectorContent>
-                        </MultiSelector>
+                      <AccordionContent className="min-h-[50px] h-auto ">
+                        <div className="relative w-70 drop-shadow-lg">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                            <svg
+                              className="h-5 w-5 text-gray-500 "
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clipRule="evenodd"
+                              ></path>
+                            </svg>
+                          </div>
+                          <input
+                            autoComplete={"off"}
+                            type="text"
+                            name="email"
+                            id="topbar-search"
+                            className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                            placeholder="ex: ServiHero, Google, Jollibee"
+                          />
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
 
                     <AccordionItem value="item-2">
                       <AccordionTrigger>Email</AccordionTrigger>
-                      <AccordionContent className="min-h-[100px] h-auto ">
-                        <MultiSelector
-                          values={value}
-                          onValuesChange={setValue}
-                          loop={false}
-                        >
-                          <MultiSelectorTrigger>
-                            <MultiSelectorInput placeholder="Select your framework" />
-                          </MultiSelectorTrigger>
-                          <MultiSelectorContent>
-                            <MultiSelectorList className="relative">
-                              {options.map((option, i) => (
-                                <MultiSelectorItem key={i} value={option.value}>
-                                  {option.label}
-                                </MultiSelectorItem>
-                              ))}
-                            </MultiSelectorList>
-                          </MultiSelectorContent>
-                        </MultiSelector>
+                      <AccordionContent className="min-h-[50px] h-auto ">
+                        <div className="relative w-70 drop-shadow-lg">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                            <svg
+                              className="h-5 w-5 text-gray-500 "
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clipRule="evenodd"
+                              ></path>
+                            </svg>
+                          </div>
+                          <input
+                            autoComplete={"off"}
+                            type="text"
+                            name="email"
+                            id="topbar-search"
+                            className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                            placeholder="ex:Juan@gmail.com"
+                          />
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
 
                     <AccordionItem value="item-3">
                       <AccordionTrigger>First Name</AccordionTrigger>
-                      <AccordionContent className="min-h-[100px] h-auto ">
-                        <MultiSelector
-                          values={value}
-                          onValuesChange={setValue}
-                          loop={false}
-                        >
-                          <MultiSelectorTrigger>
-                            <MultiSelectorInput placeholder="Select your framework" />
-                          </MultiSelectorTrigger>
-                          <MultiSelectorContent>
-                            <MultiSelectorList className="relative">
-                              {options.map((option, i) => (
-                                <MultiSelectorItem key={i} value={option.value}>
-                                  {option.label}
-                                </MultiSelectorItem>
-                              ))}
-                            </MultiSelectorList>
-                          </MultiSelectorContent>
-                        </MultiSelector>
+                      <AccordionContent className="min-h-[50px] h-auto ">
+                        <div className="relative w-70 drop-shadow-lg">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                            <svg
+                              className="h-5 w-5 text-gray-500 "
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clipRule="evenodd"
+                              ></path>
+                            </svg>
+                          </div>
+                          <input
+                            autoComplete={"off"}
+                            type="text"
+                            name="email"
+                            id="topbar-search"
+                            className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                            placeholder="ex: Juan, Jose, Marie"
+                          />
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
 
                     <AccordionItem value="item-4">
                       <AccordionTrigger>Last Name</AccordionTrigger>
-                      <AccordionContent className="min-h-[100px] h-auto ">
-                        <MultiSelector
-                          values={value}
-                          onValuesChange={setValue}
-                          loop={false}
-                        >
-                          <MultiSelectorTrigger>
-                            <MultiSelectorInput placeholder="Select your framework" />
-                          </MultiSelectorTrigger>
-                          <MultiSelectorContent>
-                            <MultiSelectorList className="relative">
-                              {options.map((option, i) => (
-                                <MultiSelectorItem key={i} value={option.value}>
-                                  {option.label}
-                                </MultiSelectorItem>
-                              ))}
-                            </MultiSelectorList>
-                          </MultiSelectorContent>
-                        </MultiSelector>
+                      <AccordionContent className="min-h-[50px] h-auto ">
+                        <div className="relative w-70 drop-shadow-lg">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                            <svg
+                              className="h-5 w-5 text-gray-500 "
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clipRule="evenodd"
+                              ></path>
+                            </svg>
+                          </div>
+                          <input
+                            autoComplete={"off"}
+                            type="text"
+                            name="email"
+                            id="topbar-search"
+                            className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                            placeholder="ex: Montemayor, Estrada"
+                          />
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
 
@@ -325,6 +370,8 @@ export function DataTable<TData, TValue>({
                     </AccordionItem>
                   </Accordion>
                 </div>
+                <SheetFooter></SheetFooter>
+                <Button>Apply</Button>
               </SheetContent>
             </Sheet>
 
