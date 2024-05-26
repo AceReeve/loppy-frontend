@@ -174,7 +174,7 @@ function Page() {
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <div className="grid gap-2 max-h-[500px] pr-3 overflow-auto custom-scrollbar">
+                  <div className="grid gap-2 max-h-[500px] px-3 overflow-auto custom-scrollbar">
                     <FormField
                       control={form.control}
                       name="first_name"
