@@ -16,12 +16,12 @@ export type SetUnreadMessagesType = (
 export interface ReduxConversation {
   sid: string;
   friendlyName: string | null;
-  dateUpdated: string | null;
+  dateUpdated: Date | null;
   notificationLevel: "default" | "muted";
   lastReadMessageIndex: number | null;
-  lastMessage: {
+  lastMessage?: {
     index?: number;
-    dateCreated?: string;
+    dateCreated?: Date;
   };
 }
 

@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui";
 import React, { useEffect, useMemo } from "react";
 import { useMessagesState } from "@/src/providers/messages-provider.tsx";
 import MessagesBox from "@/src/components/conversation-view/messages-box.tsx";
+import MessageInputField from "@/src/components/conversation-view/message-input-field.tsx";
 
 export default function ConversationView() {
   const { client, initialized } = useMessagesState();
@@ -119,16 +120,16 @@ export default function ConversationView() {
           {/*<div className="bg-gray-100 p-4 text-sm text-gray-500">*/}
           {/*  {typingData.length > 0 && typingInfo}*/}
           {/*</div>*/}
-          {/*<div className="chat-footer flex-none">*/}
-          {/*  <MessageInputField*/}
-          {/*    client={client}*/}
-          {/*    convo={openedConversation}*/}
-          {/*    convoSid={sid}*/}
-          {/*    droppedFiles={droppedFiles}*/}
-          {/*    messages={messages[sid]}*/}
-          {/*    typingData={typingData}*/}
-          {/*  />*/}
-          {/*</div>*/}
+          <div className="chat-footer flex-none">
+            <MessageInputField
+              client={client}
+              convo={openedConversation}
+              convoSid={sid}
+              // droppedFiles={droppedFiles}
+              messages={messages[sid]}
+              // typingData={typingData}
+            />
+          </div>
         </>
       ) : (
         <div className="flex-1 bg-gray-100 p-4">No message selected</div>

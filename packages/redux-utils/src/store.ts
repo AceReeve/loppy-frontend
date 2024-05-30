@@ -9,6 +9,8 @@ import participantsReducer from "./slices/messaging/participants-slice.ts";
 import messageListReducer from "./slices/messaging/message-list-slice.ts";
 import lastReadIndexReducer from "./slices/messaging/last-read-index-slice.ts";
 import usersReducer from "./slices/messaging/users-slice.ts";
+import unreadMessagesReducer from "./slices/messaging/unread-messages-slice.ts";
+import typingDataReducer from "./slices/messaging/typing-data-slice.ts";
 
 const middlewares: Middleware[] = [baseApi.middleware];
 
@@ -22,6 +24,8 @@ const makeStore = () =>
       lastReadIndex: lastReadIndexReducer,
       messageList: messageListReducer,
       participants: participantsReducer,
+      typingData: typingDataReducer,
+      unreadMessages: unreadMessagesReducer,
       users: usersReducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
@@ -30,6 +34,10 @@ const makeStore = () =>
       getDefaultMiddleware({
         serializableCheck: {
           ignoredActions: [
+            "conversations/filterConversations",
+            "conversations/upsertConversation",
+            "conversations/removeConversation",
+            "conversations/updateConversation",
             "messageList/addMessages",
             "messageList/pushMessages",
             "participants/updateParticipants",

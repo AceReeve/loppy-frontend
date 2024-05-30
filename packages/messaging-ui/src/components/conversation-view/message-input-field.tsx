@@ -6,14 +6,17 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getSdkConversationObject } from "@repo/redux-utils/src/utils/messaging/conversations-objects.ts";
+import { unexpectedErrorNotification } from "@/src/utils.ts";
+import { EmojiNormal } from "iconsax-react";
+import MessageInput from "@/src/components/conversation-view/message-input.tsx";
 
 interface SendMessageProps {
   convoSid: string;
   client: Client;
   messages: ReduxMessage[];
   convo: ReduxConversation;
-  typingData: string[];
-  droppedFiles: File[];
+  // typingData: string[];
+  // droppedFiles: File[];
 }
 
 export default function MessageInputField(props: SendMessageProps) {
@@ -103,30 +106,29 @@ export default function MessageInputField(props: SendMessageProps) {
     //   attachedMedia: [],
     // } as ReduxMessage;
 
-    for (const file of files) {
-      const fileData = new FormData();
-      fileData.set(file.name, file, file.name);
+    // for (const file of files) {
+    //   const fileData = new FormData();
+    //   fileData.set(file.name, file, file.name);
+    //
+    //   // @ts-ignore
+    //   newMessage.attachedMedia.push({
+    //     sid: key + "",
+    //     size: file.size,
+    //     filename: file.name,
+    //     contentType: file.type,
+    //   });
+    //   addAttachment(convo.sid, "-1", key + "", file);
+    //   newMessageBuilder.addMedia(fileData);
+    // }
 
-      // @ts-ignore
-      // newMessage.attachedMedia.push({
-      //   sid: key + "",
-      //   size: file.size,
-      //   filename: file.name,
-      //   contentType: file.type,
-      // });
-      // addAttachment(convo.sid, "-1", key + "", file);
-      newMessageBuilder.addMedia(fileData);
-    }
-    // @ts-ignore
-    // upsertMessages(convo.sid, [newMessage]);
     setMessage("");
-    setFiles([]);
+    // setFiles([]);
     const messageIndex = await newMessageBuilder.build().send();
 
     try {
       await sdkConvo.advanceLastReadMessageIndex(messageIndex ?? 0);
     } catch (e: any) {
-      unexpectedErrorNotification(e.message, addNotifications);
+      unexpectedErrorNotification(e);
       throw e;
     }
   };
@@ -156,7 +158,7 @@ export default function MessageInputField(props: SendMessageProps) {
         </button>
         <div className="relative flex-grow">
           <MessageInput
-            assets={files}
+            // assets={files}
             message={message}
             onChange={(e: string) => {
               sdkConvo.typing();
@@ -165,7 +167,7 @@ export default function MessageInputField(props: SendMessageProps) {
             onEnterKeyPress={async () => {
               await onMessageSend();
             }}
-            onFileRemove={onFileRemove}
+            // onFileRemove={onFileRemove}
           />
           <button
             type="button"

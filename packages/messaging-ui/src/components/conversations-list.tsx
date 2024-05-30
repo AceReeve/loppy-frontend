@@ -8,6 +8,7 @@ import React, { useMemo } from "react";
 import moment from "moment";
 import type {
   ReduxConversation,
+  ReduxMessage,
   SetParticipantsType,
   SetSidType,
 } from "@repo/redux-utils/src/types/messaging/messaging";
@@ -19,12 +20,37 @@ import ConversationsListSkeleton from "@/src/components/conversations-list-skele
 import { useMessagesState } from "@/src/providers/messages-provider.tsx";
 import { updateUnreadMessages } from "@repo/redux-utils/src/slices/messaging/unread-messages-slice.ts";
 import { setLastReadIndex } from "@repo/redux-utils/src/slices/messaging/last-read-index-slice.ts";
+import { getTypingMessage } from "@/src/utils.ts";
+import { getTranslation } from "@repo/redux-utils/src/utils/messaging/local-utils.ts";
+
+function getLastMessage(
+  messages: ReduxMessage[],
+  convoLoading: string,
+  convoEmpty: string,
+  typingData: string[],
+) {
+  if (messages === undefined || messages === null) {
+    return convoLoading;
+  }
+  if (typingData.length) {
+    return getTypingMessage(typingData);
+  }
+  if (messages.length === 0) {
+    return convoEmpty;
+  }
+  return messages[messages.length - 1].body || "Media message";
+}
 
 export default function ConversationsList() {
   const { initialized } = useMessagesState();
   const conversations = useSelector((state: AppState) => state.conversations);
   const sid = useSelector((state: AppState) => state.currentConversation);
+  const unreadMessages = useSelector((state: AppState) => state.unreadMessages);
   const messages = useSelector((state: AppState) => state.messageList);
+  const typingData = useSelector((state: AppState) => state.typingData);
+
+  const convoEmpty = getTranslation("en-US", "convoEmpty");
+  const convoLoading = getTranslation("en-US", "convoLoading");
 
   const dispatch = useDispatch();
 
@@ -106,21 +132,21 @@ export default function ConversationsList() {
               className="size-5"
               src="/assets/icons/messaging/check-read-line-duotone.svg"
             />
-            {/*<p className="w-full font-nunito text-sm font-light leading-none text-neutral-400">*/}
-            {/*  {getLastMessage(*/}
-            {/*    messages[convo.sid],*/}
-            {/*    convoLoading,*/}
-            {/*    convoEmpty,*/}
-            {/*    typingData[convo.sid] ?? [],*/}
-            {/*  ) ?? ""}*/}
-            {/*</p>*/}
-            {/*{(unreadMessages[convo.sid] ?? 0) > 0 && (*/}
-            {/*  <div className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-red-500 px-2 py-1">*/}
-            {/*    <div className="text-xs font-medium leading-none text-white">*/}
-            {/*      {unreadMessages[convo.sid]}*/}
-            {/*    </div>*/}
-            {/*  </div>*/}
-            {/*)}*/}
+            <p className="w-full font-nunito text-sm font-light leading-none text-neutral-400">
+              {getLastMessage(
+                messages[convo.sid],
+                convoLoading,
+                convoEmpty,
+                typingData[convo.sid] ?? [],
+              ) ?? ""}
+            </p>
+            {(unreadMessages[convo.sid] ?? 0) > 0 && (
+              <div className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-red-500 px-2 py-1">
+                <div className="text-xs font-medium leading-none text-white">
+                  {unreadMessages[convo.sid]}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
