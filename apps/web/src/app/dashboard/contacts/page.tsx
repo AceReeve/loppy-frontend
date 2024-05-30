@@ -15,9 +15,11 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  toast,
+  ToastAction,
 } from "@repo/ui/components/ui";
 import { ArrowDown2 } from "iconsax-react";
-import { z } from "zod";
+import { number, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -28,12 +30,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form.tsx";
-import { useState } from "react";
+
+import {
+  MultiSelector,
+  MultiSelectorTrigger,
+  MultiSelectorInput,
+  MultiSelectorContent,
+  MultiSelectorList,
+  MultiSelectorItem,
+} from "@/src/components/ui/multiselect.tsx";
+import React, { useState } from "react";
 import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
 import { useCreateContactMutation } from "@/src/endpoints/contacts.ts";
+import { CreateContactsFormSchema } from "@/src/schemas";
 import UnassignedContacts from "./tabs/unassigned-contacts";
 import MyContacts from "./tabs/my-contacts";
 import AllContacts from "./tabs/all-contacts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -56,48 +69,23 @@ function Page() {
     },
   ];
 
-  const formSchema = z.object({
-    firstName: z.string().min(2, {
-      message: "First Name must be at least 2 characters.",
-    }),
-    lastName: z.string().min(2, {
-      message: "Last Name must be at least 2 characters.",
-    }),
-    email: z.string().min(2, {
-      message: "Invalid Email Address",
-    }),
-    phone_number: z.number().min(11, {
-      message: "Invalid Phone Number",
-    }),
-    source: z.string().min(2, {
-      message: "Source must be ",
-    }),
-    lifetime_value: z.number().min(1, {
-      message: "Life Time Value is Invalid must be at least 2 characters.",
-    }),
-    last_campaign_ran: z.string().min(1, {
-      message: "Invalid must be at least 2 characters.",
-    }),
-    last_interaction: z.string().min(1, {
-      message: "Invalid must be at least 2 characters.",
-    }),
-    tag_name: z.string().min(1, {
-      message: "Invalid must be at least 2 characters.",
-    }),
-  });
+  const phoneRegex = new RegExp(
+    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/,
+  );
+  const formSchema = CreateContactsFormSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
       phone_number: 0,
       source: "",
       lifetime_value: 0,
       last_campaign_ran: "",
       last_interaction: "",
-      tags: [
+      tag: [
         {
           tag_name: "",
         },
@@ -105,13 +93,43 @@ function Page() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const [value, setValue] = useState<string[]>([]);
+  const options = [
+    { label: "ChatGPT", value: "ChatGPT" },
+    { label: "Facebook", value: "Facebook" },
+    { label: "Twitter", value: "Twitter" },
+  ];
 
-  const handleSubmit = () => {};
+  const [createContact, { data: contactData, isError, isLoading }] =
+    useCreateContactMutation();
+
+  const onSubmit = async () => {
+    try {
+      const formData = form.getValues();
+      console.log(formData);
+      await createContact(formData);
+      if (isLoading) {
+        console.log("Contact Posting");
+      }
+      if (isError) {
+        console.log("Error Posting " + isError);
+      }
+      if (!form.formState.isSubmitting) {
+        form.reset();
+      }
+      if (!contactData) {
+        console.log("Contact Added");
+      }
+    } catch (error) {
+      console.error("Error creating contact:", error);
+    } finally {
+      form.reset();
+    }
+  };
+
+  const formReset = () => {
+    form.reset();
+  };
 
   return (
     <div className="p-10">
@@ -150,22 +168,26 @@ function Page() {
             <DialogTrigger asChild>
               <Button className="rounded-xl">Create Contact</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent onCloseAutoFocus={formReset}>
               <DialogHeader>
                 <DialogTitle>Create New Contact</DialogTitle>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSubmit)}>
-                  <div className="grid gap-2 max-h-[300px] px-5 overflow-auto">
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <div className="grid gap-2 max-h-[500px] px-3 overflow-auto custom-scrollbar">
                     <FormField
                       control={form.control}
-                      name="firstName"
+                      name="first_name"
                       render={({ field }) => {
                         return (
                           <FormItem>
                             <FormLabel>First Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="First Name" {...field} />
+                              <Input
+                                autoComplete={"off"}
+                                placeholder="First Name"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -175,13 +197,37 @@ function Page() {
 
                     <FormField
                       control={form.control}
-                      name="lastName"
+                      name="last_name"
                       render={({ field }) => {
                         return (
                           <FormItem>
                             <FormLabel>Last Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Last Name" {...field} />
+                              <Input
+                                autoComplete={"off"}
+                                placeholder="Last Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                autoComplete={"off"}
+                                placeholder="servi@gmail.com"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -198,6 +244,7 @@ function Page() {
                             <FormLabel>Phone Number</FormLabel>
                             <FormControl>
                               <Input
+                                autoComplete={"off"}
                                 placeholder="Phone Number"
                                 {...field}
                                 type="number"
@@ -217,7 +264,11 @@ function Page() {
                           <FormItem>
                             <FormLabel>Source</FormLabel>
                             <FormControl>
-                              <Input placeholder="Source" {...field} />
+                              <Input
+                                autoComplete={"off"}
+                                placeholder="Source"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -234,6 +285,7 @@ function Page() {
                             <FormLabel>Lifetime Value</FormLabel>
                             <FormControl>
                               <Input
+                                autoComplete={"off"}
                                 placeholder="Lifetime Value"
                                 {...field}
                                 type="number"
@@ -247,13 +299,17 @@ function Page() {
 
                     <FormField
                       control={form.control}
-                      name="last_camapign_ran"
+                      name="last_campaign_ran"
                       render={({ field }) => {
                         return (
                           <FormItem>
                             <FormLabel>Last Campaign Ran</FormLabel>
                             <FormControl>
-                              <Input placeholder="Lifetime Value" {...field} />
+                              <Input
+                                autoComplete={"off"}
+                                placeholder="Last Campaign Ran"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -270,7 +326,8 @@ function Page() {
                             <FormLabel>Last Interaction</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="Last Interaction"
+                                autoComplete={"off"}
+                                placeholder="2020-07-10 15:00:00.000"
                                 {...field}
                               />
                             </FormControl>
@@ -280,28 +337,26 @@ function Page() {
                       }}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="tagName"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Tag Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Tag Name"
-                                {...field}
-                                type="number"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
+                    <MultiSelector
+                      values={value}
+                      onValuesChange={setValue}
+                      loop={false}
+                    >
+                      <MultiSelectorTrigger>
+                        <MultiSelectorInput placeholder="Select your framework" />
+                      </MultiSelectorTrigger>
+                      <MultiSelectorContent>
+                        <MultiSelectorList>
+                          {options.map((option, i) => (
+                            <MultiSelectorItem key={i} value={option.value}>
+                              {option.label}
+                            </MultiSelectorItem>
+                          ))}
+                        </MultiSelectorList>
+                      </MultiSelectorContent>
+                    </MultiSelector>
                   </div>
-
-                  <Button className="mt-2" type="submit">
+                  <Button className="mt-2 w-full" type="submit">
                     Submit
                   </Button>
                 </form>

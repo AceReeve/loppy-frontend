@@ -28,6 +28,13 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  Separator,
+  SheetFooter,
 } from "@repo/ui/components/ui";
 import React, { useState } from "react";
 import {
@@ -41,6 +48,32 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   noResultsComponent?: React.ReactNode;
 }
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/src/components/ui/accordion.tsx";
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from "@/src/components/ui/multiselect.tsx";
+import {
+  useCreateContactMutation,
+  useGetContactsQuery,
+} from "@/src/endpoints/contacts.ts";
+import { useCreatePaymentIntentMutation } from "@/src/endpoints/payment.ts";
+import events from "node:events";
+import TagFilter from "@/src/app/dashboard/contacts/filters/tag-filter.tsx";
+import CompanyFilter from "@/src/app/dashboard/contacts/filters/company-filter.tsx";
+import FirstNameFilter from "@/src/app/dashboard/contacts/filters/first-name-filter.tsx";
+import LastNameFilter from "@/src/app/dashboard/contacts/filters/last-name-filter.tsx";
+import EmailFilter from "@/src/app/dashboard/contacts/filters/email-filter.tsx";
+import WildCardNameFilter from "@/src/app/dashboard/contacts/filters/wild-card-name-filter.tsx";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -51,6 +84,49 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  // Function to filter items based on search term
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const accordionItems = [
+    {
+      label: "Tag",
+      content: <TagFilter />,
+    },
+    {
+      label: "Company Name",
+      content: <CompanyFilter />,
+    },
+    {
+      label: "First Name",
+      content: <FirstNameFilter />,
+    },
+    {
+      label: "Last Name",
+      content: <LastNameFilter />,
+    },
+
+    {
+      label: "Email",
+      content: <EmailFilter />,
+    },
+    {
+      label: "Wild Card Name",
+      content: <WildCardNameFilter />,
+    },
+  ];
+
+  const filterItems = (itemLabel: string) => {
+    return itemLabel.toLowerCase().includes(searchTerm.toLowerCase());
+  };
+
+  const [value, setValue] = useState<string[]>([]);
+  const options = [
+    { label: "ChatGPT", value: "ChatGPT" },
+    { label: "Facebook", value: "Facebook" },
+    { label: "Twitter", value: "Twitter" },
+  ];
 
   const table = useReactTable({
     data,
@@ -98,14 +174,90 @@ export function DataTable<TData, TValue>({
               Contact frequency (2+)
               <XMarkIcon className="relative h-4 w-4 text-gray-500" />
             </Button>
-            <Button className="gap-2 rounded-xl" variant="outline">
-              <img
-                alt=""
-                className="w-[18px]"
-                src="/assets/icons/icon-filter.svg"
-              />
-              Add Filter
-            </Button>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button className="gap-2 rounded-xl" variant="outline">
+                  <img
+                    alt=""
+                    className="w-[18px]"
+                    src="/assets/icons/icon-filter.svg"
+                  />
+                  Add Filter
+                </Button>
+              </SheetTrigger>
+
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>
+                    <div className="block ">
+                      <div className="flex justify-start gap-3">
+                        <img
+                          alt=""
+                          className="w-[18px]"
+                          src="/assets/icons/icon-filter.svg"
+                        />
+                        <p>Filter</p>
+                      </div>
+
+                      <p className="text-gray-500 text-sm font-nunito content-center">
+                        Apply filters to contacts
+                      </p>
+                    </div>
+                  </SheetTitle>
+                </SheetHeader>
+                <Separator className="my-6" />
+                <div className="relative w-70 drop-shadow-lg mb-6">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                    <svg
+                      className="h-5 w-5 text-gray-500 "
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  </div>
+                  <input
+                    autoComplete={"off"}
+                    type="text"
+                    name="email"
+                    id="topbar-search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                    placeholder="Search Filters"
+                  />
+                </div>
+                <p className="font-nunito">Most Used</p>
+                <div className=" h-[1000px]">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="h-auto w-full"
+                  >
+                    {accordionItems.map((item, index) => {
+                      if (filterItems(item.label)) {
+                        return (
+                          <AccordionItem key={index} value={`item-${index}`}>
+                            <AccordionTrigger>{item.label}</AccordionTrigger>
+                            <AccordionContent>{item.content}</AccordionContent>
+                          </AccordionItem>
+                        );
+                      }
+                      return null;
+                    })}
+                  </Accordion>
+                </div>
+                <SheetFooter></SheetFooter>
+                <Button>Apply</Button>
+              </SheetContent>
+            </Sheet>
+
             {/* Hide/Show Columns */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

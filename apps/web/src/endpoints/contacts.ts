@@ -3,6 +3,7 @@ import { baseApi } from "@repo/redux-utils/src/api.ts";
 import {
   CreateContactPayload,
   GetContactsResponse,
+  GetCreateContactResponse,
   ImportContactsResponse,
 } from "@/src/endpoints/types/contacts";
 
@@ -20,7 +21,10 @@ const userApi = baseApi
         },
         providesTags: ["contacts"],
       }),
-      createContact: builder.mutation<null, CreateContactPayload>({
+      createContact: builder.mutation<
+        GetCreateContactResponse,
+        CreateContactPayload
+      >({
         query: (payload) => {
           return {
             url: `/Contacts`,

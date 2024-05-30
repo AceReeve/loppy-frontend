@@ -6,9 +6,23 @@ import { columns } from "@/src/app/dashboard/contacts/columns";
 import { DataTable } from "@/src/components/data-table";
 import { useGetContactsQuery } from "@/src/endpoints/contacts.ts";
 import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Separator,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/src/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
+import { Button } from "@headlessui/react";
 
 // const GET_USERS = gql`
 //   query GetUsers {
