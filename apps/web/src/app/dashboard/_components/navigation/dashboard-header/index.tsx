@@ -106,8 +106,11 @@ export default function DashboardHeader() {
                 <div className="pointer-events-none relative flex overflow-hidden rounded-full text-sm focus:ring-4 focus:ring-gray-300">
                   <div className="size-10">
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarImage
+                        className="object-cover"
+                        src="/assets/images/abe-lincoln.jpeg"
+                      />
+                      <AvatarFallback>EX</AvatarFallback>
                     </Avatar>
                     {/*<ProfilePicDefault name={session?.user.email} />*/}
                   </div>

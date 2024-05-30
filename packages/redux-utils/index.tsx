@@ -5,6 +5,7 @@ export { store } from "./src/store";
 export { baseApi } from "./src/api";
 export * from "../../apps/web/src/endpoints/payment";
 export { StoreProvider } from "./src/StoreProvider";
+export type { Session } from "next-auth";
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector;

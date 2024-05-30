@@ -6,6 +6,7 @@
     "./jwt-utils": "./src/jwt-utils.ts",
     "./number-utils": "./src/number-utils.ts",
     "./query-utils": "./src/query-utils.ts",
+    "./helpers": "./src/helpers.ts",
     "./hooks/use-theme-variables": "./src/hooks/use-theme-variables.ts"
   },
   "dependencies": {

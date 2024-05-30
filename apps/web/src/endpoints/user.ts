@@ -4,7 +4,7 @@ import {
   InviteUserResponse,
 } from "@/src/endpoints/types/user";
 
-const userApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["user"],
   })
@@ -34,4 +34,4 @@ const userApi = baseApi
     }),
   });
 
-export const { useInviteUserMutation, useValidateInviteUserMutation } = userApi;
+export const { useInviteUserMutation, useValidateInviteUserMutation } = api;

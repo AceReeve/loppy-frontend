@@ -7,6 +7,7 @@ const config: Pick<Config, "content" | "presets"> = {
   content: [
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/messaging-ui/**/*.{js,ts,jsx,tsx}",
   ],
   presets: [sharedConfig],
 };

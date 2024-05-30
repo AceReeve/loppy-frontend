@@ -3,6 +3,12 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { baseApi } from "./api";
 
 import { Action } from "redux";
+import conversationReducer from "./slices/messaging/conversation-slice.ts";
+import currentConversationReducer from "./slices/messaging/current-conversation-slice.ts";
+import participantsReducer from "./slices/messaging/participants-slice.ts";
+import messageListReducer from "./slices/messaging/message-list-slice.ts";
+import lastReadIndexReducer from "./slices/messaging/last-read-index-slice.ts";
+import usersReducer from "./slices/messaging/users-slice.ts";
 
 const middlewares: Middleware[] = [baseApi.middleware];
 
@@ -11,11 +17,27 @@ const makeStore = () =>
     reducer: {
       // Add the generated reducer as a specific top-level slice
       [baseApi.reducerPath]: baseApi.reducer,
+      conversations: conversationReducer,
+      currentConversation: currentConversationReducer,
+      lastReadIndex: lastReadIndexReducer,
+      messageList: messageListReducer,
+      participants: participantsReducer,
+      users: usersReducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(middlewares),
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [
+            "messageList/addMessages",
+            "messageList/pushMessages",
+            "participants/updateParticipants",
+            "users/updateUser",
+          ],
+          ignoreState: true,
+        },
+      }).concat(middlewares),
   });
 
 export const store = makeStore();

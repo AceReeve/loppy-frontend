@@ -2,11 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { getSession, signOut } from "next-auth/react";
 
-export interface Pokemon {}
-
 const addTokenToRequest = async (headers: any, { getState }: any) => {
   const session: any = await getSession();
-  console.log("session", session);
   if (session?.jwt) {
     headers.set("Authorization", `Bearer ${session.jwt}`);
   }
@@ -27,7 +24,6 @@ const baseQueryWithReauth: BaseQueryFn = async (
   extraOptions: any,
 ) => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log("result", result);
 
   if (result?.error?.status === 403) {
     // Implement logic for restricted access

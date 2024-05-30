@@ -7,7 +7,7 @@ import type {
   SummarizePaymentResponse,
 } from "@/src/endpoints/types/payment";
 
-const paymentApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["payment"],
   })
@@ -57,4 +57,4 @@ export const {
   useCreatePaymentIntentMutation,
   useSummarizePaymentMutation,
   useGetPaymentStatusQuery,
-} = paymentApi;
+} = api;

@@ -6,7 +6,7 @@ import {
   ImportContactsResponse,
 } from "@/src/endpoints/types/contacts";
 
-const userApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["contacts"],
   })
@@ -47,4 +47,4 @@ export const {
   useGetContactsQuery,
   useCreateContactMutation,
   useImportContactsMutation,
-} = userApi;
+} = api;

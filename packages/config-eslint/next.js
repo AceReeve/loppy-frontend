@@ -46,12 +46,12 @@ module.exports = {
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/no-unsafe-return": "off",
     "jsx-a11y/heading-has-content": "off",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        selector: "enum",
-        format: ["PascalCase", "UPPER_CASE"],
-      },
-    ],
+    // "@typescript-eslint/naming-convention": [
+    //   "error",
+    //   {
+    //     selector: "enum",
+    //     format: ["PascalCase", "UPPER_CASE"],
+    //   },
+    // ],
   },
 };

@@ -89,9 +89,9 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   {
     accessorKey: "last_interaction",
     header: "Last Interaction",
-    cell: () => {
+    cell: ({ getValue }) => {
       const date = new Date();
-      return moment(date).format("ll");
+      return moment(getValue() ?? date).format("ll");
     },
   },
 ];

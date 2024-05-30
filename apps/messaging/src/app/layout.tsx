@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { StoreProvider } from "@repo/redux-utils";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@repo/ui/components/ui";
 import { ThemeProvider } from "@/src/providers/theme-provider";
 import { auth } from "@/auth.ts";
 
@@ -24,7 +25,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <SessionProvider session={session}>
           <StoreProvider>
@@ -33,6 +34,7 @@ export default async function RootLayout({
             </ThemeProvider>
           </StoreProvider>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

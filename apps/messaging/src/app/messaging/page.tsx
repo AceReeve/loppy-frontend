@@ -1,5 +1,5 @@
-export function MessagingPage() {
-  return <div className="text-black">Messaging apps</div>;
-}
+import { MessagingPage } from "@repo/messaging-ui/messaging-page";
 
-export default MessagingPage;
+export default function Page() {
+  return <MessagingPage />;
+}
