@@ -47,6 +47,7 @@ import UnassignedContacts from "./tabs/unassigned-contacts";
 import MyContacts from "./tabs/my-contacts";
 import AllContacts from "./tabs/all-contacts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -85,7 +86,7 @@ function Page() {
       lifetime_value: 0,
       last_campaign_ran: "",
       last_interaction: "",
-      tag: [
+      tags: [
         {
           tag_name: "",
         },
@@ -93,7 +94,7 @@ function Page() {
     },
   });
 
-  const [value, setValue] = useState<string[]>([]);
+  const [tagValue, setTagValue] = useState<string[]>([]);
   const options = [
     { label: "ChatGPT", value: "ChatGPT" },
     { label: "Facebook", value: "Facebook" },
@@ -106,15 +107,24 @@ function Page() {
   const onSubmit = async () => {
     try {
       const formData = form.getValues();
-      console.log(formData);
-      await createContact(formData);
+      const newData = {
+        ...formData,
+        phone_number: parseInt(formData.phone_number),
+        lifetime_value: parseInt(formData.lifetime_value),
+        tags:
+          tagValue.length > 0 ? tagValue.map((tag) => ({ tag_name: tag })) : [],
+      };
+
+      console.log(newData);
+
+      await createContact(newData);
       if (isLoading) {
         console.log("Contact Posting");
       }
       if (isError) {
         console.log("Error Posting " + isError);
       }
-      if (!form.formState.isSubmitting) {
+      if (form.formState.isSubmitted) {
         form.reset();
       }
       if (!contactData) {
@@ -122,8 +132,6 @@ function Page() {
       }
     } catch (error) {
       console.error("Error creating contact:", error);
-    } finally {
-      form.reset();
     }
   };
 
@@ -163,6 +171,14 @@ function Page() {
               </Button>
             </DialogTrigger>
             <ImportContactsDialogContent setOpen={setImportDialogOpen} />
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="rounded-xl" variant="outline">
+                Export
+              </Button>
+            </DialogTrigger>
+            <ExportContactsDialogForm />
           </Dialog>
           <Dialog>
             <DialogTrigger asChild>
@@ -338,8 +354,8 @@ function Page() {
                     />
 
                     <MultiSelector
-                      values={value}
-                      onValuesChange={setValue}
+                      values={tagValue}
+                      onValuesChange={setTagValue}
                       loop={false}
                     >
                       <MultiSelectorTrigger>

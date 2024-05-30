@@ -12,8 +12,13 @@ import {
   MultiSelectorTrigger,
 } from "@/src/components/ui/multiselect.tsx";
 import React, { useState } from "react";
+import { Button } from "@/src/components/ui";
 
-export default function TagFilter() {
+interface TagFilterProps {
+  onAdd: (label: string, values: string[]) => void;
+}
+
+export default function TagFilter({ onAdd }: TagFilterProps) {
   const options = [
     { label: "ChatGPT", value: "ChatGPT" },
     { label: "Facebook", value: "Facebook" },
@@ -38,6 +43,13 @@ export default function TagFilter() {
           </MultiSelectorContent>
         </MultiSelector>
       </AccordionContent>
+      <Button
+        onClick={() => {
+          onAdd("Tag", value);
+        }}
+      >
+        Apply
+      </Button>
     </>
   );
 }

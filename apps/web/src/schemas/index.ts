@@ -64,6 +64,9 @@ export const SendInviteSingleItemSchema = z
   .email({
     message: "Email is invalid",
   });
+const tagSchema = z.object({
+  tag_name: z.string(),
+});
 
 export const CreateContactsFormSchema = z.object({
   first_name: z.string().min(2, {
@@ -96,4 +99,6 @@ export const CreateContactsFormSchema = z.object({
   last_interaction: z.string().min(1, {
     message: "Last Interaction must be at least 1 character.",
   }),
+
+  tags: z.array(tagSchema).optional(),
 });
