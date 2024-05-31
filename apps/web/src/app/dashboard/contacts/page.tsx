@@ -1,5 +1,8 @@
 "use client";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Dialog,
   DialogContent,
@@ -39,7 +42,7 @@ import {
   MultiSelectorList,
   MultiSelectorItem,
 } from "@/src/components/ui/multiselect.tsx";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
 import { useCreateContactMutation } from "@/src/endpoints/contacts.ts";
 import { CreateContactsFormSchema } from "@/src/schemas";
@@ -48,6 +51,8 @@ import MyContacts from "./tabs/my-contacts";
 import AllContacts from "./tabs/all-contacts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
+import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
+import { AlertCircle } from "lucide-react";
 
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -93,6 +98,9 @@ function Page() {
       ],
     },
   });
+  const formReset = () => {
+    form.reset();
+  };
 
   const [tagValue, setTagValue] = useState<string[]>([]);
   const options = [
@@ -100,8 +108,7 @@ function Page() {
     { label: "Facebook", value: "Facebook" },
     { label: "Twitter", value: "Twitter" },
   ];
-
-  const [createContact, { data: contactData, isError, isLoading }] =
+  const [createContact, { data: contactData, error, isLoading }] =
     useCreateContactMutation();
 
   const onSubmit = async () => {
@@ -118,15 +125,20 @@ function Page() {
       console.log(newData);
 
       await createContact(newData);
-      if (isLoading) {
-        console.log("Contact Posting");
+
+      if (error) {
+        return (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{getErrorMessage(error)}</AlertDescription>
+          </Alert>
+        );
       }
-      if (isError) {
-        console.log("Error Posting " + isError);
-      }
-      if (form.formState.isSubmitted) {
+      if (!isLoading) {
         form.reset();
       }
+
       if (!contactData) {
         console.log("Contact Added");
       }
@@ -135,9 +147,32 @@ function Page() {
     }
   };
 
-  const formReset = () => {
-    form.reset();
+  /*  const onSubmit = async () => {
+    const [isPending, startTransition] = useTransition(); // Initialize pending state
+
+    try {
+      const formData = form.getValues();
+      const newData = {
+        ...formData,
+        phone_number: parseInt(formData.phone_number),
+        lifetime_value: parseInt(formData.lifetime_value),
+        tags:
+          tagValue.length > 0 ? tagValue.map((tag) => ({ tag_name: tag })) : [],
+      };
+
+      console.log(newData);
+
+      startTransition(() => {
+        // Start transition when creating contact
+        createContact(newData);
+        form.reset(); // Reset form after successful contact creation
+        console.log("Contact Added");
+      });
+    } catch (error) {
+      console.error("Error creating contact:", error);
+    }
   };
+*/
 
   return (
     <div className="p-10">
@@ -150,6 +185,7 @@ function Page() {
             0 contacts
           </div>
         </div>
+
         <div className="flex items-end gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -180,6 +216,7 @@ function Page() {
             </DialogTrigger>
             <ExportContactsDialogForm />
           </Dialog>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button className="rounded-xl">Create Contact</Button>
@@ -188,195 +225,207 @@ function Page() {
               <DialogHeader>
                 <DialogTitle>Create New Contact</DialogTitle>
               </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <div className="grid gap-2 max-h-[500px] px-3 overflow-auto custom-scrollbar">
-                    <FormField
-                      control={form.control}
-                      name="first_name"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="First Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="last_name"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="Last Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="servi@gmail.com"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="phone_number"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="Phone Number"
-                                {...field}
-                                type="number"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="source"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Source</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="Source"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="lifetime_value"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Lifetime Value</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="Lifetime Value"
-                                {...field}
-                                type="number"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="last_campaign_ran"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Last Campaign Ran</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="Last Campaign Ran"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="last_interaction"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Last Interaction</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete={"off"}
-                                placeholder="2020-07-10 15:00:00.000"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-
-                    <MultiSelector
-                      values={tagValue}
-                      onValuesChange={setTagValue}
-                      loop={false}
-                    >
-                      <MultiSelectorTrigger>
-                        <MultiSelectorInput placeholder="Select your framework" />
-                      </MultiSelectorTrigger>
-                      <MultiSelectorContent>
-                        <MultiSelectorList>
-                          {options.map((option, i) => (
-                            <MultiSelectorItem key={i} value={option.value}>
-                              {option.label}
-                            </MultiSelectorItem>
-                          ))}
-                        </MultiSelectorList>
-                      </MultiSelectorContent>
-                    </MultiSelector>
+              {isLoading ? (
+                <div className="content-center w-full m-auto h-[200px]">
+                  <div className="h-[50px] w-[15px] content-center m-auto">
+                    <LoadingSpinner />
                   </div>
-                  <Button className="mt-2 w-full" type="submit">
-                    Submit
-                  </Button>
-                </form>
-              </Form>
+                  <p className="text-center font-nunito text-lg">
+                    Loading please wait...
+                  </p>
+                </div>
+              ) : (
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className="grid gap-2 max-h-[500px] px-3 overflow-auto custom-scrollbar">
+                      <FormField
+                        control={form.control}
+                        name="first_name"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>First Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="First Name"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="last_name"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Last Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="Last Name"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="servi@gmail.com"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="phone_number"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Phone Number</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="Phone Number"
+                                  {...field}
+                                  type="number"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="source"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Source</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="Source"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="lifetime_value"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Lifetime Value</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="Lifetime Value"
+                                  {...field}
+                                  type="number"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="last_campaign_ran"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Last Campaign Ran</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="Last Campaign Ran"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="last_interaction"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Last Interaction</FormLabel>
+                              <FormControl>
+                                <Input
+                                  autoComplete={"off"}
+                                  placeholder="2020-07-10 15:00:00.000"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      <MultiSelector
+                        values={tagValue}
+                        onValuesChange={setTagValue}
+                        loop={false}
+                      >
+                        <MultiSelectorTrigger>
+                          <MultiSelectorInput placeholder="Select your framework" />
+                        </MultiSelectorTrigger>
+                        <MultiSelectorContent>
+                          <MultiSelectorList>
+                            {options.map((option, i) => (
+                              <MultiSelectorItem key={i} value={option.value}>
+                                {option.label}
+                              </MultiSelectorItem>
+                            ))}
+                          </MultiSelectorList>
+                        </MultiSelectorContent>
+                      </MultiSelector>
+                    </div>
+                    <Button className="mt-2 w-full" type="submit">
+                      Submit
+                    </Button>
+                  </form>
+                </Form>
+              )}
             </DialogContent>
           </Dialog>
         </div>

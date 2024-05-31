@@ -158,8 +158,8 @@ export function DataTable<TData, TValue>({
       search_key: "",
       status: "",
       skip: 0,
-      limit: 10,
-      sort_dir: "",
+      limit: 100,
+      sort_dir: "desc",
       tag: [],
     });
   };
@@ -194,8 +194,8 @@ export function DataTable<TData, TValue>({
       search_key: "",
       status: "",
       skip: 0,
-      limit: 10,
-      sort_dir: "",
+      limit: 100,
+      sort_dir: "desc",
       tag: selectedFilters.map((filter) => filter.value),
     });
   };
@@ -218,6 +218,9 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+  const totalItems = table.getFilteredRowModel().rows.length;
+  const pageSize = 10; // Assuming 10 items per page
+  const totalPages = Math.ceil(totalItems / pageSize);
 
   return (
     <div>
@@ -474,7 +477,7 @@ export function DataTable<TData, TValue>({
         </div>
 
         <div className="flex items-center justify-end space-x-2 ">
-          <Button
+          {/*          <Button
             disabled={!table.getCanPreviousPage()}
             onClick={() => table.previousPage()}
             size="sm"
@@ -487,6 +490,32 @@ export function DataTable<TData, TValue>({
             onClick={() => table.nextPage()}
             size="sm"
             variant="outline"
+          >
+            Next
+          </Button>*/}
+
+          <Button
+            onClick={() => {
+              const previousPageSkip =
+                table.page * table.pageSize - table.pageSize;
+              handleSubmitFilters(previousPageSkip);
+              table.previousPage();
+            }}
+            size="sm"
+            variant="outline"
+            disabled={table.page === 0} // Disable button when on the first page
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={() => {
+              const nextPageSkip = table.page * table.pageSize;
+              handleSubmitFilters(nextPageSkip);
+              table.nextPage();
+            }}
+            size="sm"
+            variant="outline"
+            disabled={table.page === totalPages - 1} // Disable button when on the last page
           >
             Next
           </Button>

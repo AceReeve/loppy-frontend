@@ -61,8 +61,8 @@ function AllContacts() {
     search_key: "",
     status: "",
     skip: 0,
-    limit: 10,
-    sort_dir: "",
+    limit: 100,
+    sort_dir: "desc",
     tag: [] as string[],
   });
 
