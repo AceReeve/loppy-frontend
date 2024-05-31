@@ -30,6 +30,7 @@ import { AppState } from "@repo/redux-utils/src/store.ts";
 import { SetUnreadMessagesType } from "@repo/redux-utils/src/types/messaging/messaging";
 import { updateUnreadMessages } from "@repo/redux-utils/src/slices/messaging/unread-messages-slice.ts";
 import { updateUser } from "@repo/redux-utils/src/slices/messaging/users-slice.ts";
+import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
 
 interface ContextType {
   accessToken: string | undefined;
@@ -39,6 +40,8 @@ interface ContextType {
   session: Session | null;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  newConvoLoading: boolean;
+  setNewConvoLoading: (open: boolean) => void;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
@@ -61,6 +64,9 @@ export default function MessagesProvider({
   const [client, setClient] = useState<Client>();
   const [connectionState, setConnectionState] = useState<ConnectionState>();
   const [initialized, setInitialized] = useState(false);
+  const [newConvoLoading, setNewConvoLoading] = useState(false);
+  console.log("newConvoLoading", newConvoLoading);
+
   const sid = useSelector((state: AppState) => state.currentConversation);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -253,8 +259,11 @@ export default function MessagesProvider({
         session,
         sidebarOpen,
         setSidebarOpen,
+        newConvoLoading,
+        setNewConvoLoading,
       }}
     >
+      {newConvoLoading && <LoadingOverlay />}
       {children}
     </MessagesProviderContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { Client } from "@twilio/conversations";
+import { Client, User } from "@twilio/conversations";
 import {
   ReduxConversation,
   ReduxMessage,
@@ -15,6 +15,8 @@ import { EmojiNormal } from "iconsax-react";
 import MessageInput from "@/src/components/conversation-view/message-input.tsx";
 import { updateCurrentConversation } from "@repo/redux-utils/src/slices/messaging/current-conversation-slice.ts";
 import { AppState } from "@repo/redux-utils/src/store.ts";
+import { toast } from "@repo/ui/components/ui";
+import { useMessagesState } from "@/src/providers/messages-provider.tsx";
 
 interface SendMessageProps {
   convoSid?: string;
@@ -27,11 +29,9 @@ interface SendMessageProps {
 }
 
 export default function MessageInputField(props: SendMessageProps) {
+  const { setNewConvoLoading } = useMessagesState();
   const [message, setMessage] = useState("");
   const conversations = useSelector((state: AppState) => state.conversations);
-
-  const [newConvoLoading, setNewConvoLoading] = useState(false);
-  const [newConvoError, setNewConvoError] = useState<Error>();
 
   // const [files, setFiles] = useState<File[]>([]);
   // // needed to clear input type=file
@@ -96,12 +96,11 @@ export default function MessageInputField(props: SendMessageProps) {
   //   setFiles(existentFiles);
   // };
 
-  const handleNewConvoSend = () => {
+  const handleNewConvoSend = async () => {
     const { selectedContacts } = props;
-    if (selectedContacts && selectedContacts.length === 0) return;
+    if (!selectedContacts || selectedContacts.length === 0) return;
 
     setNewConvoLoading(true);
-    setNewConvoError(undefined);
 
     // Check if conversation already exists
     const existingConvo =
@@ -117,48 +116,57 @@ export default function MessageInputField(props: SendMessageProps) {
     const { client } = props;
 
     // Search if user exists in twilio
-    client
-      .getUser(userIdentity)
-      .then((user) => {
-        setLoading(true);
+    const users: User[] = [];
+    const promises = selectedContacts.map(async (item) => {
+      try {
+        const user = await client.getUser(item);
+        users.push(user);
+      } catch (e: Error) {
+        console.log(`error on item: ${item} `, e);
+        toast({
+          variant: "destructive",
+          title: e.message === "Not Found" ? "User not found" : "Error",
+          description:
+            e.message === "Not Found"
+              ? `User with email ${item} was not found on servihero.`
+              : `${item}: ${e.message}`,
+        });
+      }
+    });
 
-        if (user.identity === session?.user?.email) {
-          throw new Error("You can't add yourself.");
-        }
+    await Promise.all(promises);
 
+    // if all users found
+    if (users.length === selectedContacts.length) {
+      // start conversation and send message
+
+      // TODO: Set proper naming for conversation
+      /**
+       // Set Convo name:
+       *
+       */
+
+      try {
         // add conversation
-        addConversation(user.identity, dispatch, client)
-          .then((convo) => {
-            setLoading(true);
-            // add the participant to the conversation
-            addChatParticipant(user.identity, convo)
-              .then(() => {
-                setLoading(true);
-                setOpen(false);
-                setUserIdentity("");
-                updateCurrentConversation(convo.sid);
-              })
-              .catch((e) => {
-                setError(e);
-              })
-              .finally(() => {
-                setLoading(false);
-              });
-          })
-          .catch((e) => {
-            setError(e);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        const convo = await addConversation(
+          selectedContacts.join(", "),
+          dispatch,
+          client,
+        );
+        const promises = users.map(async (user) => {
+          return await addChatParticipant(user.identity, convo);
+        });
+        await Promise.all(promises);
+        dispatch(updateCurrentConversation(convo.sid));
+        setNewConvoLoading(false);
+
+        return convo;
+      } catch (e: Error) {
+        unexpectedErrorNotification(e);
+      }
+    }
+
+    setNewConvoLoading(false);
   };
 
   const onMessageSend = async () => {
@@ -171,7 +179,9 @@ export default function MessageInputField(props: SendMessageProps) {
 
     if (!props.convo && props.selectedContacts) {
       // if new message
-      convo = handleNewConvoSend();
+      convo = await handleNewConvoSend();
+
+      if (!convo) return; // if convo has error, don't proceed
     } else if (props.convo) {
       convo = props.convo;
     } else {

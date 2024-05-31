@@ -263,7 +263,7 @@ export default function MessagesList(props: MessageListProps) {
                       {/*  src="/assets/images/abe-lincoln.jpeg"*/}
                       {/*  alt=""*/}
                       {/*/>*/}
-                      <Avatar>
+                      <Avatar className="size-8">
                         <AvatarImage
                           className="object-cover"
                           src="/assets/images/abe-lincoln.jpeg"

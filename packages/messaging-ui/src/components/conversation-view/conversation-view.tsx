@@ -10,7 +10,8 @@ import MessageInputField from "@/src/components/conversation-view/message-input-
 import NewConversationView from "@/src/components/conversation-view/new-conversation-view.tsx";
 
 export default function ConversationView() {
-  const { client, initialized, setSidebarOpen } = useMessagesState();
+  const { client, initialized, sidebarOpen, setSidebarOpen } =
+    useMessagesState();
 
   const conversations = useSelector((state: AppState) => state.conversations);
   const sid = useSelector((state: AppState) => state.currentConversation);
@@ -100,7 +101,7 @@ export default function ConversationView() {
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full bg-white p-2 hover:bg-gray-200"
             onClick={() => {
-              setSidebarOpen(true);
+              setSidebarOpen(!sidebarOpen);
             }}
           >
             <img

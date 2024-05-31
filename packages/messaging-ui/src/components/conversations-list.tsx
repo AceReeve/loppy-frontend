@@ -94,7 +94,6 @@ export default function ConversationsList() {
   };
 
   const renderConversations = useMemo(() => {
-    console.log("updated convo list", conversations);
     if (!initialized) return <ConversationsListSkeleton />;
     return conversations.map((convo) => (
       <div
@@ -119,7 +118,10 @@ export default function ConversationsList() {
         <div className="relative ml-4 hidden min-w-0 flex-auto group-hover:block md:block">
           <div className="flex justify-between">
             <p className="text-sm font-semibold leading-snug text-neutral-700">
-              {convo.friendlyName?.split("@")[0]}
+              {convo.friendlyName
+                ?.split(", ")
+                .map((a) => a.split("@")[0])
+                .join(", ")}
             </p>
             <div className="text-xs font-medium leading-none text-neutral-400">
               {convo.lastMessage.dateCreated
