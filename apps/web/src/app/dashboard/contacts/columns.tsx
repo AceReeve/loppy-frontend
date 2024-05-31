@@ -94,4 +94,15 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       return moment(getValue() ?? date).format("ll");
     },
   },
+  {
+    accessorKey: "tags",
+    header: "Tags",
+    cell: ({ row }) => {
+      if (row.original.tags && row.original.tags.length > 0) {
+        return row.original.tags.map((tag) => tag.tag_name).join(", "); // Join tag_name values into a single-line string
+      } else {
+        return "NONE"; // Return "NONE" if the array is empty or undefined
+      }
+    },
+  },
 ];

@@ -64,3 +64,41 @@ export const SendInviteSingleItemSchema = z
   .email({
     message: "Email is invalid",
   });
+const tagSchema = z.object({
+  tag_name: z.string(),
+});
+
+export const CreateContactsFormSchema = z.object({
+  first_name: z.string().min(2, {
+    message: "First Name must be at least 2 characters.",
+  }),
+  last_name: z.string().min(2, {
+    message: "Last Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  phone_number: z
+    .string()
+    .min(4, {
+      message: "Invalid Phone Number",
+    })
+    .transform((value) => parseInt(value)),
+  source: z.string().min(2, {
+    message: "Source must be at least 2 characters.",
+  }),
+  lifetime_value: z
+    .string()
+    .min(4, {
+      message: "Invalid Lifetime Value",
+    })
+    .transform((value) => parseInt(value)),
+  last_campaign_ran: z.string().min(1, {
+    message: "Last Campaign Ran must be at least 1 character.",
+  }),
+  last_interaction: z.string().min(1, {
+    message: "Last Interaction must be at least 1 character.",
+  }),
+
+  tags: z.array(tagSchema).optional(),
+});

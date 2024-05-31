@@ -4,6 +4,7 @@ export interface GetContactsPayload {
   skip?: number;
   limit?: number;
   sort_dir?: string;
+  tag: string[];
 }
 
 export interface GetContactsResponse {
@@ -18,7 +19,7 @@ export interface GetContactsResponse {
     lifetime_value: number;
     last_campaign_ran: string;
     last_interaction: string;
-    tag: [
+    tags: [
       {
         tag_name: string;
         _id: string;
@@ -35,7 +36,7 @@ export interface GetContactsResponse {
   };
 }
 
-export interface Contacts {
+export interface Contact {
   _id: string;
   user_id: string;
   first_name: string;
@@ -44,20 +45,22 @@ export interface Contacts {
   phone_number: number;
 }
 
-export interface APIContact {
-  _id: string;
-  user_id: string;
+export interface GetCreateContactResponse {
+  user_id?: string;
   first_name: string;
   last_name: string;
   email: string;
-  phone_number: number;
+  phone_number: string | number;
   source: string;
-  lifetime_value: number;
+  lifetime_value: string | number;
   last_campaign_ran: string;
   last_interaction: string;
-  tags: Tag[];
-  created_at: string;
-  updated_at: string;
+  tags: {
+    tag_name: string;
+  }[];
+  _id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Tag {
@@ -69,9 +72,27 @@ export interface CreateContactPayload {
   first_name: string;
   last_name: string;
   email: string;
-  phone_number: number;
+  phone_number: number | string;
+  source: string;
+  lifetime_value: number | string;
+  last_campaign_ran: string;
+  last_interaction: string;
+  tags: {
+    tag_name: string;
+  }[];
 }
 
 export interface ImportContactsResponse {
   message: string;
+}
+export interface ExportContactsResponse {
+  message: string;
+  fileName: string;
+  url: string;
+}
+
+export interface ExportContactsPayload {
+  dateFrom: Date;
+  dateTo: Date;
+  all: boolean;
 }
