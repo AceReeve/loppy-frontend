@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { number, z } from "zod";
+import { number, string, z } from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/src/lib/utils";
@@ -30,48 +30,52 @@ import {
   toast,
 } from "@/src/components/ui";
 import {
-  useExportContactsMutation,
-  useExportContactsQuery,
+  useCreateContactMutation,
+  useLazyExportContactsQuery,
 } from "@/src/endpoints/contacts.ts";
-
-const FormSchema = z.object({
-  dateFrom: z.date({
-    required_error: "Required.",
-  }),
-  dateTo: z.date({
-    required_error: "Required.",
-  }),
-});
-
-function onSubmit(data: z.infer<typeof FormSchema>) {}
+import {
+  ExportContactsPayload,
+  ExportContactsResponse,
+} from "@/src/endpoints/types/contacts";
 
 export default function ExportContactsDialogForm() {
+  const FormSchema = z.object({
+    dateFrom: z.date({
+      required_error: "Required.",
+    }),
+    dateTo: z.date({
+      required_error: "Required.",
+    }),
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {}
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      dateFrom: new Date(),
-      dateTo: new Date(),
+      dateFrom: "",
+      dateTo: "",
     },
   });
-  const { data, error, isLoading, refetch } = useExportContactsQuery();
+  const [exportContacts, { data: contactData, isError, isLoading }] =
+    useLazyExportContactsQuery();
 
   const handleExport = async () => {
     try {
-      if (!data) {
-        await refetch();
-        return;
-      }
-
       const payload = {
-        dateFrom: form.getValues("dateFrom"),
-        dateTo: form.getValues("dateTo"),
+        //dateFrom: form.getValues("dateFrom").toString(),
+        // dateTo: form.getValues("dateTo").toString(),
         all: true,
-        contactsData: data,
       };
 
-      console.log("Exporting contacts", payload);
+      const res = await exportContacts(payload).unwrap();
+
+      const link = document.createElement("a");
+      link.download = res.fileName;
+      link.href = res.url;
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(res.url);
     } catch (error) {
-      // Handle errors
       console.error("Export failed", error);
     }
   };

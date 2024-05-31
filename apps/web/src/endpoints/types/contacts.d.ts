@@ -87,6 +87,8 @@ export interface ImportContactsResponse {
 }
 export interface ExportContactsResponse {
   message: string;
+  fileName: string;
+  url: string;
 }
 
 export interface ExportContactsPayload {

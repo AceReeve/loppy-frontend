@@ -8,6 +8,7 @@ import {
   GetCreateContactResponse,
   ImportContactsResponse,
 } from "@/src/endpoints/types/contacts";
+import { string } from "zod";
 
 const userApi = baseApi
   .enhanceEndpoints({
@@ -47,6 +48,37 @@ const userApi = baseApi
         },
         invalidatesTags: ["contacts"],
       }),
+
+      exportContacts: builder.query({
+        query: (data) => {
+          const params = new URLSearchParams(data).toString();
+          return {
+            url: `/Contacts/export?${params}`,
+            method: "GET",
+            responseType: "blob",
+          };
+        },
+
+        transformResponse(response, meta) {
+          console.log("Meta" + meta);
+          /*          const type = meta?.headers?.get("type");
+                  const contentDisposition = meta?.headers?.get("content-disposition");
+                   const regex =
+                     /filename[^;=\n]*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/;
+                   const fileName = contentDisposition.match(regex)[3];
+                   const url = URL.createObjectURL(
+                     new Blob([response], {
+                       type,
+                     }),
+                   );*/
+
+          return {
+            url: "",
+            fileName: "",
+          };
+        },
+      }),
+
       importContacts: builder.mutation<ImportContactsResponse, FormData>({
         query: (payload) => {
           return {
@@ -57,19 +89,6 @@ const userApi = baseApi
         },
         invalidatesTags: ["contacts"],
       }),
-      exportContacts: builder.query<
-        ExportContactsResponse,
-        ExportContactsPayload
-      >({
-        query: (payload) => {
-          return {
-            url: `/Contacts/export`,
-            method: "GET",
-            body: payload,
-          };
-        },
-        providesTags: ["contacts"],
-      }),
     }),
   });
 
@@ -77,5 +96,6 @@ export const {
   useGetContactsQuery,
   useCreateContactMutation,
   useImportContactsMutation,
-  useExportContactsQuery,
+  // useExportContactsQuery,
+  useLazyExportContactsQuery,
 } = userApi;
