@@ -4,23 +4,35 @@ import {
   ReduxMessage,
 } from "@repo/redux-utils/src/types/messaging/messaging";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getSdkConversationObject } from "@repo/redux-utils/src/utils/messaging/conversations-objects.ts";
-import { unexpectedErrorNotification } from "@/src/utils.ts";
+import {
+  addChatParticipant,
+  addConversation,
+  unexpectedErrorNotification,
+} from "@/src/utils.ts";
 import { EmojiNormal } from "iconsax-react";
 import MessageInput from "@/src/components/conversation-view/message-input.tsx";
+import { updateCurrentConversation } from "@repo/redux-utils/src/slices/messaging/current-conversation-slice.ts";
+import { AppState } from "@repo/redux-utils/src/store.ts";
 
 interface SendMessageProps {
-  convoSid: string;
+  convoSid?: string;
   client: Client;
-  messages: ReduxMessage[];
-  convo: ReduxConversation;
+  messages?: ReduxMessage[];
+  convo?: ReduxConversation;
+  selectedContacts?: string[];
   // typingData: string[];
   // droppedFiles: File[];
 }
 
 export default function MessageInputField(props: SendMessageProps) {
   const [message, setMessage] = useState("");
+  const conversations = useSelector((state: AppState) => state.conversations);
+
+  const [newConvoLoading, setNewConvoLoading] = useState(false);
+  const [newConvoError, setNewConvoError] = useState<Error>();
+
   // const [files, setFiles] = useState<File[]>([]);
   // // needed to clear input type=file
   // const [filesInputKey, setFilesInputKey] = useState<string>("input-key");
@@ -47,10 +59,11 @@ export default function MessageInputField(props: SendMessageProps) {
   //   };
   // }, [props.droppedFiles]);
 
-  const sdkConvo = useMemo(
-    () => getSdkConversationObject(props.convo),
-    [props.convo.sid],
-  );
+  const sdkConvo = useMemo(() => {
+    if (props.convo) {
+      return getSdkConversationObject(props.convo);
+    }
+  }, [props.convo?.sid]);
 
   // const onFilesChange = (event: ChangeEvent<HTMLInputElement>): void => {
   //   const { files: assets } = event.target;
@@ -83,16 +96,91 @@ export default function MessageInputField(props: SendMessageProps) {
   //   setFiles(existentFiles);
   // };
 
+  const handleNewConvoSend = () => {
+    const { selectedContacts } = props;
+    if (selectedContacts && selectedContacts.length === 0) return;
+
+    setNewConvoLoading(true);
+    setNewConvoError(undefined);
+
+    // Check if conversation already exists
+    const existingConvo =
+      props.selectedContacts?.length === 1 &&
+      conversations.find((item) => item.friendlyName === selectedContacts[0]);
+
+    if (existingConvo) {
+      setNewConvoLoading(false);
+      dispatch(updateCurrentConversation(existingConvo.sid));
+      return getSdkConversationObject(existingConvo);
+    }
+
+    const { client } = props;
+
+    // Search if user exists in twilio
+    client
+      .getUser(userIdentity)
+      .then((user) => {
+        setLoading(true);
+
+        if (user.identity === session?.user?.email) {
+          throw new Error("You can't add yourself.");
+        }
+
+        // add conversation
+        addConversation(user.identity, dispatch, client)
+          .then((convo) => {
+            setLoading(true);
+            // add the participant to the conversation
+            addChatParticipant(user.identity, convo)
+              .then(() => {
+                setLoading(true);
+                setOpen(false);
+                setUserIdentity("");
+                updateCurrentConversation(convo.sid);
+              })
+              .catch((e) => {
+                setError(e);
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          })
+          .catch((e) => {
+            setError(e);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      })
+      .catch((e) => {
+        console.log(e);
+        setError(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   const onMessageSend = async () => {
     // if (message.length === 0 && files.length == 0) {
     if (message.length === 0) {
       return;
     }
 
-    const { convo } = props;
-    const sdkConvo = getSdkConversationObject(convo);
+    let convo = undefined;
 
-    const newMessageBuilder = sdkConvo.prepareMessage().setBody(message);
+    if (!props.convo && props.selectedContacts) {
+      // if new message
+      convo = handleNewConvoSend();
+    } else if (props.convo) {
+      convo = props.convo;
+    } else {
+      return;
+    }
+
+    const foundSdkConvo = getSdkConversationObject(convo);
+
+    const newMessageBuilder = foundSdkConvo.prepareMessage().setBody(message);
 
     // const newMessage: ReduxMessage = {
     //   author: client.user.identity,
@@ -126,7 +214,7 @@ export default function MessageInputField(props: SendMessageProps) {
     const messageIndex = await newMessageBuilder.build().send();
 
     try {
-      await sdkConvo.advanceLastReadMessageIndex(messageIndex ?? 0);
+      await foundSdkConvo.advanceLastReadMessageIndex(messageIndex ?? 0);
     } catch (e: any) {
       unexpectedErrorNotification(e);
       throw e;
@@ -161,7 +249,7 @@ export default function MessageInputField(props: SendMessageProps) {
             // assets={files}
             message={message}
             onChange={(e: string) => {
-              sdkConvo.typing();
+              sdkConvo?.typing();
               setMessage(e);
             }}
             onEnterKeyPress={async () => {

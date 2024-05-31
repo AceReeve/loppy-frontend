@@ -7,9 +7,10 @@ import React, { useEffect, useMemo } from "react";
 import { useMessagesState } from "@/src/providers/messages-provider.tsx";
 import MessagesBox from "@/src/components/conversation-view/messages-box.tsx";
 import MessageInputField from "@/src/components/conversation-view/message-input-field.tsx";
+import NewConversationView from "@/src/components/conversation-view/new-conversation-view.tsx";
 
 export default function ConversationView() {
-  const { client, initialized } = useMessagesState();
+  const { client, initialized, setSidebarOpen } = useMessagesState();
 
   const conversations = useSelector((state: AppState) => state.conversations);
   const sid = useSelector((state: AppState) => state.currentConversation);
@@ -51,6 +52,8 @@ export default function ConversationView() {
   //     });
   //   }
   // }, []);
+
+  if (!openedConversation) return <NewConversationView />;
 
   return (
     <section className="flex flex-auto flex-col border-l border-gray-200">
@@ -94,16 +97,18 @@ export default function ConversationView() {
               src="/assets/icons/messaging/search.svg"
             />
           </a>
-          <a
+          <button
             className="flex h-10 w-10 items-center justify-center rounded-full bg-white p-2 hover:bg-gray-200"
-            href="#"
+            onClick={() => {
+              setSidebarOpen(true);
+            }}
           >
             <img
               alt=""
               className="relative h-7 w-7 "
               src="/assets/icons/messaging/sidebar.svg"
             />
-          </a>
+          </button>
         </div>
       </div>
       {sid && openedConversation && client ? (

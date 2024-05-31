@@ -4,7 +4,10 @@ import {
   mediaMap,
   messagesMap,
 } from "../../utils/messaging/conversations-objects.ts";
-import { ReduxMessage } from "../../types/messaging/messaging"; // Assuming you have a separate file for types
+import {
+  ReduxConversation,
+  ReduxMessage,
+} from "../../types/messaging/messaging"; // Assuming you have a separate file for types
 
 export type ChatMessagesState = Record<string, ReduxMessage[]>;
 
@@ -38,6 +41,9 @@ const reduxifyMessage = (message: Message | ReduxMessage): ReduxMessage => ({
     })) ?? null,
 });
 
+const messagesSorter = (a: ReduxMessage, b: ReduxMessage) =>
+  (a.dateCreated?.getTime() ?? 0) - (b.dateCreated?.getTime() ?? 0);
+
 const messageListSlice = createSlice({
   name: "messageList",
   initialState,
@@ -58,9 +64,9 @@ const messageListSlice = createSlice({
         }
       }
 
-      state[channelSid] = existingMessages.concat(
-        messagesToAdd.map(reduxifyMessage),
-      );
+      state[channelSid] = existingMessages
+        .concat(messagesToAdd.map(reduxifyMessage))
+        .sort(messagesSorter);
     },
     addMessages: (
       state,

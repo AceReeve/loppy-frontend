@@ -37,6 +37,8 @@ interface ContextType {
   connectionState: ConnectionState | undefined;
   initialized: boolean;
   session: Session | null;
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
@@ -60,6 +62,8 @@ export default function MessagesProvider({
   const [connectionState, setConnectionState] = useState<ConnectionState>();
   const [initialized, setInitialized] = useState(false);
   const sid = useSelector((state: AppState) => state.currentConversation);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -105,9 +109,13 @@ export default function MessagesProvider({
       });
     });
 
-    newClient.on("conversationRemoved", async (conversation: Conversation) => {
+    newClient.on("conversationUpdated", ({ conversation }) => {
+      handlePromiseRejection(() => dispatch(upsertConversation(conversation)));
+    });
+
+    newClient.on("conversationRemoved", (conversation: Conversation) => {
       dispatch(updateCurrentConversation(""));
-      await handlePromiseRejection(async () => {
+      handlePromiseRejection(() => {
         dispatch(removeConversation(conversation.sid));
         dispatch(
           updateParticipants({
@@ -243,6 +251,8 @@ export default function MessagesProvider({
         connectionState,
         initialized,
         session,
+        sidebarOpen,
+        setSidebarOpen,
       }}
     >
       {children}

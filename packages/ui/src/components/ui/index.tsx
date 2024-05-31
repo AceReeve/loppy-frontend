@@ -7,6 +7,7 @@ export * from "./dialog.tsx";
 export * from "./drawer.tsx";
 export * from "./dropdown-menu.tsx";
 export * from "./file-dropzone.tsx";
+export * from "./form.tsx";
 export * from "./input.tsx";
 export * from "./popover.tsx";
 export * from "./separator.tsx";

@@ -1,6 +1,6 @@
 "use client";
 
-import { DirectboxReceive } from "iconsax-react";
+import { DirectboxReceive, MessageAdd } from "iconsax-react";
 import type { AppState } from "@repo/redux-utils/src/store.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui";
@@ -22,6 +22,7 @@ import { updateUnreadMessages } from "@repo/redux-utils/src/slices/messaging/unr
 import { setLastReadIndex } from "@repo/redux-utils/src/slices/messaging/last-read-index-slice.ts";
 import { getTypingMessage } from "@/src/utils.ts";
 import { getTranslation } from "@repo/redux-utils/src/utils/messaging/local-utils.ts";
+// import NewMessageDialog from "@/src/components/new-message-dialog";
 
 function getLastMessage(
   messages: ReduxMessage[],
@@ -42,7 +43,7 @@ function getLastMessage(
 }
 
 export default function ConversationsList() {
-  const { initialized } = useMessagesState();
+  const { initialized, setSidebarOpen } = useMessagesState();
   const conversations = useSelector((state: AppState) => state.conversations);
   const sid = useSelector((state: AppState) => state.currentConversation);
   const unreadMessages = useSelector((state: AppState) => state.unreadMessages);
@@ -93,6 +94,7 @@ export default function ConversationsList() {
   };
 
   const renderConversations = useMemo(() => {
+    console.log("updated convo list", conversations);
     if (!initialized) return <ConversationsListSkeleton />;
     return conversations.map((convo) => (
       <div
@@ -151,7 +153,7 @@ export default function ConversationsList() {
         </div>
       </div>
     ));
-  }, [conversations, sid, messages]);
+  }, [conversations, sid, messages, unreadMessages]);
 
   return (
     <section className="custom-scrollbar-neutral group flex w-24 flex-none flex-col overflow-auto transition-all duration-300 ease-in-out md:w-2/5 lg:max-w-sm">
@@ -171,7 +173,15 @@ export default function ConversationsList() {
             />
           </a>
           {/*<NewMessageDialog />*/}
-
+          <button
+            className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white group-hover:flex hover:bg-gray-200 md:flex"
+            onClick={() => {
+              dispatch(updateCurrentConversation(""));
+              setSidebarOpen(false);
+            }}
+          >
+            <MessageAdd className="relative h-5 w-5" />
+          </button>
           <a
             className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white group-hover:flex hover:bg-gray-200 md:flex"
             href="#"

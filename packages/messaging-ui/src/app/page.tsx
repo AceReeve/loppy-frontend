@@ -1,4 +1,5 @@
 import ConversationView from "@/src/components/conversation-view/conversation-view.tsx";
+import ConversationDetails from "@/src/components/conversation-details/conversation-details.tsx";
 import ConversationsList from "../components/conversations-list";
 
 export function MessagingPage() {
@@ -7,7 +8,7 @@ export function MessagingPage() {
       <main className="flex min-h-0 flex-grow flex-row">
         <ConversationsList />
         <ConversationView />
-        {/*<ConversationDetails />*/}
+        <ConversationDetails />
       </main>
     </div>
   );

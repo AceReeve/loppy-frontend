@@ -18,12 +18,14 @@ import {
   PARTICIPANT_MESSAGES,
   USER_PROFILE_MESSAGES,
 } from "./constants";
+import { Dispatch } from "react";
+import { updateParticipants } from "@repo/redux-utils/src/slices/messaging/participants-slice.ts";
 
 type ParticipantResponse = ReturnType<typeof Conversation.prototype.add>;
 
 export async function addConversation(
   name: string,
-  updateParticipants: (participants: Participant[], sid: string) => void,
+  dispatch: Dispatch<any>,
   client?: Client,
 ): Promise<Conversation> {
   if (client === undefined) {
@@ -45,7 +47,12 @@ export async function addConversation(
     await conversation.join();
 
     const participants = await conversation.getParticipants();
-    updateParticipants(participants, conversation.sid);
+    dispatch(
+      updateParticipants({
+        participants: participants,
+        sid: conversation.sid,
+      }),
+    );
 
     successNotification(CONVERSATION_MESSAGES.CREATED);
 

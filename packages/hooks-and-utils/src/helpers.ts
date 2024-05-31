@@ -7,7 +7,7 @@ export const handlePromiseRejection = async (
   toastProps?: ToastProps,
 ): Promise<void> => {
   try {
-    await func();
+    func();
   } catch (e: any) {
     toast({
       variant: "destructive",
