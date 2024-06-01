@@ -5,7 +5,7 @@ import type {
   GetPaymentStatusResponse,
   SummarizePaymentPayload,
   SummarizePaymentResponse,
-} from "@/src/endpoints/types/payment";
+} from "./types/payment";
 
 const api = baseApi
   .enhanceEndpoints({

@@ -11,7 +11,7 @@ const addTokenToRequest = async (headers: any, { getState }: any) => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
 
   prepareHeaders: (headers, { getState }: any) => {
     return addTokenToRequest(headers, { getState });

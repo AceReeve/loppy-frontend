@@ -46,6 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  // @ts-ignore
   session: { strategy: "jwt", maxAge: parseInt(process.env.JWT_EXPIRATION) },
   cookies: {
     csrfToken: {

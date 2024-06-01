@@ -121,7 +121,7 @@ export default function MessageInputField(props: SendMessageProps) {
       try {
         const user = await client.getUser(item);
         users.push(user);
-      } catch (e: Error) {
+      } catch (e: any) {
         console.log(`error on item: ${item} `, e);
         toast({
           variant: "destructive",
@@ -161,7 +161,7 @@ export default function MessageInputField(props: SendMessageProps) {
         setNewConvoLoading(false);
 
         return convo;
-      } catch (e: Error) {
+      } catch (e: any) {
         unexpectedErrorNotification(e);
       }
     }

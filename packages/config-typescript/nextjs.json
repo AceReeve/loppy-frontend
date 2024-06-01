@@ -13,7 +13,7 @@
     "module": "esnext",
     "resolveJsonModule": true,
     "strict": true,
-    "target": "es6"
+    "noEmit": true,
   },
   "include": ["src", "next-env.d.ts"],
   "exclude": ["node_modules"]

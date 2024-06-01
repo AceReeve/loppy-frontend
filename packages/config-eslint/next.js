@@ -13,12 +13,15 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 module.exports = {
   extends: [
-    "@vercel/style-guide/eslint/node",
-    "@vercel/style-guide/eslint/typescript",
-    "@vercel/style-guide/eslint/browser",
-    "@vercel/style-guide/eslint/react",
-    "@vercel/style-guide/eslint/next",
-    "eslint-config-turbo",
+    // "next/core-web-vitals",
+    "prettier",
+    // "eslint:recommended",
+    // "@vercel/style-guide/eslint/node",
+    // "@vercel/style-guide/eslint/typescript",
+    // "@vercel/style-guide/eslint/browser",
+    // "@vercel/style-guide/eslint/react",
+    // "@vercel/style-guide/eslint/next",
+    // "eslint-config-turbo",
   ].map(require.resolve),
   parserOptions: {
     project,

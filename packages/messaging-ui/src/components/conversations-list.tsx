@@ -78,6 +78,7 @@ export default function ConversationsList() {
           unreadCount: 0,
         }),
       );
+      setSidebarOpen(true);
       //set messages to be read
       const lastMessage =
         messages[convo.sid].length &&

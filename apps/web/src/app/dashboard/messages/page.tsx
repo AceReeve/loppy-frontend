@@ -1,8 +1,5 @@
-import React from "react";
+import { MessagingPage } from "@repo/messaging-ui/messaging-page";
 
-function Page() {
-  // return <MessagingPage />;
-  return <></>;
+export default function Page() {
+  return <MessagingPage />;
 }
-
-export default Page;

@@ -2,10 +2,7 @@ import dictionaries from "../dictionaries/en.json";
 
 const errors = dictionaries.errors;
 
-export const getErrorMessage = (
-  error: string | object,
-  fallback?: keyof typeof errors,
-) => {
+export const getErrorMessage = (error: any, fallback?: keyof typeof errors) => {
   // fetchBaseQuery error
   if (typeof error === "object" && !error?.data && "status" in error) {
     console.log("fetchBaseQuery");

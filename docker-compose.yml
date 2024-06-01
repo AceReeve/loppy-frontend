@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  development-fe:
+    container_name: frontend
+    image: development-version-1.0.0
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/web/.env
+    volumes:
+      - ./src:/usr/src/app/src
+    networks:
+      - service-hero-backend_frontend
+
+networks:
+  service-hero-backend_frontend:
+    external: true

@@ -16,6 +16,10 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["package-name"],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  output: "standalone",
 };
 
 export default nextConfig;

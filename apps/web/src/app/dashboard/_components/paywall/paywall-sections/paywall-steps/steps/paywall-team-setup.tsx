@@ -37,7 +37,7 @@ export default function PaywallTeamSetup() {
           setStepIndex(2);
         }
       })
-      .catch((e: Error) => {
+      .catch((e: any) => {
         console.log("error", e);
         toast({
           title: "Send Invite Error",
