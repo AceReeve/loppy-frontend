@@ -15,8 +15,24 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
   DropdownMenuSeparator,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  Avatar,
+  AvatarFallback,
 } from "@repo/ui/components/ui";
 import React from "react";
+import WorkspaceButton from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/dashboard-sidebar-workspace";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@repo/ui/components/ui";
 
 type Props = {
   menuItems: MenuItem;
@@ -171,8 +187,116 @@ export default function SidebarContent(props: Props) {
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+      {/*     <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+                variant="outline"
+                className="inline-flex h-[47px] w-full items-center justify-start gap-2 rounded-lg bg-card px-3 py-3.5 shadow"
+            >
+              <Image
+                  src="/assets/images/logo.png"
+                  alt=""
+                  width={138}
+                  height={141}
+                  className="size-[25px]"
+              />
+              <div
+                  className={`shrink grow basis-0 whitespace-nowrap font-nunito text-base font-bold text-gray-800`}
+              >
+                Service Hero
+              </div>
+              <div className="relative flex h-[18px] w-[18px] flex-col">
+                <ArrowUp2/>
+                <ArrowDown2/>
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+              className="left-[110px] -top-[51px] absolute min-h-[400px] max-h-[425px] w-[425px] px-2 py-1 overflow-y-auto ">
+            <DropdownMenuLabel>
+              <div
+                  className="top-3 -left-2 absolute h-0 w-0 border-[10px] border-red-950 border-solid border-l-transparent border-b-transparent -rotate-[135deg]"></div>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                  <svg
+                      className="h-5 w-5 text-gray-500 "
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                        fillRule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                    type="text"
+                    name="email"
+                    id="topbar-search"
+                    className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                    placeholder="Search for a sub-account"
+                />
+              </div>
+            </DropdownMenuLabel>
+
+            <DropdownMenuItem className="text-blue-400 font-bold cursor-pointer">
+              Switch to Agency View
+            </DropdownMenuItem>
+            <DropdownMenuSeparator/>
+            <div className="px-2 py-4">
+              <DropdownMenuLabel
+                  className="shrink grow basis-0 whitespace-nowrap font-nunito font-bold text-gray-800 text-sm">
+                RECENT
+              </DropdownMenuLabel>
+              <DropdownMenuGroup className="grid item-start gap-2">
+                {Array.from({length: 3}).map((_item, index) => (
+                    <DropdownMenuItem
+                        key={index}
+                        className="border-gray-200 border-solid border-2 cursor-pointer py-2 px-3 inline-flex items-start gap-2 content-center w-full "
+                    >
+                      <div className="rounded-full h-10 w-10 size-full bg-blue-700 my-auto"></div>
+                      <div className="inline">
+                        <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-base text-gray-800">
+                          Hero Heating & Air - Demo Account
+                        </p>
+                        <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-sm text-gray-800">
+                          10982 South Gracie, South Jordan, UT
+                        </p>
+                      </div>
+                    </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuLabel
+                  className="mt-3 shrink grow basis-0 whitespace-nowrap font-nunito font-bold text-gray-800 text-sm">
+                ALL ACCOUNTS
+              </DropdownMenuLabel>
+              <DropdownMenuGroup className="grid item-start gap-2">
+                {Array.from({length: 3}).map((_item, index) => (
+                    <DropdownMenuItem
+                        key={index}
+                        className="border-gray-200 border-solid border-2 cursor-pointer py-2 px-3 inline-flex items-start gap-2 content-center w-full "
+                    >
+                      <div className="rounded-full h-10 w-10 size-full bg-blue-700 my-auto"></div>
+                      <div className="inline">
+                        <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-base text-gray-800">
+                          Hero Heating & Air - Demo Account
+                        </p>
+                        <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-sm text-gray-800">
+                          10982 South Gracie, South Jordan, UT
+                        </p>
+                      </div>
+                    </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+*/}
+      <Dialog>
+        <DialogTrigger asChild>
           <Button
             variant="outline"
             className="inline-flex h-[47px] w-full items-center justify-start gap-2 rounded-lg bg-card px-3 py-3.5 shadow"
@@ -194,86 +318,56 @@ export default function SidebarContent(props: Props) {
               <ArrowDown2 />
             </div>
           </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent className="left-[110px] -top-[51px] absolute min-h-[400px] max-h-[425px] w-[425px] px-2 py-1 overflow-y-auto ">
-          <DropdownMenuLabel>
-            <div className="top-3 -left-2 absolute h-0 w-0 border-[10px] border-red-950 border-solid border-l-transparent border-b-transparent -rotate-[135deg]"></div>
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
-                <svg
-                  className="h-5 w-5 text-gray-500 "
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
+        </DialogTrigger>
+        <DialogContent className="block min-w-[600px] w-[1000px] max-w-[1000px] h-min-[600px] h-auto max-h-[900px] px-16 py-5 overflow-y-auto bg-[#2E1249] rounded-3xl">
+          <div className=" h-auto flex justify-between w-full content-center">
+            <p className="font-nunito text-[48px] font-bold content-center text-white">
+              Workspaces
+            </p>
+            <div className="items-center flex w-auto gap-2">
+              <Button className=" text-xl">Create</Button>
+              <div className="relative w-70 ">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
+                  <svg
+                    className="h-5 w-5 text-gray-500 "
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  name="email"
+                  id="topbar-search"
+                  className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-20 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
+                  placeholder="Search Workspace"
+                />
               </div>
-              <input
-                type="text"
-                name="email"
-                id="topbar-search"
-                className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
-                placeholder="Search for a sub-account"
-              />
             </div>
-          </DropdownMenuLabel>
-
-          <DropdownMenuItem className="text-blue-400 font-bold cursor-pointer">
-            Switch to Agency View
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <div className="px-2 py-4">
-            <DropdownMenuLabel className="shrink grow basis-0 whitespace-nowrap font-nunito font-bold text-gray-800 text-sm">
-              RECENT
-            </DropdownMenuLabel>
-            <DropdownMenuGroup className="grid item-start gap-2">
-              {Array.from({ length: 3 }).map((_item, index) => (
-                <DropdownMenuItem
-                  key={index}
-                  className="border-gray-200 border-solid border-2 cursor-pointer py-2 px-3 inline-flex items-start gap-2 content-center w-full "
-                >
-                  <div className="rounded-full h-10 w-10 size-full bg-blue-700 my-auto"></div>
-                  <div className="inline">
-                    <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-base text-gray-800">
-                      Hero Heating & Air - Demo Account
-                    </p>
-                    <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-sm text-gray-800">
-                      10982 South Gracie, South Jordan, UT
-                    </p>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-            <DropdownMenuLabel className="mt-3 shrink grow basis-0 whitespace-nowrap font-nunito font-bold text-gray-800 text-sm">
-              ALL ACCOUNTS
-            </DropdownMenuLabel>
-            <DropdownMenuGroup className="grid item-start gap-2">
-              {Array.from({ length: 3 }).map((_item, index) => (
-                <DropdownMenuItem
-                  key={index}
-                  className="border-gray-200 border-solid border-2 cursor-pointer py-2 px-3 inline-flex items-start gap-2 content-center w-full "
-                >
-                  <div className="rounded-full h-10 w-10 size-full bg-blue-700 my-auto"></div>
-                  <div className="inline">
-                    <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-base text-gray-800">
-                      Hero Heating & Air - Demo Account
-                    </p>
-                    <p className="shrink grow basis-0 whitespace-nowrap font-nunito text-sm text-gray-800">
-                      10982 South Gracie, South Jordan, UT
-                    </p>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
           </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <div className="h-[1px] w-full bg-white" />
+          <div className="grid-cols-2 gap-x-20 grid gap-y-4 my-5 ">
+            {Array.from({ length: 4 }).map((_item, index) => (
+              <WorkspaceButton key={index} />
+            ))}
+          </div>
+          <p className="text-white font-semibold tracking-wider ml-5 h-8">
+            RECENT
+          </p>
+          <div className="h-[1px] w-full bg-white" />
+          <div className="grid-cols-2 gap-x-20 grid gap-y-4 my-5 ">
+            {Array.from({ length: 4 }).map((_item, index) => (
+              <WorkspaceButton key={index} />
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <nav className="mt-6 text-[#fff]">
         <ul>{navItems}</ul>

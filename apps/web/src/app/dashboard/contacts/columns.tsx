@@ -3,6 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import moment from "moment";
+import { GetContactsResponse } from "@/src/endpoints/types/contacts";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -15,7 +16,7 @@ export interface Contacts {
   company: string;
 }
 
-export const columns: ColumnDef<Contacts>[] = [
+export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -46,7 +47,7 @@ export const columns: ColumnDef<Contacts>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row, getValue }) => {
-      const name = getValue<string>();
+      const name = `${row.original.first_name} ${row.original.last_name}`;
       const email = row.original.email;
 
       return (
@@ -61,11 +62,11 @@ export const columns: ColumnDef<Contacts>[] = [
     },
   },
   {
-    accessorKey: "phone",
+    accessorKey: "phone_number",
     header: "Phone number",
   },
   {
-    accessorKey: "website",
+    accessorKey: "source",
     header: "Source",
   },
   {
@@ -82,15 +83,26 @@ export const columns: ColumnDef<Contacts>[] = [
     },
   },
   {
-    accessorKey: "company.name",
+    accessorKey: "last_campaign_ran",
     header: "Last Campaign Ran",
   },
   {
     accessorKey: "last_interaction",
     header: "Last Interaction",
-    cell: () => {
+    cell: ({ getValue }) => {
       const date = new Date();
-      return moment(date).format("ll");
+      return moment(getValue() ?? date).format("ll");
+    },
+  },
+  {
+    accessorKey: "tags",
+    header: "Tags",
+    cell: ({ row }) => {
+      if (row.original.tags && row.original.tags.length > 0) {
+        return row.original.tags.map((tag) => tag.tag_name).join(", "); // Join tag_name values into a single-line string
+      } else {
+        return "NONE"; // Return "NONE" if the array is empty or undefined
+      }
     },
   },
 ];

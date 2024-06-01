@@ -10,16 +10,23 @@ import { SunIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import { usePathname } from "next/navigation";
 
 export default function DashboardHeader() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const pathname = usePathname();
 
   const { session } = useDashboardState();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (pathname === "/dashboard/messages") {
+    return <></>;
+  }
 
   return (
     <nav className="relative z-30 w-full border-b border-black/10 bg-gray-50">
@@ -106,8 +113,11 @@ export default function DashboardHeader() {
                 <div className="pointer-events-none relative flex overflow-hidden rounded-full text-sm focus:ring-4 focus:ring-gray-300">
                   <div className="size-10">
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarImage
+                        className="object-cover"
+                        src="/assets/images/abe-lincoln.jpeg"
+                      />
+                      <AvatarFallback>EX</AvatarFallback>
                     </Avatar>
                     {/*<ProfilePicDefault name={session?.user.email} />*/}
                   </div>

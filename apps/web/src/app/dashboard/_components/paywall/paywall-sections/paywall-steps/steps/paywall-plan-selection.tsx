@@ -1,10 +1,16 @@
 import { CheckIcon } from "@heroicons/react/16/solid";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
+import { useState } from "react";
+import LoadingOverlay from "@/src/loading/loading-overlay.tsx";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 import { paymentPlanDetails } from "@/src/data/payment-plan-details";
 
 export default function PaywallPlanSelection() {
   const { onPlanSelect } = usePaywallState();
+  const [isLoading, setLoading] = useState(false);
+
+  if (isLoading) return <LoadingOverlay />;
 
   return (
     <div className="m-auto p-5">
@@ -86,6 +92,16 @@ export default function PaywallPlanSelection() {
             </div>
           ))}
         </div>
+        <button
+          className="text-primary underline -mt-5"
+          onClick={() => {
+            setLoading(true);
+            void signOut({ callbackUrl: "/" });
+          }}
+          type="button"
+        >
+          Sign out
+        </button>
       </div>
     </div>
   );

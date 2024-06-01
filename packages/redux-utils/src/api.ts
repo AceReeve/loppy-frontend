@@ -1,12 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
-import { getSession } from "next-auth/react";
-
-export interface Pokemon {}
+import { getSession, signOut } from "next-auth/react";
 
 const addTokenToRequest = async (headers: any, { getState }: any) => {
   const session: any = await getSession();
-  console.log("session", session);
   if (session?.jwt) {
     headers.set("Authorization", `Bearer ${session.jwt}`);
   }
@@ -14,7 +11,7 @@ const addTokenToRequest = async (headers: any, { getState }: any) => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
 
   prepareHeaders: (headers, { getState }: any) => {
     return addTokenToRequest(headers, { getState });
@@ -33,6 +30,7 @@ const baseQueryWithReauth: BaseQueryFn = async (
   } else if (result?.error?.status === 401) {
     //Logout the user
     //Or redirect to unauthorized page
+    signOut({ callbackUrl: "/" });
   } else {
     //Allow the user to access the route.
   }

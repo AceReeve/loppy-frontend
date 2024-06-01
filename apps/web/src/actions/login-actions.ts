@@ -108,7 +108,9 @@ export const saveGoogleInfo = async (payload: {
   first_name: string;
   last_name: string;
   picture: string;
-}) => {
+}): Promise<{
+  access_token: string;
+}> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/google-save`,
     {
@@ -122,18 +124,18 @@ export const saveGoogleInfo = async (payload: {
 
   // Throw proper error response from backend server
   if (response.ok) {
-    return;
+    return response.json();
   }
-  // const res = await authResponse.json();
-  // if (res.errors) {
-  //   if (Array.isArray(res.errors)) {
-  //     if (typeof res.errors[0] === "object") {
-  //       throw new Error(Object.values(res.errors[0])[0] as any);
-  //     }
-  //     throw new Error(res.errors[0]);
-  //   }
-  //   throw new Error(res.errors);
-  // } else {
-  //   throw new Error(authResponse.statusText);
-  // }
+  const res = await response.json();
+  if (res.errors) {
+    if (Array.isArray(res.errors)) {
+      if (typeof res.errors[0] === "object") {
+        throw new Error(Object.values(res.errors[0])[0] as any);
+      }
+      throw new Error(res.errors[0]);
+    }
+    throw new Error(res.errors);
+  } else {
+    throw new Error(response.statusText);
+  }
 };

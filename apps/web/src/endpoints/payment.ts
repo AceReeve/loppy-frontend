@@ -1,12 +1,13 @@
 import { baseApi } from "@repo/redux-utils/src/api.ts";
-import {
+import type {
   CreatePaymentIntentPayload,
   CreatePaymentIntentResponse,
+  GetPaymentStatusResponse,
   SummarizePaymentPayload,
   SummarizePaymentResponse,
-} from "@/src/endpoints/types/payment";
+} from "./types/payment";
 
-const paymentApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["payment"],
   })
@@ -20,9 +21,10 @@ const paymentApi = baseApi
           return {
             url: `/payment/summarize-payment`,
             method: "POST",
-            data: payload,
+            body: payload,
           };
         },
+        invalidatesTags: ["payment"],
       }),
       createPaymentIntent: builder.mutation<
         CreatePaymentIntentResponse,
@@ -32,12 +34,27 @@ const paymentApi = baseApi
           return {
             url: `/payment/create-payment-intent`,
             method: "POST",
-            data: payload,
+            body: payload,
           };
         },
+        invalidatesTags: ["payment"],
+      }),
+      getPaymentStatus: builder.query<
+        GetPaymentStatusResponse | null,
+        undefined
+      >({
+        query: () => {
+          return {
+            url: `/payment/payment-status`,
+          };
+        },
+        providesTags: ["payment"],
       }),
     }),
   });
 
-export const { useCreatePaymentIntentMutation, useSummarizePaymentMutation } =
-  paymentApi;
+export const {
+  useCreatePaymentIntentMutation,
+  useSummarizePaymentMutation,
+  useGetPaymentStatusQuery,
+} = api;

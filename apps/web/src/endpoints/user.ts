@@ -4,7 +4,7 @@ import {
   InviteUserResponse,
 } from "@/src/endpoints/types/user";
 
-const userApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["user"],
   })
@@ -15,11 +15,23 @@ const userApi = baseApi
           return {
             url: `/user/invite-user`,
             method: "POST",
-            data: payload,
+            body: payload,
+          };
+        },
+      }),
+      validateInviteUser: builder.mutation<
+        InviteUserResponse,
+        InviteUserPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/user/validate-invite-user`,
+            method: "POST",
+            body: payload,
           };
         },
       }),
     }),
   });
 
-export const { useInviteUserMutation } = userApi;
+export const { useInviteUserMutation, useValidateInviteUserMutation } = api;

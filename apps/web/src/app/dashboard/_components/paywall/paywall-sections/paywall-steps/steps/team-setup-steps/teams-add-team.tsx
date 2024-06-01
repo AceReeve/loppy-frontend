@@ -1,15 +1,23 @@
+"use client";
+
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import { Combobox } from "@headlessui/react";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+} from "@headlessui/react";
 import type { TeamsSetupStepsProps } from "@/src/app/dashboard/_components/paywall/paywall.d.ts";
+import { SendInviteSingleItemSchema } from "@/src/schemas";
 
 export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
   const [invitesList, setInvitesList] = useState<string[]>([]);
 
   return (
     <>
-      <div className="inline-flex w-full flex-col items-start justify-center gap-4"></div>
+      <div className="inline-flex w-full flex-col items-start justify-center gap-4" />
       <div className="inline-flex w-full flex-col items-start justify-center gap-4">
         <div className="font-nunito font-medium leading-relaxed text-white">
           Send Invite
@@ -48,10 +56,9 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
               className="relative inline-flex flex-col items-center justify-center gap-3 rounded-3xl bg-neutral-100 px-[22px] py-4"
               key={index}
             >
-              <img
-                alt=""
-                className="h-16 w-16 rounded-[32px]"
-                src="https://via.placeholder.com/64x64"
+              <div
+                className="h-16 w-16 rounded-[32px] bg-gray-400"
+                // src="https://via.placeholder.com/64x64"
               />
               <div className="text-center font-nunito text-sm font-normal text-zinc-700">
                 Mike <br />
@@ -59,6 +66,17 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
               </div>
             </div>
           ))}
+        </div>
+        <div className="w-full justify-end">
+          <button
+            className="text-primary underline"
+            onClick={() => {
+              props.setStepIndex(2);
+            }}
+            type="button"
+          >
+            Skip this step
+          </button>
         </div>
       </div>
     </>
@@ -81,6 +99,9 @@ function InvitesList({
       multiple
       onChange={(people) => {
         setInvitesList(people);
+        setQuery("");
+      }}
+      onClose={() => {
         setQuery("");
       }}
       value={invitesList}
@@ -113,7 +134,8 @@ function InvitesList({
             </svg>
           </span>
         ))}
-        <Combobox.Input
+        <ComboboxInput
+          autoComplete="off"
           className="h-full min-h-12 flex-1 border-none bg-white p-0 px-1 text-sm focus:ring-0"
           onChange={(event) => {
             setQuery(event.target.value);
@@ -122,15 +144,15 @@ function InvitesList({
           value={query}
         />
       </div>
-      <div className="absolute mt-1 hidden w-full rounded-md bg-white shadow-lg">
-        <Combobox.Options className="shadow-xs max-h-60 overflow-auto rounded-md py-1 text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
-          {query.length > 0 && (
-            <Combobox.Option value={query}>
-              Add &apos;{query}&apos;
-            </Combobox.Option>
-          )}
-        </Combobox.Options>
-      </div>
+      {SendInviteSingleItemSchema.safeParse(query).success ? (
+        <div className="absolute -bottom-7 w-full rounded-md bg-white shadow-lg">
+          <ComboboxOptions className="shadow-xs max-h-60 overflow-auto rounded-md py-1 text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
+            <ComboboxOption value={query}>
+              Insert &apos;{query}&apos;
+            </ComboboxOption>
+          </ComboboxOptions>
+        </div>
+      ) : null}
     </Combobox>
   );
 }

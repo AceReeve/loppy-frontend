@@ -6,6 +6,7 @@
   "types": "./index.tsx",
   "devDependencies": {
     "@reduxjs/toolkit": "^2.2.5",
+    "@repo/typescript-config": "*",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "@types/react-redux": "^7.1.33",
