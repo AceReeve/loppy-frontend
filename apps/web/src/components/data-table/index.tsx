@@ -98,6 +98,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
   // Function to filter items based on search term
 
@@ -198,6 +199,7 @@ export function DataTable<TData, TValue>({
       sort_dir: "desc",
       tag: selectedFilters.map((filter) => filter.value),
     });
+    setFilterSheetOpen(false);
   };
 
   const table = useReactTable({
@@ -250,7 +252,7 @@ export function DataTable<TData, TValue>({
               <XMarkIcon className="relative h-4 w-4 text-gray-500" />
             </Button>
 
-            <Sheet>
+            <Sheet onOpenChange={setFilterSheetOpen} open={filterSheetOpen}>
               <SheetTrigger asChild>
                 <Button className="gap-2 rounded-xl" variant="outline">
                   <img

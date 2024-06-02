@@ -53,9 +53,10 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
 import { AlertCircle } from "lucide-react";
-
+import { useToast } from "@/src/components/ui/use-toast";
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const tabs = [
     {
@@ -110,7 +111,6 @@ function Page() {
   ];
   const [createContact, { data: contactData, error, isLoading }] =
     useCreateContactMutation();
-
   const onSubmit = async () => {
     try {
       const formData = form.getValues();
@@ -124,26 +124,36 @@ function Page() {
 
       console.log(newData);
 
-      await createContact(newData);
+      const response = await createContact(newData);
 
-      if (error) {
-        return (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{getErrorMessage(error)}</AlertDescription>
-          </Alert>
-        );
-      }
-      if (!isLoading) {
+      // Check if response has data property
+      if (response.data) {
+        // Handle successful submission
+        setCreateDialogOpen(false);
+        toast({
+          title: "User Created Successfully",
+          description: "New user has been created.",
+          variant: "success",
+        });
         form.reset();
+      } else if (response.error) {
+        // Handle submission failure
+        toast({
+          title: "Create User Error",
+          description:
+            //response.error
+            //? response.error.toString() :
+            "Unknown error occurred",
+          variant: "destructive",
+        });
       }
-
-      if (!contactData) {
-        console.log("Contact Added");
-      }
-    } catch (error) {
+    } catch (error: string) {
       console.error("Error creating contact:", error);
+      toast({
+        title: "Create User Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
     }
   };
 
@@ -217,7 +227,7 @@ function Page() {
             <ExportContactsDialogForm />
           </Dialog>
 
-          <Dialog>
+          <Dialog onOpenChange={setCreateDialogOpen} open={createDialogOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-xl">Create Contact</Button>
             </DialogTrigger>
