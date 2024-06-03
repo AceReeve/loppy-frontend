@@ -80,7 +80,7 @@ export const CreateContactsFormSchema = z.object({
   }),
   phone_number: z
     .string()
-    .min(4, {
+    .min(11, {
       message: "Invalid Phone Number",
     })
     .transform((value) => parseInt(value)),
@@ -89,7 +89,7 @@ export const CreateContactsFormSchema = z.object({
   }),
   lifetime_value: z
     .string()
-    .min(4, {
+    .min(1, {
       message: "Invalid Lifetime Value",
     })
     .transform((value) => parseInt(value)),
