@@ -80,7 +80,7 @@ export const CreateContactsFormSchema = z.object({
   }),
   phone_number: z
     .string()
-    .min(11, {
+    .min(4, {
       message: "Invalid Phone Number",
     })
     .transform((value) => parseInt(value)),
@@ -96,9 +96,20 @@ export const CreateContactsFormSchema = z.object({
   last_campaign_ran: z.string().min(1, {
     message: "Last Campaign Ran must be at least 1 character.",
   }),
-  last_interaction: z.string().min(1, {
+
+  last_interaction: z.date().refine(
+    (date) => {
+      // Ensure date is valid
+      return !isNaN(date.getTime());
+    },
+    {
+      message: "Last Interaction must be a valid date.",
+    },
+  ),
+
+  /*  last_interaction: z.string().min(1, {
     message: "Last Interaction must be at least 1 character.",
-  }),
+  }),*/
 
   tags: z.array(tagSchema).optional(),
 });

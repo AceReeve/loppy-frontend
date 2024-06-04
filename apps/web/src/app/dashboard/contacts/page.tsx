@@ -14,6 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Tabs,
   TabsContent,
   TabsList,
@@ -28,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -52,11 +56,15 @@ import AllContacts from "./tabs/all-contacts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, CalendarIcon } from "lucide-react";
 import { useToast } from "@/src/components/ui/use-toast";
+import { cn } from "@/src/lib/utils.ts";
+import { format } from "date-fns";
+import { Calendar } from "@/src/components/ui/calendar.tsx";
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const tabs = [
     {
@@ -76,9 +84,6 @@ function Page() {
     },
   ];
 
-  const phoneRegex = new RegExp(
-    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/,
-  );
   const formSchema = CreateContactsFormSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -91,7 +96,7 @@ function Page() {
       source: "",
       lifetime_value: 0,
       last_campaign_ran: "",
-      last_interaction: "",
+      last_interaction: new Date(),
       tags: [
         {
           tag_name: "",
@@ -104,6 +109,7 @@ function Page() {
   };
 
   const [tagValue, setTagValue] = useState<string[]>([]);
+
   const options = [
     { label: "ChatGPT", value: "ChatGPT" },
     { label: "Facebook", value: "Facebook" },
@@ -122,8 +128,6 @@ function Page() {
           tagValue.length > 0 ? tagValue.map((tag) => ({ tag_name: tag })) : [],
       };
 
-      console.log(newData);
-
       const response = await createContact(newData);
 
       // Check if response has data property
@@ -136,6 +140,7 @@ function Page() {
           variant: "success",
         });
         form.reset();
+        setTagValue([]);
       } else if (response.error) {
         // Handle submission failure
         toast({
@@ -147,7 +152,7 @@ function Page() {
           variant: "destructive",
         });
       }
-    } catch (error: string) {
+    } catch (error: any) {
       console.error("Error creating contact:", error);
       toast({
         title: "Create User Error",
@@ -396,7 +401,7 @@ function Page() {
                         name="last_interaction"
                         render={({ field }) => {
                           return (
-                            <FormItem>
+                            /*                        <FormItem>
                               <FormLabel>Last Interaction</FormLabel>
                               <FormControl>
                                 <Input
@@ -405,6 +410,47 @@ function Page() {
                                   {...field}
                                 />
                               </FormControl>
+                              <FormMessage />
+                            </FormItem>
+*/
+                            <FormItem className="flex flex-col space-y-2">
+                              <FormLabel>Last Interaction</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant={"outline"}
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !field.value && "text-muted-foreground",
+                                      )}
+                                    >
+                                      {field.value ? (
+                                        format(field.value, "yyyy-MM-dd")
+                                      ) : (
+                                        <span>Pick a date</span>
+                                      )}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              <FormDescription></FormDescription>
                               <FormMessage />
                             </FormItem>
                           );
