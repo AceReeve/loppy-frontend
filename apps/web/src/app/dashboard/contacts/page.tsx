@@ -413,9 +413,14 @@ function Page() {
                               <FormMessage />
                             </FormItem>
 */
-                            <FormItem className="flex flex-col space-y-2">
-                              <FormLabel>Last Interaction</FormLabel>
-                              <Popover>
+                            <FormItem className="flex flex-col">
+                              <FormLabel className="my-2">
+                                Last Interaction
+                              </FormLabel>
+                              <Popover
+                                onOpenChange={setCalendarOpen}
+                                open={calendarOpen}
+                              >
                                 <PopoverTrigger asChild>
                                   <FormControl>
                                     <Button
@@ -441,7 +446,11 @@ function Page() {
                                   <Calendar
                                     mode="single"
                                     selected={field.value}
-                                    onSelect={field.onChange}
+                                    //onSelect={field.onChange}
+                                    onSelect={(date) => {
+                                      field.onChange(date);
+                                      setCalendarOpen(!calendarOpen); // Close the calendar after selecting a date
+                                    }}
                                     disabled={(date) =>
                                       date > new Date() ||
                                       date < new Date("1900-01-01")
