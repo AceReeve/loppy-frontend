@@ -4,17 +4,18 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import moment from "moment";
 import { GetContactsResponse } from "@/src/endpoints/types/contacts";
+import { Button } from "@/src/components/ui/button";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export interface Contacts {
+/*export interface Contacts {
   id: string;
   name: string;
   email: string;
   phone: string;
   website: string;
   company: string;
-}
+}*/
 
 export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   {
@@ -45,11 +46,22 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      function SortHandler() {
+        const isSorted = column.getIsSorted();
+        const nextSort = isSorted === false ? "asc" : undefined;
+        column.toggleSorting(nextSort);
+      }
+
+      return (
+        <Button variant="ghost" onClick={() => SortHandler()}>
+          Name
+        </Button>
+      );
+    },
     cell: ({ row, getValue }) => {
       const name = `${row.original.first_name} ${row.original.last_name}`;
       const email = row.original.email;
-
       return (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary" />
@@ -67,13 +79,37 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   },
   {
     accessorKey: "source",
-    header: "Source",
+    header: ({ column }) => {
+      function SortHandler() {
+        const isSorted = column.getIsSorted();
+        const nextSort = isSorted === false ? "asc" : undefined;
+        column.toggleSorting(nextSort);
+      }
+
+      return (
+        <Button variant="ghost" onClick={() => SortHandler()}>
+          Source
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "lifetime_value",
-    header: "Lifetime Value",
+    header: ({ column }) => {
+      function SortHandler() {
+        const isSorted = column.getIsSorted();
+        const nextSort = isSorted === false ? "asc" : undefined;
+        column.toggleSorting(nextSort);
+      }
+
+      return (
+        <Button variant="ghost" onClick={() => SortHandler()}>
+          Lifetime Value
+        </Button>
+      );
+    },
     cell: ({ row }) => {
-      const amount = 2323;
+      const amount = row.original.lifetime_value;
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -88,9 +124,21 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   },
   {
     accessorKey: "last_interaction",
-    header: "Last Interaction",
-    cell: () => {
-      const date = new Date();
+    header: ({ column }) => {
+      function SortHandler() {
+        const isSorted = column.getIsSorted();
+        const nextSort = isSorted === false ? "asc" : undefined;
+        column.toggleSorting(nextSort);
+      }
+
+      return (
+        <Button variant="ghost" onClick={() => SortHandler()}>
+          Last Interaction
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const date = row.original.last_interaction;
       return moment(date).format("ll");
     },
   },
