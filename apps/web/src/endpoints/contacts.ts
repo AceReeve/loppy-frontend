@@ -10,7 +10,7 @@ import {
 } from "@/src/endpoints/types/contacts";
 import { string } from "zod";
 
-const userApi = baseApi
+const contactApi = baseApi
   .enhanceEndpoints({
     addTagTypes: ["contacts"],
   })
@@ -98,4 +98,4 @@ export const {
   useImportContactsMutation,
   // useExportContactsQuery,
   useLazyExportContactsQuery,
-} = userApi;
+} = contactApi;

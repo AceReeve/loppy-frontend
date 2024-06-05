@@ -49,7 +49,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
     header: ({ column }) => {
       function SortHandler() {
         const isSorted = column.getIsSorted();
-        const nextSort = isSorted === false ? "asc" : undefined;
+        const nextSort = isSorted === false ? true : undefined; // Set nextSort to true for ascending order
         column.toggleSorting(nextSort);
       }
 
@@ -82,7 +82,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
     header: ({ column }) => {
       function SortHandler() {
         const isSorted = column.getIsSorted();
-        const nextSort = isSorted === false ? "asc" : undefined;
+        const nextSort = isSorted === false ? true : undefined;
         column.toggleSorting(nextSort);
       }
 
@@ -98,7 +98,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
     header: ({ column }) => {
       function SortHandler() {
         const isSorted = column.getIsSorted();
-        const nextSort = isSorted === false ? "asc" : undefined;
+        const nextSort = isSorted === false ? true : undefined;
         column.toggleSorting(nextSort);
       }
 
@@ -120,14 +120,26 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   },
   {
     accessorKey: "last_campaign_ran",
-    header: "Last Campaign Ran",
+    header: ({ column }) => {
+      function SortHandler() {
+        const isSorted = column.getIsSorted();
+        const nextSort = isSorted === false ? true : undefined;
+        column.toggleSorting(nextSort);
+      }
+
+      return (
+        <Button variant="ghost" onClick={() => SortHandler()}>
+          Last Campaign Ran
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "last_interaction",
     header: ({ column }) => {
       function SortHandler() {
         const isSorted = column.getIsSorted();
-        const nextSort = isSorted === false ? "asc" : undefined;
+        const nextSort = isSorted === false ? true : undefined;
         column.toggleSorting(nextSort);
       }
 
