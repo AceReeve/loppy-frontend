@@ -11,7 +11,8 @@ import gsap from "gsap";
 type Props = {
   header: string;
   description: string;
-  measurement: string;
+  measurement: number;
+  suffix: string;
 };
 export default function WeatherItem(props: Props) {
   let weatherComponent = null;
@@ -29,7 +30,7 @@ export default function WeatherItem(props: Props) {
       weatherComponent = <Wind />;
       break;
     case "rain chance":
-      weatherComponent = <RainChance />;
+      weatherComponent = <RainChance measurement={props.measurement} />;
       break;
     case "uv index":
       weatherComponent = <UVIndex />;
@@ -52,7 +53,7 @@ export default function WeatherItem(props: Props) {
           {props.description}
         </div>
         <div className="font-nunito text-lg font-medium leading-relaxed text-black">
-          {props.measurement}
+          {props.measurement} {props.suffix}
         </div>
       </div>
       <div

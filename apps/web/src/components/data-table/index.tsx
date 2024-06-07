@@ -35,6 +35,16 @@ import {
   SheetTitle,
   Separator,
   SheetFooter,
+  DropdownMenuItem,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
 } from "@repo/ui/components/ui";
 import {
   Card,
@@ -44,7 +54,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card.tsx";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   XMarkIcon,
   EyeSlashIcon,
@@ -98,6 +108,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
   // Function to filter items based on search term
 
@@ -132,18 +143,6 @@ export function DataTable<TData, TValue>({
   ];
 
   const [isFilterMode, setIsFilterMode] = useState(false);
-
-  function applyFilter(index: number, newValue: []) {
-    const updatedAccordionItems = [...accordionItems];
-
-    updatedAccordionItems[index] = {
-      ...updatedAccordionItems[index],
-      //value: newValue,
-    };
-    setIsFilterMode(!isFilterMode);
-
-    //setAccordionItems(updatedAccordionItems);
-  }
 
   interface FilterObject {
     label: string;
@@ -198,6 +197,7 @@ export function DataTable<TData, TValue>({
       sort_dir: "desc",
       tag: selectedFilters.map((filter) => filter.value),
     });
+    setFilterSheetOpen(!filterSheetOpen);
   };
 
   const table = useReactTable({
@@ -218,28 +218,66 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
-  const totalItems = table.getFilteredRowModel().rows.length;
-  const pageSize = 10; // Assuming 10 items per page
-  const totalPages = Math.ceil(totalItems / pageSize);
+
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("name");
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-2 place-content-center">
         <div className="mb-6 flex w-full items-center justify-between">
-          <div className="relative">
+          <div className="relative flex flex-row w-full justify-start gap-4">
             <MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-5 w-5 text-gray-500" />
             <Input
               className="max-w-60 pl-10"
               onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
+                table.getColumn(value)?.setFilterValue(event.target.value)
               }
               placeholder="Search name, phone, etc..."
               type="search"
-              value={
-                (table.getColumn("name")?.getFilterValue() as string) ?? ""
-              }
+              value={(table.getColumn(value)?.getFilterValue() as string) ?? ""}
             />
+
+            <div className="flex flex-row h-auto place-items-center space-x-2">
+              <p className="font-nunito text-sm font-bold">Filter by:</p>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-[200px] justify-between"
+                  >
+                    {value}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandList>
+                      <CommandEmpty>No framework found.</CommandEmpty>
+                      <CommandGroup>
+                        {table
+                          .getAllColumns()
+                          .filter((column) => column.getCanHide())
+                          .map((column, index) => (
+                            <CommandItem
+                              key={index}
+                              onSelect={(currentValue) => {
+                                setValue(currentValue);
+                                setOpen(false);
+                              }}
+                            >
+                              {column.id}
+                            </CommandItem>
+                          ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
+
           <div className="flex items-end gap-4">
             <Button className="gap-2 rounded-full" variant="secondary">
               Create date before 1/12/20
@@ -250,7 +288,7 @@ export function DataTable<TData, TValue>({
               <XMarkIcon className="relative h-4 w-4 text-gray-500" />
             </Button>
 
-            <Sheet>
+            <Sheet onOpenChange={setFilterSheetOpen} open={filterSheetOpen}>
               <SheetTrigger asChild>
                 <Button className="gap-2 rounded-xl" variant="outline">
                   <img
@@ -496,26 +534,26 @@ export function DataTable<TData, TValue>({
 
           <Button
             onClick={() => {
-              const previousPageSkip =
-                table.page * table.pageSize - table.pageSize;
-              handleSubmitFilters(previousPageSkip);
+              //const previousPageSkip =
+              //table.page * table.pageSize - table.pageSize;
+              //handleSubmitFilters(previousPageSkip);
               table.previousPage();
             }}
             size="sm"
             variant="outline"
-            disabled={table.page === 0} // Disable button when on the first page
+            disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
           <Button
             onClick={() => {
-              const nextPageSkip = table.page * table.pageSize;
-              handleSubmitFilters(nextPageSkip);
+              // const nextPageSkip = table.page * table.pageSize;
+              // handleSubmitFilters(nextPageSkip);
               table.nextPage();
             }}
             size="sm"
             variant="outline"
-            disabled={table.page === totalPages - 1} // Disable button when on the last page
+            disabled={!table.getCanNextPage()}
           >
             Next
           </Button>

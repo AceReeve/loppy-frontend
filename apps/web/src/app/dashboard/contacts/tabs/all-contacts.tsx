@@ -69,20 +69,21 @@ function AllContacts() {
   const GetFilter = (value: any) => {
     setFilters(value);
     console.log(value);
-    // You can access 'filters' here directly if it's in the scope of this function
   };
-
-  /*  useEffect(() => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      tag: selectedFilters.map((filter: any) => filter.label),
-    }));
-  }, [selectedFilters]);*/
 
   const { data: contacts, error, isLoading } = useGetContactsQuery(filters);
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="content-center w-full m-auto h-[500px]">
+        <div className="h-[50px] w-[15px] content-center m-auto">
+          <LoadingSpinner />
+        </div>
+        <p className="text-center font-nunito text-lg">
+          Loading please wait...
+        </p>
+      </div>
+    );
   }
 
   if (error) {

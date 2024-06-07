@@ -1,5 +1,6 @@
 import { baseApi } from "@repo/redux-utils/src/api.ts";
-import type {
+
+import {
   CreateContactPayload,
   ExportContactsPayload,
   ExportContactsResponse,
@@ -7,25 +8,32 @@ import type {
   GetCreateContactResponse,
   ImportContactsResponse,
 } from "@/src/endpoints/types/contacts";
+import { string } from "zod";
 
-const api = baseApi
+const contactApi = baseApi
   .enhanceEndpoints({
     addTagTypes: ["contacts"],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getContacts: builder.query<
-        GetContactsResponse,
-        Record<string, any> | undefined
-      >({
-        query: (params) => {
-          const queryParams = new URLSearchParams(params).toString();
-
+      getContacts: builder.query<GetContactsResponse, undefined>({
+        query: (data) => {
+          const params = new URLSearchParams(data).toString();
           return {
-            url: `/Contacts/get-all?${queryParams}`,
+            //url: `/Contacts/get-all?skip=0`,
+            url: `Contacts/get-all?${params}`,
+            //url: `Contacts/get-all`,
           };
         },
         providesTags: ["contacts"],
+
+        /*getContacts: builder.query<GetContactsResponse, undefined>({
+          query: () => {
+            return {
+              //url: `/Contacts/get-all?skip=0`,
+              url: "Contacts/get-all?skip=1&tag=ChatGPT",
+            };
+          },*/
       }),
       createContact: builder.mutation<
         GetCreateContactResponse,
@@ -87,5 +95,7 @@ const api = baseApi
 export const {
   useGetContactsQuery,
   useCreateContactMutation,
-  useImportContactsMutation, useLazyExportContactsQuery,
-} = api;
+  useImportContactsMutation,
+  // useExportContactsQuery,
+  useLazyExportContactsQuery,
+} = contactApi;
