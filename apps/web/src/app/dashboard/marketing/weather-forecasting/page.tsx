@@ -19,11 +19,8 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { WeatherData } from "@/src/endpoints/types/weather";
 
 function Page() {
-  interface getCity {
-    city: string;
-  }
   const [city, setCity] = useState({
-    city: "London",
+    city: "Pasig",
   });
   const {
     data: weather,
@@ -49,7 +46,7 @@ function Page() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000); // Update every second
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -132,7 +129,7 @@ function Page() {
     {
       header: "UV Index",
       description: "Today UV Index",
-      measurement: "2",
+      measurement: 2,
       suffix: "",
     },
   ];

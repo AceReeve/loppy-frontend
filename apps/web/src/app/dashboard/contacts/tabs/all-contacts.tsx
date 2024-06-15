@@ -56,14 +56,19 @@ const NoResultsComponent = (
 );
 
 function AllContacts() {
-  //const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
-  const [filters, setFilters] = useState({
+  /*  const payload = {
     search_key: "",
     status: "",
     skip: 0,
-    limit: 100,
+    limit: 0,
     sort_dir: "desc",
     tag: [] as string[],
+  };*/
+  //const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
+  const [filters, setFilters] = useState({
+    skip: 0,
+    limit: 0,
+    sort_dir: "desc",
   });
 
   const GetFilter = (value: any) => {

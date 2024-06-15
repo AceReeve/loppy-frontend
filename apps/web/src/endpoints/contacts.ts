@@ -55,27 +55,25 @@ const contactApi = baseApi
           return {
             url: `/Contacts/export?${params}`,
             method: "GET",
-            responseType: "blob",
+            responseHandler: (response: any) => response.blob(), // Set response handler to handle blob
           };
         },
-
         transformResponse(response, meta) {
-          console.log("Meta" + meta);
-          /*          const type = meta?.headers?.get("type");
-                  const contentDisposition = meta?.headers?.get("content-disposition");
-                   const regex =
-                     /filename[^;=\n]*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/;
-                   const fileName = contentDisposition.match(regex)[3];
-                   const url = URL.createObjectURL(
-                     new Blob([response], {
-                       type,
-                     }),
-                   );*/
+          const contentDisposition = meta?.headers?.get("content-disposition");
+          console.log("disposition" + contentDisposition);
+          let fileName = "contacts_export.csv"; // Default filename
 
-          return {
-            url: "",
-            fileName: "",
-          };
+          if (contentDisposition) {
+            const regex = /filename[^;=\n]*=(?:(['"])(.*?)\1|([^;\n]*))/;
+            const matches = regex.exec(contentDisposition);
+            fileName = matches && matches[2] ? matches[2] : fileName;
+          }
+
+          const url = URL.createObjectURL(
+            new Blob([response], { type: response.type }),
+          );
+
+          return { url, fileName };
         },
       }),
 

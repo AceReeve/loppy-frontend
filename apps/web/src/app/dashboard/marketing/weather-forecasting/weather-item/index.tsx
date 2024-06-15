@@ -39,7 +39,6 @@ export default function WeatherItem(props: Props) {
       weatherComponent = <Pressure />;
       break;
     default:
-      // If the header is not recognized, render null
       break;
   }
 

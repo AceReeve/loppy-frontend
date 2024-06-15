@@ -154,12 +154,16 @@ export function DataTable<TData, TValue>({
     setSelectedFilters([]);
 
     setFilters({
-      search_key: "",
+      /*      search_key: "",
       status: "",
       skip: 0,
       limit: 100,
       sort_dir: "desc",
-      tag: [],
+      tag: [],*/
+
+      skip: 0,
+      limit: 0,
+      sort_dir: "desc",
     });
   };
 
@@ -190,10 +194,13 @@ export function DataTable<TData, TValue>({
 
   const handleSubmitFilters = () => {
     setFilters({
-      search_key: "",
+      /*      search_key: "",
       status: "",
       skip: 0,
       limit: 100,
+      sort_dir: "desc",*/
+      skip: 0,
+      limit: 0,
       sort_dir: "desc",
       tag: selectedFilters.map((filter) => filter.value),
     });
