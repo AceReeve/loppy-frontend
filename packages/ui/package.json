@@ -61,6 +61,7 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-separator": "^1.0.3",
     "date-fns": "^3.6.0",
+    "input-otp": "^1.2.4",
     "react-day-picker": "^8.10.1",
     "react-hook-form": "^7.51.5",
     "zod": "^3.23.8"
