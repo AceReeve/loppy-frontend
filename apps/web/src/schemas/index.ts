@@ -17,6 +17,20 @@ export const ResetSchema = z.object({
     }),
 });
 
+export const RegisterDetailsSchema = z.object({
+  first_name: z.string().min(3, { message: "First Name is required" }),
+  last_name: z.string().min(3, { message: "Last Name is required" }),
+  address: z.string().min(3, { message: "Address is required" }),
+  company: z.string().min(1, { message: "Company is required" }),
+  sex: z.string().min(1, { message: "Gender is required" }),
+  phone_number: z.string().regex(/^\d{6,}$/, {
+    message: "Mobile Number must be numeric and at least 6 digits",
+  }),
+  birth_date: z.string().min(1, {
+    message: "Date of Birth must be a valid date",
+  }),
+});
+
 export const LoginSchema = z.object({
   email: z
     .string()
@@ -29,20 +43,34 @@ export const LoginSchema = z.object({
   password: z.string().min(1, {
     message: "Password is required",
   }),
+
   code: z.optional(z.string()),
 });
 
-export const RegisterSchema = z.object({
-  email: z.string().email({
-    message: "Email is required",
-  }),
-  password: z.string().min(6, {
-    message: "Minimum 6 characters required",
-  }),
-  name: z.string().min(1, {
-    message: "Name is required",
-  }),
-});
+export const RegisterSchema = z
+  .object({
+    email: z.string().email({
+      message: "Email is required",
+    }),
+    password: z.string().min(6, {
+      message: "Minimum 6 characters required",
+    }),
+    confirmPassword: z.string().min(6, {
+      message: "Confirmation password must be at least 6 characters long",
+    }),
+    /*    name: z.string().min(1, {
+      message: "Name is required",
+    }),*/
+  })
+  .superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Passwords do not match",
+      });
+    }
+  });
 
 export const TwilioCredentialsSchema = z.object({
   ssid: z.string().min(1, {
