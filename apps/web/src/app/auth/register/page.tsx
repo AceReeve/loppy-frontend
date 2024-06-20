@@ -7,10 +7,15 @@ import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import LoadingSpinner from "@repo/ui/loading-spinner.tsx";
-import { RegisterSchema } from "@/src/schemas";
 import {
+  ConfirmOTPSchema,
+  RegisterSchema,
+  SendRegisterOTPSchema,
+} from "@/src/schemas";
+import {
+  handleConfirmOTP,
   handleCredentialsSignIn,
-  handleCredentialsSignUp,
+  handleSendOTP,
 } from "@/src/actions/login-actions";
 import FacebookSignInButton from "../_components/facebook-sign-in-button";
 import GoogleSignInButton from "../_components/google-sign-in-button";
@@ -19,17 +24,26 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/src/components/ui/input-otp.tsx";
-import { FormControl, FormField, FormItem } from "@/src/components/ui";
+import Registration from "@/src/app/dashboard/_components/registration";
 export default function Register() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const errorParam = searchParams.get("error");
+
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
+      confirm_password: "",
+    },
+  });
+
+  const confirmOTPForm = useForm<z.infer<typeof ConfirmOTPSchema>>({
+    resolver: zodResolver(ConfirmOTPSchema),
+    defaultValues: {
+      email: form.getValues("email"),
+      otp: "",
     },
   });
 
@@ -40,17 +54,26 @@ export default function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [process, setProcess] = useState(0);
+  const [openDetails, setOpenDetails] = useState(false);
 
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError("");
     setSuccess("");
+    const OTPForm: z.infer<typeof SendRegisterOTPSchema> = {
+      email: form.getValues("email"),
+    };
+
     startTransition(() => {
-      handleCredentialsSignUp(values, callbackUrl)
+      //setProcess(1);
+      // setProcess(1);
+      //handleCredentialsSignUp
+      handleSendOTP(OTPForm, callbackUrl)
         .then((data) => {
           if (data?.error) {
             setError(data.error);
           } else {
             setProcess(1);
+            // setOpenDetails(true);
           }
         })
         .catch((e) => {
@@ -59,11 +82,55 @@ export default function Register() {
     });
   };
 
-  const onConfirmOTP = (values: z.infer<typeof RegisterSchema>) => {
+  const handleResendCode = async () => {
+    try {
+      await onSubmit(form.getValues());
+      // Optionally handle success or redirect after submission
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Optionally handle and display the error to the user
+    }
+  };
+  const onHandleProceed = () => {
+    //setOpenDetails(false);
+    //setProcess(step);
+
+    handleCredentialsSignIn(form.getValues(), callbackUrl)
+      .then((data) => {
+        if (data?.error) {
+          setError(data.error);
+        } else {
+          setProcess(1);
+          // setOpenDetails(true);
+        }
+      })
+      .catch((e) => {
+        setError(e.message || e.statusText);
+      });
+  };
+  const onConfirmOTP = (values: z.infer<typeof ConfirmOTPSchema>) => {
     setError("");
     setSuccess("");
+    console.log("Confirm Called");
+
+    const confirmOPTForm: z.infer<typeof ConfirmOTPSchema> =
+      confirmOTPForm.getValues();
     startTransition(() => {
-      handleCredentialsSignIn(values, callbackUrl);
+      //handleCredentialsSignIn(values, callbackUrl);
+      console.log("Confirm Called Inside Transition");
+      handleConfirmOTP(confirmOPTForm, callbackUrl)
+        .then((data) => {
+          if (data?.error) {
+            setError(data.error);
+          } else {
+            //setProcess(1);
+            // setOpenDetails(true);
+            setOpenDetails(true);
+          }
+        })
+        .catch((e) => {
+          setError(e.message || e.statusText);
+        });
     });
   };
 
@@ -146,13 +213,13 @@ export default function Register() {
 
               <input
                 className="mt-1 w-full border-[#D0D3DB] font-bold shadow-none"
-                id="Password"
+                id="confirmPassword"
                 type="password"
-                {...register("confirmPassword")}
+                {...register("confirm_password")}
               />
-              {errors.confirmPassword ? (
+              {errors.confirm_password ? (
                 <p className="mt-2 text-[0.8rem] font-medium text-error">
-                  {errors.confirmPassword.message}
+                  {errors.confirm_password.message}
                 </p>
               ) : null}
             </div>
@@ -234,7 +301,7 @@ export default function Register() {
 
           <form
             className="w-full font-nunito text-black"
-            onSubmit={form.handleSubmit(onConfirmOTP)}
+            onSubmit={confirmOTPForm.handleSubmit(onConfirmOTP)}
           >
             <div className="block h-auto text-center mb-10">
               <p className="text-[40px] font-bold">OTP Verification</p>
@@ -246,12 +313,12 @@ export default function Register() {
                          render = {({field}) => (
                              <FormItem>
                                <FormControl>
-                                 
+
                                </FormControl>
                              </FormItem>
                          )}/>
               */}
-              <InputOTP maxLength={4}>
+              <InputOTP maxLength={6}>
                 <InputOTPGroup className="my-5 justify-evenly flex w-[500px] mx-auto">
                   <InputOTPSlot
                     index={0}
@@ -269,6 +336,14 @@ export default function Register() {
                     index={3}
                     className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
                   />
+                  <InputOTPSlot
+                    index={4}
+                    className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                  />
+                  <InputOTPSlot
+                    index={5}
+                    className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                  />
                 </InputOTPGroup>
               </InputOTP>
               <p className={" text-[16px] font-bold text-gray-500"}>
@@ -276,7 +351,8 @@ export default function Register() {
               </p>
               <Link
                 className="text-primary underline text-[16px]"
-                href="/auth/login"
+                href={"http://localhost:3000/auth/register"}
+                onClick={handleResendCode}
               >
                 Resend Code
               </Link>
@@ -306,5 +382,17 @@ export default function Register() {
       page: registerDetails(),
     },
   ];
-  return <>{pages[process].page}</>;
+  return (
+    <>
+      {pages[process].page}
+      {openDetails ? (
+        <div className="absolute left-0 top-0 z-10 flex size-full">
+          <div className="absolute left-0 top-0 size-full bg-black bg-opacity-40 backdrop-blur-md" />
+          <div className="relative m-auto flex h-auto w-full max-w-[1283px] flex-col rounded-[29px] border border-neutral-300 bg-gradient-to-b from-indigo-950 to-purple-950">
+            <Registration onHandleProceed={onHandleProceed} />
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
 }

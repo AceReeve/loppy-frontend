@@ -47,15 +47,26 @@ export const LoginSchema = z.object({
   code: z.optional(z.string()),
 });
 
+export const SendRegisterOTPSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+});
+
+export const ConfirmOTPSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  otp: z.string().min(6, { message: "Invalid OTP" }),
+});
+
 export const RegisterSchema = z
   .object({
-    email: z.string().email({
-      message: "Email is required",
-    }),
+    email: SendRegisterOTPSchema.shape.email,
     password: z.string().min(6, {
       message: "Minimum 6 characters required",
     }),
-    confirmPassword: z.string().min(6, {
+    confirm_password: z.string().min(6, {
       message: "Confirmation password must be at least 6 characters long",
     }),
     /*    name: z.string().min(1, {
@@ -63,7 +74,7 @@ export const RegisterSchema = z
     }),*/
   })
   .superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
+    if (data.password !== data.confirm_password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["confirmPassword"],
@@ -71,6 +82,13 @@ export const RegisterSchema = z
       });
     }
   });
+
+export const VerifyOTPSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  otp: z.string().min(4, { message: "Invalid OTP" }),
+});
 
 export const TwilioCredentialsSchema = z.object({
   ssid: z.string().min(1, {

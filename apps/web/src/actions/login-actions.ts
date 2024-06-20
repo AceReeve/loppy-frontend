@@ -3,9 +3,78 @@
 import type { z } from "zod";
 import { AuthError } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { LoginSchema, RegisterSchema } from "@/src/schemas";
+import {
+  ConfirmOTPSchema,
+  LoginSchema,
+  RegisterSchema,
+  SendRegisterOTPSchema,
+} from "@/src/schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+
+export const handleConfirmOTP = async (
+  values: z.infer<typeof ConfirmOTPSchema>,
+  callbackURL?: string | null,
+) => {
+  const validateFields = ConfirmOTPSchema.safeParse(values);
+
+  if (!validateFields.success) {
+    return { error: "Wrong OTP " };
+  }
+  const { email, otp } = validateFields.data;
+
+  const authResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?${email}&${otp}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+};
+export const handleSendOTP = async (
+  values: z.infer<typeof SendRegisterOTPSchema>,
+  callbackUrl?: string | null,
+) => {
+  const validateFields = SendRegisterOTPSchema.safeParse(values);
+  console.log("SENDDING inside");
+
+  if (!validateFields.success) {
+    return { error: "Failed to send OTP" };
+  }
+
+  const { email } = validateFields.data;
+  console.log("OTP CALLED");
+
+  const authResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/user/send-register-otp?email=${email}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (authResponse.ok) {
+    return;
+  }
+
+  // Throw proper error response from backend server
+  const res = await authResponse.json();
+  if (res.errors) {
+    if (Array.isArray(res.errors)) {
+      if (typeof res.errors[0] === "object") {
+        throw new Error(Object.values(res.errors[0])[0] as any);
+      }
+      throw new Error(res.errors[0]);
+    }
+    throw new Error(res.errors);
+  } else {
+    throw new Error(authResponse.statusText);
+  }
+};
 
 export const handleCredentialsSignUp = async (
   values: z.infer<typeof RegisterSchema>,
@@ -17,7 +86,7 @@ export const handleCredentialsSignUp = async (
     return { error: "Invalid fields!" };
   }
 
-  const { email, password } = validatedFields.data;
+  const { email, password, confirm_password } = validatedFields.data;
 
   const authResponse = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/user/register`,
@@ -29,14 +98,15 @@ export const handleCredentialsSignUp = async (
       body: JSON.stringify({
         email,
         password,
+        confirm_password,
       }),
     },
   );
 
   // Throw proper error response from backend server
   if (authResponse.ok) {
-    //return handleCredentialsSignIn(values, callbackUrl);
-    return;
+    return handleCredentialsSignIn(values, callbackUrl);
+    //return;
   }
   const res = await authResponse.json();
   if (res.errors) {

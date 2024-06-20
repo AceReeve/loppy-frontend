@@ -38,9 +38,14 @@ import {
   RadioGroupItem,
 } from "@/src/components/ui/radio-group.tsx";
 import { Dialog } from "@/src/components/ui/dialog.tsx";
-export default function Registration() {
+export default function Registration({
+  onHandleProceed,
+}: {
+  onHandleProceed: () => void;
+}) {
   const onSubmit = () => {
     console.log("Submitted");
+    onHandleProceed();
   };
   const registerSchema = RegisterDetailsSchema;
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -115,123 +120,49 @@ export default function Registration() {
                   Welcome to Service Hero
                 </p>
               </div>
-              <FormField
-                control={form.control}
-                name="first_name"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input autoComplete={"off"} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
+              <div className="grid grid-cols-4 gap-5">
+                <FormField
+                  control={form.control}
+                  name="first_name"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-2">
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
 
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input autoComplete={"off"} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
+                <FormField
+                  control={form.control}
+                  name="last_name"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-2">
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
 
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Input autoComplete={"off"} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-
-              <FormField
-                control={form.control}
-                name="company"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Company</FormLabel>
-                      <FormControl>
-                        <Input autoComplete={"off"} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone_number"
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>Mobile Number</FormLabel>
-                      <FormControl>
-                        <Input autoComplete={"off"} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-
-              <div className="flex justify-start gap-28">
                 <FormField
                   control={form.control}
                   name="birth_date"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col">
+                    <FormItem className="col-span-2">
                       <FormLabel>Birth Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground",
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
+                          <Input type="date" className="" {...field} />
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
                       </Popover>
                       <FormDescription></FormDescription>
                       <FormMessage />
@@ -242,15 +173,18 @@ export default function Registration() {
                   control={form.control}
                   name="sex"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="col-span-2">
                       <FormLabel>Gender</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="flex gap-10"
+                          className="grid-cols-2 h-[40px]  content-center "
                         >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem
+                            className="flex items-center
+                           space-x-3 space-y-0"
+                          >
                             <FormControl>
                               <RadioGroupItem value="Male" />
                             </FormControl>
@@ -269,9 +203,58 @@ export default function Registration() {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-4">
+                        <FormLabel>Address</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="company"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-4">
+                        <FormLabel>Company</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone_number"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-4">
+                        <FormLabel>Mobile Number</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
               </div>
             </div>
           </div>
+
           <div className=" w-3/5 flex flex-col gap-10 py-20 border-l-2">
             <Dialog>
               <DialogTrigger>
@@ -311,6 +294,7 @@ export default function Registration() {
         </div>
       </form>
     </Form>
+
     //</div>
   );
 }
