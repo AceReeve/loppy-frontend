@@ -3,7 +3,7 @@ import webpack from "webpack";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@repo/ui", "repo/tailwind-config"],
+  transpilePackages: ["@repo/ui"],
   webpack(config) {
     config.plugins.push(
         new webpack.NormalModuleReplacementPlugin(

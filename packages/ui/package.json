@@ -4,6 +4,9 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "files": [
+    "dist"
+  ],
   "exports": {
     "./components/ui": "./src/components/ui/index.tsx",
     "./components/custom": "./src/components/custom/index.tsx",

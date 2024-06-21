@@ -13,7 +13,8 @@ function DefaultAvatar(props: DefaultAvatarProps) {
       <AvatarImage className="bg-primary object-cover" src={props.image} />
       <AvatarFallback className="bg-primary-light border-2 border-white font-bold text-inherit">
         {props.children ??
-          props.name?.split(" ").map((n) => n[0]?.toUpperCase())}
+          props.name?.split(" ").map((n) => n[0]
+              .toUpperCase())}
       </AvatarFallback>
     </Avatar>
   );
