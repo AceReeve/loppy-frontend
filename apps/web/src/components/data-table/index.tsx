@@ -35,31 +35,32 @@ import {
   SheetTitle,
   Separator,
   SheetFooter,
-  DropdownMenuItem,
   Popover,
   PopoverTrigger,
   PopoverContent,
   Command,
-  CommandInput,
   CommandList,
   CommandEmpty,
   CommandGroup,
   CommandItem,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
 } from "@repo/ui/components/ui";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card.tsx";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   XMarkIcon,
   EyeSlashIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+import TagFilter from "@/src/app/dashboard/contacts/filters/tag-filter.tsx";
+import CompanyFilter from "@/src/app/dashboard/contacts/filters/company-filter.tsx";
+import FirstNameFilter from "@/src/app/dashboard/contacts/filters/first-name-filter.tsx";
+import LastNameFilter from "@/src/app/dashboard/contacts/filters/last-name-filter.tsx";
+import EmailFilter from "@/src/app/dashboard/contacts/filters/email-filter.tsx";
+import WildCardNameFilter from "@/src/app/dashboard/contacts/filters/wild-card-name-filter.tsx";
+import AppliedFilter from "@/src/app/dashboard/contacts/filters/applied-filter.tsx";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -67,36 +68,6 @@ interface DataTableProps<TData, TValue> {
   noResultsComponent?: React.ReactNode;
   setFilters: (filter: any) => void;
 }
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/src/components/ui/accordion.tsx";
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger,
-} from "@/src/components/ui/multiselect.tsx";
-import {
-  useCreateContactMutation,
-  useGetContactsQuery,
-} from "@/src/endpoints/contacts.ts";
-import { useCreatePaymentIntentMutation } from "@/src/endpoints/payment.ts";
-import events from "node:events";
-import TagFilter from "@/src/app/dashboard/contacts/filters/tag-filter.tsx";
-import CompanyFilter from "@/src/app/dashboard/contacts/filters/company-filter.tsx";
-import FirstNameFilter from "@/src/app/dashboard/contacts/filters/first-name-filter.tsx";
-import LastNameFilter from "@/src/app/dashboard/contacts/filters/last-name-filter.tsx";
-import EmailFilter from "@/src/app/dashboard/contacts/filters/email-filter.tsx";
-import WildCardNameFilter from "@/src/app/dashboard/contacts/filters/wild-card-name-filter.tsx";
-import { Trash } from "iconsax-react";
-import { Pen } from "lucide-react";
-import AppliedFilter from "@/src/app/dashboard/contacts/filters/applied-filter.tsx";
-import { string } from "zod";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -180,7 +151,7 @@ export function DataTable<TData, TValue>({
     setIsFilterMode((is) => !is);
   }
 
-  function deleteFilter(index: Number) {
+  function deleteFilter(index: number) {
     setSelectedFilters(selectedFilters.filter((_, i) => i !== index));
   }
 
@@ -219,14 +190,14 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("name");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("name");
 
   return (
     <div>
-      <div className="flex items-center py-2 place-content-center">
+      <div className="flex place-content-center items-center py-2">
         <div className="mb-6 flex w-full items-center justify-between">
-          <div className="relative flex flex-row w-full justify-start gap-4">
+          <div className="relative flex w-full flex-row justify-start gap-4">
             <MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-5 w-5 text-gray-500" />
             <Input
               className="max-w-60 pl-10"
@@ -238,7 +209,7 @@ export function DataTable<TData, TValue>({
               value={(table.getColumn(value)?.getFilterValue() as string) ?? ""}
             />
 
-            <div className="flex flex-row h-auto place-items-center space-x-2">
+            <div className="flex h-auto flex-row place-items-center space-x-2">
               <p className="font-nunito text-sm font-bold">Filter by:</p>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -313,7 +284,7 @@ export function DataTable<TData, TValue>({
                         <p>Filter</p>
                       </div>
 
-                      <p className="text-gray-500 text-sm font-nunito content-center">
+                      <p className="font-nunito content-center text-sm text-gray-500">
                         Apply filters to contacts
                       </p>
                     </div>
@@ -322,7 +293,7 @@ export function DataTable<TData, TValue>({
                 <Separator className="my-6" />
                 {isFilterMode ? (
                   <>
-                    <div className="justify-between flex">
+                    <div className="flex justify-between">
                       <Button
                         onClick={() => {
                           setIsFilterMode(!isFilterMode);
@@ -340,8 +311,10 @@ export function DataTable<TData, TValue>({
                       <AppliedFilter
                         key={index}
                         filter={selected}
-                        deleteFilter={() => deleteFilter(index)}
-                      ></AppliedFilter>
+                        deleteFilter={() => {
+                          deleteFilter(index);
+                        }}
+                      />
                     ))}
                     {/* Your component JSX here */}
                     {selectedFilters.length > 0 ? (
@@ -352,14 +325,12 @@ export function DataTable<TData, TValue>({
                         Submit
                       </Button>
                     ) : (
-                      <div className={"text-center"}>
-                        Please select a filter
-                      </div>
+                      <div className="text-center">Please select a filter</div>
                     )}
                   </>
                 ) : (
                   <>
-                    <div className="relative w-70 drop-shadow-lg mb-6">
+                    <div className="w-70 relative mb-6 drop-shadow-lg">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
                         <svg
                           className="h-5 w-5 text-gray-500 "
@@ -371,16 +342,18 @@ export function DataTable<TData, TValue>({
                             fillRule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                             clipRule="evenodd"
-                          ></path>
+                          />
                         </svg>
                       </div>
                       <input
-                        autoComplete={"off"}
+                        autoComplete="off"
                         type="text"
                         name="email"
                         id="topbar-search"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                          setSearchTerm(e.target.value);
+                        }}
                         className="block h-10 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-none placeholder:text-gray-600/50 sm:text-sm"
                         placeholder="Search Filters"
                       />
@@ -406,7 +379,7 @@ export function DataTable<TData, TValue>({
                                 </AccordionTrigger>
                                 <AccordionContent>
                                   {item.content}
-                                  <div className="flex justify-end"></div>
+                                  <div className="flex justify-end" />
                                 </AccordionContent>
                               </AccordionItem>
                             );
@@ -419,7 +392,7 @@ export function DataTable<TData, TValue>({
                 )}
 
                 <Separator className="my-6" />
-                <SheetFooter></SheetFooter>
+                <SheetFooter />
               </SheetContent>
             </Sheet>
 
@@ -439,9 +412,9 @@ export function DataTable<TData, TValue>({
                         checked={column.getIsVisible()}
                         className="capitalize"
                         key={column.id}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(value)
-                        }
+                        onCheckedChange={(value) => {
+                          column.toggleVisibility(value);
+                        }}
                       >
                         {column.id}
                       </DropdownMenuCheckboxItem>
@@ -473,7 +446,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   data-state={row.getIsSelected() && "selected"}

@@ -1,9 +1,8 @@
 import { baseApi } from "@repo/redux-utils/src/api.ts";
-import type {
-  CreateContactPayload,
-  GetContactsResponse,
-  ImportContactsResponse,
-} from "@/src/endpoints/types/contacts";
+import {
+  type GetContactsListResponse,
+  type GetContactsResponse,
+} from "./types/contacts";
 
 const api = baseApi
   .enhanceEndpoints({
@@ -13,7 +12,7 @@ const api = baseApi
     endpoints: (builder) => ({
       getContacts: builder.query<
         GetContactsResponse,
-        Record<string, any> | undefined
+        Record<string, string> | undefined
       >({
         query: (params) => {
           const queryParams = new URLSearchParams(params).toString();
@@ -24,31 +23,15 @@ const api = baseApi
         },
         providesTags: ["contacts"],
       }),
-      createContact: builder.mutation<null, CreateContactPayload>({
-        query: (payload) => {
+      getContactsList: builder.query<GetContactsListResponse, undefined>({
+        query: () => {
           return {
-            url: `/Contacts`,
-            method: "POST",
-            body: payload,
+            url: `/Contacts/list`,
           };
         },
-        invalidatesTags: ["contacts"],
-      }),
-      importContacts: builder.mutation<ImportContactsResponse, FormData>({
-        query: (payload) => {
-          return {
-            url: `/Contacts/import`,
-            method: "POST",
-            body: payload,
-          };
-        },
-        invalidatesTags: ["contacts"],
+        providesTags: ["contacts"],
       }),
     }),
   });
 
-export const {
-  useGetContactsQuery,
-  useCreateContactMutation,
-  useImportContactsMutation,
-} = api;
+export const { useGetContactsQuery, useGetContactsListQuery } = api;

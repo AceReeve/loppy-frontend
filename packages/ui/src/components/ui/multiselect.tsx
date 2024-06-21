@@ -1,24 +1,19 @@
+/* eslint-disable no-nested-ternary, react-hooks/exhaustive-deps -- remove errors, */
 "use client";
 
-import { Badge } from "@/src/components/ui/badge";
-import {
-  Command,
-  CommandItem,
-  CommandEmpty,
-  CommandList,
-} from "@repo/ui/components/ui";
-
-import { cn } from "@/src/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
 import { X as RemoveIcon, Check } from "lucide-react";
 import React, {
-  KeyboardEvent,
+  type KeyboardEvent,
   createContext,
   forwardRef,
   useCallback,
   useContext,
   useState,
 } from "react";
+import { cn } from "../../lib/utils.ts";
+import { Badge } from "./badge.tsx";
+import { Command, CommandEmpty, CommandItem, CommandList } from "./command.tsx";
 
 type MultiSelectorProps = {
   values: string[];
@@ -28,7 +23,7 @@ type MultiSelectorProps = {
 
 interface MultiSelectContextProps {
   value: string[];
-  onValueChange: (value: any) => void;
+  onValueChange: (value: string) => void;
   open: boolean;
   setOpen: (value: boolean) => void;
   inputValue: string;
@@ -47,7 +42,7 @@ const useMultiSelect = () => {
   return context;
 };
 
-const MultiSelector = ({
+function MultiSelector({
   values: value,
   onValuesChange: onValueChange,
   loop = false,
@@ -55,7 +50,7 @@ const MultiSelector = ({
   children,
   dir,
   ...props
-}: MultiSelectorProps) => {
+}: MultiSelectorProps) {
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
@@ -113,12 +108,10 @@ const MultiSelector = ({
         } else if (e.key === "ArrowLeft" && (activeIndex !== -1 || loop)) {
           moveNext();
         }
-      } else {
-        if (e.key === "ArrowLeft") {
-          movePrev();
-        } else if (e.key === "ArrowRight" && (activeIndex !== -1 || loop)) {
-          moveNext();
-        }
+      } else if (e.key === "ArrowLeft") {
+        movePrev();
+      } else if (e.key === "ArrowRight" && (activeIndex !== -1 || loop)) {
+        moveNext();
       }
     },
     [value, inputValue, activeIndex, loop],
@@ -138,19 +131,19 @@ const MultiSelector = ({
       }}
     >
       <Command
-        onKeyDown={handleKeyDown}
         className={cn(
-          "overflow-visible bg-transparent flex flex-col space-y-2",
+          "flex flex-col space-y-2 overflow-visible bg-transparent",
           className,
         )}
         dir={dir}
+        onKeyDown={handleKeyDown}
         {...props}
       >
         {children}
       </Command>
     </MultiSelectContext.Provider>
   );
-};
+}
 
 const MultiSelectorTrigger = forwardRef<
   HTMLDivElement,
@@ -165,32 +158,34 @@ const MultiSelectorTrigger = forwardRef<
 
   return (
     <div
-      ref={ref}
       className={cn(
-        "flex flex-wrap gap-1 p-1 py-2 border border-muted rounded-lg bg-background",
+        "border-muted bg-background flex flex-wrap gap-1 rounded-lg border p-1 py-2",
         className,
       )}
+      ref={ref}
       {...props}
     >
       {value.map((item, index) => (
         <Badge
-          key={item}
           className={cn(
-            "px-1 rounded-xl flex items-center gap-1",
-            activeIndex === index && "ring-2 ring-muted-foreground ",
+            "flex items-center gap-1 rounded-xl px-1",
+            activeIndex === index && "ring-muted-foreground ring-2 ",
           )}
-          variant={"secondary"}
+          key={item}
+          variant="secondary"
         >
           <span className="text-xs">{item}</span>
           <button
             aria-label={`Remove ${item} option`}
             aria-roledescription="button to remove option"
-            type="button"
+            onClick={() => {
+              onValueChange(item);
+            }}
             onMouseDown={mousePreventDefault}
-            onClick={() => onValueChange(item)}
+            type="button"
           >
             <span className="sr-only">Remove {item} option</span>
-            <RemoveIcon className="h-4 w-4 hover:stroke-destructive" />
+            <RemoveIcon className="hover:stroke-destructive h-4 w-4" />
           </button>
         </Badge>
       ))}
@@ -210,17 +205,23 @@ const MultiSelectorInput = forwardRef<
   return (
     <CommandPrimitive.Input
       {...props}
-      ref={ref}
-      value={inputValue}
-      onValueChange={activeIndex === -1 ? setInputValue : undefined}
-      onBlur={() => setOpen(false)}
-      onFocus={() => setOpen(true)}
-      onClick={() => setActiveIndex(-1)}
       className={cn(
-        "ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1",
+        "placeholder:text-muted-foreground ml-2 flex-1 bg-transparent outline-none",
         className,
         activeIndex !== -1 && "caret-transparent",
       )}
+      onBlur={() => {
+        setOpen(false);
+      }}
+      onClick={() => {
+        setActiveIndex(-1);
+      }}
+      onFocus={() => {
+        setOpen(true);
+      }}
+      onValueChange={activeIndex === -1 ? setInputValue : undefined}
+      ref={ref}
+      value={inputValue}
     />
   );
 });
@@ -233,8 +234,8 @@ const MultiSelectorContent = forwardRef<
 >(({ children }, ref) => {
   const { open } = useMultiSelect();
   return (
-    <div ref={ref} className="relative">
-      {open && children}
+    <div className="relative" ref={ref}>
+      {open ? children : null}
     </div>
   );
 });
@@ -247,11 +248,11 @@ const MultiSelectorList = forwardRef<
 >(({ className, children }, ref) => {
   return (
     <CommandList
-      ref={ref}
       className={cn(
-        "p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-background shadow-md z-10 border border-muted top-0",
+        "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg bg-background border-muted absolute top-0 z-10 flex w-full flex-col gap-2 rounded-md border p-2 shadow-md transition-colors",
         className,
       )}
+      ref={ref}
     >
       {children}
       <CommandEmpty>
@@ -281,20 +282,20 @@ const MultiSelectorItem = forwardRef<
     <CommandItem
       ref={ref}
       {...props}
+      className={cn(
+        "flex cursor-pointer justify-between rounded-md px-2 py-1 transition-colors ",
+        className,
+        isIncluded && "cursor-default opacity-50",
+        props.disabled && "cursor-not-allowed opacity-50",
+      )}
+      onMouseDown={mousePreventDefault}
       onSelect={() => {
         onValueChange(value);
         setInputValue("");
       }}
-      className={cn(
-        "rounded-md cursor-pointer px-2 py-1 transition-colors flex justify-between ",
-        className,
-        isIncluded && "opacity-50 cursor-default",
-        props.disabled && "opacity-50 cursor-not-allowed",
-      )}
-      onMouseDown={mousePreventDefault}
     >
       {children}
-      {isIncluded && <Check className="h-4 w-4" />}
+      {isIncluded ? <Check className="h-4 w-4" /> : null}
     </CommandItem>
   );
 });

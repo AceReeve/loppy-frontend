@@ -161,7 +161,7 @@ export default function Page() {
     },
   ];
   return (
-    <div className="h-screen w-auto bg-white text-black antialiased p-5 ">
+    <div className="h-screen w-auto bg-white p-5 text-black antialiased ">
       <PipelineHeader />
       <div className="flex justify-start gap-10">
         {opportunities.length > 0 ? (
@@ -169,7 +169,7 @@ export default function Page() {
             <Opportunity
               key={opportunity.id}
               opportunity={opportunity}
-            ></Opportunity>
+             />
           ))
         ) : (
           <p>No Info Yet</p>

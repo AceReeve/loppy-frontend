@@ -4,16 +4,16 @@ import {
   createColumnHelper,
   getCoreRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
 } from "@tanstack/table-core";
 import { flexRender, useReactTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 
-type Props = {};
+interface Props {}
 
 //TData
-type User = {
+interface User {
   name: string;
   date: string;
   source: string;
@@ -21,7 +21,7 @@ type User = {
   callDuration: string;
   ltv: string;
   existingCustomer: string;
-};
+}
 
 export default function Table(props: Props) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -90,8 +90,8 @@ export default function Table(props: Props) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-card text-sm">
-        <thead className="text-left font-nunito text-xs font-bold uppercase leading-tight tracking-wider text-white">
+      <table className="bg-card min-w-full text-sm">
+        <thead className="font-nunito text-left text-xs font-bold uppercase leading-tight tracking-wider text-white">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header, index) => {

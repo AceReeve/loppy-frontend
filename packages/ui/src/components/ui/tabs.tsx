@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-
-import { cn } from "@/src/lib/utils";
+import { cn } from "../../lib/utils.ts";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -12,11 +11,11 @@ const TabsList = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
-    ref={ref}
     className={cn(
       "inline-flex h-10 w-full items-center justify-start border-b-2 border-gray-200 text-gray-800",
       className,
     )}
+    ref={ref}
     {...props}
   />
 ));
@@ -27,11 +26,11 @@ const TabsTrigger = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
-    ref={ref}
     className={cn(
-      "font-monsterrat inline-flex h-full items-center justify-center whitespace-nowrap rounded-none px-3 text-base font-bold ring-offset-white transition-all data-[state=active]:border-b-2 data-[state=active]:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:data-[state=active]:bg-gray-950 dark:data-[state=active]:text-gray-50 dark:focus-visible:ring-gray-300",
+      "font-monsterrat data-[state=active]:border-primary inline-flex h-full items-center justify-center whitespace-nowrap rounded-none px-3 text-base font-bold ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-b-2 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300 dark:data-[state=active]:bg-gray-950 dark:data-[state=active]:text-gray-50",
       className,
     )}
+    ref={ref}
     {...props}
   />
 ));
@@ -42,11 +41,11 @@ const TabsContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
-    ref={ref}
     className={cn(
       "mt-2 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300",
       className,
     )}
+    ref={ref}
     {...props}
   />
 ));

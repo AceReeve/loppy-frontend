@@ -35,6 +35,8 @@ export interface GetContactsResponse {
   };
 }
 
+export type GetContactsListResponse = Record<string, string>;
+
 export interface Contacts {
   _id: string;
   user_id: string;

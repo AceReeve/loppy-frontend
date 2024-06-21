@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useRef } from "react";
-import Wind from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-wind";
-import RainChance from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-rain-chance";
-
-import UVIndex from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-uv";
-import Pressure from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-pressure";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-type Props = {
+import Wind from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-wind";
+import RainChance from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-rain-chance";
+import UVIndex from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-uv";
+import Pressure from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-pressure";
+
+interface Props {
   header: string;
   description: string;
   measurement: number;
   suffix: string;
-};
+}
 export default function WeatherItem(props: Props) {
   let weatherComponent = null;
   const itemComponent = useRef(null);
@@ -58,7 +58,7 @@ export default function WeatherItem(props: Props) {
       </div>
       <div
         ref={itemComponent}
-        className="flex opacity-0 min-w-[110.78spx] flex-col rounded-full"
+        className="flex min-w-[110.78spx] flex-col rounded-full opacity-0"
       >
         {weatherComponent}
       </div>

@@ -2,15 +2,6 @@ const { resolve } = require("node:path");
 
 const project = resolve(process.cwd(), "tsconfig.json");
 
-/*
- * This is a custom ESLint configuration for use a library
- * that utilizes React.
- *
- * This config extends the Vercel Engineering Style Guide.
- * For more information, see https://github.com/vercel/style-guide
- *
- */
-
 module.exports = {
   extends: [
     "@vercel/style-guide/eslint/browser",
@@ -21,6 +12,7 @@ module.exports = {
     project,
   },
   globals: {
+    React: true,
     JSX: true,
   },
   settings: {
@@ -37,15 +29,15 @@ module.exports = {
   // add rules configurations here
   rules: {
     "@typescript-eslint/explicit-function-return-type": "off",
-    "import/no-default-export": "off",
-    "@typescript-eslint/no-unsafe-call": "off",
-    "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/no-unsafe-return": "off",
-    "jsx-a11y/heading-has-content": "off",
+    // "import/no-default-export": "off",
+    // "@typescript-eslint/no-unsafe-call": "off",
+    // "@typescript-eslint/no-unsafe-assignment": "off",
+    // "@typescript-eslint/no-unsafe-return": "off",
+    // "jsx-a11y/heading-has-content": "off",
   },
   overrides: [
     {
-      files: ["*.config.js"],
+      files: ["*.config.js", ".eslintrc.cjs"],
       env: {
         node: true,
       },

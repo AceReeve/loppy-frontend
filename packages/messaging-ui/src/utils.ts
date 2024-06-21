@@ -10,22 +10,27 @@ import type {
 import type { ToastProps } from "@repo/ui/components/ui";
 import { toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import type { ReduxMessage } from "@repo/redux-utils/src/types/messaging/messaging";
+import type {
+  ReduxMessage,
+  ReduxParticipant,
+} from "@repo/redux-utils/src/types/messaging/messaging";
 import moment from "moment";
+import { type Dispatch } from "react";
+import { updateParticipants } from "@repo/redux-utils/src/slices/messaging/participants-slice.ts";
+import { type Session } from "@repo/redux-utils/src";
+import { truncate } from "@repo/hooks-and-utils/string-utils";
+import { type UnknownAction } from "@reduxjs/toolkit";
 import {
-  CONVERSATION_MESSAGES,
   CONVERSATION_PAGE_SIZE,
   PARTICIPANT_MESSAGES,
   USER_PROFILE_MESSAGES,
 } from "./constants";
-import { Dispatch } from "react";
-import { updateParticipants } from "@repo/redux-utils/src/slices/messaging/participants-slice.ts";
 
 type ParticipantResponse = ReturnType<typeof Conversation.prototype.add>;
 
 export async function addConversation(
   name: string,
-  dispatch: Dispatch<any>,
+  dispatch: Dispatch<UnknownAction>,
   client?: Client,
 ): Promise<Conversation> {
   if (client === undefined) {
@@ -39,25 +44,23 @@ export async function addConversation(
   }
 
   try {
-    console.log(name);
-    const conversation = await client.createConversation({
-      friendlyName: name,
-    });
-    console.log("conversation", conversation);
+    const conversation = await client.createConversation(
+    // {
+    //   uniqueName: name,
+    // }
+    );
     await conversation.join();
 
     const participants = await conversation.getParticipants();
     dispatch(
       updateParticipants({
-        participants: participants,
+        participants,
         sid: conversation.sid,
       }),
     );
 
-    successNotification(CONVERSATION_MESSAGES.CREATED);
-
     return conversation;
-  } catch (e: any) {
+  } catch (e) {
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -79,9 +82,9 @@ export async function addChatParticipant(
 
   try {
     const result = await convo.add(name);
-    successNotification(PARTICIPANT_MESSAGES.ADDED);
+    // successNotification(PARTICIPANT_MESSAGES.ADDED);
     return result;
-  } catch (e: any) {
+  } catch (e) {
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -105,14 +108,12 @@ export async function addNonChatParticipant(
   }
 
   try {
-    const result = await convo.addNonChatParticipant(proxyNumber, number, {
-      friendlyName: number,
-    });
-
-    successNotification(PARTICIPANT_MESSAGES.ADDED);
+    const result = await convo.addNonChatParticipant(proxyNumber, number);
+    // successNotification(PARTICIPANT_MESSAGES.ADDED);
 
     return result;
-  } catch (e: any) {
+  } catch (e) {
+    await convo.delete();
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -124,7 +125,7 @@ export async function readUserProfile(
 ): Promise<User | undefined> {
   try {
     return await client?.getUser(identity);
-  } catch (e: any) {
+  } catch (e) {
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -139,7 +140,7 @@ export async function updateFriendlyName(
     successNotification(USER_PROFILE_MESSAGES.FRIENDLY_NAME_UPDATED);
 
     return result;
-  } catch (e: any) {
+  } catch (e) {
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -152,7 +153,7 @@ export const removeParticipant = async (
   try {
     await conversation.removeParticipant(participant);
     successNotification(PARTICIPANT_MESSAGES.REMOVED);
-  } catch (e: any) {
+  } catch (e) {
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -163,7 +164,7 @@ export const getBlobFile = async (media: Media): Promise<Blob> => {
     const url = await getFileUrl(media);
     const response = await fetch(url);
     return response.blob();
-  } catch (e: any) {
+  } catch (e) {
     unexpectedErrorNotification(e);
     throw e;
   }
@@ -222,7 +223,7 @@ export function getLastMessageTime(messages: ReduxMessage[], on: boolean) {
 
 export function getFirstMessagePerDate(messages: ReduxMessage[]) {
   // Group messages by dateCreated
-  const messagesByDate: Record<string, typeof messages> = {};
+  const messagesByDate: Record<string, typeof messages | undefined> = {};
 
   for (const message of messages) {
     if (message.dateCreated) {
@@ -230,10 +231,9 @@ export function getFirstMessagePerDate(messages: ReduxMessage[]) {
       if (!messagesByDate[dateKey]) {
         messagesByDate[dateKey] = [message];
       } else {
-        const existingMessage = messagesByDate[dateKey][0];
+        const existingMessage = messagesByDate[dateKey]?.[0];
         if (
-          existingMessage &&
-          existingMessage.dateCreated &&
+          existingMessage?.dateCreated &&
           message.dateCreated < existingMessage.dateCreated
         ) {
           messagesByDate[dateKey] = [message];
@@ -245,7 +245,10 @@ export function getFirstMessagePerDate(messages: ReduxMessage[]) {
   // Extract sid values from the earliest messages per day
   const earliestSidsPerDay: string[] = [];
   for (const dateKey in messagesByDate) {
-    earliestSidsPerDay.push(messagesByDate[dateKey][0].sid);
+    const message = messagesByDate[dateKey];
+    if (message) {
+      earliestSidsPerDay.push(message[0].sid);
+    }
   }
 
   return earliestSidsPerDay;
@@ -262,7 +265,7 @@ export function successNotification(
 }
 
 export function unexpectedErrorNotification(
-  e: string,
+  e: unknown,
   addNotifications?: ToastProps,
 ) {
   toast({
@@ -274,5 +277,27 @@ export function unexpectedErrorNotification(
 
 export const getTypingMessage = (typingData: string[]): string =>
   typingData.length > 1
-    ? `${typingData.length + " participants are typing..."}`
-    : `${typingData[0] + " is typing..."}`;
+    ? `${typingData.length.toString()} participants are typing...`
+    : `${typingData[0]} is typing...`;
+
+export const getConvoParticipantsFormatted = (
+  contactsMap: Record<string, string> | undefined,
+  participants: ReduxParticipant[],
+  session: Session | null,
+) => {
+  const convoParticipants = participants.filter(
+    (p) => p.identity !== session?.user?.email,
+  );
+
+  const label =
+    convoParticipants
+      .map((p) =>
+        p.address
+          ? contactsMap?.[p.address] ?? p.address
+          : p.identity?.split("@")[0],
+      )
+      .join(", ")
+      .toString() || "Empty";
+
+  return { label: truncate(label, 20), participants: convoParticipants };
+};

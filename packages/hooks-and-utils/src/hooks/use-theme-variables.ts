@@ -1,21 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
-export default function useThemeVariables() {
+function useThemeVariables() {
   const [computedStyle, setComputedStyle] = useState<CSSStyleDeclaration>();
   const { theme } = useTheme();
 
   useEffect(() => {
     const computedDocStyle = getComputedStyle(document.documentElement);
-
-    if (computedDocStyle) {
-      setComputedStyle(computedDocStyle);
-    }
+    setComputedStyle(computedDocStyle);
   }, [theme]);
 
   /**
    * returns the actual rgb color defined on globals.css
-   * @param colorVariableName variable defined on globals.css (format: --color-primary)
+   * @param colorVariableName - variable defined on globals.css (format: --color-primary)
    */
   const getColorVariable = useCallback(
     (colorVariableName: string) => {
@@ -23,7 +20,9 @@ export default function useThemeVariables() {
       const color = computedStyle.getPropertyValue(colorVariableName);
 
       if (!color)
-        throw "Invalid color variable. Check if css variable is properly defined.";
+        throw Error(
+          "Invalid color variable. Check if css variable is properly defined.",
+        );
 
       return `rgb(${computedStyle.getPropertyValue(colorVariableName)})`;
     },
@@ -32,3 +31,5 @@ export default function useThemeVariables() {
 
   return { getColorVariable };
 }
+
+export { useThemeVariables };

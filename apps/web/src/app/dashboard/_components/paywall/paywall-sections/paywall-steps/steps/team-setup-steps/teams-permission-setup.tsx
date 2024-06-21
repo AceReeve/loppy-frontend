@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
+import type { InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/user";
 import type { TeamsSetupStepsProps } from "@/src/app/dashboard/_components/paywall/paywall.d.ts";
-import type { InviteUserResponse } from "@/src/endpoints/types/user";
 import { ComboBox } from "./_components/combo-box";
 
 const renderEmailList = (emails?: InviteUserResponse["emails"]) => {
@@ -10,7 +10,7 @@ const renderEmailList = (emails?: InviteUserResponse["emails"]) => {
         className="flex w-full items-center justify-between"
         key={email.email}
       >
-        <span className="font-nunito text-sm text-card">
+        <span className="font-nunito text-card text-sm">
           {index + 1}. {email.email} ({email.status})
         </span>
         <ComboBox />
@@ -18,7 +18,7 @@ const renderEmailList = (emails?: InviteUserResponse["emails"]) => {
     ));
   } else {
     return (
-      <span className="font-nunito text-sm text-card">No emails invited</span>
+      <span className="font-nunito text-card text-sm">No emails invited</span>
     );
   }
 };
@@ -38,6 +38,7 @@ export default function TeamsPermissionSetup(props: TeamsSetupStepsProps) {
           onClick={() => {
             props.handleFinalSubmit();
           }}
+          type="button"
         >
           Next
           <ArrowRightIcon className="size-4" />

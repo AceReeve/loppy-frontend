@@ -2,11 +2,16 @@
   "name": "@repo/redux-utils",
   "version": "0.0.0",
   "type": "module",
-  "main": "./index.tsx",
-  "types": "./index.tsx",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
+  "scripts": {
+    "lint": "eslint src/"
+  },
   "devDependencies": {
     "@reduxjs/toolkit": "^2.2.5",
+    "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@twilio/conversations": "^2.5.0",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "@types/react-redux": "^7.1.33",

@@ -1,13 +1,13 @@
-import { usePaywallState } from "@/src/providers/paywall-provider";
 import Image from "next/image";
 import { formatDecimal } from "@repo/hooks-and-utils/number-utils";
+import { usePaywallState } from "@/src/providers/paywall-provider";
 
 export default function PaywallOrderDetails() {
   const { onPromoCodeSubmit, onSubmit, paymentPlan } = usePaywallState();
   const tax = 10;
 
   return (
-    <div className="mx-auto max-w-[336px] font-nunito">
+    <div className="font-nunito mx-auto max-w-[336px]">
       <div className="mb-5 text-lg font-bold leading-[18px] text-black">
         Order Details
       </div>
@@ -48,7 +48,7 @@ export default function PaywallOrderDetails() {
         </div>
       </div>
 
-      <div className="mt-4 border-t-[0.5px] border-[#D7D7D7]"></div>
+      <div className="mt-4 border-t-[0.5px] border-[#D7D7D7]" />
       <div className="mt-2 flex justify-between">
         <div className="mt-2 font-medium leading-normal text-gray-700">
           Total
@@ -72,7 +72,7 @@ export default function PaywallOrderDetails() {
         <div className="mt-2 flex justify-between">
           <input
             type="text"
-            className="mt-1 block h-12 flex-1 rounded-lg border border-gray-200 bg-white shadow-soft"
+            className="shadow-soft mt-1 block h-12 flex-1 rounded-lg border border-gray-200 bg-white"
           />
         </div>
       </form>
@@ -81,6 +81,7 @@ export default function PaywallOrderDetails() {
         <button
           className="btn-gradient-primary-lg mt-7 w-full"
           onClick={onSubmit}
+          type="button"
         >
           Next
         </button>

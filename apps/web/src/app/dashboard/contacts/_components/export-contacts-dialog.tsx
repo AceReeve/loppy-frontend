@@ -2,13 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { number, string, z } from "zod";
-import { format } from "date-fns";
+import { z } from "zod";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/src/lib/utils";
-import { Button } from "@/src/components/ui/button";
-import { Calendar } from "@/src/components/ui/calendar";
+import { useLazyExportContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import {
+  Button,
+  Calendar,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
   Form,
   FormControl,
   FormDescription,
@@ -16,27 +18,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/src/components/ui/form";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/src/components/ui/popover";
-import {
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
   Separator,
-  toast,
-} from "@/src/components/ui";
-import {
-  useCreateContactMutation,
-  useLazyExportContactsQuery,
-} from "@/src/endpoints/contacts.ts";
-import {
-  ExportContactsPayload,
-  ExportContactsResponse,
-} from "@/src/endpoints/types/contacts";
+} from "@repo/ui/components/ui";
+import { cn } from "@repo/ui/utils";
+import moment from "moment";
 
 export default function ExportContactsDialogForm() {
   const FormSchema = z.object({
@@ -80,7 +68,7 @@ export default function ExportContactsDialogForm() {
     }
   };
   return (
-    <DialogContent className="p-5 min-w-[600px]">
+    <DialogContent className="min-w-[600px] p-5">
       <DialogHeader className="font-bold">Export Contacts</DialogHeader>
       <Separator />
       <Form {...form}>
@@ -96,14 +84,14 @@ export default function ExportContactsDialogForm() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                              moment(field.value).format("PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -123,7 +111,7 @@ export default function ExportContactsDialogForm() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <FormDescription></FormDescription>
+                  <FormDescription />
                   <FormMessage />
                 </FormItem>
               )}
@@ -139,14 +127,14 @@ export default function ExportContactsDialogForm() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                              moment(field.value).format("PPP")
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -166,7 +154,7 @@ export default function ExportContactsDialogForm() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <FormDescription></FormDescription>
+                  <FormDescription />
                   <FormMessage />
                 </FormItem>
               )}
@@ -176,7 +164,7 @@ export default function ExportContactsDialogForm() {
           <DialogFooter>
             <Button
               type="submit"
-              className="justify-items-end flex"
+              className="flex justify-items-end"
               onClick={handleExport}
             >
               Submit

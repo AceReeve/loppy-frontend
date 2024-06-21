@@ -1,14 +1,13 @@
-import { NotificationsType } from "@repo/redux-utils/src/slices/messaging/notification-slice.ts";
-import { toast, ToastProps } from "@repo/ui/components/ui";
+import { toast, type ToastProps } from "@repo/ui/components/ui";
 import { getErrorMessage } from "./error-utils.ts";
 
 export const handlePromiseRejection = async (
-  func: () => void,
+  func: () => Promise<void> | void,
   toastProps?: ToastProps,
 ): Promise<void> => {
   try {
-    func();
-  } catch (e: any) {
+    await func();
+  } catch (e) {
     toast({
       variant: "destructive",
       description: getErrorMessage(e),

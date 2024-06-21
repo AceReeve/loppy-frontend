@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
-import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { AlertCircle } from "lucide-react";
+import { useSummarizePaymentMutation } from "@repo/redux-utils/src/endpoints/payment.ts";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { usePaywallState } from "@/src/providers/paywall-provider";
-import { useSummarizePaymentMutation } from "@/src/endpoints/payment.ts";
 
 export default function PaywallOrderSummary() {
   const [isLoading, setLoading] = useState(true);

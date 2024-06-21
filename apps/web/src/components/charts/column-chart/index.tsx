@@ -1,7 +1,7 @@
 "use client";
 import type { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
-import useThemeVariables from "@repo/hooks-and-utils/hooks/use-theme-variables";
+import { useThemeVariables } from "@repo/hooks-and-utils/hooks/use-theme-variables";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -113,7 +113,7 @@ export default function ColumnChart() {
             "text-xs font-medium fill-[#B2B2B2] leading-tight tracking-tight",
         },
         formatter: (value) => {
-          return `${value}k`;
+          return `${value.toString()}k`;
         },
       },
     },
@@ -122,7 +122,7 @@ export default function ColumnChart() {
       colors: ["#CFCFCF", colorPrimary],
       gradient: {
         type: "vertical",
-        gradientToColors: ["#CFCFCF", colorPrimary || "#000"],
+        gradientToColors: ["#CFCFCF", colorPrimary ?? "#000"],
         opacityTo: [1, 0.66],
         stops: [0, 100],
       },

@@ -1,23 +1,26 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { useMessagesState } from "@/src/providers/messages-provider.tsx";
-import MessageInputField from "@/src/components/conversation-view/message-input-field.tsx";
-import MessageInputTo from "@/src/components/conversation-view/message-input-to.tsx";
+import React, { useState } from "react";
+import { useMessagesState } from "../../providers/messages-provider.tsx";
+import MessageInputTo from "./message-input-to.tsx";
+import MessageInputField from "./message-input-field.tsx";
 
 export default function NewConversationView() {
   const { client } = useMessagesState();
   const [contacts, setContacts] = useState<string[]>([]);
+  // TODO: To implement
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- will implement later
+  const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
 
   return (
     <section className="flex flex-auto flex-col border-l border-gray-200">
       <div className="chat-header flex flex-none flex-row items-center justify-between px-6 py-4 shadow">
-        <div className="flex flex-col w-full">
+        <div className="flex w-full flex-col">
           <div className="text-md">
             <p className="font-bold">New Message</p>
           </div>
-          <div className="w-full flex mt-4 items-start gap-2">
-            <div className="font-nunito text-sm pt-4">To:</div>
+          <div className="mt-4 flex w-full items-start gap-2">
+            <div className="font-nunito pt-4 text-sm">To:</div>
             <MessageInputTo
               className="w-full flex-wrap rounded-xl"
               contacts={contacts}
@@ -28,7 +31,7 @@ export default function NewConversationView() {
       </div>
       {client ? (
         <>
-          <div className="custom-scrollbar-neutral flex column-reverse size-full pl-4 chat-body flex-1 overflow-y-scroll bg-gray-100 p-4">
+          <div className="custom-scrollbar-neutral column-reverse chat-body flex size-full flex-1 overflow-y-scroll bg-gray-100 p-4 pl-4">
             {/*<div className="inline-flex w-full flex-col items-start justify-start gap-1">*/}
             {/*  test*/}
             {/*</div>*/}
@@ -41,7 +44,7 @@ export default function NewConversationView() {
             <MessageInputField
               client={client}
               selectedContacts={contacts}
-              // droppedFiles={droppedFiles}
+              droppedFiles={droppedFiles}
               // typingData={typingData}
             />
           </div>

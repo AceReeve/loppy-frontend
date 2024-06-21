@@ -1,4 +1,4 @@
-import { jwtVerify, SignJWT } from "jose";
+import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 
 export function getJwtSecretKey() {
   const secret = process.env.APP_JWT_SECRET;
@@ -10,7 +10,7 @@ export function getJwtSecretKey() {
   return new TextEncoder().encode(secret);
 }
 
-export const signJwt = async (payload: any, expiresIn = "1d") => {
+export const signJwt = async (payload: JWTPayload, expiresIn = "1d") => {
   return await new SignJWT(payload)
     .setProtectedHeader({
       alg: "HS256",

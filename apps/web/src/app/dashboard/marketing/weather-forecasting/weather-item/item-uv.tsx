@@ -1,8 +1,8 @@
 export default function UVIndex() {
   return (
     <div className="h-full w-full">
-      <div className="absolute font-roboto font-bold text-center h-[110px] w-[110px] ">
-        <div className=" content-center h-full w-full text-center">Low</div>
+      <div className="font-roboto absolute h-[110px] w-[110px] text-center font-bold ">
+        <div className=" h-full w-full content-center text-center">Low</div>
       </div>
 
       <svg width="116" height="93" viewBox="0 0 116 93" fill="none">

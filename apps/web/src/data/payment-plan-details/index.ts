@@ -1,12 +1,12 @@
-import { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
+import { PaymentPlan } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 
-export type PlanDetails = {
+export interface PlanDetails {
   title: string;
   name: string;
   cost: number;
   inclusions: string[];
   plan: PaymentPlan;
-};
+}
 
 export const paymentPlanDetails: { [_key in PaymentPlan]: PlanDetails } = {
   [PaymentPlan.ESSENTIAL]: {

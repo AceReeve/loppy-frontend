@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import {
   Button,
   DropdownMenu,
@@ -16,12 +16,12 @@ import { Checkbox } from "@/src/components/ui/checkbox";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
+export interface Payment {
   id: string;
   amount: number;
   status: "pending" | "processing" | "success" | "failed";
   email: string;
-};
+}
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -32,14 +32,14 @@ export const columns: ColumnDef<Payment>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={(value) => { table.toggleAllPageRowsSelected(Boolean(value)); }}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={(value) => { row.toggleSelected(Boolean(value)); }}
         aria-label="Select row"
       />
     ),
@@ -56,7 +56,7 @@ export const columns: ColumnDef<Payment>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => { column.toggleSorting(column.getIsSorted() === "asc"); }}
         >
           Email
           <ArrowsUpDownIcon className="ml-2 h-4 w-4" />

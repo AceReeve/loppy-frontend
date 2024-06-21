@@ -6,6 +6,7 @@
   ],
   "exports": {
     "./components/ui": "./src/components/ui/index.tsx",
+    "./components/custom": "./src/components/custom/index.tsx",
     "./hooks": "./src/lib/hooks/index.tsx",
     "./utils": "./src/lib/utils.ts",
     "./styles.css": "./dist/index.css",

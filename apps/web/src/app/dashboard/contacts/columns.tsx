@@ -1,10 +1,9 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/src/components/ui/checkbox";
 import moment from "moment";
-import { GetContactsResponse } from "@/src/endpoints/types/contacts";
-import { Button } from "@/src/components/ui/button";
+import { type GetContactsResponse } from "@repo/redux-utils/src/endpoints/types/contacts";
+import { Button, Checkbox } from "@repo/ui/components/ui";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -54,7 +53,12 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       }
 
       return (
-        <Button variant="ghost" onClick={() => SortHandler()}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            SortHandler();
+          }}
+        >
           Name
         </Button>
       );
@@ -64,7 +68,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       const email = row.original.email;
       return (
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary" />
+          <div className="bg-primary h-10 w-10 rounded-full" />
           <div className="flex flex-col">
             <div className="font-medium">{name}</div>
             <div className="text-gray-700">{email}</div>
@@ -87,7 +91,12 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       }
 
       return (
-        <Button variant="ghost" onClick={() => SortHandler()}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            SortHandler();
+          }}
+        >
           Source
         </Button>
       );
@@ -103,7 +112,12 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       }
 
       return (
-        <Button variant="ghost" onClick={() => SortHandler()}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            SortHandler();
+          }}
+        >
           Lifetime Value
         </Button>
       );
@@ -128,7 +142,12 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       }
 
       return (
-        <Button variant="ghost" onClick={() => SortHandler()}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            SortHandler();
+          }}
+        >
           Last Campaign Ran
         </Button>
       );
@@ -144,7 +163,12 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       }
 
       return (
-        <Button variant="ghost" onClick={() => SortHandler()}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            SortHandler();
+          }}
+        >
           Last Interaction
         </Button>
       );
@@ -160,9 +184,8 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
     cell: ({ row }) => {
       if (row.original.tags && row.original.tags.length > 0) {
         return row.original.tags.map((tag) => tag.tag_name).join(", "); // Join tag_name values into a single-line string
-      } else {
-        return "NONE"; // Return "NONE" if the array is empty or undefined
       }
+      return "NONE"; // Return "NONE" if the array is empty or undefined
     },
   },
 ];

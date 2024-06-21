@@ -1,21 +1,17 @@
-import {
+import type {
   Conversation,
   Media,
   Message,
   Participant,
   User,
 } from "@twilio/conversations";
-import {
+import type {
   ReduxConversation,
   ReduxMedia,
   ReduxMessage,
   ReduxParticipant,
   ReduxUser,
 } from "../../types/messaging/messaging";
-// import { ReduxConversation } from "./store/reducers/convoReducer";
-// import { ReduxMedia, ReduxMessage } from "./store/reducers/messageListReducer";
-// import { ReduxParticipant } from "./store/reducers/participantsReducer";
-// import { ReduxUser } from "./store/reducers/userReducer";
 
 export const conversationsMap = new Map<string, Conversation>();
 export const messagesMap = new Map<string, Message>();

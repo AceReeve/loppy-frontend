@@ -8,9 +8,9 @@ import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { signOut } from "next-auth/react";
 import { SunIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import { usePathname } from "next/navigation";
+import { DefaultAvatar } from "@repo/ui/components/custom";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 
 export default function DashboardHeader() {
   const [mounted, setMounted] = useState(false);
@@ -24,9 +24,9 @@ export default function DashboardHeader() {
     setMounted(true);
   }, []);
 
-  if (pathname === "/dashboard/messages") {
-    return <></>;
-  }
+  if (pathname === "/dashboard/messages") return null;
+
+  if (!session) return null;
 
   return (
     <nav className="relative z-30 w-full border-b border-black/10 bg-gray-50">
@@ -60,7 +60,7 @@ export default function DashboardHeader() {
                   </svg>
                 </div>
                 <input
-                  className="block h-11 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 shadow-softer placeholder:text-gray-600/50 sm:text-sm"
+                  className="shadow-softer block h-11 w-full rounded-lg border-none bg-white p-2.5 px-3.5 py-3 pl-10 text-gray-900 placeholder:text-gray-600/50 sm:text-sm"
                   id="topbar-search"
                   name="email"
                   placeholder="Search anything here"
@@ -81,7 +81,7 @@ export default function DashboardHeader() {
               {mounted ? (
                 <>
                   {theme === "dark" ? (
-                    <Moon className="size-full text-primary" />
+                    <Moon className="text-primary size-full" />
                   ) : (
                     <SunIcon className="size-full text-gray-600" />
                   )}
@@ -108,30 +108,26 @@ export default function DashboardHeader() {
             {/* Profile */}
             <Menu as="div" className="relative">
               <Menu.Button className="relative ml-3 flex items-center gap-3">
-                <div className="absolute -inset-2 rounded-lg hover:bg-black/10 hover:shadow-soft" />
+                <div className="hover:shadow-soft absolute -inset-2 rounded-lg hover:bg-black/10" />
                 <span className="sr-only">Open user menu</span>
                 <div className="pointer-events-none relative flex overflow-hidden rounded-full text-sm focus:ring-4 focus:ring-gray-300">
                   <div className="size-10">
-                    <Avatar>
-                      <AvatarImage
-                        className="object-cover"
-                        src="/assets/images/abe-lincoln.jpeg"
-                      />
-                      <AvatarFallback>EX</AvatarFallback>
-                    </Avatar>
-                    {/*<ProfilePicDefault name={session?.user.email} />*/}
+                    <DefaultAvatar
+                      image={session.user.image ?? ""}
+                      name={session.user.name ?? ""}
+                    />
                   </div>
                 </div>
                 <div className="pointer-events-none relative inline-flex flex-col items-start justify-center whitespace-nowrap">
                   <div className="font-nunito text-base font-bold text-black">
-                    {session?.user.email?.split("@")[0]}
+                    {session.user.email?.split("@")[0]}
                   </div>
                   <div className="font-nunito text-xs font-normal text-gray-700 text-opacity-50">
                     Monday, 16 Jul 2023
                   </div>
                 </div>
               </Menu.Button>
-              <Menu.Items className="absolute right-0 mt-4 w-56 origin-top-right divide-y divide-black/10 rounded-md bg-card shadow-soft ring-1 ring-black/5 focus:outline-none">
+              <Menu.Items className="bg-card shadow-soft absolute right-0 mt-4 w-56 origin-top-right divide-y divide-black/10 rounded-md ring-1 ring-black/5 focus:outline-none">
                 <Menu.Item>
                   {({ active }) => (
                     <Link
@@ -154,7 +150,8 @@ export default function DashboardHeader() {
                       className={`${
                         active ? "bg-primary text-white" : "text-gray-900"
                       } group flex w-full items-center rounded-md p-3 text-sm`}
-                      onClick={() => signOut({ callbackUrl: "/" })}
+                      onClick={() => void signOut({ callbackUrl: "/" })}
+                      type="button"
                     >
                       <ArrowLeftStartOnRectangleIcon
                         aria-hidden="true"

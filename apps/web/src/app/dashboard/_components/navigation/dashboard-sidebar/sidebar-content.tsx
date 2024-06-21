@@ -3,7 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Disclosure, Transition } from "@headlessui/react";
-import { useDashboardState } from "@/src/providers/dashboard-provider";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 import Image from "next/image";
 import {
@@ -20,10 +19,7 @@ import {
   DialogContent,
   Avatar,
   AvatarFallback,
-} from "@repo/ui/components/ui";
-import React from "react";
-import WorkspaceButton from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/dashboard-sidebar-workspace";
-import {
+
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -31,18 +27,20 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
-} from "@repo/ui/components/ui";
+  DrawerTrigger} from "@repo/ui/components/ui";
+import React from "react";
+import WorkspaceButton from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/dashboard-sidebar-workspace";
+import { useDashboardState } from "@/src/providers/dashboard-provider";
 
-type Props = {
+interface Props {
   menuItems: MenuItem;
-};
+}
 
 export default function SidebarContent(props: Props) {
   const { sidebarCollapsed: collapsed } = useDashboardState();
 
   const pathName = usePathname();
-  const currentParentPath = "/" + pathName?.split("/")[2];
+  const currentParentPath = `/${  pathName.split("/")[2]}`;
   const menus = props.menuItems.items;
   const rootSlug = props.menuItems.slug;
   // const role = props.session?.user?.data?.role;
@@ -75,9 +73,9 @@ export default function SidebarContent(props: Props) {
 
   function getPath(path: string[] | string) {
     if (typeof path === "string") {
-      return "/" + rootSlug.concat(path);
+      return `/${  rootSlug.concat(path)}`;
     }
-    return "/" + rootSlug.concat(path.join(""));
+    return `/${  rootSlug.concat(path.join(""))}`;
   }
 
   function isActive(path: string[] | string) {
@@ -87,7 +85,7 @@ export default function SidebarContent(props: Props) {
   const renderMenuIcon = (icon: MenuLinkItem["icon"]) => (
     <>
       {icon && typeof icon === "string" ? (
-        // eslint-disable-next-line @next/next/no-img-element
+         
         <img src={icon} alt="" className="relative h-6 w-6" />
       ) : (
         icon
@@ -102,14 +100,14 @@ export default function SidebarContent(props: Props) {
           <Link
             href={getPath([menuItem.url])}
             className={`${menuItemClass} ${
-              isActive(menuItem.url) ? `${activeClass}` : ""
+              isActive(menuItem.url) ? activeClass : ""
             }`}
           >
             {isActive(menuItem.url) && (
               <span
-                className="absolute inset-0 animate-sidebar-select rounded-[11px] bg-primary"
+                className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
                 aria-hidden="true"
-              ></span>
+               />
             )}
             {renderMenuIcon(menuItem.icon)}
             <span
@@ -134,7 +132,7 @@ export default function SidebarContent(props: Props) {
                 {renderMenuIcon(menuItem.icon)}
                 {menuItem.collapsible === false ? (
                   <span
-                    className={`${titleClass} mt-5 font-montserrat text-sm font-semibold uppercase tracking-wide text-[#fff] text-opacity-50 ${collapsed ? collapsedTitleClass : ""}`}
+                    className={`${titleClass} font-montserrat mt-5 text-sm font-semibold uppercase tracking-wide text-[#fff] text-opacity-50 ${collapsed ? collapsedTitleClass : ""}`}
                   >
                     {menuItem.title}
                   </span>
@@ -158,15 +156,15 @@ export default function SidebarContent(props: Props) {
                     href={getPath([menuItem.url, subItem.url])}
                     className={`${menuItemClass} ${
                       isActive([menuItem.url, subItem.url])
-                        ? `${activeClass}`
+                        ? activeClass
                         : ""
                     }`}
                   >
                     {isActive([menuItem.url, subItem.url]) && (
                       <span
-                        className="absolute inset-0 animate-sidebar-select rounded-[11px] bg-primary"
+                        className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
                         aria-hidden="true"
-                      ></span>
+                       />
                     )}
                     <span
                       className={`${titleClass} ${collapsed ? collapsedTitleClass : ""}`}
@@ -299,7 +297,7 @@ export default function SidebarContent(props: Props) {
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="inline-flex h-[47px] w-full items-center justify-start gap-2 rounded-lg bg-card px-3 py-3.5 shadow"
+            className="bg-card inline-flex h-[47px] w-full items-center justify-start gap-2 rounded-lg px-3 py-3.5 shadow"
           >
             <Image
               src="/assets/images/logo.png"
@@ -309,7 +307,7 @@ export default function SidebarContent(props: Props) {
               className="size-[25px]"
             />
             <div
-              className={`shrink grow basis-0 whitespace-nowrap font-nunito text-base font-bold text-gray-800`}
+              className="font-nunito shrink grow basis-0 whitespace-nowrap text-base font-bold text-gray-800"
             >
               Service Hero
             </div>
@@ -319,14 +317,14 @@ export default function SidebarContent(props: Props) {
             </div>
           </Button>
         </DialogTrigger>
-        <DialogContent className="block min-w-[600px] w-[1000px] max-w-[1000px] h-min-[600px] h-auto max-h-[900px] px-16 py-5 overflow-y-auto bg-[#2E1249] rounded-3xl">
-          <div className=" h-auto flex justify-between w-full content-center">
-            <p className="font-nunito text-[48px] font-bold content-center text-white">
+        <DialogContent className="h-min-[600px] block h-auto max-h-[900px] w-[1000px] min-w-[600px] max-w-[1000px] overflow-y-auto rounded-3xl bg-[#2E1249] px-16 py-5">
+          <div className=" flex h-auto w-full content-center justify-between">
+            <p className="font-nunito content-center text-[48px] font-bold text-white">
               Workspaces
             </p>
-            <div className="items-center flex w-auto gap-2">
+            <div className="flex w-auto items-center gap-2">
               <Button className=" text-xl">Create</Button>
-              <div className="relative w-70 ">
+              <div className="w-70 relative ">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
                   <svg
                     className="h-5 w-5 text-gray-500 "
@@ -338,7 +336,7 @@ export default function SidebarContent(props: Props) {
                       fillRule="evenodd"
                       d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                       clipRule="evenodd"
-                    ></path>
+                     />
                   </svg>
                 </div>
                 <input
@@ -352,16 +350,16 @@ export default function SidebarContent(props: Props) {
             </div>
           </div>
           <div className="h-[1px] w-full bg-white" />
-          <div className="grid-cols-2 gap-x-20 grid gap-y-4 my-5 ">
+          <div className="my-5 grid grid-cols-2 gap-x-20 gap-y-4 ">
             {Array.from({ length: 4 }).map((_item, index) => (
               <WorkspaceButton key={index} />
             ))}
           </div>
-          <p className="text-white font-semibold tracking-wider ml-5 h-8">
+          <p className="ml-5 h-8 font-semibold tracking-wider text-white">
             RECENT
           </p>
           <div className="h-[1px] w-full bg-white" />
-          <div className="grid-cols-2 gap-x-20 grid gap-y-4 my-5 ">
+          <div className="my-5 grid grid-cols-2 gap-x-20 gap-y-4 ">
             {Array.from({ length: 4 }).map((_item, index) => (
               <WorkspaceButton key={index} />
             ))}

@@ -1,35 +1,26 @@
 import { Fragment, useState } from "react";
 import { toast } from "@repo/ui/components/ui";
-import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { useValidateInviteUserMutation } from "@repo/redux-utils/src/endpoints/user.ts";
+import { PaymentPlan } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
+import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { usePaywallState } from "@/src/providers/paywall-provider";
-import TeamsAddTeam from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-add-team";
-import TeamsPermissionSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-permission-setup";
-import TeamsSubmit from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/team-setup-steps/teams-submit";
-import {
-  useInviteUserMutation,
-  useValidateInviteUserMutation,
-} from "@/src/endpoints/user.ts";
-import { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
-import { signOut } from "next-auth/react";
+import TeamsAddTeam from "./team-setup-steps/teams-add-team.tsx";
+import TeamsPermissionSetup from "./team-setup-steps/teams-permission-setup.tsx";
+import TeamsSubmit from "./team-setup-steps/teams-submit.tsx";
 
 export default function PaywallTeamSetup() {
   const [stepIndex, setStepIndex] = useState(0);
-  const { setStorage, paymentPlan } = usePaywallState();
+  const { setStorage } = usePaywallState();
   const [validateInviteUser, { data: invitedUsersData, isLoading }] =
     useValidateInviteUserMutation();
 
   const handleSubmitInvitedList = (invitesList: string[]) => {
-    // if (paymentPlan) {
-    // setStorage({
-    //   plan: paymentPlan.plan,
-    // });
     validateInviteUser({
       email: invitesList,
     })
       .unwrap()
       .then((res) => {
-        console.log(res);
         if (res.emails && res.emails.length > 0) {
           setStepIndex(stepIndex + 1);
         } else {
@@ -38,7 +29,6 @@ export default function PaywallTeamSetup() {
         }
       })
       .catch((e: any) => {
-        console.log("error", e);
         toast({
           title: "Send Invite Error",
           description: getErrorMessage(e),
@@ -87,16 +77,16 @@ export default function PaywallTeamSetup() {
       {isLoading ? <LoadingOverlay /> : null}
       <div className="flex max-w-[668px] flex-col items-center gap-7 text-center">
         {stepIndex < steps.length - 1 ? (
-          <div className="text-center font-nunito text-[35px] font-bold text-card">
+          <div className="font-nunito text-card text-center text-[35px] font-bold">
             Thanks for Signing up To Service Hero! <br />
             Now, Let’s Setup Your Team!
           </div>
         ) : (
           <div>
-            <div className="text-center font-nunito text-[35px] font-bold text-card">
+            <div className="font-nunito text-card text-center text-[35px] font-bold">
               Thanks for Signing up To Service Hero!
             </div>
-            <div className="text-center text-md text-card mt-4">
+            <div className="text-md text-card mt-4 text-center">
               Manage your clients and streamline your workflow all in one place.
               <br />
               We&apos;re excited to help you enhance your productivity and
@@ -108,7 +98,7 @@ export default function PaywallTeamSetup() {
         <div className="relative flex w-full justify-between">
           <div className="absolute top-[50%] -mt-[3px] h-1.5 w-full bg-gray-300" />
           <div
-            className="absolute top-[50%] -mt-[3px] h-1.5 bg-primary"
+            className="bg-primary absolute top-[50%] -mt-[3px] h-1.5"
             style={{
               width: `${(stepIndex / (steps.length - 1)) * 100}%`,
             }}
@@ -134,6 +124,7 @@ export default function PaywallTeamSetup() {
                 onClick={() => {
                   index >= stepIndex ? null : setStepIndex(index);
                 }}
+                type="button"
               >
                 {item.label}
               </button>

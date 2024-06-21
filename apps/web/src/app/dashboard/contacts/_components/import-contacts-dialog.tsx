@@ -1,13 +1,13 @@
 "use client";
 
+import React, { useState } from "react";
+import { Paperclip } from "lucide-react";
+import { useImportContactsMutation } from "@repo/redux-utils/src/endpoints/contacts.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-  DropzoneOptions,
-  toast,
-} from "@/src/components/ui";
-import {
   Button,
   DialogContent,
   DialogDescription,
@@ -17,15 +17,9 @@ import {
   FileInput,
   FileUploader,
   FileUploaderContent,
-  FileUploaderItem,
-} from "@/src/components/ui";
-import React, { useState } from "react";
-import Image from "next/image";
-import { Paperclip } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useImportContactsMutation } from "@/src/endpoints/contacts.ts";
-import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
-import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+  toast,
+} from "@repo/ui/components/ui";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 interface Props {
   setOpen: (open: boolean) => void;
@@ -36,7 +30,7 @@ function FileSvgDraw() {
     <>
       <svg
         aria-hidden="true"
-        className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400"
+        className="mb-3 h-8 w-8 text-gray-500 dark:text-gray-400"
         fill="none"
         viewBox="0 0 20 16"
         xmlns="http://www.w3.org/2000/svg"
@@ -93,8 +87,8 @@ function FileUploadDropzone(props: {
         onValueChange={props.setFiles}
         value={props.files}
       >
-        <FileInput className="outline-dashed outline-1 outline-gray-500 py-10">
-          <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full">
+        <FileInput className="py-10 outline-dashed outline-1 outline-gray-500">
+          <div className="flex w-full flex-col items-center justify-center pb-4 pt-3">
             <FileSvgDraw />
           </div>
         </FileInput>
@@ -157,7 +151,7 @@ export default function ImportContactsDialogContent(props: Props) {
             <DialogDescription>
               <FileUploadDropzone files={files} setFiles={setFiles} />
               <button
-                className="text-primary underline -mt-5"
+                className="text-primary -mt-5 underline"
                 onClick={() => {
                   handleDownloadTemplate(
                     csvFileTemplate.fileName,
@@ -178,7 +172,7 @@ export default function ImportContactsDialogContent(props: Props) {
               }}
               disabled={isLoading || !files || files.length === 0}
             >
-              {isLoading && <LoadingSpinner></LoadingSpinner>}
+              {isLoading ? <LoadingSpinner /> : null}
               Import
             </Button>
           </DialogFooter>

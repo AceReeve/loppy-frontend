@@ -1,46 +1,28 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { number, z } from "zod";
+import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import {
-  Button,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  FileInput,
-  FileUploader,
-  FileUploaderContent,
-  FileUploaderItem,
-  DropzoneOptions,
-  DialogHeader,
-} from "@/src/components/ui";
-import { cn } from "@/src/lib/utils.ts";
-import { format } from "date-fns";
-import { CalendarIcon, File } from "lucide-react";
-import { Calendar } from "@/src/components/ui/calendar.tsx";
-import { RegisterDetailsSchema } from "@/src/schemas";
+import { CalendarIcon } from "lucide-react";
 import React from "react";
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/src/components/ui/radio-group.tsx";
-import { Dialog } from "@/src/components/ui/dialog.tsx";
+    Button, Calendar, Dialog, DialogContent, DialogHeader, DialogTrigger,
+    type DropzoneOptions, FileInput, FileUploader,
+    Form,
+    FormControl, FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input, Popover, PopoverContent, PopoverTrigger, RadioGroup, RadioGroupItem
+} from "@repo/ui/components/ui";
+import {cn} from "@repo/ui/utils";
+import moment from "moment";
+import { RegisterDetailsSchema } from "@/src/schemas";
+
 export default function Registration() {
   const onSubmit = () => {
-    console.log("Submitted");
+    // console.log("Submitted");
   };
   const registerSchema = RegisterDetailsSchema;
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -123,7 +105,7 @@ export default function Registration() {
                     <FormItem>
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input autoComplete={"off"} {...field} />
+                        <Input autoComplete="off" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -139,7 +121,7 @@ export default function Registration() {
                     <FormItem>
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input autoComplete={"off"} {...field} />
+                        <Input autoComplete="off" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -155,7 +137,7 @@ export default function Registration() {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input autoComplete={"off"} {...field} />
+                        <Input autoComplete="off" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -171,7 +153,7 @@ export default function Registration() {
                     <FormItem>
                       <FormLabel>Company</FormLabel>
                       <FormControl>
-                        <Input autoComplete={"off"} {...field} />
+                        <Input autoComplete="off" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -187,7 +169,7 @@ export default function Registration() {
                     <FormItem>
                       <FormLabel>Mobile Number</FormLabel>
                       <FormControl>
-                        <Input autoComplete={"off"} {...field} />
+                        <Input autoComplete="off" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -206,14 +188,14 @@ export default function Registration() {
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
-                              variant={"outline"}
+                              variant="outline"
                               className={cn(
                                 "w-[240px] pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                moment(field.value).format("PPP")
                               ) : (
                                 <span>Pick a date</span>
                               )}
@@ -233,7 +215,7 @@ export default function Registration() {
                           />
                         </PopoverContent>
                       </Popover>
-                      <FormDescription></FormDescription>
+                      <FormDescription />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -275,7 +257,7 @@ export default function Registration() {
           <div className=" w-3/5 flex flex-col gap-10 py-20 border-l-2">
             <Dialog>
               <DialogTrigger>
-                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto"></div>
+                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto" />
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>

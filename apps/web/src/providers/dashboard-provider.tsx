@@ -7,13 +7,13 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { Session } from "next-auth";
+import { type Session } from "next-auth";
 
-type ContextType = {
+interface ContextType {
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
   session: Session | null;
-};
+}
 
 const DashboardContext = createContext<ContextType | null>(null);
 

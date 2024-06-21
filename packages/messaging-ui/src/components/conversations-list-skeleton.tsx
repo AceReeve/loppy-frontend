@@ -4,6 +4,7 @@ export default function ConversationsListSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       {Array.from({ length: 10 }).map((_, index) => (
+        // eslint-disable-next-line react/no-array-index-key -- disregard
         <div className="flex items-center space-x-4" key={index}>
           <Skeleton className="h-12 w-12 rounded-full" />
           <div className="space-y-2">

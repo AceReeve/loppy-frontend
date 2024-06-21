@@ -6,7 +6,7 @@ import type { z } from "zod";
 import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import LoadingSpinner from "@repo/ui/loading-spinner.tsx";
+import {LoadingSpinner} from "@repo/ui/loading-spinner.tsx";
 import { RegisterSchema } from "@/src/schemas";
 import {
   handleCredentialsSignIn,
@@ -14,12 +14,8 @@ import {
 } from "@/src/actions/login-actions";
 import FacebookSignInButton from "../_components/facebook-sign-in-button";
 import GoogleSignInButton from "../_components/google-sign-in-button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/src/components/ui/input-otp.tsx";
-import { FormControl, FormField, FormItem } from "@/src/components/ui";
+import {InputOTP, InputOTPGroup, InputOTPSlot} from "@repo/ui/components/ui";
+
 export default function Register() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -74,8 +70,7 @@ export default function Register() {
   }, [errorParam]);
 
   const registration = () => (
-    <>
-      <div className="mt-10 font-open-sans text-[15px] lg:mt-0">
+    <div className="mt-10 font-open-sans text-[15px] lg:mt-0">
         <div className="text-left">
           <h1 className="font-montserrat text-2xl font-bold text-primary sm:text-[32px]">
             Get Started Now
@@ -205,13 +200,11 @@ export default function Register() {
           </div>
         </div>
       </div>
-    </>
   );
 
   const registerDetails = () => <>REGISTER DETAILS</>;
   const otpRequest = () => (
-    <>
-      <div className="mt-16 font-open-sans text-[15px] lg:mt-0">
+    <div className="mt-16 font-open-sans text-[15px] lg:mt-0">
         <div className="text-left">
           <h1 className="font-montserrat text-2xl font-bold text-primary sm:text-[42px]">
             Service Hero
@@ -238,7 +231,7 @@ export default function Register() {
           >
             <div className="block h-auto text-center mb-10">
               <p className="text-[40px] font-bold">OTP Verification</p>
-              <p className={" text-[16px] font-normal text-gray-500"}>
+              <p className=" text-[16px] font-normal text-gray-500">
                 Enter OTP Code sent to Email
               </p>
               {/*              <FormField control = {form.control}
@@ -271,7 +264,7 @@ export default function Register() {
                   />
                 </InputOTPGroup>
               </InputOTP>
-              <p className={" text-[16px] font-bold text-gray-500"}>
+              <p className=" text-[16px] font-bold text-gray-500">
                 Didn't receive OTP code?
               </p>
               <Link
@@ -293,7 +286,6 @@ export default function Register() {
           </form>
         </div>
       </div>
-    </>
   );
   const pages = [
     {

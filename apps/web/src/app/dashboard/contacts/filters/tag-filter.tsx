@@ -1,18 +1,14 @@
 import {
   AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/src/components/ui/accordion.tsx";
-import {
+  Button,
   MultiSelector,
   MultiSelectorContent,
   MultiSelectorInput,
   MultiSelectorItem,
   MultiSelectorList,
   MultiSelectorTrigger,
-} from "@/src/components/ui/multiselect.tsx";
+} from "@repo/ui/components/ui";
 import React, { useState } from "react";
-import { Button } from "@/src/components/ui";
 
 interface TagFilterProps {
   onAdd: (label: string, values: string[]) => void;
@@ -27,7 +23,7 @@ export default function TagFilter({ onAdd }: TagFilterProps) {
   const [value, setValue] = useState<string[]>([]);
   return (
     <>
-      <AccordionContent className="min-h-[100px] h-auto ">
+      <AccordionContent className="h-auto min-h-[100px] ">
         <MultiSelector values={value} onValuesChange={setValue} loop={false}>
           <MultiSelectorTrigger>
             <MultiSelectorInput placeholder="Select your framework" />

@@ -1,6 +1,7 @@
 "use client";
-import { ApexOptions } from "apexcharts";
+import { type ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
+
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function TemperatureChart(data) {
@@ -137,11 +138,11 @@ export default function TemperatureChart(data) {
         height="200px"
         type="line"
       />
-      <div className="flex justify-between ml-4 content-center overflow-hidden">
+      <div className="ml-4 flex content-center justify-between overflow-hidden">
         {series[0].data.map((temp: any, index) => (
           <p
             key={index}
-            className="px-2 text-center text-white font-roboto font-light"
+            className="font-roboto px-2 text-center font-light text-white"
           >
             {temp}°
           </p>

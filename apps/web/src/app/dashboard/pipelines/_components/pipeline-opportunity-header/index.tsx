@@ -2,12 +2,12 @@ import React from "react";
 
 export default function OpportunityHeader({ opportunity }: any) {
   return (
-    <div className="border-t-blue-600 border-4 content-center min-h-[70px] w-full bg-white rounded-2xl px-5 py-2 mb-auto  mt-2 drop-shadow-lg shadow-xl ">
-      <h1 className="font-medium font-roboto text-[14px]">
+    <div className="mb-auto mt-2 min-h-[70px] w-full content-center rounded-2xl border-4 border-t-blue-600 bg-white px-5  py-2 shadow-xl drop-shadow-lg ">
+      <h1 className="font-roboto text-[14px] font-medium">
         {opportunity.header}
       </h1>
-      <div className="border-b-2 my-1"></div>
-      <h1 className=" font-medium font-roboto text-[14px]">
+      <div className="my-1 border-b-2" />
+      <h1 className=" font-roboto text-[14px] font-medium">
         {" "}
         <span className="text-[14px] text-gray-400">
           {opportunity.leads.length} Leads{" "}

@@ -3,8 +3,7 @@
 import * as React from "react"
 import { OTPInput, OTPInputContext } from "input-otp"
 import { Dot } from "lucide-react"
-
-import { cn } from "@/src/lib/utils"
+import { cn } from "../../lib/utils"
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
@@ -48,11 +47,9 @@ const InputOTPSlot = React.forwardRef<
       {...props}
     >
       {char}
-      {hasFakeCaret && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      {hasFakeCaret ? <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-4 w-px animate-caret-blink bg-gray-950 duration-1000 dark:bg-gray-50" />
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 })

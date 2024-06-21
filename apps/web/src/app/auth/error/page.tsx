@@ -2,7 +2,7 @@
 export default function AuthError({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const errors = {
     OAuthCallbackError: "Error",

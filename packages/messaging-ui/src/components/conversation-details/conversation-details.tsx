@@ -1,11 +1,22 @@
 "use client";
-import { NoSymbolIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  NoSymbolIcon,
+  UserGroupIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { DocumentText, MessageRemove } from "iconsax-react";
 import { Transition } from "@headlessui/react";
-import { useMessagesState } from "@/src/providers/messages-provider.tsx";
+import type { AppState } from "@repo/redux-utils/src/store.ts";
+import { useSelector } from "react-redux";
+import { useMessagesState } from "../../providers/messages-provider.tsx";
+import ConversationPhoto from "../conversation-photo.tsx";
+import ConversationLabel from "../conversation-label.tsx";
 
 export default function ConversationDetails() {
   const { sidebarOpen, setSidebarOpen } = useMessagesState();
+  const sid = useSelector((state: AppState) => state.currentConversation);
+  const participants =
+    useSelector((state: AppState) => state.participants)[sid] ?? [];
 
   return (
     <Transition
@@ -20,30 +31,44 @@ export default function ConversationDetails() {
       <section className="inline-flex w-full max-w-[329px] flex-col items-center justify-start gap-5 bg-white px-5 pt-6">
         <div className="inline-flex w-full items-start justify-between">
           <button
-            className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white group-hover:flex hover:bg-gray-200 md:flex"
+            className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white hover:bg-gray-200 group-hover:flex md:flex"
             onClick={() => {
               setSidebarOpen(false);
             }}
+            type="button"
           >
             <XMarkIcon className="relative h-5 w-5" />
           </button>
-          <a
-            className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white group-hover:flex hover:bg-gray-200 md:flex"
-            href="#"
+          <button
+            className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white hover:bg-gray-200 group-hover:flex md:flex"
+            type="button"
           >
             <img
               alt=""
               className="relative h-5 w-5"
               src="/assets/icons/messaging/tabler_dots.svg"
             />
-          </a>
+          </button>
         </div>
         <div className="inline-flex flex-col items-center justify-center gap-4">
-          <div className="size-[142px] rounded-full bg-zinc-300" />
+          <div className="size-[142px]">
+            {participants.length > 2 ? (
+              <img
+                src="/assets/icons/messaging/icon-group.svg"
+                alt=""
+                className="size-full"
+              />
+            ) : (
+              <ConversationPhoto
+                participants={participants}
+                className="text-3xl"
+              />
+            )}
+          </div>
 
           <div className="flex flex-col items-center justify-center gap-2.5">
             <div className="text-xl font-semibold leading-7 text-neutral-800">
-              Full Name
+              <ConversationLabel participants={participants} />
             </div>
             <div className="inline-flex items-center justify-center gap-3">
               <div className="text-sm font-normal leading-snug text-neutral-400">
@@ -80,7 +105,7 @@ export default function ConversationDetails() {
               <div className="relative h-6 w-6" />
             </div>
           </div>
-          <div className="flex h-[136px] flex-col items-start justify-start gap-3.5 self-stretch font-nunito">
+          <div className="font-nunito flex h-[136px] flex-col items-start justify-start gap-3.5 self-stretch">
             <div className="inline-flex items-center justify-between self-stretch">
               <div className="flex items-center justify-start gap-1.5">
                 <DocumentText className="relative h-5 w-5 text-neutral-400" />
@@ -114,7 +139,10 @@ export default function ConversationDetails() {
                 15Mb
               </div>
             </div>
-            <button className="text-sm font-medium leading-snug text-sky-300">
+            <button
+              className="text-sm font-medium leading-snug text-sky-300"
+              type="button"
+            >
               Show more
             </button>
           </div>
@@ -131,16 +159,22 @@ export default function ConversationDetails() {
               <div className="relative h-6 w-6" />
             </div>
           </div>
-          <button className="btn-solid-white inline-flex w-[289px] gap-1.5 rounded-[52px] border border-red-500 px-5 py-3">
+          <button
+            className="btn-solid-white inline-flex w-[289px] gap-1.5 rounded-[52px] border border-red-500 px-5 py-3"
+            type="button"
+          >
             <NoSymbolIcon className="relative h-5 w-5" />
             <div className="text-sm font-medium leading-snug text-red-500">
-              Block Lincoln
+              Block
             </div>
           </button>
-          <button className="btn-solid-white inline-flex w-[289px] gap-1.5 rounded-[52px] border border-red-500 px-5 py-3">
+          <button
+            className="btn-solid-white inline-flex w-[289px] gap-1.5 rounded-[52px] border border-red-500 px-5 py-3"
+            type="button"
+          >
             <MessageRemove className="relative h-5 w-5" />
             <div className="text-sm font-medium leading-snug text-red-500">
-              Block Lincoln
+              Block
             </div>
           </button>
         </div>

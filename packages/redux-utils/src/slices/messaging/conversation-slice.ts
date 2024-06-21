@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ReduxConversation } from "../../types/messaging/messaging";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { type Conversation } from "@twilio/conversations";
+import { type ReduxConversation } from "../../types/messaging/messaging";
 import { conversationsMap } from "../../utils/messaging/conversations-objects.ts";
-import { Conversation } from "@twilio/conversations";
 
 const initialState: ReduxConversation[] = [];
 

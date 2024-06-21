@@ -1,11 +1,13 @@
-//import { JSONValue, Participant, ParticipantType } from "@twilio/conversations";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { ReduxParticipant } from "../../types/messaging/messaging";
-import { Participant } from "@twilio/conversations";
+import {
+  type Participant,
+  type ParticipantBindings,
+} from "@twilio/conversations";
+import { type ReduxParticipant } from "../../types/messaging/messaging";
 import { participantsMap } from "../../utils/messaging/conversations-objects.ts";
 
-export type ParticipantsType = Record<string, ReduxParticipant[]>;
+export type ParticipantsType = Record<string, ReduxParticipant[] | undefined>;
 
 const initialState: ParticipantsType = {};
 
@@ -15,6 +17,9 @@ const reduxifyParticipant = (participant: Participant): ReduxParticipant => ({
   identity: participant.identity,
   type: participant.type,
   lastReadMessageIndex: participant.lastReadMessageIndex,
+  address:
+    participant.bindings[participant.type as keyof ParticipantBindings]
+      ?.address,
 });
 
 export const participantsSlice = createSlice({

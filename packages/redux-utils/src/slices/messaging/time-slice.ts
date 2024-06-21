@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { notificationSlice } from "src/slices/notification-slice.ts";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = false;
 
@@ -8,7 +7,7 @@ export const timeSlice = createSlice({
   initialState,
   reducers: {
     updateTimeFormat: (state, action: PayloadAction<boolean>) => {
-      state = action.payload;
+      return action.payload;
     },
   },
 });
