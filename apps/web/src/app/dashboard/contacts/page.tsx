@@ -14,6 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Tabs,
   TabsContent,
   TabsList,
@@ -28,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -52,10 +56,16 @@ import AllContacts from "./tabs/all-contacts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
-import { AlertCircle } from "lucide-react";
-
+import { AlertCircle, CalendarIcon } from "lucide-react";
+import { useToast } from "@/src/components/ui/use-toast";
+import { cn } from "@/src/lib/utils.ts";
+import { format } from "date-fns";
+import { Calendar } from "@/src/components/ui/calendar.tsx";
+import { useReactTable } from "@tanstack/react-table";
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const tabs = [
     {
@@ -75,9 +85,6 @@ function Page() {
     },
   ];
 
-  const phoneRegex = new RegExp(
-    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/,
-  );
   const formSchema = CreateContactsFormSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,7 +97,7 @@ function Page() {
       source: "",
       lifetime_value: 0,
       last_campaign_ran: "",
-      last_interaction: "",
+      last_interaction: new Date(),
       tags: [
         {
           tag_name: "",
@@ -103,6 +110,7 @@ function Page() {
   };
 
   const [tagValue, setTagValue] = useState<string[]>([]);
+
   const options = [
     { label: "ChatGPT", value: "ChatGPT" },
     { label: "Facebook", value: "Facebook" },
@@ -110,7 +118,6 @@ function Page() {
   ];
   const [createContact, { data: contactData, error, isLoading }] =
     useCreateContactMutation();
-
   const onSubmit = async () => {
     try {
       const formData = form.getValues();
@@ -122,28 +129,37 @@ function Page() {
           tagValue.length > 0 ? tagValue.map((tag) => ({ tag_name: tag })) : [],
       };
 
-      console.log(newData);
+      const response = await createContact(newData);
 
-      await createContact(newData);
-
-      if (error) {
-        return (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{getErrorMessage(error)}</AlertDescription>
-          </Alert>
-        );
-      }
-      if (!isLoading) {
+      // Check if response has data property
+      if (response.data) {
+        // Handle successful submission
+        setCreateDialogOpen(false);
+        toast({
+          title: "User Created Successfully",
+          description: "New user has been created.",
+          variant: "success",
+        });
         form.reset();
+        setTagValue([]);
+      } else if (response.error) {
+        // Handle submission failure
+        toast({
+          title: "Create User Error",
+          description:
+            //response.error
+            //? response.error.toString() :
+            "Unknown error occurred",
+          variant: "destructive",
+        });
       }
-
-      if (!contactData) {
-        console.log("Contact Added");
-      }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating contact:", error);
+      toast({
+        title: "Create User Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
     }
   };
 
@@ -217,7 +233,7 @@ function Page() {
             <ExportContactsDialogForm />
           </Dialog>
 
-          <Dialog>
+          <Dialog onOpenChange={setCreateDialogOpen} open={createDialogOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-xl">Create Contact</Button>
             </DialogTrigger>
@@ -386,7 +402,7 @@ function Page() {
                         name="last_interaction"
                         render={({ field }) => {
                           return (
-                            <FormItem>
+                            /*                        <FormItem>
                               <FormLabel>Last Interaction</FormLabel>
                               <FormControl>
                                 <Input
@@ -395,6 +411,56 @@ function Page() {
                                   {...field}
                                 />
                               </FormControl>
+                              <FormMessage />
+                            </FormItem>
+*/
+                            <FormItem className="flex flex-col">
+                              <FormLabel className="my-2">
+                                Last Interaction
+                              </FormLabel>
+                              <Popover
+                                onOpenChange={setCalendarOpen}
+                                open={calendarOpen}
+                              >
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant={"outline"}
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !field.value && "text-muted-foreground",
+                                      )}
+                                    >
+                                      {field.value ? (
+                                        format(field.value, "yyyy-MM-dd")
+                                      ) : (
+                                        <span>Pick a date</span>
+                                      )}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    //onSelect={field.onChange}
+                                    onSelect={(date) => {
+                                      field.onChange(date);
+                                      setCalendarOpen(!calendarOpen); // Close the calendar after selecting a date
+                                    }}
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              <FormDescription></FormDescription>
                               <FormMessage />
                             </FormItem>
                           );
