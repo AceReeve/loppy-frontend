@@ -12,6 +12,7 @@ export default function TeamsVerify(props: TeamsSetupStepsProps) {
         onClick={() => {
           props.handleSubmitPermissions();
         }}
+        type="button"
       >
         Next
         <ArrowRightIcon className="size-4" />

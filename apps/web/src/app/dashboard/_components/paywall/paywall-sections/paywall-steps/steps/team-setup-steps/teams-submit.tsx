@@ -8,6 +8,7 @@ export default function TeamsSubmit(props: TeamsSetupStepsProps) {
       onClick={() => {
         props.handleFinalSubmit();
       }}
+      type="button"
     >
       Finish
       <ArrowRightIcon className="size-4" />

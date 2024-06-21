@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import type {
   ConnectionState,
   Conversation,
@@ -8,7 +14,6 @@ import type {
 } from "@twilio/conversations";
 import { Client } from "@twilio/conversations";
 import { useGetTwilioAccessTokenQuery } from "@repo/redux-utils/src/endpoints/messaging.ts";
-import LoadingSpinner from "@repo/ui/loading-spinner.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
@@ -17,20 +22,31 @@ import {
   removeConversation,
   upsertConversation,
 } from "@repo/redux-utils/src/slices/messaging/conversation-slice.ts";
-import { conversationsMap } from "@repo/redux-utils/src/utils/messaging/conversations-objects.ts";
+import { getSdkMessageObject } from "@repo/redux-utils/src/utils/messaging/conversations-objects.ts";
 import { handlePromiseRejection } from "@repo/hooks-and-utils/helpers";
-import type { Session } from "@repo/redux-utils";
+import type { Session } from "@repo/redux-utils/src";
 import { updateParticipants } from "@repo/redux-utils/src/slices/messaging/participants-slice.ts";
 import {
   addMessages,
   removeMessages,
 } from "@repo/redux-utils/src/slices/messaging/message-list-slice.ts";
 import { updateCurrentConversation } from "@repo/redux-utils/src/slices/messaging/current-conversation-slice.ts";
-import { AppState } from "@repo/redux-utils/src/store.ts";
-import { SetUnreadMessagesType } from "@repo/redux-utils/src/types/messaging/messaging";
+import { type AppState } from "@repo/redux-utils/src/store.ts";
+import { type ReduxMessage } from "@repo/redux-utils/src/types/messaging/messaging";
 import { updateUnreadMessages } from "@repo/redux-utils/src/slices/messaging/unread-messages-slice.ts";
 import { updateUser } from "@repo/redux-utils/src/slices/messaging/users-slice.ts";
-import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
+import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
+import {
+  type ShowEmojiPickerProps,
+  type ShowReactionPickerProps,
+} from "../messaging";
+import { type InviteUserResponse } from "../endpoints/types/user";
+import { useGetContactsListQuery } from "../endpoints/contacts.ts";
+import { useGetInvitedUsersQuery } from "../endpoints/user.ts";
+import ManualPopover from "../components/manual-popover.tsx";
+import { MessagingFilters } from "../messaging.enum.ts";
 
 interface ContextType {
   accessToken: string | undefined;
@@ -42,6 +58,15 @@ interface ContextType {
   setSidebarOpen: (open: boolean) => void;
   newConvoLoading: boolean;
   setNewConvoLoading: (open: boolean) => void;
+  showEmojiPicker: (props: ShowEmojiPickerProps | null) => void;
+  showReactionPicker: (props: ShowReactionPickerProps | null) => void;
+  onReactionClick: (reaction: string, message: ReduxMessage | null) => void;
+  onEmojiClick: (reaction: string | null) => void;
+  emojiClicked: string | null;
+  contactsMap: Record<string, string> | undefined;
+  invitedUsers: InviteUserResponse | undefined;
+  messageFilter: MessagingFilters;
+  setMessageFilter: (filter: MessagingFilters) => void;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
@@ -53,11 +78,7 @@ export default function MessagesProvider({
   children: React.ReactNode;
   session: Session | null;
 }) {
-  const {
-    data: token,
-    error,
-    isLoading,
-  } = useGetTwilioAccessTokenQuery(undefined);
+  const { data: token, error } = useGetTwilioAccessTokenQuery(undefined);
 
   const dispatch = useDispatch();
 
@@ -65,11 +86,45 @@ export default function MessagesProvider({
   const [connectionState, setConnectionState] = useState<ConnectionState>();
   const [initialized, setInitialized] = useState(false);
   const [newConvoLoading, setNewConvoLoading] = useState(false);
-  console.log("newConvoLoading", newConvoLoading);
+  const [messageFilter, setMessageFilter] = useState<MessagingFilters>(
+    MessagingFilters.ALL,
+  );
+
+  // state to rerender emoji picker
+  const [emojiPickerState, setEmojiPickerState] =
+    useState<ShowEmojiPickerProps | null>(null);
+  const [reactionPickerState, setReactionPickerState] =
+    useState<ShowReactionPickerProps | null>(null);
+  const [emojiClicked, setEmojiClicked] = useState<string | null>(null);
+
+  // needs ref since state doesn't update callback quickly
+  const emojiPickerRef = useRef<ShowEmojiPickerProps | null>(null);
+  const reactionPickerRef = useRef<ShowReactionPickerProps | null>(null);
+  const showEmojiPicker = (value: ShowEmojiPickerProps | null) => {
+    setEmojiPickerState(value);
+    emojiPickerRef.current = value;
+  };
+  const showReactionPicker = (value: ShowReactionPickerProps | null) => {
+    setReactionPickerState(value);
+    reactionPickerRef.current = value;
+  };
 
   const sid = useSelector((state: AppState) => state.currentConversation);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { data: contactsData } = useGetContactsListQuery(undefined);
+  const { data: invitedUsersData } = useGetInvitedUsersQuery(undefined);
+
+  const invitedUsers = invitedUsersData?.[0];
+
+  // Add '+' sign to keys
+  const contactsMap = contactsData
+    ? Object.entries(contactsData).reduce(
+        (acc, [key, value]) => ({ ...acc, [`+${key}`]: value }),
+        {},
+      )
+    : {};
 
   useEffect(() => {
     if (!token) return;
@@ -80,30 +135,29 @@ export default function MessagesProvider({
     newClient.on("initialized", () => {
       setInitialized(true);
     });
-    newClient.on("initFailed", (e) => {
-      console.log(e.error);
+    newClient.on("initFailed", () => {
+      //   TODO: Set init failed action
     });
 
     newClient.on("connectionStateChanged", (state) => {
-      console.log("connectionStateChanged");
-      console.log(state);
       setConnectionState(state);
     });
 
     newClient.on("conversationJoined", (conversation) => {
-      handlePromiseRejection(async () => {
-        dispatch(upsertConversation(conversation));
-
+      void handlePromiseRejection(async () => {
         if (conversation.status === "joined") {
-          const result = await conversation.getParticipants();
+          const participants = await conversation.getParticipants();
+
+          dispatch(upsertConversation(conversation));
           dispatch(
             updateParticipants({
-              participants: result,
+              participants,
               sid: conversation.sid,
             }),
           );
 
           const messages = await conversation.getMessages();
+
           dispatch(
             addMessages({
               channelSid: conversation.sid,
@@ -116,30 +170,28 @@ export default function MessagesProvider({
     });
 
     newClient.on("conversationUpdated", ({ conversation }) => {
-      handlePromiseRejection(() => dispatch(upsertConversation(conversation)));
+      dispatch(upsertConversation(conversation));
     });
 
     newClient.on("conversationRemoved", (conversation: Conversation) => {
       dispatch(updateCurrentConversation(""));
-      handlePromiseRejection(() => {
-        dispatch(removeConversation(conversation.sid));
-        dispatch(
-          updateParticipants({
-            participants: [],
-            sid: conversation.sid,
-          }),
-        );
-      });
+      dispatch(removeConversation(conversation.sid));
+      dispatch(
+        updateParticipants({
+          participants: [],
+          sid: conversation.sid,
+        }),
+      );
     });
 
     newClient.on("messageAdded", (message) => {
-      upsertMessage(message);
+      void upsertMessage(message);
       // if (message.author === localStorage.getItem("username")) {
       //   clearAttachments(message.conversation.sid, "-1");
       // }
     });
     newClient.on("messageUpdated", (data) => {
-      upsertMessage(data.message);
+      void upsertMessage(data.message);
     });
 
     newClient.on("messageRemoved", (message) => {
@@ -151,13 +203,11 @@ export default function MessagesProvider({
       );
     });
     newClient.on("userUpdated", (event) => {
-      console.log("User updated");
-
       dispatch(updateUser(event.user));
     });
 
     newClient.on("participantUpdated", (data) => {
-      handlePromiseRejection(async () => {
+      void handlePromiseRejection(async () => {
         const { participant } = data;
         const result = await participant.conversation.getParticipants();
         dispatch(
@@ -169,20 +219,8 @@ export default function MessagesProvider({
       });
     });
 
-    newClient.on("participantUpdated", (data) => {
-      handlePromiseRejection(async () => {
-        const { participant } = data;
-        const result = await participant.conversation.getParticipants();
-        dispatch(
-          updateParticipants({
-            participants: result,
-            sid: participant.conversation.sid,
-          }),
-        );
-      });
-    });
     newClient.on("participantJoined", (participant) => {
-      handlePromiseRejection(async () => {
+      void handlePromiseRejection(async () => {
         const result = await participant.conversation.getParticipants();
         dispatch(
           updateParticipants({
@@ -192,7 +230,7 @@ export default function MessagesProvider({
         );
       });
     });
-  }, [token]);
+  }, [token, messageFilter]);
 
   async function upsertMessage(message: Message) {
     //transform the message and add it to redux
@@ -213,20 +251,18 @@ export default function MessagesProvider({
   async function loadUnreadMessagesCount(convo: Conversation) {
     let count = 0;
 
-    try {
+    await handlePromiseRejection(async () => {
       count =
         (await convo.getUnreadMessagesCount()) ??
         (await convo.getMessagesCount());
-    } catch (e) {
-      console.error("getUnreadMessagesCount threw an error", e);
-    }
 
-    dispatch(
-      updateUnreadMessages({
-        channelSid: convo.sid,
-        unreadCount: count,
-      }),
-    );
+      dispatch(
+        updateUnreadMessages({
+          channelSid: convo.sid,
+          unreadCount: count,
+        }),
+      );
+    });
   }
 
   if (error) {
@@ -249,6 +285,30 @@ export default function MessagesProvider({
     );
   }
 
+  function onReactionClick(reaction: string, message: ReduxMessage | null) {
+    if (!message) return;
+    const attributes = message.attributes as {
+      reactions?: Record<string, string[]>;
+    };
+    const reactionUsers = attributes.reactions?.[reaction] ?? [];
+    // @ts-expect-error disregard jwt does not exist error
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- disregard errors
+    const currentUserId = session?.jwt ?? "";
+    void getSdkMessageObject(message).updateAttributes({
+      ...attributes,
+      reactions: {
+        ...attributes.reactions,
+        [reaction]: reactionUsers.includes(currentUserId as string)
+          ? reactionUsers.filter((id) => id !== currentUserId)
+          : [...reactionUsers, currentUserId],
+      },
+    });
+    showReactionPicker(null);
+  }
+  function onEmojiClick(reaction: string | null) {
+    setEmojiClicked(reaction);
+  }
+
   return (
     <MessagesProviderContext.Provider
       value={{
@@ -261,10 +321,48 @@ export default function MessagesProvider({
         setSidebarOpen,
         newConvoLoading,
         setNewConvoLoading,
+        showEmojiPicker,
+        showReactionPicker,
+        onReactionClick,
+        onEmojiClick,
+        emojiClicked,
+        contactsMap,
+        invitedUsers,
+        messageFilter,
+        setMessageFilter,
       }}
     >
-      {newConvoLoading && <LoadingOverlay />}
+      {newConvoLoading ? <LoadingOverlay /> : null}
       {children}
+      <ManualPopover
+        clickEvent={reactionPickerState?.event ?? null}
+        hideType="hidden" // or "remove"
+        position="top"
+      >
+        <EmojiPicker
+          allowExpandReactions={false}
+          emojiStyle={EmojiStyle.FACEBOOK}
+          onReactionClick={(emoji) => {
+            onReactionClick(
+              emoji.unified,
+              reactionPickerRef.current?.message ?? null,
+            );
+          }}
+          reactionsDefaultOpen
+        />
+      </ManualPopover>
+      <ManualPopover
+        clickEvent={emojiPickerState?.event ?? null}
+        hideType="hidden" // or "remove"
+        position="top"
+      >
+        <EmojiPicker
+          emojiStyle={EmojiStyle.FACEBOOK}
+          onEmojiClick={(emoji) => {
+            onEmojiClick(emoji.emoji);
+          }}
+        />
+      </ManualPopover>
     </MessagesProviderContext.Provider>
   );
 }

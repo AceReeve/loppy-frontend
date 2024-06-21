@@ -1,11 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ReduxUser } from "../../types/messaging/messaging";
-import { User } from "@twilio/conversations";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { type User } from "@twilio/conversations";
+import { type ReduxUser } from "../../types/messaging/messaging";
 import { usersMap } from "../../utils/messaging/conversations-objects.ts";
 
-export type UsersState = {
-  [identity: string]: ReduxUser;
-};
+export type UsersState = Record<string, ReduxUser | undefined>;
 
 const initialState: UsersState = {};
 

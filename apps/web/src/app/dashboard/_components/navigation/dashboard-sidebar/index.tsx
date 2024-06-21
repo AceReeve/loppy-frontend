@@ -1,11 +1,11 @@
 "use client";
+import { Category, Message2, PresentionChart } from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
-import { Category, Message2, PresentionChart } from "iconsax-react";
 
-type Props = {
+interface Props {
   className?: string | null;
-};
+}
 export default function DashboardSidebar(props: Props) {
   const chatbotItems: MenuLinkItem[] = [
     {

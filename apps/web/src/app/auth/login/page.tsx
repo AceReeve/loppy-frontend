@@ -6,7 +6,7 @@ import type { z } from "zod";
 import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import LoadingSpinner from "@repo/ui/loading-spinner.tsx";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { LoginSchema } from "@/src/schemas";
 import { handleCredentialsSignIn } from "@/src/actions/login-actions";
 import GoogleSignInButton from "../_components/google-sign-in-button";
@@ -55,9 +55,9 @@ export default function Login() {
   }, [errorParam]);
 
   return (
-    <div className="mt-10 font-open-sans text-[15px] lg:mt-0">
+    <div className="font-open-sans mt-10 text-[15px] lg:mt-0">
       <div className="text-left">
-        <h1 className="font-montserrat text-2xl font-bold text-primary sm:text-[32px]">
+        <h1 className="font-montserrat text-primary text-2xl font-bold sm:text-[32px]">
           Login
         </h1>
 
@@ -77,7 +77,7 @@ export default function Login() {
         ) : null}
 
         <form
-          className="grid grid-cols-6 gap-6 font-nunito text-black"
+          className="font-nunito grid grid-cols-6 gap-6 text-black"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <div className="col-span-6">
@@ -93,8 +93,8 @@ export default function Login() {
             />
 
             {errors.email ? (
-              <p className="mt-2 text-[0.8rem] font-medium text-error">
-                {errors.email?.message}
+              <p className="text-error mt-2 text-[0.8rem] font-medium">
+                {errors.email.message}
               </p>
             ) : null}
           </div>
@@ -112,8 +112,8 @@ export default function Login() {
               {...register("password")}
             />
             {errors.password ? (
-              <p className="mt-2 text-[0.8rem] font-medium text-error">
-                {errors.password?.message}
+              <p className="text-error mt-2 text-[0.8rem] font-medium">
+                {errors.password.message}
               </p>
             ) : null}
           </div>
@@ -128,7 +128,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-6 grid grid-cols-6 gap-6 font-nunito text-black">
+        <div className="font-nunito mt-6 grid grid-cols-6 gap-6 text-black">
           <div className="col-span-6">
             <div className="flex items-center justify-center gap-8">
               <div className="h-[1px] flex-auto bg-gray-300" />

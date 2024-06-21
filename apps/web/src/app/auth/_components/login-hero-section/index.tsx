@@ -4,7 +4,7 @@ import React from "react";
 export default function LoginHeroSection() {
   return (
     <section className="relative flex h-32 items-center justify-center lg:col-span-5 lg:h-full xl:col-span-6">
-      <div className="= absolute left-0 top-0 h-full w-full bg-gradient-to-b from-[#401A65] to-[#200D31]"></div>
+      <div className="= absolute left-0 top-0 h-full w-full bg-gradient-to-b from-[#401A65] to-[#200D31]" />
       <Image
         alt=""
         src="/assets/images/login-cover.png"
@@ -24,7 +24,7 @@ export default function LoginHeroSection() {
         </h2>
 
         <div className="mt-8 flex gap-6">
-          <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-primary">
+          <div className="border-primary relative h-16 w-16 overflow-hidden rounded-full border-2">
             <Image
               src="/assets/images/garrett-elmore.png"
               width={223}

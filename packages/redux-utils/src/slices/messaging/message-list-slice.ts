@@ -1,15 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DeliveryAmount, JSONValue, Message } from "@twilio/conversations";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment -- disregard errors */
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { Message } from "@twilio/conversations";
 import {
   mediaMap,
   messagesMap,
 } from "../../utils/messaging/conversations-objects.ts";
-import {
-  ReduxConversation,
-  ReduxMessage,
-} from "../../types/messaging/messaging"; // Assuming you have a separate file for types
+import { type ReduxMessage } from "../../types/messaging/messaging"; // Assuming you have a separate file for types
 
-export type ChatMessagesState = Record<string, ReduxMessage[]>;
+export type ChatMessagesState = Record<string, ReduxMessage[] | undefined>;
 
 const initialState: ChatMessagesState = {};
 
@@ -110,7 +108,7 @@ const messageListSlice = createSlice({
     },
     removeMessages: (
       state,
-      action: PayloadAction<{ channelSid: string; messages: ReduxMessage[] }>,
+      action: PayloadAction<{ channelSid: string; messages: Message[] }>,
     ) => {
       const { channelSid, messages: messagesToRemove } = action.payload;
       const existingMessages = state[channelSid] ?? [];

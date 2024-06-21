@@ -1,4 +1,4 @@
-type MenuLinkItem = {
+interface MenuLinkItem {
   id: number;
   title: string;
   url: string;
@@ -7,12 +7,12 @@ type MenuLinkItem = {
   children?: MenuLinkItem[];
   icon?: string | React.ReactNode;
   collapsible?: boolean;
-};
+}
 
-type MenuItem = {
+interface MenuItem {
   id: number;
   title: string;
   slug: string;
   items: MenuLinkItem[];
   showTitle?: boolean;
-};
+}

@@ -1,3 +1,6 @@
+/* eslint-disable no-nested-ternary, react-hooks/exhaustive-deps -- remove ternary errors, */
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- remove tabIndex errors */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition -- remove tabIndex errors */
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
@@ -16,12 +19,13 @@ import type {
   DropzoneState,
   FileRejection,
 } from "react-dropzone";
-export type { DropzoneOptions } from "react-dropzone";
 import { Trash2 as RemoveIcon } from "lucide-react";
-import { buttonVariants } from "@/src/components/ui/button.tsx";
-import { toast } from "@/src/components/ui/use-toast.ts";
-import { cn } from "@/src/lib/utils.ts";
+import { cn } from "../../lib/utils.ts";
 import { Input } from "./input";
+import { toast } from "./use-toast.ts";
+import { buttonVariants } from "./button.tsx";
+
+export type { DropzoneOptions } from "react-dropzone";
 
 type DirectionOptions = "rtl" | "ltr" | undefined;
 
@@ -179,13 +183,13 @@ export const FileUploader = forwardRef<
         onValueChange(newValues);
 
         if (rejectedFiles.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/prefer-for-of -- just fine
           for (let i = 0; i < rejectedFiles.length; i++) {
             if (rejectedFiles[i].errors[0]?.code === "file-too-large") {
               toast({
                 variant: "destructive",
                 title: "File Upload Error",
-                description:
-                  "File is too large. Max size is ${maxSize / 1024 / 1024}MB",
+                description: `File is too large. Max size is ${(maxSize / 1024 / 1024).toString()}MB`,
               });
               break;
             }
@@ -242,7 +246,7 @@ export const FileUploader = forwardRef<
       >
         <div
           className={cn(
-            "grid w-full focus:outline-none overflow-hidden ",
+            "grid w-full overflow-hidden focus:outline-none ",
             className,
             {
               "gap-2": value && value.length > 0,
@@ -279,7 +283,7 @@ export const FileUploaderContent = forwardRef<
       <div
         {...props}
         className={cn(
-          "flex rounded-xl gap-1",
+          "flex gap-1 rounded-xl",
           orientation === "horizontal" ? "flex-raw flex-wrap" : "flex-col",
           className,
         )}
@@ -303,20 +307,20 @@ export const FileUploaderItem = forwardRef<
     <div
       className={cn(
         buttonVariants({ variant: "ghost" }),
-        "h-6 p-1 justify-between cursor-pointer relative",
+        "relative h-6 cursor-pointer justify-between p-1",
         className,
         isSelected ? "bg-muted" : "",
       )}
       ref={ref}
       {...props}
     >
-      <div className="font-medium leading-none tracking-tight flex items-center gap-1.5 h-full w-full">
+      <div className="flex h-full w-full items-center gap-1.5 font-medium leading-none tracking-tight">
         {children}
       </div>
       <button
         className={cn(
           "absolute",
-          direction === "rtl" ? "top-1 left-1" : "top-1 right-1",
+          direction === "rtl" ? "left-1 top-1" : "right-1 top-1",
         )}
         onClick={() => {
           removeFileFromSet(index);
@@ -324,7 +328,7 @@ export const FileUploaderItem = forwardRef<
         type="button"
       >
         <span className="sr-only">remove item {index}</span>
-        <RemoveIcon className="w-4 h-4 hover:stroke-destructive duration-200 ease-in-out" />
+        <RemoveIcon className="hover:stroke-destructive h-4 w-4 duration-200 ease-in-out" />
       </button>
     </div>
   );
@@ -343,7 +347,7 @@ export const FileInput = forwardRef<
       ref={ref}
       {...props}
       className={`relative w-full ${
-        isLOF ? "opacity-50 cursor-not-allowed " : "cursor-pointer "
+        isLOF ? "cursor-not-allowed opacity-50 " : "cursor-pointer "
       }`}
     >
       <div

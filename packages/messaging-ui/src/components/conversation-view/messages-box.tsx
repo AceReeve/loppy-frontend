@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import type {
-  AddMessagesType,
   ReduxConversation,
   ReduxMessage,
   ReduxParticipant,
@@ -14,32 +13,30 @@ import type {
 import type { Client, Message, Paginator } from "@twilio/conversations";
 import { getSdkConversationObject } from "@repo/redux-utils/src/utils/messaging/conversations-objects.ts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import LoadingSpinner from "@repo/ui/loading-spinner.tsx";
-import { CONVERSATION_PAGE_SIZE } from "@/src/constants.ts";
-import { getMessages } from "@/src/utils.ts";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { useDispatch } from "react-redux";
 import { pushMessages } from "@repo/redux-utils/src/slices/messaging/message-list-slice.ts";
-import MessagesList from "@/src/components/conversation-view/messages-list.tsx";
+import { getMessages } from "../../utils.ts";
+import { CONVERSATION_PAGE_SIZE } from "../../constants.ts";
+import MessagesList from "./messages-list.tsx";
 
 interface MessageProps {
   convoSid: string;
   client?: Client;
   convo: ReduxConversation;
   messages: ReduxMessage[];
-  loadingState: boolean;
   participants: ReduxParticipant[];
   lastReadIndex: number;
-  // handleDroppedFiles: (droppedFiles: File[]) => void;
+  handleDroppedFiles: (droppedFiles: File[]) => void;
 }
 
 export default function MessagesBox(props: MessageProps) {
   const {
     messages,
     convo,
-    loadingState,
     lastReadIndex,
     // use24hTimeFormat,
-    // handleDroppedFiles,
+    handleDroppedFiles,
   } = props;
 
   const [hasMore, setHasMore] = useState(
@@ -65,15 +62,17 @@ export default function MessagesBox(props: MessageProps) {
   }, [listRef.current?.clientHeight]);
 
   useEffect(() => {
-    void getMessages(sdkConvo).then((paginator) => {
-      setHasMore(paginator.hasPrevPage);
-      setPaginator(paginator);
+    void getMessages(sdkConvo).then((p) => {
+      setHasMore(p.hasPrevPage);
+      setPaginator(p);
     });
   }, [convo]);
 
   useEffect(() => {
     if (messages.length && messages[messages.length - 1].index !== -1) {
-      sdkConvo.advanceLastReadMessageIndex(messages[messages.length - 1].index);
+      void sdkConvo.advanceLastReadMessageIndex(
+        messages[messages.length - 1].index,
+      );
     }
   }, [messages, convo]);
 
@@ -92,9 +91,6 @@ export default function MessagesBox(props: MessageProps) {
     }
 
     const result = await paginator.prevPage();
-    if (!result) {
-      return;
-    }
     const moreMessages = result.items;
 
     setLoading(true);
@@ -123,7 +119,7 @@ export default function MessagesBox(props: MessageProps) {
       }}
     >
       <InfiniteScroll
-        dataLength={messages.length ?? 0}
+        dataLength={messages.length}
         hasMore={!loading && hasMore}
         inverse
         loader={<LoadingSpinner />}
@@ -134,14 +130,15 @@ export default function MessagesBox(props: MessageProps) {
           display: "flex",
           overflow: "hidden",
           flexDirection: "column-reverse",
+          minHeight: "600px",
         }}
       >
         <div ref={listRef}>
           <MessagesList
             conversation={convo}
-            // handleDroppedFiles={handleDroppedFiles}
+            handleDroppedFiles={handleDroppedFiles}
             lastReadIndex={lastConversationReadIndex}
-            messages={messages ?? []}
+            messages={messages}
             participants={props.participants}
           />
         </div>

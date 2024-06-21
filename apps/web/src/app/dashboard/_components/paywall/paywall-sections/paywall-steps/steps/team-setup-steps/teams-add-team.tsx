@@ -33,6 +33,7 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
             onClick={() => {
               props.handleSubmitInvitedList(invitesList);
             }}
+            type="button"
           >
             Next
             <ArrowRightIcon className="size-4" />
@@ -44,7 +45,7 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
           <div className="font-nunito font-medium leading-relaxed text-white">
             Friends List
           </div>
-          <div className="font-nunito font-medium leading-relaxed text-primary">
+          <div className="font-nunito text-primary font-medium leading-relaxed">
             Manage Contacts
           </div>
         </div>
@@ -60,7 +61,7 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
                 className="h-16 w-16 rounded-[32px] bg-gray-400"
                 // src="https://via.placeholder.com/64x64"
               />
-              <div className="text-center font-nunito text-sm font-normal text-zinc-700">
+              <div className="font-nunito text-center text-sm font-normal text-zinc-700">
                 Mike <br />
                 Townsend
               </div>
@@ -109,7 +110,7 @@ function InvitesList({
       <div className={`flex items-center gap-0.5 px-2 py-0.5 ${className}`}>
         {invitesList.map((person) => (
           <span
-            className="flex cursor-pointer items-center gap-1 rounded-lg bg-primary-light px-2 py-0.5 font-nunito text-sm"
+            className="bg-primary-light font-nunito flex cursor-pointer items-center gap-1 rounded-lg px-2 py-0.5 text-sm"
             key={person}
             onClick={() => {
               setInvitesList((existing) =>

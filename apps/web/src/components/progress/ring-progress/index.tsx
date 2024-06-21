@@ -7,7 +7,7 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP);
 
-type Props = {
+interface Props {
   colorProgress?: string[];
   size?: number;
   strokeWidth?: number;
@@ -15,7 +15,7 @@ type Props = {
   label?: ((_value: number) => React.ReactNode) | boolean;
   className?: string;
   colorBg?: string[] | boolean;
-};
+}
 
 export default function RingProgress({
   colorProgress = [themeColors.primary.DEFAULT],
@@ -98,7 +98,7 @@ export default function RingProgress({
             gradientTransform="rotate(90)"
           >
             {typeof colorBg === "object" &&
-              colorBg?.map((color, index) => (
+              colorBg.map((color, index) => (
                 <stop
                   key={index}
                   offset={index * (100 / (colorProgress.length - 1 || 1))}
@@ -120,7 +120,7 @@ export default function RingProgress({
           mask={`url(#progressMask${id})`}
         />
       </svg>
-      <div className="relative font-roboto text-[26px] font-bold leading-tight text-black">
+      <div className="font-roboto relative text-[26px] font-bold leading-tight text-black">
         {label === true
           ? `${currentProgress}%`
           : label && label(currentProgress)}

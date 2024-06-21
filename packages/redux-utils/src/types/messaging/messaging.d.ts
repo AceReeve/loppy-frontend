@@ -1,4 +1,8 @@
-import { Message, Participant } from "@twilio/conversations";
+import {
+  JSONValue,
+  type Message,
+  type Participant,
+} from "@twilio/conversations";
 
 export type AddMessagesType = (channelSid: string, messages: Message[]) => void;
 export type SetSidType = (sid: string) => void;
@@ -63,4 +67,5 @@ export interface ReduxParticipant {
   identity: string | null;
   type: ParticipantType;
   lastReadMessageIndex: number | null;
+  address?: string;
 }

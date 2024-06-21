@@ -1,17 +1,17 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import LoadingOverlay from "@repo/ui/loading-overlay.tsx";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { toast, ToastAction } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import type { PlanDetails } from "@/src/data/payment-plan-details";
-import type { PaymentPlan } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
+import type { PaymentPlan } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 import {
   useCreatePaymentIntentMutation,
   useGetPaymentStatusQuery,
-} from "@/src/endpoints/payment.ts";
-import type { GetPaymentStatusResponse } from "@/src/endpoints/types/payment";
+} from "@repo/redux-utils/src/endpoints/payment.ts";
+import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
+import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
+import type { PlanDetails } from "@/src/data/payment-plan-details";
 
 interface ContextType {
   isLoading: boolean;
@@ -133,7 +133,6 @@ export default function PaywallProvider({
   };
 
   async function refetchPaymentStatus() {
-    console.log("refetching");
     setIsPaymentProcessing(true);
     // TODO: Add retries limit for refetching
     const res = await refetch();

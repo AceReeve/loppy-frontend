@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import { signJwt } from "@repo/hooks-and-utils/jwt-utils";
 import { authConfig } from "@/auth.config";
 import { saveGoogleInfo } from "@/src/actions/login-actions.ts";
+import { Profile } from "@/next-auth";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
@@ -14,6 +15,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, account, user, profile }) {
       if (account) {
+        // console.log("token", token);
+        // console.log("user", user);
+        console.log("profile", profile);
+        // console.log("sub", token.sub);
+        // console.log("id_token", account.id_token);
+        // console.log("access_token", account.access_token);
+        // console.log("expires_at", account.expires_at);
+
         if (account.provider === "google" && profile) {
           const jwt = await signJwt({
             sub: token.sub,
@@ -24,15 +33,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             image: user.image,
           });
 
-          // console.log("token", token);
-          // console.log("jwt", jwt);
-          // console.log("user", user);
-          // console.log("profile", profile);
-          // console.log("sub", token.sub);
-          // console.log("id_token", account.id_token);
-          // console.log("access_token", account.access_token);
-          // console.log("expires_at", account.expires_at);
-
           const res = await saveGoogleInfo({
             email: profile.email,
             first_name: profile.given_name,
@@ -40,21 +40,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             picture: profile.picture,
             token: jwt,
           });
-          console.log("res", res);
+          console.log("google res", res);
 
           // TODO: Implement BE signin here
+          console.log("token!", token);
           return {
             ...token,
             jwt: res.access_token,
+            profile,
           };
         } else if (account.provider === "credentials") {
-          return { ...token, jwt: user.access_token };
+          return {
+            ...token,
+            jwt: user.access_token,
+            profile: {
+              given_name: user.email?.split("@")[0] ?? "",
+            },
+          };
         }
       }
       return token;
     },
-    session({ session, token }) {
+    session({ session, token, user }) {
       session.jwt = token.jwt as string;
+      session.profile = token.profile as Profile;
+      session.user.name = token.email?.split("@")[0] ?? "";
+
       return session;
     },
   },

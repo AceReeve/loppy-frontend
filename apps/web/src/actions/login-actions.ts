@@ -3,15 +3,15 @@
 import type { z } from "zod";
 import { AuthError } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { LoginSchema } from "@/src/schemas";
+import { LoginSchema, RegisterSchema } from "@/src/schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const handleCredentialsSignUp = async (
-  values: z.infer<typeof LoginSchema>,
+  values: z.infer<typeof RegisterSchema>,
   callbackUrl?: string | null,
 ) => {
-  const validatedFields = LoginSchema.safeParse(values);
+  const validatedFields = RegisterSchema.safeParse(values);
 
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -35,7 +35,8 @@ export const handleCredentialsSignUp = async (
 
   // Throw proper error response from backend server
   if (authResponse.ok) {
-    return handleCredentialsSignIn(values, callbackUrl);
+    //return handleCredentialsSignIn(values, callbackUrl);
+    return;
   }
   const res = await authResponse.json();
   if (res.errors) {

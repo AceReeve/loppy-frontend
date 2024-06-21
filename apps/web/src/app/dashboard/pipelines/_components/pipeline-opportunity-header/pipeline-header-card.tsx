@@ -1,5 +1,3 @@
-export default function HeaderCard(){
-    return(
-      <div className =""></div>
-    );
+export default function HeaderCard() {
+  return <div className="" />;
 }

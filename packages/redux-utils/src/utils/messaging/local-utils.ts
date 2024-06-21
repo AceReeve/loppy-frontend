@@ -1,8 +1,4 @@
-interface Translations {
-  [key: string]: {
-    [key: string]: string;
-  };
-}
+type Translations = Record<string, Record<string, string>>;
 
 interface LanguageOption {
   code: string;
@@ -191,9 +187,8 @@ export const translations: Translations = {
 };
 
 export const getTranslation = (language: string, key: string): string => {
-  if (translations[language] && translations[language][key]) {
+  if (translations[language][key]) {
     return translations[language][key];
-  } else {
-    return `Translation not available for '${key}' in '${language}'`;
   }
+  return `Translation not available for '${key}' in '${language}'`;
 };

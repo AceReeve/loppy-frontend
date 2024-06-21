@@ -6,6 +6,7 @@
   ],
   "exports": {
     "./components/ui": "./src/components/ui/index.tsx",
+    "./components/custom": "./src/components/custom/index.tsx",
     "./hooks": "./src/lib/hooks/index.tsx",
     "./utils": "./src/lib/utils.ts",
     "./styles.css": "./dist/index.css",
@@ -59,8 +60,10 @@
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-radio-group": "^1.1.3",
     "@radix-ui/react-separator": "^1.0.3",
     "date-fns": "^3.6.0",
+    "input-otp": "^1.2.4",
     "react-day-picker": "^8.10.1",
     "react-hook-form": "^7.51.5",
     "zod": "^3.23.8"

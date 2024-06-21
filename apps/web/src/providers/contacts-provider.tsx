@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext } from "react";
 
-type ContextType = {};
+interface ContextType {}
 
 const ContactsContext = createContext<ContextType | null>(null);
 

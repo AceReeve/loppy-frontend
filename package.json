@@ -1,4 +1,5 @@
 {
+  "name": "servihero",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -13,7 +14,7 @@
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "turbo": "latest"
+    "turbo": "^2.0.4"
   },
   "engines": {
     "node": ">=20.12.1"

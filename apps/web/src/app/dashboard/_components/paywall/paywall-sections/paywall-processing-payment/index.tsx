@@ -1,5 +1,5 @@
-import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui";
-import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 export default function PaywallProcessingPayment() {
   return (

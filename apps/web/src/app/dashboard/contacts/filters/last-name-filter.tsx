@@ -1,10 +1,9 @@
-import { AccordionContent } from "@/src/components/ui/accordion.tsx";
-import React from "react";
+import { AccordionContent } from "@repo/ui/components/ui";
 
 export default function LastNameFilter() {
   return (
-    <AccordionContent className="min-h-[50px] h-auto ">
-      <div className="relative w-70 drop-shadow-lg">
+    <AccordionContent className="h-auto min-h-[50px]">
+      <div className="w-70 relative drop-shadow-lg">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 ">
           <svg
             className="h-5 w-5 text-gray-500 "
@@ -16,11 +15,11 @@ export default function LastNameFilter() {
               fillRule="evenodd"
               d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
               clipRule="evenodd"
-            ></path>
+            />
           </svg>
         </div>
         <input
-          autoComplete={"off"}
+          autoComplete="off"
           type="text"
           name="email"
           id="topbar-search"

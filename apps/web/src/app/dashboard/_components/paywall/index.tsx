@@ -3,12 +3,13 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createQueryString } from "@repo/hooks-and-utils/query-utils";
+import { PaymentStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums";
 import PaywallPlanSelection from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-plan-selection";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 import PaywallSteps from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps";
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
-import { PaymentStatus } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
+import Registration from "@/src/app/dashboard/_components/registration";
 
 export default function Paywall() {
   const router = useRouter();
@@ -18,6 +19,11 @@ export default function Paywall() {
   const viewParam = searchParams.get("view");
 
   const views = [
+    {
+      label: "Registration Details",
+      id: "registration-details",
+      component: Registration,
+    },
     {
       label: "Plan Selection",
       id: "plan-selection",

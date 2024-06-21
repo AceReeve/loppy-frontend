@@ -20,9 +20,12 @@ import RingProgress from "@/src/components/progress/ring-progress";
 import ColumnChart from "@/src/components/charts/column-chart";
 import dashboardSampleData from "@/src/data/sample/dashboard-sample-data";
 import LineChart from "@/src/components/charts/line-chart";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import { DefaultAvatar } from "@repo/ui/components/custom";
 
 export default function Page() {
   const [value, setValue] = useState("1D");
+  const { session } = useDashboardState();
 
   const customerLeads = [
     {
@@ -50,13 +53,11 @@ export default function Page() {
       {/* Dashboard Header */}
       <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
-          <div className="relative h-[54px] w-[54px] s-hrink-0">
-            <Image
-              alt=""
-              className="h-full w-full rounded-full object-cover"
-              height={247}
-              src="/assets/images/garrett-elmore.png"
-              width={223}
+          <div className="s-hrink-0 relative h-[54px] w-[54px]">
+            <DefaultAvatar
+              className="size-full"
+              image={session?.user.image ?? ""}
+              name={session?.user.name ?? ""}
             />
             <svg
               className="absolute left-0 top-0 -ml-[20%] -mt-[20%]"
@@ -79,7 +80,7 @@ export default function Page() {
           </div>
           <div className="flex flex-col gap-[13px]">
             <div className="font-nunito text-[2rem]/[1] font-bold text-black">
-              Welcome back, Garrett!
+              Welcome back, {session?.profile?.given_name}!
             </div>
             <p className="font-open-sans text-sm font-normal tracking-wider text-gray-400">
               We’ve recently added updates to the Call Center - Check them out{" "}
@@ -108,7 +109,7 @@ export default function Page() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button className="flex h-[46px] items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] bg-primary px-6 py-4">
+          <Button className="bg-primary flex h-[46px] items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] px-6 py-4">
             <Export className="relative h-6 w-6 text-[#fff]" />
             <div className="font-nunito text-base/[1] font-bold text-[#fff]">
               Export
@@ -121,13 +122,13 @@ export default function Page() {
       <div className="mt-5 grid grid-cols-12 gap-[38px]">
         {[1, 2, 3].map((i) => (
           <div
-            className="relative col-span-12 flex flex-col gap-5 rounded-[14px] bg-card p-5 shadow-soft dark:border dark:border-secondary/40 lg:col-span-6 xl:col-span-3"
+            className="bg-card shadow-soft dark:border-secondary/40 relative col-span-12 flex flex-col gap-5 rounded-[14px] p-5 lg:col-span-6 xl:col-span-3 dark:border"
             key={i}
           >
             <div className="absolute right-[11px] top-[10px] flex h-[58px] w-[58px] items-center justify-center rounded-full border border-[#E6E6E6]">
               <Profile2User className="h-[34.80px] w-[34.80px] text-black" />
             </div>
-            <div className="mt-2 pr-[60px] font-open-sans text-lg font-semibold text-gray-500">
+            <div className="font-open-sans mt-2 pr-[60px] text-lg font-semibold text-gray-500">
               Total Customers
             </div>
             <h2 className="text-[38px] font-bold leading-10 text-gray-700">
@@ -154,8 +155,8 @@ export default function Page() {
             </div>
           </div>
         ))}
-        <div className="relative col-span-12 flex flex-col gap-5 rounded-[14px] bg-card p-5 shadow-soft dark:border dark:border-secondary/40 lg:col-span-6 xl:col-span-3">
-          <div className="mt-2 font-open-sans text-lg font-semibold text-gray-500">
+        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-12 flex flex-col gap-5 rounded-[14px] p-5 lg:col-span-6 xl:col-span-3 dark:border">
+          <div className="font-open-sans mt-2 text-lg font-semibold text-gray-500">
             Top Lead Source
           </div>
           <div className="flex items-center gap-2.5">
@@ -175,8 +176,8 @@ export default function Page() {
 
       {/* Second Row Components */}
       <div className="mt-5 grid grid-cols-12 gap-[38px]">
-        <div className="relative col-span-full flex flex-col gap-5 rounded-[32px] bg-card p-6 shadow-soft dark:border dark:border-secondary/40 lg:col-span-7">
-          <div className="pr-[60px] font-montserrat text-lg font-semibold text-gray-900">
+        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex flex-col gap-5 rounded-[32px] p-6 lg:col-span-7 dark:border">
+          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
             Website Analytics
           </div>
           {/*Chart Filter by Date */}
@@ -215,11 +216,11 @@ export default function Page() {
                   className={`relative flex h-[58px] w-full flex-col items-center justify-between border-zinc-300 ${index !== dashboardSampleData.analytics.length - 1 ? "border-r" : ""}`}
                 >
                   <div className="relative flex flex-col items-start">
-                    <div className="relative flex font-roboto text-[26px] font-bold leading-[34px] text-gray-500">
+                    <div className="font-roboto relative flex text-[26px] font-bold leading-[34px] text-gray-500">
                       <div>{item.title}</div>
                       <div className="flex items-center justify-start gap-1">
                         <ArrowUpIcon className="relative inline-flex h-[18.01px] w-[18.01px] flex-col items-start justify-start text-emerald-500" />
-                        <div className="text-right font-roboto text-sm font-medium leading-snug text-emerald-500">
+                        <div className="font-roboto text-right text-sm font-medium leading-snug text-emerald-500">
                           {item.increase}%
                         </div>
                       </div>
@@ -233,8 +234,8 @@ export default function Page() {
             ))}
           </div>
         </div>
-        <div className="relative col-span-full flex flex-col gap-3 rounded-[32px] bg-card p-6 shadow-soft dark:border dark:border-secondary/40 lg:col-span-5">
-          <div className="pr-[60px] font-montserrat text-lg font-semibold text-gray-900">
+        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex flex-col gap-3 rounded-[32px] p-6 lg:col-span-5 dark:border">
+          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
             Total Revenue
           </div>
           {/*  Filter */}
@@ -270,10 +271,10 @@ export default function Page() {
               </div>
             </div>
             <div className="inline-flex w-[91px] flex-col items-end justify-start gap-2">
-              <div className="text-right font-open-sans text-sm font-normal leading-none tracking-wide text-green-500">
+              <div className="font-open-sans text-right text-sm font-normal leading-none tracking-wide text-green-500">
                 -1.9%
               </div>
-              <div className="text-right font-open-sans text-sm font-normal leading-none tracking-wide text-stone-500">
+              <div className="font-open-sans text-right text-sm font-normal leading-none tracking-wide text-stone-500">
                 vs last week
               </div>
             </div>
@@ -284,19 +285,19 @@ export default function Page() {
       </div>
 
       {/*  Third Row Components */}
-      <div className="relative mt-8 rounded-[14px] bg-card p-1.5 shadow-soft dark:border dark:border-secondary/40">
+      <div className="bg-card shadow-soft dark:border-secondary/40 relative mt-8 rounded-[14px] p-1.5 dark:border">
         <Table />
       </div>
       {/*  Fourth Row Components */}
       <div className="mt-5 grid grid-cols-12 gap-[38px]">
-        <div className="relative col-span-full flex h-[364px] flex-col gap-5 rounded-[14px] bg-card p-5 shadow-soft dark:border dark:border-secondary/40 lg:col-span-7">
-          <div className="pr-[60px] font-montserrat text-lg font-semibold text-gray-900">
+        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex h-[364px] flex-col gap-5 rounded-[14px] p-5 lg:col-span-7 dark:border">
+          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
             Lead Submissions
           </div>
           {/*Chart Filter by Date Range*/}
 
           <ToggleGroup
-            className="absolute right-6 top-5 z-50 w-auto flex-row rounded-[20px] border border-gray-100 bg-neutral-100 px-[5px] inline-flex items-center justify-start gap-[5px] text-[#3A3F51]"
+            className="absolute right-6 top-5 z-50 inline-flex w-auto flex-row items-center justify-start gap-[5px] rounded-[20px] border border-gray-100 bg-neutral-100 px-[5px] text-[#3A3F51]"
             defaultValue="1D"
             onValueChange={(value) => {
               if (value) setValue(value);
@@ -323,8 +324,8 @@ export default function Page() {
           </ToggleGroup>
           <ColumnChart />
         </div>
-        <div className="relative col-span-full flex h-[364px] flex-col gap-5 rounded-[14px] bg-card p-5 shadow-soft dark:border dark:border-secondary/40 lg:col-span-5">
-          <div className="pr-[60px] font-montserrat text-lg font-semibold text-gray-900">
+        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex h-[364px] flex-col gap-5 rounded-[14px] p-5 lg:col-span-5 dark:border">
+          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
             Customer Leads
           </div>
           {/*  Filter */}

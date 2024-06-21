@@ -8,6 +8,7 @@ export default function GoogleSignInButton() {
       onClick={async () => {
         await handleOAuthSignin("google");
       }}
+      type="button"
     >
       <Image
         src="/assets/icons/icon-google-colored.svg"
@@ -17,7 +18,7 @@ export default function GoogleSignInButton() {
         className="size-4"
         alt=""
       />
-      <div className="text-center font-nunito text-sm font-bold text-gray-800">
+      <div className="font-nunito text-center text-sm font-bold text-gray-800">
         Google
       </div>
     </button>

@@ -1,4 +1,4 @@
-import type { InviteUserResponse } from "@/src/endpoints/types/user";
+import type { InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/user";
 
 export interface TeamsSetupStepsProps {
   emails?: InviteUserResponse["emails"];

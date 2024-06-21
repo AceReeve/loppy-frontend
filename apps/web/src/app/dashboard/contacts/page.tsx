@@ -1,9 +1,7 @@
 "use client";
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
   Button,
+  Calendar,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -13,49 +11,51 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Input,
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   toast,
-  ToastAction,
 } from "@repo/ui/components/ui";
 import { ArrowDown2 } from "iconsax-react";
-import { number, z } from "zod";
+import { type z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/src/components/ui/form.tsx";
-
-import {
-  MultiSelector,
-  MultiSelectorTrigger,
-  MultiSelectorInput,
-  MultiSelectorContent,
-  MultiSelectorList,
-  MultiSelectorItem,
-} from "@/src/components/ui/multiselect.tsx";
-import React, { useState, useTransition } from "react";
-import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
-import { useCreateContactMutation } from "@/src/endpoints/contacts.ts";
-import { CreateContactsFormSchema } from "@/src/schemas";
-import UnassignedContacts from "./tabs/unassigned-contacts";
-import MyContacts from "./tabs/my-contacts";
-import AllContacts from "./tabs/all-contacts";
+import React, { useState } from "react";
+import { useCreateContactMutation } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { CalendarIcon } from "lucide-react";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
-import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
-import { AlertCircle } from "lucide-react";
+import { CreateContactsFormSchema } from "@/src/schemas";
+import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
+import AllContacts from "./tabs/all-contacts";
+import MyContacts from "./tabs/my-contacts";
+import UnassignedContacts from "./tabs/unassigned-contacts";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { cn } from "@repo/ui/utils";
+import moment from "moment";
 
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const tabs = [
     {
@@ -75,9 +75,6 @@ function Page() {
     },
   ];
 
-  const phoneRegex = new RegExp(
-    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/,
-  );
   const formSchema = CreateContactsFormSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,7 +87,7 @@ function Page() {
       source: "",
       lifetime_value: 0,
       last_campaign_ran: "",
-      last_interaction: "",
+      last_interaction: new Date(),
       tags: [
         {
           tag_name: "",
@@ -103,14 +100,13 @@ function Page() {
   };
 
   const [tagValue, setTagValue] = useState<string[]>([]);
+
   const options = [
     { label: "ChatGPT", value: "ChatGPT" },
     { label: "Facebook", value: "Facebook" },
     { label: "Twitter", value: "Twitter" },
   ];
-  const [createContact, { data: contactData, error, isLoading }] =
-    useCreateContactMutation();
-
+  const [createContact, { isLoading }] = useCreateContactMutation();
   const onSubmit = async () => {
     try {
       const formData = form.getValues();
@@ -122,28 +118,36 @@ function Page() {
           tagValue.length > 0 ? tagValue.map((tag) => ({ tag_name: tag })) : [],
       };
 
-      console.log(newData);
+      const response = await createContact(newData);
 
-      await createContact(newData);
-
-      if (error) {
-        return (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{getErrorMessage(error)}</AlertDescription>
-          </Alert>
-        );
-      }
-      if (!isLoading) {
+      // Check if response has data property
+      if (response.data) {
+        // Handle successful submission
+        setCreateDialogOpen(false);
+        toast({
+          title: "User Created Successfully",
+          description: "New user has been created.",
+          variant: "success",
+        });
         form.reset();
-      }
-
-      if (!contactData) {
-        console.log("Contact Added");
+        setTagValue([]);
+      } else if (response.error) {
+        // Handle submission failure
+        toast({
+          title: "Create User Error",
+          description:
+            //response.error
+            //? response.error.toString() :
+            "Unknown error occurred",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.error("Error creating contact:", error);
+      toast({
+        title: "Create User Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
     }
   };
 
@@ -181,7 +185,7 @@ function Page() {
           <div className="font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
             Contacts
           </div>
-          <div className="mb-2 font-montserrat text-sm font-normal text-gray-500">
+          <div className="font-montserrat mb-2 text-sm font-normal text-gray-500">
             0 contacts
           </div>
         </div>
@@ -217,7 +221,7 @@ function Page() {
             <ExportContactsDialogForm />
           </Dialog>
 
-          <Dialog>
+          <Dialog onOpenChange={setCreateDialogOpen} open={createDialogOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-xl">Create Contact</Button>
             </DialogTrigger>
@@ -227,18 +231,18 @@ function Page() {
               </DialogHeader>
 
               {isLoading ? (
-                <div className="content-center w-full m-auto h-[200px]">
-                  <div className="h-[50px] w-[15px] content-center m-auto">
+                <div className="m-auto h-[200px] w-full content-center">
+                  <div className="m-auto h-[50px] w-[15px] content-center">
                     <LoadingSpinner />
                   </div>
-                  <p className="text-center font-nunito text-lg">
+                  <p className="font-nunito text-center text-lg">
                     Loading please wait...
                   </p>
                 </div>
               ) : (
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="grid gap-2 max-h-[500px] px-3 overflow-auto custom-scrollbar">
+                  <form onSubmit={void form.handleSubmit(onSubmit)}>
+                    <div className="custom-scrollbar grid max-h-[500px] gap-2 overflow-auto px-3">
                       <FormField
                         control={form.control}
                         name="first_name"
@@ -248,7 +252,7 @@ function Page() {
                               <FormLabel>First Name</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="First Name"
                                   {...field}
                                 />
@@ -268,7 +272,7 @@ function Page() {
                               <FormLabel>Last Name</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="Last Name"
                                   {...field}
                                 />
@@ -288,7 +292,7 @@ function Page() {
                               <FormLabel>Email</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="servi@gmail.com"
                                   {...field}
                                 />
@@ -308,7 +312,7 @@ function Page() {
                               <FormLabel>Phone Number</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="Phone Number"
                                   {...field}
                                   type="number"
@@ -329,7 +333,7 @@ function Page() {
                               <FormLabel>Source</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="Source"
                                   {...field}
                                 />
@@ -349,7 +353,7 @@ function Page() {
                               <FormLabel>Lifetime Value</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="Lifetime Value"
                                   {...field}
                                   type="number"
@@ -370,7 +374,7 @@ function Page() {
                               <FormLabel>Last Campaign Ran</FormLabel>
                               <FormControl>
                                 <Input
-                                  autoComplete={"off"}
+                                  autoComplete="off"
                                   placeholder="Last Campaign Ran"
                                   {...field}
                                 />
@@ -386,7 +390,7 @@ function Page() {
                         name="last_interaction"
                         render={({ field }) => {
                           return (
-                            <FormItem>
+                            /*                        <FormItem>
                               <FormLabel>Last Interaction</FormLabel>
                               <FormControl>
                                 <Input
@@ -395,6 +399,56 @@ function Page() {
                                   {...field}
                                 />
                               </FormControl>
+                              <FormMessage />
+                            </FormItem>
+*/
+                            <FormItem className="flex flex-col">
+                              <FormLabel className="my-2">
+                                Last Interaction
+                              </FormLabel>
+                              <Popover
+                                onOpenChange={setCalendarOpen}
+                                open={calendarOpen}
+                              >
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      className={cn(
+                                        "w-full pl-3 text-left font-normal",
+                                        !field.value && "text-muted-foreground",
+                                      )}
+                                    >
+                                      {field.value ? (
+                                        moment(field.value).format("yyyy-MM-dd")
+                                      ) : (
+                                        <span>Pick a date</span>
+                                      )}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    //onSelect={field.onChange}
+                                    onSelect={(date) => {
+                                      field.onChange(date);
+                                      setCalendarOpen(!calendarOpen); // Close the calendar after selecting a date
+                                    }}
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              <FormDescription />
                               <FormMessage />
                             </FormItem>
                           );

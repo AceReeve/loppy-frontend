@@ -7,9 +7,7 @@ function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <ContactsProvider>{children}</ContactsProvider>
-    </>
+    <ContactsProvider>{children}</ContactsProvider>
   );
 }
 

@@ -2,7 +2,7 @@ import { CheckIcon } from "@heroicons/react/16/solid";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import LoadingOverlay from "@/src/loading/loading-overlay.tsx";
+import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 import { paymentPlanDetails } from "@/src/data/payment-plan-details";
 
@@ -43,7 +43,7 @@ export default function PaywallPlanSelection() {
               key={key}
             >
               <div className={index % 2 === 1 ? "text-white" : "text-black"}>
-                <div className="w-full text-center font-montserrat">
+                <div className="font-montserrat w-full text-center">
                   <div className="text-sm font-medium leading-normal tracking-wide">
                     {item.name}
                   </div>
@@ -85,6 +85,7 @@ export default function PaywallPlanSelection() {
                   onClick={() => {
                     onPlanSelect(item);
                   }}
+                  type="button"
                 >
                   Choose Plan
                 </button>
@@ -93,7 +94,7 @@ export default function PaywallPlanSelection() {
           ))}
         </div>
         <button
-          className="text-primary underline -mt-5"
+          className="text-primary -mt-5 underline"
           onClick={() => {
             setLoading(true);
             void signOut({ callbackUrl: "/" });

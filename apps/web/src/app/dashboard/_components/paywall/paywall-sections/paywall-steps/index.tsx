@@ -1,10 +1,10 @@
-import PaywallOrderDetails from "../paywall-order-details";
-import PaywallPaymentMethod from "./steps/paywall-payment-method";
-import PaywallUserInformation from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-user-information";
 import { useEffect, useMemo } from "react";
-import { usePaywallState } from "@/src/providers/paywall-provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createQueryString } from "@repo/hooks-and-utils/query-utils";
+import { usePaywallState } from "@/src/providers/paywall-provider";
+import PaywallUserInformation from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-user-information";
+import PaywallOrderDetails from "../paywall-order-details";
+import PaywallPaymentMethod from "./steps/paywall-payment-method";
 import PaywallOrderSummary from "./steps/paywall-order-summary";
 
 export default function PaywallSteps() {
@@ -32,12 +32,12 @@ export default function PaywallSteps() {
 
   const stepsMap = useMemo(
     () =>
-      steps.reduce(
+      steps.reduce<Record<string, any>>(
         (acc, current, index) => {
           acc[current.id] = { ...current, index };
           return acc;
         },
-        {} as { [key: string]: any },
+        {},
       ),
     [],
   );
@@ -73,6 +73,7 @@ export default function PaywallSteps() {
                 onClick={() => {
                   index >= currentStepIndex ? null : toStepIndex(index);
                 }}
+                type="button"
               >
                 <div
                   className={`flex h-7 w-7 items-center justify-center rounded-full text-white ${index === currentStepIndex ? "bg-primary" : "bg-[#CECECE]"}`}
@@ -80,7 +81,7 @@ export default function PaywallSteps() {
                   {index + 1}
                 </div>
                 <div
-                  className={`ml-2 font-nunito text-base leading-none ${index === currentStepIndex ? "font-medium text-primary" : "font-normal text-[#CECECE]"}`}
+                  className={`font-nunito ml-2 text-base leading-none ${index === currentStepIndex ? "text-primary font-medium" : "font-normal text-[#CECECE]"}`}
                 >
                   {step.label}
                 </div>
@@ -89,7 +90,7 @@ export default function PaywallSteps() {
           </div>
 
           {/* Step Content */}
-          <form autoComplete="on" className="mt-8 font-nunito">
+          <form autoComplete="on" className="font-nunito mt-8">
             {steps.map((step, index) => {
               if (index <= currentStepIndex) {
                 const StepComponent = step.component;
@@ -98,9 +99,9 @@ export default function PaywallSteps() {
                     <StepComponent />
                   </div>
                 );
-              } else {
+              } 
                 return null;
-              }
+              
             })}
           </form>
         </div>

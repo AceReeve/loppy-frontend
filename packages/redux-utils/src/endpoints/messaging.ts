@@ -10,7 +10,7 @@ const api = baseApi
         query: () => {
           return {
             url: `/messages/get-twilio-access-token`,
-            responseHandler: (response: { text: () => any }) => response.text(),
+            responseHandler: (response: Response) => response.text(),
           };
         },
         providesTags: ["messaging"],
