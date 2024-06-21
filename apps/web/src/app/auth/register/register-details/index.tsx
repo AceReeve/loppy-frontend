@@ -38,15 +38,37 @@ import {
   RadioGroupItem,
 } from "@/src/components/ui/radio-group.tsx";
 import { Dialog } from "@/src/components/ui/dialog.tsx";
-export default function Registration({
-  onHandleProceed,
-}: {
-  onHandleProceed: () => void;
-}) {
+import { handleCredentialsSignIn } from "@/src/actions/login-actions.ts";
+import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
+
+type RegisterOTPProps = {};
+export default function RegisterDetails() {
+  const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
+    usePaywallState();
   const onSubmit = () => {
     console.log("Submitted");
     onHandleProceed();
   };
+
+  const onHandleProceed = () => {
+    setViewIndex(1);
+
+    //setOpenDetails(false);
+    //setProcess(step);
+    /*handleCredentialsSignIn(form.getValues(), callbackUrl)
+      .then((data) => {
+        if (data?.error) {
+          setError(data.error);
+        } else {
+          //setProcess(1);
+          // setOpenDetails(true);
+        }
+      })
+      .catch((e) => {
+        setError(e.message || e.statusText);
+      });*/
+  };
+
   const registerSchema = RegisterDetailsSchema;
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -157,7 +179,7 @@ export default function Registration({
                   control={form.control}
                   name="birth_date"
                   render={({ field }) => (
-                    <FormItem className="col-span-2">
+                    <FormItem className="col-span-1">
                       <FormLabel>Birth Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -169,6 +191,7 @@ export default function Registration({
                     </FormItem>
                   )}
                 />
+                <div></div>
                 <FormField
                   control={form.control}
                   name="sex"

@@ -9,7 +9,7 @@ import PaywallSteps from "@/src/app/dashboard/_components/paywall/paywall-sectio
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
 import { PaymentStatus } from "@/src/app/dashboard/_components/paywall/paywall.enums.ts";
-import Registration from "@/src/app/dashboard/_components/registration";
+import RegisterDetails from "../../../auth/register/register-details";
 
 export default function Paywall() {
   const router = useRouter();
@@ -19,6 +19,11 @@ export default function Paywall() {
   const viewParam = searchParams.get("view");
 
   const views = [
+    {
+      label: "Register Details",
+      id: "register-details",
+      component: RegisterDetails,
+    },
     {
       label: "Plan Selection",
       id: "plan-selection",

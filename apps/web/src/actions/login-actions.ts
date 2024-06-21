@@ -24,7 +24,8 @@ export const handleConfirmOTP = async (
   const { email, otp } = validateFields.data;
 
   const authResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?${email}&${otp}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?email=${email}&otp=${otp}`,
+
     {
       method: "POST",
       headers: {
@@ -32,6 +33,27 @@ export const handleConfirmOTP = async (
       },
     },
   );
+  console.log(
+    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?email=${email}&otp=${otp}`,
+  );
+  if (authResponse.ok) {
+    //await handleCredentialsSignUp(values, callbackURL);
+    return;
+  }
+
+  // Throw proper error response from backend server
+  const res = await authResponse.json();
+  if (res.errors) {
+    if (Array.isArray(res.errors)) {
+      if (typeof res.errors[0] === "object") {
+        throw new Error(Object.values(res.errors[0])[0] as any);
+      }
+      throw new Error(res.errors[0]);
+    }
+    throw new Error(res.errors);
+  } else {
+    throw new Error(authResponse.statusText);
+  }
 };
 export const handleSendOTP = async (
   values: z.infer<typeof SendRegisterOTPSchema>,
@@ -45,7 +67,6 @@ export const handleSendOTP = async (
   }
 
   const { email } = validateFields.data;
-  console.log("OTP CALLED");
 
   const authResponse = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/user/send-register-otp?email=${email}`,
@@ -86,7 +107,7 @@ export const handleCredentialsSignUp = async (
     return { error: "Invalid fields!" };
   }
 
-  const { email, password, confirm_password } = validatedFields.data;
+  const { email, password } = validatedFields.data;
 
   const authResponse = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/user/register`,
@@ -98,7 +119,6 @@ export const handleCredentialsSignUp = async (
       body: JSON.stringify({
         email,
         password,
-        confirm_password,
       }),
     },
   );
