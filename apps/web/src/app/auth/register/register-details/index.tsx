@@ -3,34 +3,32 @@
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon } from "lucide-react";
 import React from "react";
 import {
-    Button, Calendar, Dialog, DialogContent, DialogHeader, DialogTrigger,
-    type DropzoneOptions, FileInput, FileUploader,
-    Form,
-    FormControl, FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    Input, Popover, PopoverContent, PopoverTrigger, RadioGroup, RadioGroupItem
-} from "@repo/ui/components/ui";
-import {cn} from "@repo/ui/utils";
-import moment from "moment";
-import { RegisterDetailsSchema } from "@/src/schemas";
-
-export default function Registration() {
-import React from "react";
-import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+  type DropzoneOptions,
+  FileInput,
+  FileUploader,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Popover,
+  PopoverTrigger,
   RadioGroup,
   RadioGroupItem,
-} from "@/src/components/ui/radio-group.tsx";
-import { Dialog } from "@/src/components/ui/dialog.tsx";
-import { handleCredentialsSignIn } from "@/src/actions/login-actions.ts";
+} from "@repo/ui/components/ui";
+import { RegisterDetailsSchema } from "@/src/schemas";
 import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
 
-type RegisterOTPProps = {};
 export default function RegisterDetails() {
   const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
     usePaywallState();
@@ -175,7 +173,7 @@ export default function RegisterDetails() {
                           <Input type="date" className="" {...field} />
                         </PopoverTrigger>
                       </Popover>
-                      <FormDescription/>
+                      <FormDescription />
                       <FormMessage />
                     </FormItem>
                   )}

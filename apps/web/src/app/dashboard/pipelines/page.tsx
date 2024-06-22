@@ -166,10 +166,7 @@ export default function Page() {
       <div className="flex justify-start gap-10">
         {opportunities.length > 0 ? (
           opportunities.map((opportunity) => (
-            <Opportunity
-              key={opportunity.id}
-              opportunity={opportunity}
-             />
+            <Opportunity key={opportunity.id} opportunity={opportunity} />
           ))
         ) : (
           <p>No Info Yet</p>

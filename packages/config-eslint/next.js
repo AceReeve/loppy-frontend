@@ -45,10 +45,10 @@ module.exports = {
   rules: {
     "@typescript-eslint/explicit-function-return-type": "off",
     "import/no-default-export": "off",
-    "@typescript-eslint/no-unsafe-call": "off",
-    "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/no-unsafe-return": "off",
-    "jsx-a11y/heading-has-content": "off",
+    // "@typescript-eslint/no-unsafe-call": "off",
+    // "@typescript-eslint/no-unsafe-assignment": "off",
+    // "@typescript-eslint/no-unsafe-return": "off",
+    // "jsx-a11y/heading-has-content": "off",
     // "@typescript-eslint/naming-convention": [
     //   "error",
     //   {

@@ -10,7 +10,7 @@ interface MessageMediaProps {
   sending?: boolean;
   images: ReduxMedia[];
   files: ReduxMedia[];
-  attachments: Record<string, Blob>;
+  attachments?: Record<string, Blob>;
 }
 
 export default function MessageMedia({
@@ -71,7 +71,7 @@ export default function MessageMedia({
               width: "100%",
             }}
             src={
-              isMediaLoaded
+              isMediaLoaded && attachments
                 ? window.URL.createObjectURL(attachments[img.sid])
                 : undefined
             }

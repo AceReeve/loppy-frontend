@@ -1,12 +1,6 @@
-import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
 import GoogleSignInButton from "@/src/app/auth/_components/google-sign-in-button";
 import FacebookSignInButton from "@/src/app/auth/_components/facebook-sign-in-button";
 import Link from "next/link";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/src/components/ui/input-otp.tsx";
 import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -15,6 +9,7 @@ import { RegisterSchema, SendRegisterOTPSchema } from "@/src/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleSendOTP } from "@/src/actions/login-actions.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 export default function Registration({
   HandleStepProcess,

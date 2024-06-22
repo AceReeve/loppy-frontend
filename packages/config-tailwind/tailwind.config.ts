@@ -6,7 +6,11 @@ import buttonStyles from "./src/button-styles.ts";
 // We want each package to be responsible for its own content.
 const config: Omit<Config, "content"> = {
   darkMode: "class",
-  content: ["../../packages/ui/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "../../packages/ui/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/messaging-ui/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       colors: {

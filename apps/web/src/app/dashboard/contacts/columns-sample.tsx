@@ -32,14 +32,18 @@ export const columns: ColumnDef<Payment>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value) => { table.toggleAllPageRowsSelected(Boolean(value)); }}
+        onCheckedChange={(value) => {
+          table.toggleAllPageRowsSelected(Boolean(value));
+        }}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => { row.toggleSelected(Boolean(value)); }}
+        onCheckedChange={(value) => {
+          row.toggleSelected(Boolean(value));
+        }}
         aria-label="Select row"
       />
     ),
@@ -56,7 +60,9 @@ export const columns: ColumnDef<Payment>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => { column.toggleSorting(column.getIsSorted() === "asc"); }}
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === "asc");
+          }}
         >
           Email
           <ArrowsUpDownIcon className="ml-2 h-4 w-4" />

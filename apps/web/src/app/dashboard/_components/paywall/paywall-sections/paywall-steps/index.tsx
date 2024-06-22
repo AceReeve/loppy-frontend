@@ -32,13 +32,10 @@ export default function PaywallSteps() {
 
   const stepsMap = useMemo(
     () =>
-      steps.reduce<Record<string, any>>(
-        (acc, current, index) => {
-          acc[current.id] = { ...current, index };
-          return acc;
-        },
-        {},
-      ),
+      steps.reduce<Record<string, any>>((acc, current, index) => {
+        acc[current.id] = { ...current, index };
+        return acc;
+      }, {}),
     [],
   );
 
@@ -99,9 +96,8 @@ export default function PaywallSteps() {
                     <StepComponent />
                   </div>
                 );
-              } 
-                return null;
-              
+              }
+              return null;
             })}
           </form>
         </div>

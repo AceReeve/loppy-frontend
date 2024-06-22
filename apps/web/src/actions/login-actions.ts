@@ -23,8 +23,9 @@ export const handleConfirmOTP = async (
   }
   const { email, otp } = validateFields.data;
 
+  const queryParams = new URLSearchParams({ email, otp }).toString();
   const authResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?email=${email}&otp=${otp}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?${queryParams}`,
 
     {
       method: "POST",
@@ -33,9 +34,7 @@ export const handleConfirmOTP = async (
       },
     },
   );
-  console.log(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?email=${email}&otp=${otp}`,
-  );
+
   if (authResponse.ok) {
     //await handleCredentialsSignUp(values, callbackURL);
     return;
@@ -67,9 +66,10 @@ export const handleSendOTP = async (
   }
 
   const { email } = validateFields.data;
+  const queryParams = new URLSearchParams({ email }).toString();
 
   const authResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/send-register-otp?email=${email}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/user/send-register-otp?${queryParams}`,
     {
       method: "POST",
       headers: {

@@ -1,17 +1,3 @@
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/src/components/ui/input-otp.tsx";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from "@/src/components/ui/form.tsx";
-import Link from "next/link";
-import LoadingSpinner from "@/src/loading/loading-spinner.tsx";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import {
@@ -27,6 +13,17 @@ import {
   handleSendOTP,
 } from "@/src/actions/login-actions.ts";
 import { useState, useTransition } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@repo/ui/components/ui";
+import Link from "next/link";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 type RegisterOTPProps = {
   data: z.infer<typeof RegisterSchema>;
