@@ -10,7 +10,7 @@ const weatherApi = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getWeatherDay: builder.query<GetWeatherDayResponse, undefined>({
+      getWeatherDay: builder.query<GetWeatherDayResponse, { city: string }>({
         query: (data) => {
           const params = new URLSearchParams(data).toString();
           return {
@@ -19,15 +19,17 @@ const weatherApi = baseApi
         },
         providesTags: ["weather"],
       }),
-      getWeatherDaily: builder.query<GetWeatherDailyResponse, undefined>({
-        query: (data) => {
-          const params = new URLSearchParams(data).toString();
-          return {
-            url: `/weather/openweather/daily?${params}`,
-          };
+      getWeatherDaily: builder.query<GetWeatherDailyResponse, { city: string }>(
+        {
+          query: (data) => {
+            const params = new URLSearchParams(data).toString();
+            return {
+              url: `/weather/openweather/daily?${params}`,
+            };
+          },
+          providesTags: ["weather"],
         },
-        providesTags: ["weather"],
-      }),
+      ),
     }),
   });
 
