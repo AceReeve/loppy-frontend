@@ -4,7 +4,7 @@
   "private": true,
   "exports": {
     ".": "./tailwind.config.ts",
-    "./styles.css": "./dist/index.css",
+    "./styles.css": "./src/styles.css",
     "./theme-colors.ts": "./src/theme-colors.ts"
   },
   "scripts": {

@@ -44,11 +44,12 @@ export async function addConversation(
   }
 
   try {
-    const conversation = await client.createConversation(
-    // {
-    //   uniqueName: name,
-    // }
-    );
+    const conversation = await client
+      .createConversation
+      // {
+      //   uniqueName: name,
+      // }
+      ();
     await conversation.join();
 
     const participants = await conversation.getParticipants();

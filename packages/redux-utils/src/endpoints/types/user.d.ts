@@ -1,11 +1,11 @@
 export interface InviteUserPayload {
-    email: string[];
+  email: string[];
 }
 
 export interface InviteUserResponse {
-    emails: {
-        email: string;
-        status: string;
-    }[];
-    invited_by: string;
+  emails: {
+    email: string;
+    status: string;
+  }[];
+  invited_by: string;
 }

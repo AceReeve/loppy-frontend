@@ -16,9 +16,7 @@ export default function Wind() {
   return (
     <div className="relative h-[110px] w-[110px] select-none">
       {/* Arrow */}
-      <div
-        className="absolute bottom-0 left-0 right-0 top-0 z-20 flex items-center  justify-center"
-      >
+      <div className="absolute bottom-0 left-0 right-0 top-0 z-20 flex items-center  justify-center">
         <img
           className="rotate-180 opacity-0"
           ref={arrow}

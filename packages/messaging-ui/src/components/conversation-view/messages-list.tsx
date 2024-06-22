@@ -129,6 +129,8 @@ export default function MessagesList(props: MessageListProps) {
   }, [files]);
 
   const onDownloadAttachments = async (message: ReduxMessage) => {
+    console.log("HEY");
+
     const attachedMedia = message.attachedMedia?.map(getSdkMediaObject);
     if (message.index === -1) {
       return undefined;
@@ -299,40 +301,38 @@ export default function MessagesList(props: MessageListProps) {
                     className={`relative ml-2 max-w-xs rounded-lg ${isOutbound ? "bg-sky-200 dark:bg-blue-800" : "bg-white"} px-4 py-2 lg:max-w-md`}
                   >
                     {wrappedBody}
-                    {conversationAttachments?.[message.sid] ? (
-                      <MessageMedia
-                        attachments={conversationAttachments[message.sid]}
-                        files={messageFiles}
-                        images={messageImages}
-                        key={message.sid}
-                        onDownload={async () =>
-                          await onDownloadAttachments(message)
+                    <MessageMedia
+                      attachments={conversationAttachments?.[message.sid]}
+                      files={messageFiles}
+                      images={messageImages}
+                      key={message.sid}
+                      onDownload={async () =>
+                        await onDownloadAttachments(message)
+                      }
+                      onOpen={(
+                        mediaSid: string,
+                        image?: ReduxMedia,
+                        file?: ReduxMedia,
+                      ) => {
+                        if (file) {
+                          onFileOpen(
+                            conversationAttachments[message.sid][mediaSid],
+                            file,
+                          );
+                          return;
                         }
-                        onOpen={(
-                          mediaSid: string,
-                          image?: ReduxMedia,
-                          file?: ReduxMedia,
-                        ) => {
-                          if (file) {
-                            onFileOpen(
-                              conversationAttachments[message.sid][mediaSid],
-                              file,
-                            );
-                            return;
-                          }
-                          if (image) {
-                            setImagePreview({
-                              message,
-                              file: conversationAttachments[message.sid][
-                                mediaSid
-                              ],
-                              sid: mediaSid,
-                            });
-                          }
-                        }}
-                        sending={message.index === -1}
-                      />
-                    ) : null}
+                        if (image) {
+                          setImagePreview({
+                            message,
+                            file: conversationAttachments[message.sid][
+                              mediaSid
+                            ],
+                            sid: mediaSid,
+                          });
+                        }
+                      }}
+                      sending={message.index === -1}
+                    />
 
                     <div
                       className={`absolute -bottom-[16px] flex gap-0.5 ${isOutbound ? "right-0" : "left-0"}`}

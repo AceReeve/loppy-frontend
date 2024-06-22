@@ -144,11 +144,10 @@ export default function MessagesProvider({
     });
 
     newClient.on("conversationJoined", (conversation) => {
+      dispatch(upsertConversation(conversation));
       void handlePromiseRejection(async () => {
         if (conversation.status === "joined") {
           const participants = await conversation.getParticipants();
-
-          dispatch(upsertConversation(conversation));
           dispatch(
             updateParticipants({
               participants,
@@ -188,7 +187,7 @@ export default function MessagesProvider({
       void upsertMessage(message);
       // if (message.author === localStorage.getItem("username")) {
       //   clearAttachments(message.conversation.sid, "-1");
-      // }
+      // }z
     });
     newClient.on("messageUpdated", (data) => {
       void upsertMessage(data.message);
@@ -230,7 +229,7 @@ export default function MessagesProvider({
         );
       });
     });
-  }, [token, messageFilter]);
+  }, [token]);
 
   async function upsertMessage(message: Message) {
     //transform the message and add it to redux

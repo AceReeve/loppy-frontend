@@ -6,9 +6,7 @@ function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ContactsProvider>{children}</ContactsProvider>
-  );
+  return <ContactsProvider>{children}</ContactsProvider>;
 }
 
 export default Layout;

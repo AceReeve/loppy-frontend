@@ -1,5 +1,5 @@
 /* eslint-disable -- temporarily disable all lint errors */
-  import dictionaries from "./dictionaries/en.json";
+import dictionaries from "./dictionaries/en.json";
 
 const errors = dictionaries.errors;
 

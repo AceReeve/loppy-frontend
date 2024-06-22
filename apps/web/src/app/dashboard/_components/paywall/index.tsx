@@ -9,7 +9,7 @@ import { usePaywallState } from "@/src/providers/paywall-provider";
 import PaywallSteps from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps";
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
-import Registration from "@/src/app/dashboard/_components/registration";
+import RegisterDetails from "../../../auth/register/register-details";
 
 export default function Paywall() {
   const router = useRouter();
@@ -20,9 +20,9 @@ export default function Paywall() {
 
   const views = [
     {
-      label: "Registration Details",
-      id: "registration-details",
-      component: Registration,
+      label: "Register Details",
+      id: "register-details",
+      component: RegisterDetails,
     },
     {
       label: "Plan Selection",

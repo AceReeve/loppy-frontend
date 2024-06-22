@@ -1,10 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
   Button,
+  DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  Input,
+  Separator,
 } from "@repo/ui/components/ui";
 import { useGetContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import {
@@ -19,23 +25,23 @@ import WeatherItem from "@/src/app/dashboard/marketing/weather-forecasting/weath
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 function Page() {
-  interface getCity {
-    city: string;
-  }
-  const [city, setCity] = useState({
-    city: "London",
-  });
+  const [city, setCity] = useState("London");
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef(null);
   const {
     data: weather,
     error: dayError,
     isLoading: dayIsLoading,
-  } = useGetWeatherDayQuery(city);
+  } = useGetWeatherDayQuery({ city });
+  String.prototype.toCapitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+  };
 
   const {
     data: weatherDaily,
     error: dailyError,
     isLoading: dailyIsLoading,
-  } = useGetWeatherDailyQuery(city);
+  } = useGetWeatherDailyQuery({ city });
 
   //const [weather, setWeather] = useState<WeatherData | null>(null);
 
@@ -44,6 +50,14 @@ function Page() {
       setWeather(weatherDaily.list[0]);
     }
   }, [weatherDaily]);*/
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (inputRef.current) {
+      setCity(inputRef.current.value);
+    }
+    setOpen(false);
+  };
 
   const [currentTime, setCurrentTime] = useState(new Date());
   useEffect(() => {
@@ -62,6 +76,7 @@ function Page() {
       day: "numeric",
     });
   }
+
   function getDayOfWeek(dateString: string) {
     const dayOfWeek = new Date(dateString).getDay();
     let dayName;
@@ -161,12 +176,39 @@ function Page() {
       </Alert>
     );
   }
-  if (!weather) return null;
 
+  if (!weather) return null;
   return (
     <div className="p-10 lg:overflow-x-hidden">
       <div className="flex w-full justify-end">
-        <Button className="rounded-xl">Change Location</Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger>
+            <Button className="rounded-xl font-bold ">Change Location</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>Change Location</DialogHeader>
+            <Separator />
+            <div className="h-auto">
+              <form
+                onSubmit={handleSubmit}
+                className="h-full flex gap-2 content-center"
+              >
+                <label className="content-center" htmlFor="input">
+                  City:
+                </label>
+                <Input
+                  className="w-full"
+                  id="input"
+                  type="text"
+                  ref={inputRef}
+                />
+                <div className="flex justify-end">
+                  <Button type="submit">Submit</Button>
+                </div>
+              </form>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="mt-14 xl:flex ">
         <div className="w-full">
@@ -180,7 +222,7 @@ function Page() {
                       src="/assets/icons/weather-forecast/icon-location.svg"
                     />
                     <div className="font-nunito h-[30.89px] w-[87.17px] text-lg font-semibold leading-7 text-white">
-                      {city.city}
+                      {city.toCapitalize()}
                     </div>
                   </div>
                   <div className="font-montserrat text-right text-sm font-normal leading-tight text-white">

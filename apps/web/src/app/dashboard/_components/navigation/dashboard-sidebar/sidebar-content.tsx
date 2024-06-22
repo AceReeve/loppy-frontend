@@ -19,7 +19,6 @@ import {
   DialogContent,
   Avatar,
   AvatarFallback,
-
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -27,7 +26,8 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger} from "@repo/ui/components/ui";
+  DrawerTrigger,
+} from "@repo/ui/components/ui";
 import React from "react";
 import WorkspaceButton from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/dashboard-sidebar-workspace";
 import { useDashboardState } from "@/src/providers/dashboard-provider";
@@ -40,7 +40,7 @@ export default function SidebarContent(props: Props) {
   const { sidebarCollapsed: collapsed } = useDashboardState();
 
   const pathName = usePathname();
-  const currentParentPath = `/${  pathName.split("/")[2]}`;
+  const currentParentPath = `/${pathName.split("/")[2]}`;
   const menus = props.menuItems.items;
   const rootSlug = props.menuItems.slug;
   // const role = props.session?.user?.data?.role;
@@ -73,9 +73,9 @@ export default function SidebarContent(props: Props) {
 
   function getPath(path: string[] | string) {
     if (typeof path === "string") {
-      return `/${  rootSlug.concat(path)}`;
+      return `/${rootSlug.concat(path)}`;
     }
-    return `/${  rootSlug.concat(path.join(""))}`;
+    return `/${rootSlug.concat(path.join(""))}`;
   }
 
   function isActive(path: string[] | string) {
@@ -85,7 +85,6 @@ export default function SidebarContent(props: Props) {
   const renderMenuIcon = (icon: MenuLinkItem["icon"]) => (
     <>
       {icon && typeof icon === "string" ? (
-         
         <img src={icon} alt="" className="relative h-6 w-6" />
       ) : (
         icon
@@ -107,7 +106,7 @@ export default function SidebarContent(props: Props) {
               <span
                 className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
                 aria-hidden="true"
-               />
+              />
             )}
             {renderMenuIcon(menuItem.icon)}
             <span
@@ -155,16 +154,14 @@ export default function SidebarContent(props: Props) {
                     key={subItem.id}
                     href={getPath([menuItem.url, subItem.url])}
                     className={`${menuItemClass} ${
-                      isActive([menuItem.url, subItem.url])
-                        ? activeClass
-                        : ""
+                      isActive([menuItem.url, subItem.url]) ? activeClass : ""
                     }`}
                   >
                     {isActive([menuItem.url, subItem.url]) && (
                       <span
                         className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
                         aria-hidden="true"
-                       />
+                      />
                     )}
                     <span
                       className={`${titleClass} ${collapsed ? collapsedTitleClass : ""}`}
@@ -306,9 +303,7 @@ export default function SidebarContent(props: Props) {
               height={141}
               className="size-[25px]"
             />
-            <div
-              className="font-nunito shrink grow basis-0 whitespace-nowrap text-base font-bold text-gray-800"
-            >
+            <div className="font-nunito shrink grow basis-0 whitespace-nowrap text-base font-bold text-gray-800">
               Service Hero
             </div>
             <div className="relative flex h-[18px] w-[18px] flex-col">
@@ -336,7 +331,7 @@ export default function SidebarContent(props: Props) {
                       fillRule="evenodd"
                       d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                       clipRule="evenodd"
-                     />
+                    />
                   </svg>
                 </div>
                 <input
