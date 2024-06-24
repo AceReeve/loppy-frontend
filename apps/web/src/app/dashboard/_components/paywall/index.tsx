@@ -55,7 +55,6 @@ export default function Paywall() {
   );
 
   const Components = views[viewIndex].component;
-  const TeamSetupComponent = views[2].component;
 
   // To enable navigation using url query param
   useEffect(() => {
@@ -88,7 +87,7 @@ export default function Paywall() {
     if (paymentStatus?.stripeSubscriptionStatus === PaymentStatus.SUCCEEDED) {
       return (
         <div className="relative m-auto flex min-h-[85%] w-full max-w-[1283px] flex-col rounded-[29px] border border-neutral-300 bg-gradient-to-b from-indigo-950 to-purple-950">
-          <TeamSetupComponent />
+          <PaywallTeamSetup />
         </div>
       );
     }
