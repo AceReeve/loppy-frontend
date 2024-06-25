@@ -7,7 +7,7 @@ import type {
   ImportContactsResponse,
 } from "./types/contacts";
 
-const contactApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["contacts"],
   })
@@ -15,7 +15,7 @@ const contactApi = baseApi
     endpoints: (builder) => ({
       getContacts: builder.query<
         GetContactsResponse,
-        Record<string, string> | undefined
+        Record<string, string | number> | undefined
       >({
         query: (params) => {
           const queryParams = new URLSearchParams(params).toString();
@@ -77,4 +77,4 @@ export const {
   useCreateContactMutation,
   useImportContactsMutation,
   useLazyExportContactsQuery,
-} = contactApi;
+} = api;

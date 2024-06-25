@@ -42,7 +42,7 @@ const reduxifyMessage = (message: Message | ReduxMessage): ReduxMessage => ({
 const messagesSorter = (a: ReduxMessage, b: ReduxMessage) =>
   (a.dateCreated?.getTime() ?? 0) - (b.dateCreated?.getTime() ?? 0);
 
-const messageListSlice = createSlice({
+export const messageListSlice = createSlice({
   name: "messageList",
   initialState,
   reducers: {
@@ -135,4 +135,3 @@ const messageListSlice = createSlice({
 
 export const { pushMessages, addMessages, removeMessages } =
   messageListSlice.actions;
-export default messageListSlice.reducer;

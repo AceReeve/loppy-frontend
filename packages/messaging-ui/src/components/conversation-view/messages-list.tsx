@@ -129,8 +129,6 @@ export default function MessagesList(props: MessageListProps) {
   }, [files]);
 
   const onDownloadAttachments = async (message: ReduxMessage) => {
-    console.log("HEY");
-
     const attachedMedia = message.attachedMedia?.map(getSdkMediaObject);
     if (message.index === -1) {
       return undefined;

@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
-import themeColors from "./src/theme-colors.ts";
-import buttonStyles from "./src/button-styles.ts";
+import { themeColors } from "./src/theme-colors.ts";
+import { buttonStyles } from "./src/button-styles.ts";
 
 // We want each package to be responsible for its own content.
 const config: Omit<Config, "content"> = {

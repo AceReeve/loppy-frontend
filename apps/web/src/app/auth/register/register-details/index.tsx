@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import {
   Button,
   Dialog,
@@ -26,14 +25,14 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@repo/ui/components/ui";
+import React from "react";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
 
 export default function RegisterDetails() {
-  const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
-    usePaywallState();
+  const { setViewIndex } = usePaywallState();
+
   const onSubmit = () => {
-    console.log("Submitted");
     onHandleProceed();
   };
 
@@ -138,7 +137,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-2">
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input autoComplete={"off"} {...field} />
+                          <Input autoComplete="off" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -154,7 +153,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-2">
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input autoComplete={"off"} {...field} />
+                          <Input autoComplete="off" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -178,7 +177,7 @@ export default function RegisterDetails() {
                     </FormItem>
                   )}
                 />
-                <div></div>
+                <div />
                 <FormField
                   control={form.control}
                   name="sex"
@@ -222,7 +221,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-4">
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Input autoComplete={"off"} {...field} />
+                          <Input autoComplete="off" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -238,7 +237,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-4">
                         <FormLabel>Company</FormLabel>
                         <FormControl>
-                          <Input autoComplete={"off"} {...field} />
+                          <Input autoComplete="off" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -254,7 +253,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-4">
                         <FormLabel>Mobile Number</FormLabel>
                         <FormControl>
-                          <Input autoComplete={"off"} {...field} />
+                          <Input autoComplete="off" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -268,7 +267,7 @@ export default function RegisterDetails() {
           <div className=" w-3/5 flex flex-col gap-10 py-20 border-l-2">
             <Dialog>
               <DialogTrigger>
-                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto"></div>
+                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto" />
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>

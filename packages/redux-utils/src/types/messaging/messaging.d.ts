@@ -1,5 +1,5 @@
 import {
-  JSONValue,
+  type JSONValue,
   type Message,
   type Participant,
 } from "@twilio/conversations";

@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type LocalState = string;
 const initialState: LocalState = "";
+
 export const localSlice = createSlice({
   name: "local",
   initialState,
@@ -14,4 +15,3 @@ export const localSlice = createSlice({
 });
 
 export const { updateLocal } = localSlice.actions;
-export default localSlice.reducer;

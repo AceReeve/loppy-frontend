@@ -38,13 +38,13 @@ import { updateUser } from "@repo/redux-utils/src/slices/messaging/users-slice.t
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
+import { type InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/user";
+import { useGetContactsListQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
+import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/user.ts";
 import {
   type ShowEmojiPickerProps,
   type ShowReactionPickerProps,
 } from "../messaging";
-import { type InviteUserResponse } from "../endpoints/types/user";
-import { useGetContactsListQuery } from "../endpoints/contacts.ts";
-import { useGetInvitedUsersQuery } from "../endpoints/user.ts";
 import ManualPopover from "../components/manual-popover.tsx";
 import { MessagingFilters } from "../messaging.enum.ts";
 

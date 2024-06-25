@@ -34,7 +34,7 @@ export default function Registration({
       //setProcess(1);
       // setProcess(1);
       //handleCredentialsSignUp
-      handleSendOTP(OTPForm, callbackUrl)
+      handleSendOTP(OTPForm)
         .then((data) => {
           if (data?.error) {
             setError(data.error);

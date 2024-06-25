@@ -77,9 +77,10 @@ export default function MessageInputField(props: SendMessageProps) {
     const existingConvo =
       props.selectedContacts?.length === 1 &&
       conversations.find((convo) => {
-        const participantsFiltered = participants[convo.sid].filter(
-          (p) => p.identity !== session?.user?.email,
-        );
+        const participantsFiltered =
+          participants[convo.sid]?.filter(
+            (p) => p.identity !== session?.user?.email,
+          ) ?? [];
         return (
           participantsFiltered.length === 1 &&
           participantsFiltered[0].address &&

@@ -20,4 +20,3 @@ export const unreadMessageSlice = createSlice({
 });
 
 export const { updateUnreadMessages } = unreadMessageSlice.actions;
-export default unreadMessageSlice.reducer;

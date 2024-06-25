@@ -15,13 +15,13 @@ import { updateParticipants } from "@repo/redux-utils/src/slices/messaging/parti
 import { updateUnreadMessages } from "@repo/redux-utils/src/slices/messaging/unread-messages-slice.ts";
 import { setLastReadIndex } from "@repo/redux-utils/src/slices/messaging/last-read-index-slice.ts";
 import { getTranslation } from "@repo/redux-utils/src/utils/messaging/local-utils.ts";
+import { PhoneIcon } from "@heroicons/react/20/solid";
 import { getTypingMessage } from "../utils.ts";
 import { useMessagesState } from "../providers/messages-provider.tsx";
+import { MessagingFilters } from "../messaging.enum.ts";
 import ConversationsListSkeleton from "./conversations-list-skeleton.tsx";
 import ConversationPhoto from "./conversation-photo.tsx";
 import ConversationLabel from "./conversation-label.tsx";
-import { PhoneIcon } from "@heroicons/react/20/solid";
-import { MessagingFilters } from "../messaging.enum.ts";
 
 function getLastMessage(
   convoLoading: string,

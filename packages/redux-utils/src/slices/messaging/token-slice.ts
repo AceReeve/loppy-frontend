@@ -13,4 +13,3 @@ export const tokenSlice = createSlice({
 });
 
 export const { logIn } = tokenSlice.actions;
-export default tokenSlice.reducer;

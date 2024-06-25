@@ -29,4 +29,3 @@ export const typingDataSlice = createSlice({
   },
 });
 export const { typingStarted, typingEnded } = typingDataSlice.actions;
-export default typingDataSlice.reducer;

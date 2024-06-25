@@ -11,7 +11,7 @@ const convoSorter = (a: ReduxConversation, b: ReduxConversation) =>
   (b.lastMessage?.dateCreated?.getTime() ?? b.dateUpdated?.getTime() ?? 0) -
   (a.lastMessage?.dateCreated?.getTime() ?? a.dateUpdated?.getTime() ?? 0);
 
-const conversationsSlice = createSlice({
+export const conversationsSlice = createSlice({
   name: "conversations",
   initialState,
   reducers: {
@@ -90,5 +90,3 @@ export const {
   removeConversation,
   filterConversations,
 } = conversationsSlice.actions;
-
-export default conversationsSlice.reducer;

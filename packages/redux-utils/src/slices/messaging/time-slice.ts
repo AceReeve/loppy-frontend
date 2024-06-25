@@ -13,4 +13,3 @@ export const timeSlice = createSlice({
 });
 
 export const { updateTimeFormat } = timeSlice.actions;
-export default timeSlice.reducer;

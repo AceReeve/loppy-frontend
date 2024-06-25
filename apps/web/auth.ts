@@ -1,8 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { type Profile } from "next-auth";
 import { signJwt } from "@repo/hooks-and-utils/jwt-utils";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { authConfig } from "@/auth.config";
-import { saveGoogleInfo } from "@/src/actions/login-actions.ts";
-import { Profile } from "@/next-auth";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
@@ -15,14 +14,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, account, user, profile }) {
       if (account) {
-        // console.log("token", token);
-        // console.log("user", user);
-        console.log("profile", profile);
-        // console.log("sub", token.sub);
-        // console.log("id_token", account.id_token);
-        // console.log("access_token", account.access_token);
-        // console.log("expires_at", account.expires_at);
-
         if (account.provider === "google" && profile) {
           const jwt = await signJwt({
             sub: token.sub,
@@ -34,16 +25,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
 
           const res = await saveGoogleInfo({
-            email: profile.email,
-            first_name: profile.given_name,
-            last_name: profile.family_name,
-            picture: profile.picture,
+            email: profile.email ?? "",
+            first_name: profile.given_name ?? "",
+            last_name: profile.family_name ?? "",
+            picture: profile.picture as string,
             token: jwt,
           });
-          console.log("google res", res);
 
-          // TODO: Implement BE signin here
-          console.log("token!", token);
           return {
             ...token,
             jwt: res.access_token,
@@ -96,3 +84,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // basePath: "/api/auth",
   ...authConfig,
 });
+
+interface ResponseType {
+  access_token: string;
+}
+
+async function saveGoogleInfo(payload: {
+  email: string;
+  first_name: string;
+  last_name: string;
+  picture: string;
+  token: string;
+}): Promise<ResponseType> {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/google-save`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  if (response.ok) {
+    return response.json() as Promise<ResponseType>;
+  }
+
+  // Throw proper error response from backend server
+  const res: unknown = await response.json();
+  throw new Error(getErrorMessage(res));
+}

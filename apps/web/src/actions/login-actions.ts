@@ -14,8 +14,10 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const handleConfirmOTP = async (
   values: z.infer<typeof ConfirmOTPSchema>,
-  callbackURL?: string | null,
 ) => {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
   const validateFields = ConfirmOTPSchema.safeParse(values);
 
   if (!validateFields.success) {
@@ -24,6 +26,7 @@ export const handleConfirmOTP = async (
   const { email, otp } = validateFields.data;
 
   const queryParams = new URLSearchParams({ email, otp }).toString();
+
   const authResponse = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/user/verify-otp?${queryParams}`,
 
@@ -41,25 +44,16 @@ export const handleConfirmOTP = async (
   }
 
   // Throw proper error response from backend server
-  const res = await authResponse.json();
-  if (res.errors) {
-    if (Array.isArray(res.errors)) {
-      if (typeof res.errors[0] === "object") {
-        throw new Error(Object.values(res.errors[0])[0] as any);
-      }
-      throw new Error(res.errors[0]);
-    }
-    throw new Error(res.errors);
-  } else {
-    throw new Error(authResponse.statusText);
-  }
+  const res: unknown = await authResponse.json();
+  throw new Error(getErrorMessage(res));
 };
 export const handleSendOTP = async (
   values: z.infer<typeof SendRegisterOTPSchema>,
-  callbackUrl?: string | null,
 ) => {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
   const validateFields = SendRegisterOTPSchema.safeParse(values);
-  console.log("SENDDING inside");
 
   if (!validateFields.success) {
     return { error: "Failed to send OTP" };
@@ -83,24 +77,17 @@ export const handleSendOTP = async (
   }
 
   // Throw proper error response from backend server
-  const res = await authResponse.json();
-  if (res.errors) {
-    if (Array.isArray(res.errors)) {
-      if (typeof res.errors[0] === "object") {
-        throw new Error(Object.values(res.errors[0])[0] as any);
-      }
-      throw new Error(res.errors[0]);
-    }
-    throw new Error(res.errors);
-  } else {
-    throw new Error(authResponse.statusText);
-  }
+  const res: unknown = await authResponse.json();
+  throw new Error(getErrorMessage(res));
 };
 
 export const handleCredentialsSignUp = async (
   values: z.infer<typeof RegisterSchema>,
   callbackUrl?: string | null,
 ) => {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
   const validatedFields = RegisterSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -128,18 +115,9 @@ export const handleCredentialsSignUp = async (
     return handleCredentialsSignIn(values, callbackUrl);
     //return;
   }
-  const res = await authResponse.json();
-  if (res.errors) {
-    if (Array.isArray(res.errors)) {
-      if (typeof res.errors[0] === "object") {
-        throw new Error(Object.values(res.errors[0])[0] as any);
-      }
-      throw new Error(res.errors[0]);
-    }
-    throw new Error(res.errors);
-  } else {
-    throw new Error(authResponse.statusText);
-  }
+  // Throw proper error response from backend server
+  const res: unknown = await authResponse.json();
+  throw new Error(getErrorMessage(res));
 };
 
 export const handleCredentialsSignIn = async (
@@ -158,7 +136,7 @@ export const handleCredentialsSignIn = async (
     await signIn("credentials", {
       email,
       password,
-      redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+      redirectTo: callbackUrl ?? DEFAULT_LOGIN_REDIRECT,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -191,42 +169,5 @@ export const handleOAuthSignin = async (provider: "google" | "facebook") => {
     }
 
     throw error;
-  }
-};
-
-export const saveGoogleInfo = async (payload: {
-  email: string;
-  first_name: string;
-  last_name: string;
-  picture: string;
-}): Promise<{
-  access_token: string;
-}> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/google-save`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    },
-  );
-
-  // Throw proper error response from backend server
-  if (response.ok) {
-    return response.json();
-  }
-  const res = await response.json();
-  if (res.errors) {
-    if (Array.isArray(res.errors)) {
-      if (typeof res.errors[0] === "object") {
-        throw new Error(Object.values(res.errors[0])[0] as any);
-      }
-      throw new Error(res.errors[0]);
-    }
-    throw new Error(res.errors);
-  } else {
-    throw new Error(response.statusText);
   }
 };

@@ -56,7 +56,7 @@ export default function RegisterOTP(props: RegisterOTPProps) {
       //setProcess(1);
       // setProcess(1);
       //handleCredentialsSignUp
-      handleSendOTP(OTPForm, callbackUrl)
+      handleSendOTP(OTPForm)
         .then((data) => {
           if (data?.error) {
             setError(data.error);
@@ -78,7 +78,7 @@ export default function RegisterOTP(props: RegisterOTPProps) {
     startTransition(() => {
       //handleCredentialsSignIn(values, callbackUrl);
       console.log("Confirm Called Inside Transition");
-      handleConfirmOTP(otpSchema, callbackUrl)
+      handleConfirmOTP(otpSchema)
         .then((data) => {
           if (data?.error) {
             setError(data.error);

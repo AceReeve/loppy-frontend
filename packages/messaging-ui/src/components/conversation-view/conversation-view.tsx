@@ -3,13 +3,13 @@
 import { useSelector } from "react-redux";
 import type { AppState } from "@repo/redux-utils/src/store.ts";
 import React, { useMemo, useState } from "react";
+import { DefaultAvatar } from "@repo/ui/components/custom";
 import { useMessagesState } from "../../providers/messages-provider.tsx";
 import ConversationPhoto from "../conversation-photo.tsx";
 import ConversationLabel from "../conversation-label.tsx";
 import NewConversationView from "./new-conversation-view.tsx";
 import MessagesBox from "./messages-box.tsx";
 import MessageInputField from "./message-input-field.tsx";
-import { DefaultAvatar } from "@repo/ui/components/custom";
 
 export default function ConversationView() {
   const { client, sidebarOpen, setSidebarOpen } = useMessagesState();

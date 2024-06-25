@@ -1,6 +1,6 @@
 "use client";
 
-import themeColors from "@repo/tailwind-config/theme-colors.ts";
+import { themeColors } from "@repo/tailwind-config/theme-colors.ts";
 import { useId, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
