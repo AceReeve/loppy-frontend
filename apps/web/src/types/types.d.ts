@@ -1,4 +1,4 @@
-interface MenuLinkItem {
+export interface MenuLinkItem {
   id: number;
   title: string;
   url: string;
@@ -9,7 +9,7 @@ interface MenuLinkItem {
   collapsible?: boolean;
 }
 
-interface MenuItem {
+export interface MenuItem {
   id: number;
   title: string;
   slug: string;

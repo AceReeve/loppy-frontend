@@ -6,7 +6,6 @@ import { StripeElementsProvider } from "@/src/providers/stripe-elements-provider
 import PaywallProvider from "@/src/providers/paywall-provider";
 import Paywall from "@/src/app/dashboard/_components/paywall";
 import { auth } from "@/auth.ts";
-import RegisterDetails from "../auth/register/register-details";
 
 export default async function Layout({
   children,

@@ -14,14 +14,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  type DropzoneOptions,
   FileInput,
   FileUploader,
   FileUploaderContent,
+  FileUploaderItem,
   toast,
 } from "@repo/ui/components/ui";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
-interface Props {
+interface ImportContactsProps {
   setOpen: (open: boolean) => void;
 }
 
@@ -95,7 +97,7 @@ function FileUploadDropzone(props: {
         <FileUploaderContent>
           {props.files && props.files.length > 0
             ? props.files.map((file, i) => (
-                <FileUploaderItem index={i} key={i}>
+                <FileUploaderItem index={i} key={file.name}>
                   <Paperclip className="h-4 w-4 stroke-current" />
                   <span>{file.name}</span>
                 </FileUploaderItem>
@@ -107,7 +109,9 @@ function FileUploadDropzone(props: {
   );
 }
 
-export default function ImportContactsDialogContent(props: Props) {
+export default function ImportContactsDialogContent(
+  props: ImportContactsProps,
+) {
   const [files, setFiles] = useState<File[] | null>([]);
   const [importContacts, { isLoading }] = useImportContactsMutation();
 
@@ -118,7 +122,7 @@ export default function ImportContactsDialogContent(props: Props) {
 
   const handleImportContacts = () => {
     const formData = new FormData();
-    formData.append("file", files[0] !== undefined ? files[0] : "");
+    formData.append("file", files?.[0] !== undefined ? files[0] : "");
 
     importContacts(formData)
       .unwrap()
@@ -129,7 +133,7 @@ export default function ImportContactsDialogContent(props: Props) {
         props.setOpen(false);
         setFiles([]);
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         toast({
           description: getErrorMessage(e),
         });
@@ -170,9 +174,8 @@ export default function ImportContactsDialogContent(props: Props) {
               onClick={() => {
                 handleImportContacts();
               }}
-              disabled={isLoading || !files || files.length === 0}
+              disabled={!files || files.length === 0}
             >
-              {isLoading ? <LoadingSpinner /> : null}
               Import
             </Button>
           </DialogFooter>

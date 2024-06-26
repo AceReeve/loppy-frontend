@@ -22,10 +22,15 @@ export const attachmentSlice = createSlice({
 
       // Ensure channelSid and messageSid exist
       state[channelSid] = state[channelSid] ?? {};
-      state[channelSid][messageSid] = state[channelSid][messageSid] ?? {};
 
-      // Update state with the new attachment
-      state[channelSid][messageSid][mediaSid] = attachment;
+      const messages = state[channelSid];
+
+      if (messages) {
+        messages[messageSid] = state[channelSid]?.[messageSid] ?? {};
+
+        // Update state with the new attachment
+        messages[messageSid][mediaSid] = attachment;
+      }
     },
     clearAttachments: (
       state: AttachmentsState,
@@ -33,11 +38,13 @@ export const attachmentSlice = createSlice({
     ) => {
       const { channelSid, messageSid } = action.payload;
 
+      const messages = state[channelSid];
       // Directly assign an empty object to [channelSid][messageSid]
-      state[channelSid][messageSid] = {};
+      if (messages) {
+        messages[messageSid] = {};
+      }
     },
   },
 });
 
 export const { addAttachments, clearAttachments } = attachmentSlice.actions;
-export default attachmentSlice.reducer;

@@ -1,4 +1,4 @@
-import { type DefaultSession } from "next-auth";
+import { type DefaultSession, type Profile } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
   status: string;
@@ -12,6 +12,7 @@ declare module "next-auth" {
   interface Session {
     user: ExtendedUser;
     jwt: string;
+    profile: Profile;
   }
 
   interface User {

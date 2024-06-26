@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface -- might add later
 interface ContextType {}
 
 const ContactsContext = createContext<ContextType | null>(null);

@@ -1,6 +1,7 @@
 const dashboardSampleData = {
   analytics: [
     {
+      key: "unique_visitors",
       title: "18.6K",
       subtitle: "Unique Visitors",
       increase: 18,
@@ -8,6 +9,7 @@ const dashboardSampleData = {
       progressColor: ["#78BEFF", "#0085FF"],
     },
     {
+      key: "visit_duration",
       title: "2m 56s",
       subtitle: "Visit Duration",
       increase: 12,
@@ -15,6 +17,7 @@ const dashboardSampleData = {
       progressColor: ["#FFB17A", "#FF8933"],
     },
     {
+      key: "total_page_views",
       title: "55.9K",
       subtitle: "Total Page Views",
       increase: 25,

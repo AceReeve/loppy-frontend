@@ -15,8 +15,11 @@ export default function WorkspaceButton() {
       </div>
       <div className="flex w-1/3 justify-end">
         <div className="flex">
-          {Array.from({ length: 3 }).map((_item) => (
-            <Avatar className="-ml-4 h-[40px] w-[40px] border-2 border-white">
+          {Array.from({ length: 3 }, (_, i) => i + 1).map((item) => (
+            <Avatar
+              className="-ml-4 h-[40px] w-[40px] border-2 border-white"
+              key={item}
+            >
               <AvatarFallback className="bg-orange-500 text-[20px] text-white">
                 G
               </AvatarFallback>

@@ -17,4 +17,3 @@ export const loadingSlice = createSlice({
 });
 
 export const { updateLoadingState } = loadingSlice.actions;
-export default loadingSlice.reducer;

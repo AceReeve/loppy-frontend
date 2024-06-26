@@ -18,4 +18,3 @@ export const currentConversationSlice = createSlice({
 });
 
 export const { updateCurrentConversation } = currentConversationSlice.actions;
-export default currentConversationSlice.reducer;

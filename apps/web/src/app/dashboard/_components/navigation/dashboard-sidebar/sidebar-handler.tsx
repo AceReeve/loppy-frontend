@@ -6,16 +6,16 @@ import Image from "next/image";
 import metadata from "@/src/meta/metadata";
 import { useDashboardState } from "@/src/providers/dashboard-provider";
 
-interface Props {
+interface SidebarHandlerProps {
   children: React.ReactNode;
   className?: string | null;
 }
-export default function SidebarHandler(props: Props) {
+export default function SidebarHandler(props: SidebarHandlerProps) {
   const { sidebarCollapsed: collapsed, toggleSidebar } = useDashboardState();
 
   return (
     <aside
-      className={`${props.className} overflow-x-hidden px-4 transition-all duration-500 ${collapsed ? "w-[72px]" : "w-[250px]"}`}
+      className={`${props.className ?? ""} overflow-x-hidden px-4 transition-all duration-500 ${collapsed ? "w-[72px]" : "w-[250px]"}`}
     >
       <button
         className={`absolute right-4 top-10 border-2 p-2 text-[#fff] transition-all duration-500 hover:bg-white ${collapsed ? "rotate-180" : ""}`}

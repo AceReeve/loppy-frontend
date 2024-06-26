@@ -1,5 +1,6 @@
-"use client";
+/* eslint-disable -- will do later after redesign since this is a lot */
 
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

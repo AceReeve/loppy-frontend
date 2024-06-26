@@ -1,9 +1,5 @@
 "use client";
-import {
-  NoSymbolIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { NoSymbolIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DocumentText, MessageRemove } from "iconsax-react";
 import { Transition } from "@headlessui/react";
 import type { AppState } from "@repo/redux-utils/src/store.ts";

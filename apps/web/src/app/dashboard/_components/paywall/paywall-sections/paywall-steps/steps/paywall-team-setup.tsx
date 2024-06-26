@@ -21,14 +21,14 @@ export default function PaywallTeamSetup() {
     })
       .unwrap()
       .then((res) => {
-        if (res.emails && res.emails.length > 0) {
+        if (res.emails?.length) {
           setStepIndex(stepIndex + 1);
         } else {
           // Skip permissions setup if no emails entered
           setStepIndex(2);
         }
       })
-      .catch((e: any) => {
+      .catch((e: unknown) => {
         toast({
           title: "Send Invite Error",
           description: getErrorMessage(e),
@@ -100,13 +100,13 @@ export default function PaywallTeamSetup() {
           <div
             className="bg-primary absolute top-[50%] -mt-[3px] h-1.5"
             style={{
-              width: `${(stepIndex / (steps.length - 1)) * 100}%`,
+              width: `${((stepIndex / (steps.length - 1)) * 100).toString()}%`,
             }}
           />
-          {Array.from({ length: 3 }).map((_item, index) => (
+          {Array.from({ length: 3 }, (_, i) => i + 1).map((item, index) => (
             <div
               className={`relative size-[70px] rounded-full p-3 ${index <= stepIndex ? "bg-primary text-red-500" : "bg-gray-300 text-black"}`}
-              key={index}
+              key={item}
             >
               <div className="flex size-full items-center justify-center rounded-full bg-white text-xl font-bold">
                 {index + 1}

@@ -31,4 +31,4 @@ const themeColors = {
     DEFAULT: "rgb(var(--color-error), <alpha-value>)",
   },
 };
-export default themeColors;
+export { themeColors };

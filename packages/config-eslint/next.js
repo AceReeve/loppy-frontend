@@ -13,16 +13,15 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 module.exports = {
   extends: [
-    // "next/core-web-vitals",
-    "prettier",
-    // "eslint:recommended",
-    // "@vercel/style-guide/eslint/node",
-    // "@vercel/style-guide/eslint/typescript",
-    // "@vercel/style-guide/eslint/browser",
-    // "@vercel/style-guide/eslint/react",
-    // "@vercel/style-guide/eslint/next",
-    // "eslint-config-turbo",
-  ].map(require.resolve),
+    ...[
+      "@vercel/style-guide/eslint/node",
+      "@vercel/style-guide/eslint/typescript",
+      "@vercel/style-guide/eslint/browser",
+      "@vercel/style-guide/eslint/react",
+      "@vercel/style-guide/eslint/next",
+    ].map(require.resolve),
+    "turbo",
+  ],
   parserOptions: {
     project,
   },
@@ -45,6 +44,20 @@ module.exports = {
   rules: {
     "@typescript-eslint/explicit-function-return-type": "off",
     "import/no-default-export": "off",
+
+    // Will have to temporarily disable this
+    "@next/next/no-img-element": "off",
+    "react-hooks/exhaustive-deps": "off",
+
+    // this is for react-hook-form issue. Refer to https://github.com/orgs/react-hook-form/discussions/8622
+    "@typescript-eslint/no-misused-promises": [
+      2,
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
     // "@typescript-eslint/no-unsafe-call": "off",
     // "@typescript-eslint/no-unsafe-assignment": "off",
     // "@typescript-eslint/no-unsafe-return": "off",

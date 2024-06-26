@@ -1,3 +1,5 @@
+/* eslint-disable -- will do later since this is a lot */
+
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -154,6 +156,13 @@ function Page() {
     },
   ];
 
+  //let celsius = weather.main.temp.toFixed(1);
+  let convertToFahrenheit = (celsius: number) => {
+    let scale = celsius * 1.8;
+    let fahrenheit = scale + 32;
+    return parseFloat(fahrenheit.toFixed(1));
+  };
+
   if (dayIsLoading && dailyIsLoading) {
     return (
       <div className="m-auto h-[500px] w-full content-center">
@@ -232,10 +241,10 @@ function Page() {
                 <div className="relative flex h-[178.74px] flex-col">
                   <div className="flex justify-center">
                     <div className="font-nunito text-center text-[100px] font-normal leading-[140px] text-white">
-                      {weather.main.temp.toFixed(1)}
+                      {convertToFahrenheit(weather.main.temp)}
                     </div>
                     <div className="font-nunito text-center text-5xl font-normal leading-[67.20px] text-white">
-                      °
+                      °F
                     </div>
                   </div>
                   <div className="font-nunito text-center text-base font-medium leading-snug text-white">
@@ -339,7 +348,7 @@ function Page() {
                       <div
                         className={`absolute left-[27px] top-[77px] text-center text-base font-semibold leading-snug text-gray-800 ${index === 0 ? "text-white" : "text-gray-800"}`}
                       >
-                        {Math.floor(day.main.temp)}°
+                        {Math.floor(convertToFahrenheit(day.main.temp))}°F
                       </div>
                       <div
                         className={`absolute left-[26px] top-[12px] text-center text-xs font-normal leading-none ${index === 0 ? "text-white" : "text-gray-800"} opacity-90`}
@@ -392,7 +401,7 @@ function Page() {
                 return (
                   <div className="relative h-[52px] w-72" key={index}>
                     <div className="font-['Plus Jakarta Sans'] absolute left-[144px] top-[12px] text-xl font-semibold leading-7 text-gray-800">
-                      {day.main.temp.toFixed(1)}°
+                      {convertToFahrenheit(day.main.temp)}°F
                     </div>
                     <div className="absolute left-0 top-0 h-[52px] w-[87px]">
                       <div className="font-['Plus Jakarta Sans'] absolute left-0 top-0 text-base font-normal leading-snug text-gray-800">

@@ -1,4 +1,5 @@
 import { baseApi } from "../api";
+import { type SearchParamsType } from "../index.tsx";
 import type {
   CreateContactPayload,
   GetContactsListResponse,
@@ -7,16 +8,13 @@ import type {
   ImportContactsResponse,
 } from "./types/contacts";
 
-const contactApi = baseApi
+const api = baseApi
   .enhanceEndpoints({
     addTagTypes: ["contacts"],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getContacts: builder.query<
-        GetContactsResponse,
-        Record<string, string> | undefined
-      >({
+      getContacts: builder.query<GetContactsResponse, SearchParamsType>({
         query: (params) => {
           const queryParams = new URLSearchParams(params).toString();
           return {
@@ -47,7 +45,7 @@ const contactApi = baseApi
         invalidatesTags: ["contacts"],
       }),
 
-      exportContacts: builder.query<Blob, Record<string, string> | undefined>({
+      exportContacts: builder.query<Blob, SearchParamsType>({
         query: (data) => {
           const params = new URLSearchParams(data).toString();
           return {
@@ -77,4 +75,4 @@ export const {
   useCreateContactMutation,
   useImportContactsMutation,
   useLazyExportContactsQuery,
-} = contactApi;
+} = api;

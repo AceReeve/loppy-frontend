@@ -2,74 +2,37 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Disclosure } from "@headlessui/react";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 import Image from "next/image";
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuGroup,
-  DropdownMenuSeparator,
   Dialog,
   DialogTrigger,
   DialogContent,
-  Avatar,
-  AvatarFallback,
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
 } from "@repo/ui/components/ui";
 import React from "react";
 import WorkspaceButton from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/dashboard-sidebar-workspace";
 import { useDashboardState } from "@/src/providers/dashboard-provider";
+import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
 
-interface Props {
+interface SidebarContentProps {
   menuItems: MenuItem;
 }
 
-export default function SidebarContent(props: Props) {
+export default function SidebarContent(props: SidebarContentProps) {
   const { sidebarCollapsed: collapsed } = useDashboardState();
 
   const pathName = usePathname();
   const currentParentPath = `/${pathName.split("/")[2]}`;
   const menus = props.menuItems.items;
   const rootSlug = props.menuItems.slug;
-  // const role = props.session?.user?.data?.role;
-  const role = null;
 
   const menuItemClass = `relative mt-1 flex w-full items-center rounded-[11px] p-2 text-base font-medium hover:bg-secondary-light whitespace-nowrap gap-[10px]`;
   const activeClass = "pointer-events-none !font-bold";
   const collapsedTitleClass = "!w-0 hidden";
   const titleClass =
     "relative overflow-hidden transition-all duration-500 w-full";
-
-  // if visibility is set, then check if role is included
-  // otherwise, just show it (true)
-  const hasAccess = (item: MenuLinkItem) =>
-    (item.visibility ?? []).length > 0
-      ? role && isRoleIncluded(role, item.visibility!)
-      : true;
-
-  function isRoleIncluded(role: string, visibility: any[]) {
-    const searchString = role.toLowerCase();
-
-    for (const obj of visibility) {
-      const name = obj.name.toLowerCase();
-      if (name.includes(searchString)) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   function getPath(path: string[] | string) {
     if (typeof path === "string") {
@@ -93,90 +56,86 @@ export default function SidebarContent(props: Props) {
   );
 
   const navItems = menus.map((menuItem) =>
-    hasAccess(menuItem) ? (
-      (menuItem.children ?? []).length === 0 ? (
-        <li className="relative" key={menuItem.id}>
-          <Link
-            href={getPath([menuItem.url])}
-            className={`${menuItemClass} ${
-              isActive(menuItem.url) ? activeClass : ""
-            }`}
-          >
-            {isActive(menuItem.url) && (
-              <span
-                className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
-                aria-hidden="true"
-              />
-            )}
-            {renderMenuIcon(menuItem.icon)}
-            <span
-              className={`${titleClass} ${collapsed ? collapsedTitleClass : ""}`}
-            >
-              {menuItem.title}
-            </span>
-          </Link>
-        </li>
-      ) : (
-        /** With children **/
-        <Disclosure
-          key={menuItem.id}
-          defaultOpen={currentParentPath == menuItem.url}
+    (menuItem.children ?? []).length === 0 ? (
+      <li className="relative" key={menuItem.id}>
+        <Link
+          href={getPath([menuItem.url])}
+          className={`${menuItemClass} ${
+            isActive(menuItem.url) ? activeClass : ""
+          }`}
         >
-          {({ open }) => (
-            <>
-              <Disclosure.Button
-                disabled={menuItem.collapsible === false}
-                className={`flex items-center justify-between text-left ${menuItemClass} ${menuItem.collapsible === false ? "pointer-events-none" : ""}`}
-              >
-                {renderMenuIcon(menuItem.icon)}
-                {menuItem.collapsible === false ? (
-                  <span
-                    className={`${titleClass} font-montserrat mt-5 text-sm font-semibold uppercase tracking-wide text-[#fff] text-opacity-50 ${collapsed ? collapsedTitleClass : ""}`}
-                  >
-                    {menuItem.title}
-                  </span>
-                ) : (
-                  <>
-                    <span>{menuItem.title}</span>
-                    <ChevronDownIcon
-                      className={`w-4 ${open ? "-rotate-180" : ""}`}
-                    />
-                  </>
-                )}
-              </Disclosure.Button>
-              <Disclosure.Panel
-                className="ml-4"
-                aria-label="submenu"
-                static={menuItem.collapsible === false}
-              >
-                {(menuItem.children ?? []).map((subItem) => (
-                  <Link
-                    key={subItem.id}
-                    href={getPath([menuItem.url, subItem.url])}
-                    className={`${menuItemClass} ${
-                      isActive([menuItem.url, subItem.url]) ? activeClass : ""
-                    }`}
-                  >
-                    {isActive([menuItem.url, subItem.url]) && (
-                      <span
-                        className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span
-                      className={`${titleClass} ${collapsed ? collapsedTitleClass : ""}`}
-                    >
-                      {subItem.title}
-                    </span>
-                  </Link>
-                ))}
-              </Disclosure.Panel>
-            </>
+          {isActive(menuItem.url) && (
+            <span
+              className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
+              aria-hidden="true"
+            />
           )}
-        </Disclosure>
-      )
+          {renderMenuIcon(menuItem.icon)}
+          <span
+            className={`${titleClass} ${collapsed ? collapsedTitleClass : ""}`}
+          >
+            {menuItem.title}
+          </span>
+        </Link>
+      </li>
     ) : (
-      <></>
+      /** With children **/
+      <Disclosure
+        key={menuItem.id}
+        defaultOpen={currentParentPath === menuItem.url}
+      >
+        {({ open }) => (
+          <>
+            <Disclosure.Button
+              disabled={menuItem.collapsible === false}
+              className={`flex items-center justify-between text-left ${menuItemClass} ${menuItem.collapsible === false ? "pointer-events-none" : ""}`}
+            >
+              {renderMenuIcon(menuItem.icon)}
+              {menuItem.collapsible === false ? (
+                <span
+                  className={`${titleClass} font-montserrat mt-5 text-sm font-semibold uppercase tracking-wide text-[#fff] text-opacity-50 ${collapsed ? collapsedTitleClass : ""}`}
+                >
+                  {menuItem.title}
+                </span>
+              ) : (
+                <>
+                  <span>{menuItem.title}</span>
+                  <ChevronDownIcon
+                    className={`w-4 ${open ? "-rotate-180" : ""}`}
+                  />
+                </>
+              )}
+            </Disclosure.Button>
+            <Disclosure.Panel
+              className="ml-4"
+              aria-label="submenu"
+              static={menuItem.collapsible === false}
+            >
+              {(menuItem.children ?? []).map((subItem) => (
+                <Link
+                  key={subItem.id}
+                  href={getPath([menuItem.url, subItem.url])}
+                  className={`${menuItemClass} ${
+                    isActive([menuItem.url, subItem.url]) ? activeClass : ""
+                  }`}
+                >
+                  {isActive([menuItem.url, subItem.url]) && (
+                    <span
+                      className="animate-sidebar-select bg-primary absolute inset-0 rounded-[11px]"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span
+                    className={`${titleClass} ${collapsed ? collapsedTitleClass : ""}`}
+                  >
+                    {subItem.title}
+                  </span>
+                </Link>
+              ))}
+            </Disclosure.Panel>
+          </>
+        )}
+      </Disclosure>
     ),
   );
 
@@ -346,8 +305,8 @@ export default function SidebarContent(props: Props) {
           </div>
           <div className="h-[1px] w-full bg-white" />
           <div className="my-5 grid grid-cols-2 gap-x-20 gap-y-4 ">
-            {Array.from({ length: 4 }).map((_item, index) => (
-              <WorkspaceButton key={index} />
+            {Array.from({ length: 4 }, (_, i) => i + 1).map((item) => (
+              <WorkspaceButton key={item} />
             ))}
           </div>
           <p className="ml-5 h-8 font-semibold tracking-wider text-white">
@@ -355,7 +314,7 @@ export default function SidebarContent(props: Props) {
           </p>
           <div className="h-[1px] w-full bg-white" />
           <div className="my-5 grid grid-cols-2 gap-x-20 gap-y-4 ">
-            {Array.from({ length: 4 }).map((_item, index) => (
+            {Array.from({ length: 4 }, (_, i) => i + 1).map((index) => (
               <WorkspaceButton key={index} />
             ))}
           </div>

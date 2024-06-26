@@ -41,4 +41,3 @@ export const participantsSlice = createSlice({
 });
 
 export const { updateParticipants } = participantsSlice.actions;
-export default participantsSlice.reducer;

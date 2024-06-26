@@ -3,6 +3,7 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   Button,
+  Checkbox,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,7 +13,6 @@ import {
 } from "@repo/ui/components/ui";
 import { More } from "iconsax-react";
 import { ArrowsUpDownIcon } from "@heroicons/react/16/solid";
-import { Checkbox } from "@/src/components/ui/checkbox";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

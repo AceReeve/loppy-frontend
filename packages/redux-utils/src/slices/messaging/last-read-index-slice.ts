@@ -20,4 +20,3 @@ export const lastReadIndexSlice = createSlice({
 });
 
 export const { setLastReadIndex } = lastReadIndexSlice.actions;
-export default lastReadIndexSlice.reducer;

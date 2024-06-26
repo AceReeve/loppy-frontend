@@ -8,7 +8,7 @@ import { paymentPlanDetails } from "@/src/data/payment-plan-details";
 
 export default function PaywallPlanSelection() {
   const { onPlanSelect } = usePaywallState();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (isLoading) return <LoadingOverlay />;
 
@@ -70,6 +70,7 @@ export default function PaywallPlanSelection() {
                 {item.inclusions.map((inclusion, index2) => (
                   <div
                     className="flex  items-start justify-start gap-2 self-stretch text-left"
+                    // eslint-disable-next-line react/no-array-index-key -- only index can be used
                     key={index2}
                   >
                     <CheckIcon
@@ -96,7 +97,7 @@ export default function PaywallPlanSelection() {
         <button
           className="text-primary -mt-5 underline"
           onClick={() => {
-            setLoading(true);
+            setIsLoading(true);
             void signOut({ callbackUrl: "/" });
           }}
           type="button"

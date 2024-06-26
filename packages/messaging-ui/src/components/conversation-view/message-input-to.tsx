@@ -11,8 +11,8 @@ import {
 import * as z from "zod";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { isMobilePhone } from "validator";
+import { useGetContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useMessagesState } from "../../providers/messages-provider.tsx";
-import { useGetContactsQuery } from "../../endpoints/contacts.ts";
 
 // TODO: Add phone number validation
 const SendInviteSingleItemSchema = z.union([

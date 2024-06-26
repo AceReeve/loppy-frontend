@@ -24,8 +24,8 @@ export default function WildCardNameFilter() {
         </MultiSelectorTrigger>
         <MultiSelectorContent>
           <MultiSelectorList className="relative">
-            {options.map((option, i) => (
-              <MultiSelectorItem key={i} value={option.value}>
+            {options.map((option) => (
+              <MultiSelectorItem key={option.value} value={option.value}>
                 {option.label}
               </MultiSelectorItem>
             ))}

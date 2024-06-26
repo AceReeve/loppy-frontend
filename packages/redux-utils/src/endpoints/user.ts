@@ -16,10 +16,10 @@ const api = baseApi
           };
         },
       }),
-      getInvitedUsers: builder.query<InviteUserResponse, undefined>({
+      getInvitedUsers: builder.query<InviteUserResponse[], undefined>({
         query: () => {
           return {
-            url: `/Contacts/list`,
+            url: `/user/get-invited-user`,
           };
         },
         providesTags: ["user"],
@@ -39,4 +39,8 @@ const api = baseApi
     }),
   });
 
-export const { useInviteUserMutation, useValidateInviteUserMutation } = api;
+export const {
+  useGetInvitedUsersQuery,
+  useInviteUserMutation,
+  useValidateInviteUserMutation,
+} = api;

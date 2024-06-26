@@ -32,15 +32,10 @@ function AllContacts() {
   const [filters, setFilters] = useState({
     search_key: "",
     status: "",
-    skip: 0,
-    limit: 100,
+    skip: "0",
+    limit: "100",
     sort_dir: "desc",
-    tag: [] as string[],
   });
-
-  const GetFilter = (value: any) => {
-    setFilters(value);
-  };
 
   const { data: contacts, error, isLoading } = useGetContactsQuery(filters);
 
@@ -74,7 +69,7 @@ function AllContacts() {
       columns={columns}
       data={contacts.data} // Just use 'contacts' directly
       noResultsComponent={NoResultsComponent}
-      setFilters={GetFilter}
+      setFilters={setFilters}
     />
   );
 }

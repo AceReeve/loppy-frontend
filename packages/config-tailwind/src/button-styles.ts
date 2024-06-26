@@ -1,4 +1,5 @@
 import plugin from "tailwindcss/plugin";
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment -- disregard error,
 const flattenColorPalette = require("tailwindcss/lib/util/flattenColorPalette");
 
 const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
@@ -22,7 +23,8 @@ const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
   };
   matchComponents(
     {
-      "btn-outline": (value: any) => {
+      // @ts-expect-error -- didn't figure out to solve this ts error
+      "btn-outline": (value: string) => {
         const parsedValue = () => {
           if (value.includes(", <alpha-value>")) {
             return value.replace(", <alpha-value>", "");
@@ -34,7 +36,7 @@ const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
           fontSize: "1rem",
           fontWeight: "700",
           lineHeight: "1.6rem",
-          border: `1px solid ${parsedValue()}`,
+          border: `1px solid ${parsedValue() ?? ""}`,
           padding: "0.75rem 1.5rem",
           borderRadius: "8px",
           "&:hover, &:active": {
@@ -45,6 +47,7 @@ const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
         };
       },
     },
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment -- disregard error,
     { values: flattenColorPalette(theme("colors")) },
   );
 
@@ -117,4 +120,4 @@ const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
   });
 });
 
-export default buttonStyles;
+export { buttonStyles };
