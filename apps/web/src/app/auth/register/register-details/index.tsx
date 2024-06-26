@@ -1,9 +1,9 @@
-/* eslint-disable -- will do later after merge */
 "use client";
 
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useState, useTransition } from "react";
 import {
   Button,
   Dialog,
@@ -26,19 +26,39 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@repo/ui/components/ui";
-import React from "react";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
+import { handleRegisterDetails } from "@/src/actions/login-actions.ts";
+import { useSearchParams } from "next/navigation";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 export default function RegisterDetails() {
-  const { setViewIndex } = usePaywallState();
-
+  const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
+    usePaywallState();
   const onSubmit = () => {
+    console.log("Submitted");
     onHandleProceed();
   };
 
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const errorParam = searchParams.get("error");
   const onHandleProceed = () => {
-    setViewIndex(1);
+    startTransition(() => {
+      handleRegisterDetails(form.getValues(), callbackUrl)
+        .then((data) => {
+          if (data?.error) {
+            setError(data.error);
+          } else {
+            //setProcess(1);
+            // setOpenDetails(true);
+            setViewIndex(1);
+          }
+        })
+        .catch((e) => {
+          setError(e.message || e.statusText);
+        });
+    });
 
     //setOpenDetails(false);
     //setProcess(step);
@@ -63,12 +83,20 @@ export default function RegisterDetails() {
       first_name: "",
       last_name: "",
       address: "",
-      company: "",
-      phone_number: "",
-      birth_date: "",
-      sex: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      contact_no: "",
+      birthday: "",
+      gender: "",
     },
   });
+  const { register, formState } = form;
+  const { errors } = formState;
+
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   interface Props {
     setOpen: (open: boolean) => void;
@@ -138,7 +166,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-2">
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input autoComplete="off" {...field} />
+                          <Input autoComplete={"off"} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -154,7 +182,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-2">
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input autoComplete="off" {...field} />
+                          <Input autoComplete={"off"} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -164,7 +192,7 @@ export default function RegisterDetails() {
 
                 <FormField
                   control={form.control}
-                  name="birth_date"
+                  name="birthday"
                   render={({ field }) => (
                     <FormItem className="col-span-1">
                       <FormLabel>Birth Date</FormLabel>
@@ -178,10 +206,10 @@ export default function RegisterDetails() {
                     </FormItem>
                   )}
                 />
-                <div />
+                <div></div>
                 <FormField
                   control={form.control}
-                  name="sex"
+                  name="gender"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>Gender</FormLabel>
@@ -222,7 +250,7 @@ export default function RegisterDetails() {
                       <FormItem className="col-span-4">
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Input autoComplete="off" {...field} />
+                          <Input autoComplete={"off"} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -232,13 +260,47 @@ export default function RegisterDetails() {
 
                 <FormField
                   control={form.control}
-                  name="company"
+                  name="state"
                   render={({ field }) => {
                     return (
-                      <FormItem className="col-span-4">
-                        <FormLabel>Company</FormLabel>
+                      <FormItem className="col-span-2">
+                        <FormLabel>State</FormLabel>
                         <FormControl>
-                          <Input autoComplete="off" {...field} />
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-1">
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="zipCode"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-1">
+                        <FormLabel>Zip Code</FormLabel>
+                        <FormControl>
+                          <Input
+                            type={"number"}
+                            autoComplete={"off"}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -248,13 +310,13 @@ export default function RegisterDetails() {
 
                 <FormField
                   control={form.control}
-                  name="phone_number"
+                  name="contact_no"
                   render={({ field }) => {
                     return (
                       <FormItem className="col-span-4">
                         <FormLabel>Mobile Number</FormLabel>
                         <FormControl>
-                          <Input autoComplete="off" {...field} />
+                          <Input autoComplete={"off"} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -268,13 +330,12 @@ export default function RegisterDetails() {
           <div className=" w-3/5 flex flex-col gap-10 py-20 border-l-2">
             <Dialog>
               <DialogTrigger>
-                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto" />
+                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto"></div>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <p>Upload Profile Photo</p>
                 </DialogHeader>
-                {/* @ts-ignore -- ignore */}
                 <FileUploader
                   className="relative rounded-lg p-2"
                   dropzoneOptions={dropZoneConfig}
@@ -299,8 +360,17 @@ export default function RegisterDetails() {
               className="mx-auto w-[200px] h-[50px] text-lg"
               type="submit"
             >
+              {isPending ? <LoadingSpinner /> : null}
               Proceed
             </Button>
+            {error ? (
+              <div
+                className="mb-5 rounded border-s-4 border-red-500 bg-red-50 p-4"
+                role="alert"
+              >
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </form>

@@ -21,14 +21,19 @@ export const RegisterDetailsSchema = z.object({
   first_name: z.string().min(3, { message: "First Name is required" }),
   last_name: z.string().min(3, { message: "Last Name is required" }),
   address: z.string().min(3, { message: "Address is required" }),
-  company: z.string().min(1, { message: "Company is required" }),
-  sex: z.string().min(1, { message: "Gender is required" }),
-  phone_number: z.string().regex(/^\d{6,}$/, {
+  city: z.string().min(1, { message: "City is required" }),
+  state: z.string().min(1, { message: "State is required" }),
+  gender: z.string().min(1, { message: "Gender is required" }),
+  contact_no: z.string().regex(/^\d{6,}$/, {
     message: "Mobile Number must be numeric and at least 6 digits",
   }),
-  birth_date: z.string().min(1, {
+  birthday: z.string().min(1, {
     message: "Date of Birth must be a valid date",
   }),
+  zipCode: z
+    .string()
+    .min(4, { message: "Invalid Zip Code" })
+    .max(4, { message: "Invalid Zip Code" }),
 });
 
 export const LoginSchema = z.object({

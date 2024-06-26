@@ -6,11 +6,63 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import {
   ConfirmOTPSchema,
   LoginSchema,
+  RegisterDetailsSchema,
   RegisterSchema,
   SendRegisterOTPSchema,
 } from "@/src/schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+
+export const handleRegisterDetails = async (
+  values: z.infer<typeof RegisterDetailsSchema>,
+  callbackURL?: string | null,
+) => {
+  const validateFields = RegisterDetailsSchema.safeParse(values);
+
+  if (!validateFields.success) {
+    return { error: "Failed to Register details" };
+  }
+  const {
+    first_name,
+    last_name,
+    gender,
+    birthday,
+    address,
+    city,
+    state,
+    zipCode,
+    contact_no,
+  } = validateFields.data;
+
+  const authResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/user/user-info`,
+
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (authResponse.ok) {
+    //await handleCredentialsSignUp(values, callbackURL);
+    return;
+  }
+  // Throw proper error response from backend server
+  const res = await authResponse.json();
+  if (res.errors) {
+    if (Array.isArray(res.errors)) {
+      if (typeof res.errors[0] === "object") {
+        throw new Error(Object.values(res.errors[0])[0] as any);
+      }
+      throw new Error(res.errors[0]);
+    }
+    throw new Error(res.errors);
+  } else {
+    throw new Error(authResponse.statusText);
+  }
+};
 
 export const handleConfirmOTP = async (
   values: z.infer<typeof ConfirmOTPSchema>,
