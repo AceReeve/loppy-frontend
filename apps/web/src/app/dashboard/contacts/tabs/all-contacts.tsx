@@ -42,7 +42,7 @@ function AllContacts() {
     setFilters(value);
   };
 
-  const { data: contacts, error, isLoading } = useGetContactsQuery(filters);
+  const { data: contacts, error, isLoading } = useGetContactsQuery({ filters });
 
   if (isLoading) {
     return (
@@ -51,7 +51,7 @@ function AllContacts() {
           <LoadingSpinner />
         </div>
         <p className="font-nunito text-center text-lg">
-          Loading please wait...
+          Loading please wait...avanza
         </p>
       </div>
     );

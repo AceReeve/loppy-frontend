@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState, useTransition } from "react";
 import {
   Button,
   Dialog,
@@ -28,6 +28,9 @@ import {
 } from "@repo/ui/components/ui";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
+import { handleRegisterDetails } from "@/src/actions/login-actions.ts";
+import { useSearchParams } from "next/navigation";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 export default function RegisterDetails() {
   const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
@@ -37,8 +40,25 @@ export default function RegisterDetails() {
     onHandleProceed();
   };
 
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const errorParam = searchParams.get("error");
   const onHandleProceed = () => {
-    setViewIndex(1);
+    startTransition(() => {
+      handleRegisterDetails(form.getValues(), callbackUrl)
+        .then((data) => {
+          if (data?.error) {
+            setError(data.error);
+          } else {
+            //setProcess(1);
+            // setOpenDetails(true);
+            setViewIndex(1);
+          }
+        })
+        .catch((e) => {
+          setError(e.message || e.statusText);
+        });
+    });
 
     //setOpenDetails(false);
     //setProcess(step);
@@ -63,12 +83,20 @@ export default function RegisterDetails() {
       first_name: "",
       last_name: "",
       address: "",
-      company: "",
-      phone_number: "",
-      birth_date: "",
-      sex: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      contact_no: "",
+      birthday: "",
+      gender: "",
     },
   });
+  const { register, formState } = form;
+  const { errors } = formState;
+
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   interface Props {
     setOpen: (open: boolean) => void;
@@ -164,7 +192,7 @@ export default function RegisterDetails() {
 
                 <FormField
                   control={form.control}
-                  name="birth_date"
+                  name="birthday"
                   render={({ field }) => (
                     <FormItem className="col-span-1">
                       <FormLabel>Birth Date</FormLabel>
@@ -181,7 +209,7 @@ export default function RegisterDetails() {
                 <div></div>
                 <FormField
                   control={form.control}
-                  name="sex"
+                  name="gender"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>Gender</FormLabel>
@@ -232,13 +260,47 @@ export default function RegisterDetails() {
 
                 <FormField
                   control={form.control}
-                  name="company"
+                  name="state"
                   render={({ field }) => {
                     return (
-                      <FormItem className="col-span-4">
-                        <FormLabel>Company</FormLabel>
+                      <FormItem className="col-span-2">
+                        <FormLabel>State</FormLabel>
                         <FormControl>
                           <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-1">
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input autoComplete={"off"} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="zipCode"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="col-span-1">
+                        <FormLabel>Zip Code</FormLabel>
+                        <FormControl>
+                          <Input
+                            type={"number"}
+                            autoComplete={"off"}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -248,7 +310,7 @@ export default function RegisterDetails() {
 
                 <FormField
                   control={form.control}
-                  name="phone_number"
+                  name="contact_no"
                   render={({ field }) => {
                     return (
                       <FormItem className="col-span-4">
@@ -298,8 +360,17 @@ export default function RegisterDetails() {
               className="mx-auto w-[200px] h-[50px] text-lg"
               type="submit"
             >
+              {isPending ? <LoadingSpinner /> : null}
               Proceed
             </Button>
+            {error ? (
+              <div
+                className="mb-5 rounded border-s-4 border-red-500 bg-red-50 p-4"
+                role="alert"
+              >
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </form>
