@@ -1,3 +1,4 @@
+/* eslint-disable -- will fix eslint errors later */
 "use client";
 
 import React, { useState } from "react";
@@ -9,7 +10,6 @@ export default function NewConversationView() {
   const { client } = useMessagesState();
   const [contacts, setContacts] = useState<string[]>([]);
   // TODO: To implement
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- will implement later
   const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
 
   return (

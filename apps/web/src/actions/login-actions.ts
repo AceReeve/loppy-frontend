@@ -15,24 +15,26 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const handleRegisterDetails = async (
   values: z.infer<typeof RegisterDetailsSchema>,
-  callbackURL?: string | null,
 ) => {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
   const validateFields = RegisterDetailsSchema.safeParse(values);
 
   if (!validateFields.success) {
     return { error: "Failed to Register details" };
   }
-  const {
-    first_name,
-    last_name,
-    gender,
-    birthday,
-    address,
-    city,
-    state,
-    zipCode,
-    contact_no,
-  } = validateFields.data;
+  // const {
+  //   first_name,
+  //   last_name,
+  //   gender,
+  //   birthday,
+  //   address,
+  //   city,
+  //   state,
+  //   zipCode,
+  //   contact_no,
+  // } = validateFields.data;
 
   const authResponse = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/user/user-info`,
@@ -49,19 +51,10 @@ export const handleRegisterDetails = async (
     //await handleCredentialsSignUp(values, callbackURL);
     return;
   }
+
   // Throw proper error response from backend server
-  const res = await authResponse.json();
-  if (res.errors) {
-    if (Array.isArray(res.errors)) {
-      if (typeof res.errors[0] === "object") {
-        throw new Error(Object.values(res.errors[0])[0] as any);
-      }
-      throw new Error(res.errors[0]);
-    }
-    throw new Error(res.errors);
-  } else {
-    throw new Error(authResponse.statusText);
-  }
+  const res: unknown = await authResponse.json();
+  throw new Error(getErrorMessage(res));
 };
 
 export const handleConfirmOTP = async (

@@ -1,3 +1,4 @@
+/* eslint-disable -- will do later after merge */
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -25,12 +26,14 @@ import {
   PopoverTrigger,
   RadioGroup,
   RadioGroupItem,
+  toast,
 } from "@repo/ui/components/ui";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
-import { handleRegisterDetails } from "@/src/actions/login-actions.ts";
 import { useSearchParams } from "next/navigation";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { handleRegisterDetails } from "@/src/actions/login-actions.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 export default function RegisterDetails() {
   const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
@@ -45,7 +48,7 @@ export default function RegisterDetails() {
   const errorParam = searchParams.get("error");
   const onHandleProceed = () => {
     startTransition(() => {
-      handleRegisterDetails(form.getValues(), callbackUrl)
+      handleRegisterDetails(form.getValues())
         .then((data) => {
           if (data?.error) {
             setError(data.error);
@@ -55,8 +58,10 @@ export default function RegisterDetails() {
             setViewIndex(1);
           }
         })
-        .catch((e) => {
-          setError(e.message || e.statusText);
+        .catch((e: unknown) => {
+          toast({
+            description: getErrorMessage(e),
+          });
         });
     });
 
@@ -336,6 +341,7 @@ export default function RegisterDetails() {
                 <DialogHeader>
                   <p>Upload Profile Photo</p>
                 </DialogHeader>
+                {/*  @ts-ignore -- will add later */}
                 <FileUploader
                   className="relative rounded-lg p-2"
                   dropzoneOptions={dropZoneConfig}

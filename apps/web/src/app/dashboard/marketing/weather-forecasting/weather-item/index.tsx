@@ -8,13 +8,13 @@ import RainChance from "@/src/app/dashboard/marketing/weather-forecasting/weathe
 import UVIndex from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-uv";
 import Pressure from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-pressure";
 
-interface Props {
+interface WeatherItemProps {
   header: string;
   description: string;
   measurement: number;
   suffix: string;
 }
-export default function WeatherItem(props: Props) {
+export default function WeatherItem(props: WeatherItemProps) {
   let weatherComponent = null;
   const itemComponent = useRef(null);
 

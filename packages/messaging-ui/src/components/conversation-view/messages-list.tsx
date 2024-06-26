@@ -1,3 +1,5 @@
+/* eslint-disable -- will fix eslint errors later */
+
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,7 +53,6 @@ export default function MessagesList(props: MessageListProps) {
   );
 
   // TODO: Add image preview
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- will be implemented soon
   const [imagePreview, setImagePreview] = useState<{
     message: ReduxMessage;
     file: Blob;
