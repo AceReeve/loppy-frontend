@@ -19,12 +19,12 @@ export interface GetContactsResponse {
     lifetime_value: number;
     last_campaign_ran: string;
     last_interaction: string;
-    tags: [
-      {
-        tag_name: string;
-        _id: string;
-      },
-    ];
+    tags:
+      | {
+          tag_name: string;
+          _id: string;
+        }[]
+      | undefined;
     created_at: string;
     updated_at: string;
   }[];

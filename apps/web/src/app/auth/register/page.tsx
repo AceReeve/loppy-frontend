@@ -1,11 +1,13 @@
-"use client";
-import { useEffect, useState, useTransition } from "react";
+/* eslint-disable -- will do later after merge */
 
+"use client";
+import { useState } from "react";
+import { type z } from "zod";
+import { type RegisterSchema } from "@/src/schemas";
+import RegisterOTP from "@/src/app/auth/register/register-otp";
 import RegisterDetails from "./register-details";
 import Registration from "./register-account";
-import { RegisterSchema } from "@/src/schemas";
-import { z } from "zod";
-import RegisterOTP from "@/src/app/auth/register/register-otp";
+
 export default function Register() {
   const [process, setProcess] = useState(0);
   const [openDetails, setOpenDetails] = useState(false);
@@ -31,11 +33,7 @@ export default function Register() {
   };
 
   const otpRequest = () => {
-    return (
-      <>
-        <div className="w-full bg-red-900">OTP Request</div>
-      </>
-    );
+    return <div className="w-full bg-red-900">OTP Request</div>;
   };
 
   const pages = [

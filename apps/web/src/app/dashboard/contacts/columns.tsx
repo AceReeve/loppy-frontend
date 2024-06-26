@@ -5,17 +5,6 @@ import moment from "moment";
 import { type GetContactsResponse } from "@repo/redux-utils/src/endpoints/types/contacts";
 import { Button, Checkbox } from "@repo/ui/components/ui";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-/*export interface Contacts {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  website: string;
-  company: string;
-}*/
-
 export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
   {
     id: "select",
@@ -63,7 +52,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
         </Button>
       );
     },
-    cell: ({ row, getValue }) => {
+    cell: ({ row }) => {
       const name = `${row.original.first_name} ${row.original.last_name}`;
       const email = row.original.email;
       return (
@@ -182,7 +171,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
     accessorKey: "tags",
     header: "Tags",
     cell: ({ row }) => {
-      if (row.original.tags && row.original.tags.length > 0) {
+      if (row.original.tags?.length) {
         return row.original.tags.map((tag) => tag.tag_name).join(", "); // Join tag_name values into a single-line string
       }
       return "NONE"; // Return "NONE" if the array is empty or undefined

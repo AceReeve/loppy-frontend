@@ -42,15 +42,14 @@ import React, { useState } from "react";
 import { useCreateContactMutation } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { CalendarIcon } from "lucide-react";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import moment from "moment";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 import { CreateContactsFormSchema } from "@/src/schemas";
 import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
 import AllContacts from "./tabs/all-contacts";
 import MyContacts from "./tabs/my-contacts";
 import UnassignedContacts from "./tabs/unassigned-contacts";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import { cn } from "@repo/ui/utils";
-import moment from "moment";
 
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -83,9 +82,9 @@ function Page() {
       first_name: "",
       last_name: "",
       email: "",
-      phone_number: 0,
+      phone_number: "0",
       source: "",
-      lifetime_value: 0,
+      lifetime_value: "0",
       last_campaign_ran: "",
       last_interaction: new Date(),
       tags: [
@@ -414,16 +413,9 @@ function Page() {
                                   <FormControl>
                                     <Button
                                       variant="outline"
-                                      className={cn(
-                                        "w-full pl-3 text-left font-normal",
-                                        !field.value && "text-muted-foreground",
-                                      )}
+                                      className="w-full pl-3 text-left font-normal"
                                     >
-                                      {field.value ? (
-                                        moment(field.value).format("yyyy-MM-dd")
-                                      ) : (
-                                        <span>Pick a date</span>
-                                      )}
+                                      {moment(field.value).format("yyyy-MM-dd")}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
@@ -465,8 +457,11 @@ function Page() {
                         </MultiSelectorTrigger>
                         <MultiSelectorContent>
                           <MultiSelectorList>
-                            {options.map((option, i) => (
-                              <MultiSelectorItem key={i} value={option.value}>
+                            {options.map((option) => (
+                              <MultiSelectorItem
+                                key={option.value}
+                                value={option.value}
+                              >
                                 {option.label}
                               </MultiSelectorItem>
                             ))}

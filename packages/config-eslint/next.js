@@ -44,8 +44,20 @@ module.exports = {
   rules: {
     "@typescript-eslint/explicit-function-return-type": "off",
     "import/no-default-export": "off",
+
+    // Will have to temporarily disable this
     "@next/next/no-img-element": "off",
     "react-hooks/exhaustive-deps": "off",
+
+    // this is for react-hook-form issue. Refer to https://github.com/orgs/react-hook-form/discussions/8622
+    "@typescript-eslint/no-misused-promises": [
+      2,
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
     // "@typescript-eslint/no-unsafe-call": "off",
     // "@typescript-eslint/no-unsafe-assignment": "off",
     // "@typescript-eslint/no-unsafe-return": "off",

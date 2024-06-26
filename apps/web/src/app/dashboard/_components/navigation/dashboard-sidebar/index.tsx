@@ -2,11 +2,12 @@
 import { Category, Message2, PresentionChart } from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
+import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
 
-interface Props {
+interface DashboardSidebarProps {
   className?: string | null;
 }
-export default function DashboardSidebar(props: Props) {
+export default function DashboardSidebar(props: DashboardSidebarProps) {
   const chatbotItems: MenuLinkItem[] = [
     {
       title: "Dashboard",

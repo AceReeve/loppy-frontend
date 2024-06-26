@@ -32,8 +32,8 @@ export default function PaywallSteps() {
 
   const stepsMap = useMemo(
     () =>
-      steps.reduce<Record<string, any>>((acc, current, index) => {
-        acc[current.id] = { ...current, index };
+      steps.reduce<Record<string, number>>((acc, current, index) => {
+        acc[current.id] = index;
         return acc;
       }, {}),
     [],
@@ -44,15 +44,15 @@ export default function PaywallSteps() {
     if (process.env.NODE_ENV === "development") return;
 
     const params = { view: "payment", step: steps[currentStepIndex].id };
-    router.push(`?${createQueryString(searchParams, params)}`);
+    router.push(`?${createQueryString(searchParams, params).toString()}`);
   }, [currentStepIndex]);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") return;
 
-    const step = stepsMap[stepParam || steps[0].id];
-    if (step.index < currentStepIndex) {
-      toStepIndex(step.index);
+    const step = stepsMap[stepParam ?? steps[0].id];
+    if (step < currentStepIndex) {
+      toStepIndex(step);
     }
   }, [stepParam]);
 
@@ -65,7 +65,7 @@ export default function PaywallSteps() {
             {steps.map((step, index) => (
               <button
                 className="flex items-center"
-                key={index}
+                key={step.id}
                 disabled={index >= currentStepIndex}
                 onClick={() => {
                   index >= currentStepIndex ? null : toStepIndex(index);

@@ -1,14 +1,11 @@
+import type { ConfirmationToken } from "@stripe/stripe-js";
 import type { PaymentPlan, PaymentStatus } from "../enums/paywall.enums.ts";
 
 export interface SummarizePaymentPayload {
   confirmationToken: string;
 }
 
-export interface SummarizePaymentResponse {
-  // TODO: set proper type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- disregard error
-  payment_method_preview: any;
-}
+export type SummarizePaymentResponse = ConfirmationToken;
 
 export interface CreatePaymentIntentPayload {
   type: PaymentPlan;

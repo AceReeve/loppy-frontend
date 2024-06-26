@@ -9,7 +9,10 @@
         "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_BACKEND_URL",
         "NODE_ENV",
-        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
+        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+        "JWT_EXPIRATION",
+        "COOKIE_SECURE",
+        "COOKIE_DOMAIN"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",

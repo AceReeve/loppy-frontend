@@ -15,30 +15,32 @@ import {
 } from "@repo/ui/components/ui";
 import { ArrowUpIcon } from "@heroicons/react/16/solid";
 import { Mail } from "lucide-react";
-import Table from "@/src/components/table";
+import { DefaultAvatar } from "@repo/ui/components/custom";
 import RingProgress from "@/src/components/progress/ring-progress";
 import ColumnChart from "@/src/components/charts/column-chart";
 import dashboardSampleData from "@/src/data/sample/dashboard-sample-data";
 import LineChart from "@/src/components/charts/line-chart";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
-import { DefaultAvatar } from "@repo/ui/components/custom";
 
 export default function Page() {
-  const [value, setValue] = useState("1D");
+  const [leadSubmissionsValue, setLeadSubmissionsValue] = useState("1D");
   const { session } = useDashboardState();
 
   const customerLeads = [
     {
+      key: "social_media",
       icon: Global,
       lead: "Social Media",
       value: 50.342,
     },
     {
+      key: "email",
       icon: Mail,
       lead: "Email",
       value: 34.342,
     },
     {
+      key: "call",
       icon: Call,
       lead: "Call",
       value: 18.342,
@@ -80,10 +82,11 @@ export default function Page() {
           </div>
           <div className="flex flex-col gap-[13px]">
             <div className="font-nunito text-[2rem]/[1] font-bold text-black">
-              Welcome back, {session?.profile?.given_name}!
+              Welcome back, {session?.profile.given_name}!
             </div>
             <p className="font-open-sans text-sm font-normal tracking-wider text-gray-400">
               We’ve recently added updates to the Call Center - Check them out{" "}
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid -- will add link later */}
               <a className="text-primary" href="#">
                 here
               </a>
@@ -204,7 +207,7 @@ export default function Page() {
             {dashboardSampleData.analytics.map((item, index) => (
               <div
                 className="flex flex-1 flex-col items-center gap-[40px]"
-                key={index}
+                key={item.key}
               >
                 <div className="mx-auto">
                   <RingProgress
@@ -286,7 +289,8 @@ export default function Page() {
 
       {/*  Third Row Components */}
       <div className="bg-card shadow-soft dark:border-secondary/40 relative mt-8 rounded-[14px] p-1.5 dark:border">
-        <Table />
+        {/*TODO: Use table from ui components package instead */}
+        {/*<Table />*/}
       </div>
       {/*  Fourth Row Components */}
       <div className="mt-5 grid grid-cols-12 gap-[38px]">
@@ -300,10 +304,10 @@ export default function Page() {
             className="absolute right-6 top-5 z-50 inline-flex w-auto flex-row items-center justify-start gap-[5px] rounded-[20px] border border-gray-100 bg-neutral-100 px-[5px] text-[#3A3F51]"
             defaultValue="1D"
             onValueChange={(value) => {
-              if (value) setValue(value);
+              if (value) setLeadSubmissionsValue(value);
             }}
             type="single"
-            value={value}
+            value={leadSubmissionsValue}
           >
             <ToggleGroupItem value="1D" variant="rounded">
               {" "}
@@ -352,7 +356,7 @@ export default function Page() {
               return (
                 <div
                   className="grid w-full grid-cols-12 items-center gap-2"
-                  key={index}
+                  key={lead.key}
                 >
                   <div
                     className="col-span-1 flex h-[46px] w-[46px] items-center justify-center rounded-[9px] bg-opacity-10"
@@ -367,7 +371,7 @@ export default function Page() {
                     <div
                       className="h-full bg-teal-400"
                       style={{
-                        width: `${lead.value}%`,
+                        width: `${lead.value.toString()}%`,
                         backgroundColor: colors[index],
                       }}
                     />

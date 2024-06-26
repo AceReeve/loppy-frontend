@@ -79,41 +79,62 @@ export default function PaywallProvider({
   };
 
   const onUserInformationSubmit = (_e: React.SyntheticEvent) => {
-    elements?.submit().then((res) => {
-      if (!res.error) {
-        toNextStep();
-      }
-    });
+    elements
+      ?.submit()
+      .then((res) => {
+        if (!res.error) {
+          toNextStep();
+        }
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
   };
   const onPaymentMethodSubmit = (_e: React.SyntheticEvent) => {
-    elements?.submit().then((res) => {
-      if (!res.error) {
-        toNextStep();
-        stripe
-          ?.createConfirmationToken({
-            elements,
-          })
-          .then((res) => {
-            if (res.error) {
-              throw new Error(res.error.message);
-            }
-            setConfirmationToken(res.confirmationToken.id);
-          });
-      }
-    });
+    elements
+      ?.submit()
+      .then((res) => {
+        if (!res.error) {
+          toNextStep();
+          stripe
+            ?.createConfirmationToken({
+              elements,
+            })
+            .then((confirmTokenResult) => {
+              if (confirmTokenResult.error) {
+                throw new Error(confirmTokenResult.error.message);
+              }
+              setConfirmationToken(confirmTokenResult.confirmationToken.id);
+            })
+            .catch((e: unknown) => {
+              toast({
+                description: getErrorMessage(e),
+              });
+            });
+        } else {
+          throw new Error(res.error.message);
+        }
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
   };
 
   const onFinalSubmit = (_e: React.SyntheticEvent) => {
     // TODO: Add loading
-    if (!confirmationToken) return;
+    if (!confirmationToken || !paymentPlan?.plan) return;
     createPaymentIntent({
-      type: paymentPlan?.plan!,
+      type: paymentPlan.plan,
       confirmationToken,
     })
       .then(async () => {
         await refetchPaymentStatus();
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
@@ -184,7 +205,7 @@ export default function PaywallProvider({
   useEffect(() => {
     const items = localStorage.getItem("storage");
     if (items) {
-      setStorage(JSON.parse(items));
+      setStorage(JSON.parse(items) as typeof storage);
     }
     setMounted(true);
   }, []);

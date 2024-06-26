@@ -29,11 +29,9 @@ export default function Login() {
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
-    setSuccess("");
 
     startTransition(() => {
       handleCredentialsSignIn(values, callbackUrl)
@@ -42,8 +40,8 @@ export default function Login() {
             setError(data.error);
           }
         })
-        .catch((e) => {
-          setError(e.message || e.statusText);
+        .catch((e: unknown) => {
+          setError(getErrorMessage(e));
         });
     });
   };

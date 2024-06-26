@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 
 export default function PaywallOrderSummary() {
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [
     summarizePayment,
     { data, isLoading: summarizePaymentLoading, error },
@@ -23,7 +23,7 @@ export default function PaywallOrderSummary() {
       })
         .unwrap()
         .finally(() => {
-          setLoading(false);
+          setIsLoading(false);
         });
     }
   }, [confirmationToken, summarizePayment]);
@@ -45,14 +45,14 @@ export default function PaywallOrderSummary() {
         <div className="rounded-xl border border-zinc-300 bg-white p-2">
           <div className="mb-2 mt-4">
             <strong>Full Name:</strong>{" "}
-            {paymentMethodPreview?.billing_details?.name}
+            {paymentMethodPreview?.billing_details.name}
           </div>
           {/*<div className="mb-2 mt-4">*/}
           {/*  <strong>Email:</strong> {paymentDetails.cardNumber}*/}
           {/*</div>*/}
           <div className="mb-2 mt-4">
             <strong>Address:</strong>{" "}
-            {paymentMethodPreview?.billing_details?.address?.line1}
+            {paymentMethodPreview?.billing_details.address?.line1}
           </div>
         </div>
 

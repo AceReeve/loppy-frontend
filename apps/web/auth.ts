@@ -49,7 +49,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    session({ session, token, user }) {
+    session({ session, token }) {
       session.jwt = token.jwt as string;
       session.profile = token.profile as Profile;
       session.user.name = token.email?.split("@")[0] ?? "";
@@ -57,7 +57,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-  session: { strategy: "jwt", maxAge: parseInt(process.env.JWT_EXPIRATION) },
+  session: {
+    strategy: "jwt",
+    maxAge: parseInt(process.env.JWT_EXPIRATION ?? "3000"),
+  },
   cookies: {
     csrfToken: {
       name: "next-auth.csrf-token",
@@ -111,7 +114,7 @@ async function saveGoogleInfo(payload: {
   );
 
   if (response.ok) {
-    return response.json() as Promise<ResponseType>;
+    return (await response.json()) as Promise<ResponseType>;
   }
 
   // Throw proper error response from backend server

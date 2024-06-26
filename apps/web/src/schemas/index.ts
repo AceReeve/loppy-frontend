@@ -136,21 +136,17 @@ export const CreateContactsFormSchema = z.object({
   email: z.string().email({
     message: "Email is required",
   }),
-  phone_number: z
-    .string()
-    .min(4, {
-      message: "Invalid Phone Number",
-    })
-    .transform((value) => parseInt(value)),
+  phone_number: z.string().min(4, {
+    message: "Invalid Phone Number",
+  }),
+  // .transform((value) => parseInt(value)),
   source: z.string().min(2, {
     message: "Source must be at least 2 characters.",
   }),
-  lifetime_value: z
-    .string()
-    .min(1, {
-      message: "Invalid Lifetime Value",
-    })
-    .transform((value) => parseInt(value)),
+  lifetime_value: z.string().min(1, {
+    message: "Invalid Lifetime Value",
+  }),
+  // .transform((value) => parseInt(value)),
   last_campaign_ran: z.string().min(1, {
     message: "Last Campaign Ran must be at least 1 character.",
   }),

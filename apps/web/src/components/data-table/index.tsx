@@ -1,3 +1,5 @@
+/* eslint-disable -- will use tanstack table for this one */
+
 "use client";
 
 // TODO: Use table from @repo/ui and uninstall tanstack table

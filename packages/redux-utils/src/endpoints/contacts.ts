@@ -1,4 +1,5 @@
 import { baseApi } from "../api";
+import { type SearchParamsType } from "../index.tsx";
 import type {
   CreateContactPayload,
   GetContactsListResponse,
@@ -13,10 +14,7 @@ const api = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getContacts: builder.query<
-        GetContactsResponse,
-        Record<string, string | number> | undefined
-      >({
+      getContacts: builder.query<GetContactsResponse, SearchParamsType>({
         query: (params) => {
           const queryParams = new URLSearchParams(params).toString();
           return {
@@ -47,7 +45,7 @@ const api = baseApi
         invalidatesTags: ["contacts"],
       }),
 
-      exportContacts: builder.query<Blob, Record<string, string> | undefined>({
+      exportContacts: builder.query<Blob, SearchParamsType>({
         query: (data) => {
           const params = new URLSearchParams(data).toString();
           return {

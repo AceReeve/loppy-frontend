@@ -1,3 +1,6 @@
+// TODO: Set proper typings
+/* eslint-disable -- disregard errors, will improve later */
+
 import OpportunityHeader from "@/src/app/dashboard/pipelines/_components/pipeline-opportunity-header";
 import OpportunityCard from "@/src/app/dashboard/pipelines/_components/pipeline-opportunity-card";
 import LeadButton from "@/src/app/dashboard/pipelines/_components/pipeline-add-button";

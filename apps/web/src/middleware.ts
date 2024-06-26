@@ -23,9 +23,8 @@ export default auth((req) => {
   if (isRootRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_ROOT_REDIRECT, nextUrl));
-    } else {
-      return Response.redirect(new URL("/auth/login", nextUrl));
     }
+    return Response.redirect(new URL("/auth/login", nextUrl));
   }
 
   if (isAuthRoute) {

@@ -50,9 +50,12 @@ export default function TeamsAddTeam(props: TeamsSetupStepsProps) {
           </div>
         </div>
         <div className="relative flex w-full justify-between">
-          {Array.from({
-            length: 5,
-          }).map((_item, index) => (
+          {Array.from(
+            {
+              length: 5,
+            },
+            (_, index) => index + 1,
+          ).map((index) => (
             <div
               className="relative inline-flex flex-col items-center justify-center gap-3 rounded-3xl bg-neutral-100 px-[22px] py-4"
               key={index}
@@ -107,9 +110,11 @@ function InvitesList({
       }}
       value={invitesList}
     >
-      <div className={`flex items-center gap-0.5 px-2 py-0.5 ${className}`}>
+      <div
+        className={`flex items-center gap-0.5 px-2 py-0.5 ${className ?? ""}`}
+      >
         {invitesList.map((person) => (
-          <span
+          <button
             className="bg-primary-light font-nunito flex cursor-pointer items-center gap-1 rounded-lg px-2 py-0.5 text-sm"
             key={person}
             onClick={() => {
@@ -117,6 +122,7 @@ function InvitesList({
                 existing.filter((p) => p !== person),
               );
             }}
+            type="button"
           >
             <span>{person}</span>
             <svg
@@ -133,7 +139,7 @@ function InvitesList({
                 strokeWidth="2"
               />
             </svg>
-          </span>
+          </button>
         ))}
         <ComboboxInput
           autoComplete="off"

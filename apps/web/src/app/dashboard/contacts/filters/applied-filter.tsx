@@ -36,9 +36,9 @@ export default function AppliedFilter({ filter, deleteFilter }: FilterProps) {
       </CardTitle>
       <Separator />
       <CardContent className="flex h-auto flex-wrap">
-        {filter.value.map((value, index) => (
+        {filter.value.map((value) => (
           <p
-            key={index}
+            key={value}
             className="inline-block h-auto w-auto rounded-full border-2 px-2 py-1 text-sm font-bold "
           >
             {value}

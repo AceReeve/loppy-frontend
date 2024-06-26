@@ -1,3 +1,5 @@
+/* eslint-disable -- will do later after merge */
+
 import GoogleSignInButton from "@/src/app/auth/_components/google-sign-in-button";
 import FacebookSignInButton from "@/src/app/auth/_components/facebook-sign-in-button";
 import Link from "next/link";

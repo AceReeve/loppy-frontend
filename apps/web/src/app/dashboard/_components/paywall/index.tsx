@@ -47,8 +47,8 @@ export default function Paywall() {
 
   const viewsMap = useMemo(
     () =>
-      views.reduce<Record<string, any>>((acc, current, index) => {
-        acc[current.id] = { ...current, index };
+      views.reduce<Record<string, number>>((acc, current, index) => {
+        acc[current.id] = index;
         return acc;
       }, {}),
     [],
@@ -60,14 +60,14 @@ export default function Paywall() {
   useEffect(() => {
     if (process.env.NODE_ENV === "development") return;
     const params = { view: views[viewIndex].id };
-    router.push(`?${createQueryString(searchParams, params)}`);
+    router.push(`?${createQueryString(searchParams, params).toString()}`);
   }, [viewIndex]);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") return;
-    const view = viewsMap[viewParam || views[0].id];
-    if (view.index < viewIndex) {
-      setViewIndex(view.index);
+    const view = viewsMap[viewParam ?? views[0].id];
+    if (view < viewIndex) {
+      setViewIndex(view);
     }
   }, [viewParam]);
 

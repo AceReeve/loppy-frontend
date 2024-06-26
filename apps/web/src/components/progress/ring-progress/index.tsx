@@ -7,7 +7,7 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP);
 
-interface Props {
+interface RingProgressProps {
   colorProgress?: string[];
   size?: number;
   strokeWidth?: number;
@@ -25,7 +25,7 @@ export default function RingProgress({
   label = true,
   className,
   colorBg = ["var(--color-chart-bg)"],
-}: Props) {
+}: RingProgressProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const targetCircumference = circumference * (value / 100);
@@ -39,7 +39,7 @@ export default function RingProgress({
       onUpdate: () => {
         setCurrentProgress(Math.floor(value * tween.progress()));
       },
-      strokeDasharray: `${targetCircumference} ${circumference}`,
+      strokeDasharray: `${targetCircumference.toString()} ${circumference.toString()}`,
       ease: "power4.out",
       duration: 1.5,
     });
@@ -47,7 +47,7 @@ export default function RingProgress({
 
   return (
     <div
-      className={`relative flex flex-col place-content-center text-center ${className}`}
+      className={`relative flex flex-col place-content-center text-center ${className ?? ""}`}
       style={{
         width: size,
         height: size,
@@ -73,7 +73,7 @@ export default function RingProgress({
             cx={size / 2}
             cy={size / 2}
             strokeWidth={strokeWidth}
-            strokeDasharray={`0 ${circumference}`}
+            strokeDasharray={`0 ${circumference.toString()}`}
             ref={progressRef}
             className="origin-center -rotate-90 fill-[#000] stroke-[#fff]"
           />
@@ -85,6 +85,7 @@ export default function RingProgress({
           >
             {colorProgress.map((color, index) => (
               <stop
+                // eslint-disable-next-line react/no-array-index-key -- we have to rely on index
                 key={index}
                 offset={index * (100 / (colorProgress.length - 1 || 1))}
                 stopColor={color}
@@ -100,6 +101,7 @@ export default function RingProgress({
             {typeof colorBg === "object" &&
               colorBg.map((color, index) => (
                 <stop
+                  // eslint-disable-next-line react/no-array-index-key -- we have to rely on index
                   key={index}
                   offset={index * (100 / (colorProgress.length - 1 || 1))}
                   stopColor={color}
@@ -122,7 +124,7 @@ export default function RingProgress({
       </svg>
       <div className="font-roboto relative text-[26px] font-bold leading-tight text-black">
         {label === true
-          ? `${currentProgress}%`
+          ? `${currentProgress.toString()}%`
           : label && label(currentProgress)}
       </div>
     </div>
