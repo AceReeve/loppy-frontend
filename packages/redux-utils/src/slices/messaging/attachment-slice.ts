@@ -25,12 +25,10 @@ export const attachmentSlice = createSlice({
 
       const messages = state[channelSid];
 
-      if (messages) {
-        messages[messageSid] = state[channelSid]?.[messageSid] ?? {};
+      messages[messageSid] = state[channelSid][messageSid] ?? {};
 
-        // Update state with the new attachment
-        messages[messageSid][mediaSid] = attachment;
-      }
+      // Update state with the new attachment
+      messages[messageSid][mediaSid] = attachment;
     },
     clearAttachments: (
       state: AttachmentsState,
