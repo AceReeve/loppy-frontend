@@ -232,9 +232,9 @@ export function getFirstMessagePerDate(messages: ReduxMessage[]) {
       if (!messagesByDate[dateKey]) {
         messagesByDate[dateKey] = [message];
       } else {
-        const existingMessage = messagesByDate[dateKey]?.[0];
+        const existingMessage = messagesByDate[dateKey][0];
         if (
-          existingMessage?.dateCreated &&
+          existingMessage.dateCreated &&
           message.dateCreated < existingMessage.dateCreated
         ) {
           messagesByDate[dateKey] = [message];
