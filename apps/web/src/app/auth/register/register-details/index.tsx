@@ -34,14 +34,12 @@ import { useSearchParams } from "next/navigation";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { handleRegisterDetails } from "@/src/actions/login-actions.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { useCreateContactMutation } from "@repo/redux-utils/src/endpoints/contacts.ts";
+import { useRegisterDetailsMutation } from "@repo/redux-utils/src/endpoints/register.ts";
 
 export default function RegisterDetails() {
   const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
     usePaywallState();
-  const onSubmit = () => {
-    console.log("Submitted");
-    onHandleProceed();
-  };
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -102,6 +100,49 @@ export default function RegisterDetails() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [registerDetails, { isLoading }] = useRegisterDetailsMutation();
+
+  const onSubmit = async () => {
+    try {
+      const formData = form.getValues();
+      const newData = {
+        ...formData,
+        contact_no: parseInt(formData.contact_no),
+        zipCode: parseInt(formData.zipCode),
+      };
+
+      const response = await registerDetails(newData);
+
+      // Check if response has data property
+      if (response.data) {
+        // Handle successful submission
+        setViewIndex(1);
+        toast({
+          title: "Updated Successfully",
+          description: "User Details has been created.",
+          variant: "success",
+        });
+        form.reset();
+      } else if (response.error) {
+        // Handle submission failure
+        toast({
+          title: "Create User Details Error",
+          description:
+            //response.error
+            //? response.error.toString() :
+            "Unknown error occurred",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Create User Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
+    }
+  };
 
   interface Props {
     setOpen: (open: boolean) => void;

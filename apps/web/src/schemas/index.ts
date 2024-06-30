@@ -27,6 +27,7 @@ export const RegisterDetailsSchema = z.object({
   contact_no: z.string().regex(/^\d{6,}$/, {
     message: "Mobile Number must be numeric and at least 6 digits",
   }),
+
   birthday: z.string().min(1, {
     message: "Date of Birth must be a valid date",
   }),
@@ -148,10 +149,7 @@ export const CreateContactsFormSchema = z.object({
   source: z.string().min(2, {
     message: "Source must be at least 2 characters.",
   }),
-  lifetime_value: z.string().min(1, {
-    message: "Invalid Lifetime Value",
-  }),
-  // .transform((value) => parseInt(value)),
+
   last_campaign_ran: z.string().min(1, {
     message: "Last Campaign Ran must be at least 1 character.",
   }),

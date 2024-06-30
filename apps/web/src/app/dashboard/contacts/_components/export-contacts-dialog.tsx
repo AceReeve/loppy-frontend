@@ -92,7 +92,7 @@ export default function ExportContactsDialogForm() {
                           )}
                         >
                           {field.value ? (
-                            moment(field.value).format("PPP")
+                            moment(field.value).format("l")
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -135,7 +135,7 @@ export default function ExportContactsDialogForm() {
                           )}
                         >
                           {field.value ? (
-                            moment(field.value).format("PPP")
+                            moment(field.value).format("l")
                           ) : (
                             <span>Pick a date</span>
                           )}
