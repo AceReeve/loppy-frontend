@@ -3,7 +3,7 @@
 import GoogleSignInButton from "@/src/app/auth/_components/google-sign-in-button";
 import FacebookSignInButton from "@/src/app/auth/_components/facebook-sign-in-button";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { handleSendOTP } from "@/src/actions/login-actions.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export default function Registration({
   HandleStepProcess,
@@ -57,6 +58,17 @@ export default function Registration({
     }
   }, [errorParam]);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmShowPassword(!showConfirmPassword);
+  };
+
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -76,14 +88,14 @@ export default function Registration({
   return (
     <>
       <div className="mt-10 font-open-sans text-[15px] lg:mt-0">
-        <div className="text-left">
-          <h1 className="font-montserrat text-2xl font-bold text-primary sm:text-[32px]">
-            Get Started Now
+        <div className="text-center">
+          <h1 className="font-montserrat  text-2xl font-semibold sm:text-[24px] text-black">
+            Create an Account
           </h1>
 
-          <p className="mt-2 text-[13px] font-normal text-gray-500">
+          {/*          <p className="mt-2 text-[13px] font-normal text-gray-500">
             Enter your credential to access your account.
-          </p>
+          </p>*/}
         </div>
 
         <div className="mt-5 lg:mt-12">
@@ -101,14 +113,17 @@ export default function Registration({
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="col-span-6">
+              {/*
               <label className="block text-sm font-bold" htmlFor="Email">
                 Email
               </label>
+*/}
 
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-medium shadow-none"
+                className="mt-1 w-full border-[#D0D3DB] font-nunito shadow-none  h-[38px]"
                 id="Email"
                 type="email"
+                placeholder={"Email"}
                 {...register("email")}
               />
 
@@ -119,18 +134,26 @@ export default function Registration({
               ) : null}
             </div>
 
-            <div className="col-span-6">
-              <label className="block text-sm font-bold" htmlFor="Password">
+            <div className="col-span-6 relative">
+              {/*              <label className="block text-sm font-bold" htmlFor="Password">
                 {" "}
                 Password{" "}
-              </label>
+              </label>*/}
 
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-bold shadow-none"
+                className="mt-1 w-full border-[#D0D3DB] font-nunito shadow-none  h-[38px]"
                 id="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                placeholder={"Password"}
                 {...register("password")}
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center px-2"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+              </button>
               {errors.password ? (
                 <p className="mt-2 text-[0.8rem] font-medium text-error">
                   {errors.password.message}
@@ -138,18 +161,28 @@ export default function Registration({
               ) : null}
             </div>
 
-            <div className="col-span-6">
+            <div className="col-span-6 relative">
+              {/*
               <label className="block text-sm font-bold" htmlFor="Password">
                 {" "}
                 Confirm Password{" "}
               </label>
-
+*/}
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-bold shadow-none"
+                className="mt-1 w-full border-[#D0D3DB] font-nunito shadow-none h-[38px]"
                 id="confirmPassword"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
                 {...register("confirm_password")}
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center px-2"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+              </button>
+
               {errors.confirm_password ? (
                 <p className="mt-2 text-[0.8rem] font-medium text-error">
                   {errors.confirm_password.message}
@@ -158,7 +191,7 @@ export default function Registration({
             </div>
 
             <button
-              className="btn-gradient-primary col-span-6"
+              className="btn-gradient-primary col-span-6  h-[38px]"
               disabled={isPending}
               type="submit"
             >
@@ -169,15 +202,14 @@ export default function Registration({
 
           <div className="mt-6 grid grid-cols-6 gap-6 font-nunito text-black">
             <div className="col-span-6">
-              <div className="flex items-center justify-center gap-8">
-                <div className="h-[1px] flex-auto bg-gray-300" />
-                <span className="text-gray-400">or</span>
-                <div className="h-[1px] flex-auto bg-gray-300" />
-              </div>
+              <div className="col-span-6">
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <GoogleSignInButton />
+                </div>
 
-              <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-                <GoogleSignInButton />
-                <FacebookSignInButton />
+                <div className="mt-6 flex flex-col gap-4 sm:flex-row ">
+                  <FacebookSignInButton />
+                </div>
               </div>
             </div>
 
@@ -194,7 +226,7 @@ export default function Registration({
               </p>
             </div>
 
-            <div className="col-span-6 mt-3 sm:flex sm:items-center sm:gap-4">
+            <div className="col-span-6 mt-3 sm:flex sm:items-center sm:gap-4 m-auto">
               <p className="font-nunito text-sm font-bold">
                 Have an account?{" "}
                 <Link className="text-primary underline" href="/auth/login">

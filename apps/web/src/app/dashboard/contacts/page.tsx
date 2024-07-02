@@ -167,7 +167,7 @@ function Page() {
       startTransition(() => {
         // Start transition when creating contact
         createContact(newData);
-        form.reset(); // Reset form after successful contact creation
+        form.forgot-password(); // Reset form after successful contact creation
         console.log("Contact Added");
       });
     } catch (error) {

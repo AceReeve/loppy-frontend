@@ -53,6 +53,11 @@ export const LoginSchema = z.object({
   code: z.optional(z.string()),
 });
 
+export const SendPasswordVerification = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+});
 export const SendRegisterOTPSchema = z.object({
   email: z.string().email({
     message: "Email is required",

@@ -13,11 +13,10 @@ import { LoginSchema } from "@/src/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import RecoverPassword from "@/src/app/auth/forgot-password/password-recover";
-import ChangePassword from "../reset-password/password-reset";
-import PasswordChanged from "../reset-password/password-changed";
-import PasswordVerification from "@/src/app/auth/forgot-password/password-verification";
+import ChangePassword from "@/src/app/auth/reset-password/password-reset";
+import PasswordChanged from "@/src/app/auth/reset-password/password-changed";
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const errorParam = searchParams.get("error");
@@ -46,10 +45,10 @@ export default function ForgotPassword() {
 
   const views = [
     {
-      component: <RecoverPassword nextProcess={nextProcess} />,
+      component: <ChangePassword nextProcess={nextProcess} />,
     },
     {
-      component: <PasswordVerification />,
+      component: <PasswordChanged />,
     },
   ];
 

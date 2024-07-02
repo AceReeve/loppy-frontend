@@ -32,25 +32,27 @@ export default function Layout({
             </main>
           </section>*/
 
-    <section className="bg-white">
-      <LoginHeroSection />
+    <section className="bg-[url('/assets/images/login-cover-new.svg')] size-full bg-no-repeat bg-contain bg-fixed">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         {/* Hero Section */}
-        <div className="relative flex h-32 items-center justify-center lg:col-span-5 lg:h-full xl:col-span-6">
+        {/* <LoginHeroSection />*/}
+
+        <div className="relative flex items-center justify-center lg:h-full lg:col-span-6">
           <Image
             ref={loginObject}
             alt="login-cover"
             src="/assets/images/login-object.svg"
+            width={630}
+            height={570}
             //className=" z-20  max-h-[630px] w[730px] -ml-40 my-auto size-full"
-            className=" z-20 my-auto ml-40 flex min-h-[670px] max-h-[670px] max-w-[630px] relative select-none mr-auto"
+            className=" z-20 m-auto select-none"
             draggable={false}
-            fill
           />
         </div>
 
         {/* Sign Up / Login Section */}
         <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:p-0 lg:px-16 lg:py-12 xl:col-span-6">
-          <div className=" flex-1 lg:max-w-[500px] p-10 rounded-2xl drop-shadow-xl bg-white z-20 h-auto">
+          <div className=" flex-1 xl:max-w-[500px]  p-10 rounded-2xl drop-shadow-xl bg-white z-20 h-auto xl:p-4">
             <Suspense>{children}</Suspense>
           </div>
         </main>
