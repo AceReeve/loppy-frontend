@@ -13,6 +13,6 @@ export interface MenuItem {
   id: number;
   title: string;
   slug: string;
-  items: MenuLinkItem[];
+  items: MenuLinkItem[][];
   showTitle?: boolean;
 }

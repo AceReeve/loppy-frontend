@@ -8,10 +8,11 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 export default function ColumnChart() {
   const { getColorVariable } = useThemeVariables();
   const colorPrimary = getColorVariable("--color-primary");
+  const colorGray = getColorVariable("--color-gray-200");
 
   const series: ApexOptions["series"] = [
     {
-      color: "#CFCFCF",
+      color: colorGray,
       name: "Previous",
       data: [200, 100, 160, 50, 300, 70, 180, 200, 90, 100, 450, 300],
     },
@@ -60,7 +61,7 @@ export default function ColumnChart() {
           show: true,
         },
       },
-      borderColor: "#EAEAEA",
+      borderColor: colorGray,
       show: true,
     },
     dataLabels: {
@@ -119,10 +120,10 @@ export default function ColumnChart() {
     },
     fill: {
       type: "gradient",
-      colors: ["#CFCFCF", colorPrimary],
+      colors: [colorGray, colorPrimary],
       gradient: {
         type: "vertical",
-        gradientToColors: ["#CFCFCF", colorPrimary ?? "#000"],
+        gradientToColors: [colorGray, colorPrimary ?? "#000"],
         opacityTo: [1, 0.66],
         stops: [0, 100],
       },

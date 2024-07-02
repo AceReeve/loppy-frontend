@@ -26,6 +26,8 @@ const config: Omit<Config, "content"> = {
           '"Source Code Pro"',
           ...defaultTheme.fontFamily.mono,
         ], // Code & Data (regular)
+        poppins: ['"Poppins"', ...defaultTheme.fontFamily.sans], // Buttons & CTAs (bold)
+        inter: ['"Inter"', ...defaultTheme.fontFamily.sans], // Buttons & CTAs (bold)
       },
       boxShadow: {
         soft: "0px 4px 20px 0px rgba(var(--color-shadow-soft))",

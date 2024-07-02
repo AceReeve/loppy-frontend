@@ -1,5 +1,13 @@
 "use client";
-import { Category, Message2, PresentionChart } from "iconsax-react";
+import {
+  Home,
+  Message,
+  Profile2User,
+  RouteSquare,
+  Setting2,
+  VideoOctagon,
+  I3DSquare,
+} from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
@@ -8,86 +16,57 @@ interface DashboardSidebarProps {
   className?: string | null;
 }
 export default function DashboardSidebar(props: DashboardSidebarProps) {
-  const chatbotItems: MenuLinkItem[] = [
+  const bottomItems: MenuLinkItem[] = [
     {
-      title: "Dashboard",
-      url: "/dashboard",
+      title: "Settings",
+      icon: <Setting2 className="relative size-6" />,
+      url: "/settings",
       id: 0,
     },
     {
-      title: "Modify Bot",
-      url: "/modify-bot",
+      title: "Help",
+      icon: <I3DSquare className="relative size-6" />,
+      url: "/help",
       id: 1,
-    },
-    {
-      title: "Test Your Bot",
-      url: "/test-you-bot",
-      id: 2,
-    },
-  ];
-
-  const marketingItems: MenuLinkItem[] = [
-    {
-      title: "Email Templates",
-      url: "/email-templates",
-      id: 0,
-    },
-    {
-      title: "Call Center",
-      url: "/call-center",
-      id: 1,
-    },
-    {
-      title: "Weather Forecasting",
-      url: "/weather-forecasting",
-      id: 2,
     },
   ];
 
   const dashboardItems: MenuLinkItem[] = [
     {
-      title: "Dashboard",
-      icon: <Category variant="Bold" className="relative h-7 w-7" />,
+      title: "Home",
+      icon: <Home className="relative size-6" />,
       url: "",
       id: 0,
     },
     {
-      title: "Performance",
-      icon: <PresentionChart variant="Bold" className="relative h-7 w-7" />,
-      url: "/performance",
+      title: "Messages",
+      icon: <Message className="relative size-6" />,
+      url: "/messages",
       id: 1,
     },
     {
-      title: "Pipelines",
-      icon: "/assets/icons/icon-pipelines.png",
-      url: "/pipelines",
+      title: "Contacts",
+      icon: <Profile2User className="relative size-6" />,
+      url: "/contacts",
       id: 2,
     },
     {
-      title: "Messages",
-      icon: <Message2 variant="Bold" className="relative h-7 w-7" />,
-      url: "/messages",
+      title: "Marketing",
+      icon: <RouteSquare className="relative size-6" />,
+      url: "/marketing",
       id: 3,
     },
     {
-      title: "Contacts",
-      icon: "/assets/icons/icon-contacts.png",
-      url: "/contacts",
+      title: "Pipelines",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/pipelines",
       id: 4,
     },
     {
-      title: "Chatbot",
-      url: "/chatbot",
+      title: "Workflows",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/workflows",
       id: 5,
-      children: chatbotItems,
-      collapsible: false,
-    },
-    {
-      title: "Marketing",
-      url: "/marketing",
-      id: 6,
-      children: marketingItems,
-      collapsible: false,
     },
   ];
 
@@ -95,7 +74,7 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
     title: "Dashboard Menu Items",
     slug: "dashboard",
     id: 0,
-    items: dashboardItems,
+    items: [dashboardItems, bottomItems],
     showTitle: false,
   };
 

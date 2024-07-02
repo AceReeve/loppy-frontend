@@ -16,6 +16,7 @@ export * from "./multiselect.tsx";
 export * from "./input-otp.tsx";
 export * from "./popover.tsx";
 export * from "./radio-group.tsx";
+export * from "./select.tsx";
 export * from "./separator.tsx";
 export * from "./sheet.tsx";
 export * from "./skeleton.tsx";

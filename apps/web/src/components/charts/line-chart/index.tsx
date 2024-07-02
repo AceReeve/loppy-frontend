@@ -1,10 +1,14 @@
 "use client";
 import type { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
+import { useThemeVariables } from "@repo/hooks-and-utils/hooks/use-theme-variables";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function LineChart() {
+  const { getColorVariable } = useThemeVariables();
+  const colorGray = getColorVariable("--color-gray-200");
+
   const series: ApexOptions["series"] = [
     {
       name: "New users",
@@ -51,6 +55,7 @@ export default function LineChart() {
           show: true,
         },
       },
+      borderColor: colorGray,
       show: true,
     },
     dataLabels: {
@@ -72,8 +77,8 @@ export default function LineChart() {
     xaxis: {
       labels: {
         style: {
-          fontFamily: "Roboto, sans-serif",
-          cssClass: "text-xs font-normal fill-[#636178]/80",
+          fontFamily: "Inter, sans-serif",
+          cssClass: "text-xs font-normal fill-[#B2B2B2]",
         },
       },
       categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -85,8 +90,8 @@ export default function LineChart() {
       stepSize: 100,
       labels: {
         style: {
-          fontFamily: "Roboto, sans-serif",
-          cssClass: "text-xs font-normal fill-[#636178]/80",
+          fontFamily: "Inter, sans-serif",
+          cssClass: "text-xs font-normal fill-[#B2B2B2]",
         },
       },
     },
@@ -96,7 +101,7 @@ export default function LineChart() {
   };
 
   return (
-    <div className="relative -mt-5 size-full">
+    <div className="relative -mt-5 h-[244px] w-full">
       <Chart
         height="100%"
         options={options}
