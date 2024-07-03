@@ -90,7 +90,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
         </Button>
       );
     },
-  },
+  } /*
   {
     accessorKey: "lifetime_value",
     header: ({ column }) => {
@@ -120,7 +120,7 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
 
       return <div className="font-medium">{formatted}</div>;
     },
-  },
+  },*/,
   {
     accessorKey: "last_campaign_ran",
     header: ({ column }) => {

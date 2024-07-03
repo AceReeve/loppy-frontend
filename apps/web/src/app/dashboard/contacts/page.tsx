@@ -84,7 +84,6 @@ function Page() {
       email: "",
       phone_number: "0",
       source: "",
-      lifetime_value: "0",
       last_campaign_ran: "",
       last_interaction: new Date(),
       tags: [
@@ -107,12 +106,12 @@ function Page() {
   ];
   const [createContact, { isLoading }] = useCreateContactMutation();
   const onSubmit = async () => {
+    console.log("Submitted");
     try {
       const formData = form.getValues();
       const newData = {
         ...formData,
         phone_number: parseInt(formData.phone_number),
-        lifetime_value: parseInt(formData.lifetime_value),
         tags:
           tagValue.length > 0 ? tagValue.map((tag) => ({ tag_name: tag })) : [],
       };
@@ -168,7 +167,7 @@ function Page() {
       startTransition(() => {
         // Start transition when creating contact
         createContact(newData);
-        form.reset(); // Reset form after successful contact creation
+        form.forgot-password(); // Reset form after successful contact creation
         console.log("Contact Added");
       });
     } catch (error) {
@@ -240,7 +239,7 @@ function Page() {
                 </div>
               ) : (
                 <Form {...form}>
-                  <form onSubmit={void form.handleSubmit(onSubmit)}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="custom-scrollbar grid max-h-[500px] gap-2 overflow-auto px-3">
                       <FormField
                         control={form.control}
@@ -343,7 +342,7 @@ function Page() {
                         }}
                       />
 
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name="lifetime_value"
                         render={({ field }) => {
@@ -362,7 +361,7 @@ function Page() {
                             </FormItem>
                           );
                         }}
-                      />
+                      />*/}
 
                       <FormField
                         control={form.control}
@@ -415,7 +414,7 @@ function Page() {
                                       variant="outline"
                                       className="w-full pl-3 text-left font-normal"
                                     >
-                                      {moment(field.value).format("yyyy-MM-dd")}
+                                      {moment(field.value).format("L")}
                                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                     </Button>
                                   </FormControl>
