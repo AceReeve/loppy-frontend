@@ -291,7 +291,7 @@ export default function Page() {
               </Select>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-4">
             <FunnelChart />
           </CardContent>
         </Card>
@@ -383,7 +383,7 @@ export default function Page() {
 
             <div className="flex gap-4">
               <Select defaultValue="week">
-                <SelectTrigger className="w-[100px]">
+                <SelectTrigger className="w-[120px]">
                   <SelectValue placeholder="Select range" />
                 </SelectTrigger>
                 <SelectContent>

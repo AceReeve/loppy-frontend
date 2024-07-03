@@ -38,6 +38,14 @@ function FunnelChart() {
             <div className="font-inter text-2xl font-semibold text-gray-700">
               {item.value}
             </div>
+            <div
+              className="self-end font-inter text-sm font-medium text-gray-600"
+              style={{
+                marginTop: index * 9,
+              }}
+            >
+              {item.percentage}
+            </div>
           </div>
         ))}
       </div>
