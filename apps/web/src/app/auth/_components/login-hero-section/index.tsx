@@ -1,8 +1,7 @@
-import Image from "next/image";
 import React from "react";
 
 export default function LoginHeroSection() {
-  const oldHero = () => {
+  /*  const oldHero = () => {
     return (
       <section className="relative flex h-32 items-center justify-center lg:col-span-5 lg:h-full xl:col-span-6">
         <div className="= absolute left-0 top-0 h-full w-full bg-gradient-to-b from-[#401A65] to-[#200D31]" />
@@ -46,9 +45,9 @@ export default function LoginHeroSection() {
         </div>
       </section>
     );
-  };
+  };*/
 
   return (
-    <section className="absolute  select-none bg-[url('/assets/images/login-cover-new.svg')] size-full bg-no-repeat bg-contain bg-fixed" />
+    <section className="absolute  size-full select-none bg-[url('/assets/images/login-cover-new.svg')] bg-contain bg-fixed bg-no-repeat" />
   );
 }

@@ -106,7 +106,6 @@ function Page() {
   ];
   const [createContact, { isLoading }] = useCreateContactMutation();
   const onSubmit = async () => {
-    console.log("Submitted");
     try {
       const formData = form.getValues();
       const newData = {
@@ -183,7 +182,7 @@ function Page() {
           <div className="font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
             Contacts
           </div>
-          <div className="font-montserrat mb-2 text-sm font-normal text-gray-500">
+          <div className="mb-2 font-montserrat text-sm font-normal text-gray-500">
             0 contacts
           </div>
         </div>
@@ -233,7 +232,7 @@ function Page() {
                   <div className="m-auto h-[50px] w-[15px] content-center">
                     <LoadingSpinner />
                   </div>
-                  <p className="font-nunito text-center text-lg">
+                  <p className="text-center font-nunito text-lg">
                     Loading please wait...
                   </p>
                 </div>

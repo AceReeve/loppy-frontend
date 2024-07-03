@@ -58,6 +58,41 @@ export const SendPasswordVerification = z.object({
     message: "Email is required",
   }),
 });
+export const SetNewPasswordSchema = z
+  .object({
+    token: z.string(),
+    password: z
+      .string()
+      .min(6, {
+        message: "Minimum 6 characters required",
+      })
+      .max(32, { message: "Maximum of 32 characters" })
+      .regex(/[A-Z]/, {
+        message: "Password must contain at least one uppercase letter",
+      })
+      .regex(/[a-z]/, {
+        message: "Password must contain at least one lowercase letter",
+      })
+      .regex(/[0-9]/, {
+        message: "Password must contain at least one number",
+      })
+      .regex(/[!@#$%^&*(),.?":{}|<>]/, {
+        message: "Password must contain at least one special character",
+      }),
+    confirm_password: z.string().min(6, {
+      message: "Confirmation password must be at least 6 characters long",
+    }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.password !== data.confirm_password) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirm_password"],
+        message: "Passwords do not match",
+      });
+    }
+  });
+
 export const SendRegisterOTPSchema = z.object({
   email: z.string().email({
     message: "Email is required",

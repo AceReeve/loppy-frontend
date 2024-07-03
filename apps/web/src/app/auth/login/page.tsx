@@ -1,4 +1,6 @@
 "use client";
+import { Checkbox } from "@repo/ui/components/ui";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,13 +9,10 @@ import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import { LoginSchema } from "@/src/schemas";
 import { handleCredentialsSignIn } from "@/src/actions/login-actions";
+import { LoginSchema } from "@/src/schemas";
 import GoogleSignInButton from "../_components/google-sign-in-button";
 import FacebookSignInButton from "../_components/facebook-sign-in-button";
-import { Checkbox } from "@repo/ui/components/ui";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import ForgotPassword from "@/src/app/auth/forgot-password/page.tsx";
 
 export default function Login() {
   const searchParams = useSearchParams();
@@ -61,9 +60,9 @@ export default function Login() {
   }, [errorParam]);
 
   return (
-    <div className="font-open-sans mt-10 text-[15px] lg:mt-0">
+    <div className="mt-10 font-open-sans text-[15px] lg:mt-0">
       <div className="text-center">
-        <h1 className="font-montserrat  text-2xl font-semibold sm:text-[24px] text-black">
+        <h1 className="font-montserrat  text-2xl font-semibold text-black sm:text-[24px]">
           Login to your Account
         </h1>
       </div>
@@ -79,7 +78,7 @@ export default function Login() {
         ) : null}
 
         <form
-          className="font-nunito grid grid-cols-6 gap-6 text-black"
+          className="grid grid-cols-6 gap-6 font-nunito text-black"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <div className="col-span-6">
@@ -88,15 +87,15 @@ export default function Login() {
             </label>*/}
 
             <input
-              className="mt-1 w-full border-[#D0D3DB] font-medium shadow-none h-[38px]"
+              className="mt-1 h-[38px] w-full border-[#D0D3DB] font-medium shadow-none"
               id="Email"
               type="email"
-              placeholder={"Email"}
+              placeholder="Email"
               {...register("email")}
             />
 
             {errors.email ? (
-              <p className="text-error mt-2 text-[0.8rem] font-medium">
+              <p className="mt-2 text-[0.8rem] font-medium text-error">
                 {errors.email.message}
               </p>
             ) : null}
@@ -127,9 +126,9 @@ export default function Login() {
           <div className="col-span-6">
             <div className="relative">
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-medium shadow-none h-[38px]"
+                className="mt-1 h-[38px] w-full border-[#D0D3DB] font-medium shadow-none"
                 id="password"
-                placeholder={"Password"}
+                placeholder="Password"
                 type={showPassword ? "text" : "password"}
                 {...register("password")} // Assuming you're using react-hook-form
               />
@@ -152,12 +151,12 @@ export default function Login() {
           <div className="col-span-6 flex gap-3">
             <Checkbox
               id="rememberMe"
-              className={"size-5 content-center rounded-full"}
+              className="size-5 content-center rounded-full"
             />
             <label htmlFor="rememberMe">Remember Me</label>
           </div>
           <button
-            className="btn-gradient-primary col-span-6 font-semibold h-[38px]"
+            className="btn-gradient-primary col-span-6 h-[38px] font-semibold"
             disabled={isPending}
             type="submit"
           >
@@ -165,9 +164,9 @@ export default function Login() {
             Login
           </button>
 
-          <div className="flex flex-col gap-4 sm:flex-row text-center col-span-6">
+          <div className="col-span-6 flex flex-col gap-4 text-center sm:flex-row">
             <Link
-              className={"text-[14px] font-semibold m-auto text-center"}
+              className="m-auto text-center text-[14px] font-semibold"
               href="/auth/forgot-password"
             >
               Forgot Your Password?
@@ -175,7 +174,7 @@ export default function Login() {
           </div>
         </form>
 
-        <div className="font-nunito mt-6 grid grid-cols-6 gap-6 text-black">
+        <div className="mt-6 grid grid-cols-6 gap-6 font-nunito text-black">
           <div className="col-span-6">
             <div className="flex flex-col gap-4 sm:flex-row">
               <GoogleSignInButton />
@@ -186,9 +185,9 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="col-span-6 mt-3 sm:flex sm:items-center sm:gap-4 m-auto">
-            <p className="font-nunito text-sm font-semibold text-[14px]">
-              Don't Have an Account?{" "}
+          <div className="col-span-6 m-auto mt-3 sm:flex sm:items-center sm:gap-4">
+            <p className="font-nunito text-[14px] text-sm font-semibold">
+              Don&apos;t Have an Account?{" "}
               <Link className="text-primary" href="/auth/register">
                 Sign Up
               </Link>

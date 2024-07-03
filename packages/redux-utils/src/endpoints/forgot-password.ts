@@ -1,6 +1,9 @@
 import { baseApi } from "../api";
 import { type SearchParamsType } from "../index.tsx";
-import { CreateResetPasswordPayload } from "./types/forgot-password.ts";
+import {
+  CreateNewPasswordPayload,
+  CreateResetPasswordPayload,
+} from "./types/forgot-password.ts";
 
 const api = baseApi
   .enhanceEndpoints({
@@ -24,7 +27,17 @@ const api = baseApi
         },
         invalidatesTags: ["forgot-password"],
       }),
+      setNewPassword: builder.mutation<undefined, CreateNewPasswordPayload>({
+        query: (payload) => {
+          return {
+            url: `/user/reset-password`,
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["forgot-password"],
+      }),
     }),
   });
 
-export const { useSendResetPasswordMutation } = api;
+export const { useSendResetPasswordMutation, useSetNewPasswordMutation } = api;
