@@ -68,6 +68,18 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/workflows",
       id: 5,
     },
+    {
+      title: "Teams",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/teams",
+      id: 6,
+    },
+    {
+      title: "Weather",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/marketing/weather-forecasting",
+      id: 7,
+    },
   ];
 
   const menuItems: MenuItem = {

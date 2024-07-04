@@ -29,8 +29,11 @@ const api = baseApi
       }),
       setNewPassword: builder.mutation<undefined, CreateNewPasswordPayload>({
         query: (payload) => {
+          const params = new URLSearchParams({
+            token: payload.token,
+          }).toString();
           return {
-            url: `/user/reset-password`,
+            url: `/user/reset-password?${params}`,
             method: "POST",
             body: payload,
           };

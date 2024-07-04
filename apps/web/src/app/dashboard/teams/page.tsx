@@ -7,10 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Form,
   FormControl,
   FormDescription,
@@ -34,7 +30,6 @@ import {
   TabsTrigger,
   toast,
 } from "@repo/ui/components/ui";
-import { ArrowDown2 } from "iconsax-react";
 import { type z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,33 +39,18 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { CalendarIcon } from "lucide-react";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import moment from "moment";
-import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 import { CreateContactsFormSchema } from "@/src/schemas";
-import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
-import AllContacts from "./tabs/all-contacts";
-import MyContacts from "./tabs/my-contacts";
-import UnassignedContacts from "./tabs/unassigned-contacts";
+import AllTeams from "@/src/app/dashboard/teams/tabs/all-teams.tsx";
 
 function Page() {
-  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const tabs = [
     {
-      label: "All Contacts",
-      id: "all-contacts",
-      component: AllContacts,
-    },
-    {
-      label: "My contacts",
-      id: "my-contacts",
-      component: MyContacts,
-    },
-    {
-      label: "Unassigned contacts",
-      id: "unassigned-contacts",
-      component: UnassignedContacts,
+      label: "All Teams",
+      id: "all-teams",
+      component: AllTeams,
     },
   ];
 
@@ -176,55 +156,25 @@ function Page() {
 */
 
   return (
-    <div className="rounded-xl bg-white p-10">
+    <div className="p-10">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-end gap-3">
           <div className="font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
-            Contacts
+            Teams
           </div>
           <div className="mb-2 font-montserrat text-sm font-normal text-gray-500">
-            0 contacts
+            0 Active Teams
           </div>
         </div>
 
         <div className="flex items-end gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="gap-2 rounded-xl" variant="outline">
-                Action
-                <ArrowDown2 size={12} variant="Bold" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem disabled>Edit</DropdownMenuItem>
-              <DropdownMenuItem disabled>Delete</DropdownMenuItem>
-              <DropdownMenuItem disabled>Send Message</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Dialog onOpenChange={setImportDialogOpen} open={importDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="rounded-xl" variant="outline">
-                Import
-              </Button>
-            </DialogTrigger>
-            <ImportContactsDialogContent setOpen={setImportDialogOpen} />
-          </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="rounded-xl" variant="outline">
-                Export
-              </Button>
-            </DialogTrigger>
-            <ExportContactsDialogForm />
-          </Dialog>
-
           <Dialog onOpenChange={setCreateDialogOpen} open={createDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="rounded-xl">Create Contact</Button>
+              <Button className="rounded-xl">Add Team + </Button>
             </DialogTrigger>
             <DialogContent onCloseAutoFocus={formReset}>
               <DialogHeader>
-                <DialogTitle>Create New Contact</DialogTitle>
+                <DialogTitle>Add New Team</DialogTitle>
               </DialogHeader>
 
               {isLoading ? (
@@ -388,17 +338,17 @@ function Page() {
                         render={({ field }) => {
                           return (
                             /*                        <FormItem>
-                              <FormLabel>Last Interaction</FormLabel>
-                              <FormControl>
-                                <Input
-                                  autoComplete={"off"}
-                                  placeholder="2020-07-10 15:00:00.000"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-*/
+                                      <FormLabel>Last Interaction</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          autoComplete={"off"}
+                                          placeholder="2020-07-10 15:00:00.000"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+        */
                             <FormItem className="flex flex-col">
                               <FormLabel className="my-2">
                                 Last Interaction
@@ -477,7 +427,7 @@ function Page() {
           </Dialog>
         </div>
       </div>
-      <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
+      <Tabs className="w-fullx mt-8" defaultValue={tabs[0].id}>
         <TabsList>
           {tabs.map((tab) => (
             <TabsTrigger key={tab.id} value={tab.id}>

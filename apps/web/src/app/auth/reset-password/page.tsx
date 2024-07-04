@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -7,18 +7,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-
 import Link from "next/link";
 import { useSetNewPasswordMutation } from "@repo/redux-utils/src/endpoints/forgot-password.ts";
 import { toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { SetNewPasswordSchema } from "@/src/schemas";
+
 export default function ResetPassword() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const callbackUrl = searchParams.get("callbackUrl");
-  const errorParam = searchParams.get("error");
   const form = useForm<z.infer<typeof SetNewPasswordSchema>>({
     resolver: zodResolver(SetNewPasswordSchema),
     defaultValues: {
@@ -37,12 +35,12 @@ export default function ResetPassword() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
   const toggleConfirmPasswordVisibility = () => {
-    setConfirmShowPassword(!showConfirmPassword);
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const onSubmit = async () => {
@@ -55,6 +53,7 @@ export default function ResetPassword() {
         toast({
           description: getErrorMessage(e),
         });
+        setError("Failed to Set New Password");
       });
   };
   const nextProcess = () => {
@@ -136,7 +135,7 @@ export default function ResetPassword() {
               disabled={isLoading}
               type="submit"
             >
-              {/*{isLoading ? <LoadingSpinner /> : null}*/}
+              {isLoading ? <LoadingSpinner /> : null}
               Send Reset Password
             </button>
 
@@ -162,7 +161,7 @@ export default function ResetPassword() {
           </h1>
           <p>Your password has been reset successfully</p>
 
-          <div className={"m-auto flex h-[38px] w-full content-center"}>
+          <div className="m-auto flex h-[38px] w-full content-center">
             <a
               href="/auth/login"
               className=" m-auto h-[38px] w-full bg-primary p-2 text-white hover:bg-primary-light"
