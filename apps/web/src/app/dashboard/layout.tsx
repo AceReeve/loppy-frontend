@@ -16,8 +16,8 @@ export default async function Layout({
   return (
     <Suspense>
       <DashboardProvider session={session}>
-        <div className="bg-background relative z-0 flex min-h-screen items-stretch">
-          <DashboardSidebar className="custom-scrollbar relative  z-40 h-auto max-h-screen min-h-screen flex-shrink-0 select-none overflow-y-auto" />
+        <div className="relative z-0 flex min-h-screen items-stretch bg-background">
+          <DashboardSidebar className="relative z-40 h-screen flex-shrink-0 select-none" />
           <div className="relative flex h-screen w-full flex-1 flex-col overflow-hidden rounded-tl-[48px]">
             <DashboardHeader />
             <div className="custom-scrollbar relative flex w-full flex-1 flex-col overflow-y-auto">

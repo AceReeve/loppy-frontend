@@ -13,8 +13,16 @@ import type {
   Message,
 } from "@twilio/conversations";
 import { Client } from "@twilio/conversations";
-import { useGetTwilioAccessTokenQuery } from "@repo/redux-utils/src/endpoints/messaging.ts";
-import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
+import {
+  useGetTwilioAccessTokenQuery,
+  useGetTwilioCredentialsQuery,
+} from "@repo/redux-utils/src/endpoints/messaging.ts";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+} from "@repo/ui/components/ui";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,7 +86,14 @@ export default function MessagesProvider({
   children: React.ReactNode;
   session: Session | null;
 }) {
-  const { data: token, error } = useGetTwilioAccessTokenQuery(undefined);
+  const {
+    data: token,
+    error,
+    isLoading: isTokenLoading,
+  } = useGetTwilioAccessTokenQuery(undefined);
+  const { data: twilioCredentials, isLoading: isCredsLoading } =
+    useGetTwilioCredentialsQuery(undefined);
+  const isLoading = isTokenLoading || isCredsLoading;
 
   const dispatch = useDispatch();
 
@@ -231,6 +246,45 @@ export default function MessagesProvider({
     });
   }, [token]);
 
+  if (isLoading) {
+    return (
+      <Alert className="max-w-96">
+        <LoadingSpinner />
+        <AlertTitle>Loading Messages</AlertTitle>
+        <AlertDescription>This may take a while.</AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (!twilioCredentials) {
+    return (
+      <section>
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:px-12 lg:px-24 lg:py-24">
+          <div className="mb-12 flex w-full flex-col text-center">
+            <h1 className="max-w-5xl text-2xl font-bold leading-none text-gray-600">
+              Setup Twilio Credentials to Access Messaging
+            </h1>
+            <p className="mx-auto mt-8 max-w-xl text-center text-base leading-relaxed text-gray-500">
+              Input your{" "}
+              <a href="https://console.twilio.com/" className="text-primary">
+                twilio credentials
+              </a>{" "}
+              in order to access messaging.
+            </p>
+            <Button
+              onClick={() => {
+                location.replace("/dashboard/settings");
+              }}
+              className="mt-4"
+            >
+              Setup your twilio credentials
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   async function upsertMessage(message: Message) {
     //transform the message and add it to redux
     await handlePromiseRejection(async () => {
@@ -270,16 +324,6 @@ export default function MessagesProvider({
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{getErrorMessage(error)}</AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (!token) {
-    return (
-      <Alert className="max-w-96">
-        <LoadingSpinner />
-        <AlertTitle>Loading Messages</AlertTitle>
-        <AlertDescription>This may take a while.</AlertDescription>
       </Alert>
     );
   }

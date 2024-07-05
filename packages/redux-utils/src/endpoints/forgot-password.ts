@@ -1,8 +1,7 @@
 import { baseApi } from "../api";
-import { type SearchParamsType } from "../index.tsx";
 import {
-  CreateNewPasswordPayload,
-  CreateResetPasswordPayload,
+  type CreateNewPasswordPayload,
+  type CreateResetPasswordPayload,
 } from "./types/forgot-password.ts";
 
 const api = baseApi

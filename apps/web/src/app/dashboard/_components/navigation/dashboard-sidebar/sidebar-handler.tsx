@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@repo/ui/utils";
@@ -12,12 +11,12 @@ interface SidebarHandlerProps {
   className?: string | null;
 }
 export default function SidebarHandler(props: SidebarHandlerProps) {
-  const { sidebarCollapsed: collapsed, toggleSidebar } = useDashboardState();
+  const { sidebarCollapsed: collapsed } = useDashboardState();
 
   return (
     <aside
       className={cn(
-        "overflow-x-hidden px-4 transition-all duration-500",
+        "overflow-hidden pl-4 transition-all duration-500",
         props.className,
         collapsed ? "w-auto" : "w-[250px]",
       )}
@@ -51,19 +50,21 @@ export default function SidebarHandler(props: SidebarHandlerProps) {
         </Link>
       </div>
 
-      <div className="mt-[33px]">{props.children}</div>
+      <div className="custom-scrollbar-tiny mt-[33px] h-[85%] overflow-hidden pr-4 hover:overflow-auto">
+        {props.children}
+      </div>
 
-      <button
-        className={`absolute bottom-10 right-4 border-2 p-2 text-[#fff] transition-all duration-500 hover:bg-white ${collapsed ? "rotate-180" : ""}`}
-        aria-label="Menu"
-        onClick={() => {
-          toggleSidebar();
-        }}
-        type="button"
-      >
-        {/*<Bars2Icon className="w-5 h-5" aria-hidden="true" />*/}
-        <ChevronLeftIcon className="h-5 w-5 " aria-hidden="true" />
-      </button>
+      {/*<button*/}
+      {/*  className={`absolute bottom-10 right-4 border-2 p-2 text-[#fff] transition-all duration-500 hover:bg-white ${collapsed ? "rotate-180" : ""}`}*/}
+      {/*  aria-label="Menu"*/}
+      {/*  onClick={() => {*/}
+      {/*    toggleSidebar();*/}
+      {/*  }}*/}
+      {/*  type="button"*/}
+      {/*>*/}
+      {/*  /!*<Bars2Icon className="w-5 h-5" aria-hidden="true" />*!/*/}
+      {/*  <ChevronLeftIcon className="h-5 w-5 " aria-hidden="true" />*/}
+      {/*</button>*/}
     </aside>
   );
 }

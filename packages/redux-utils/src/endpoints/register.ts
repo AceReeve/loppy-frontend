@@ -1,6 +1,5 @@
 import { baseApi } from "../api";
-import { type SearchParamsType } from "../index.tsx";
-import { CreateRegisterDetailsPayload } from "./types/register.ts";
+import { type CreateRegisterDetailsPayload } from "./types/register.ts";
 
 const api = baseApi
   .enhanceEndpoints({

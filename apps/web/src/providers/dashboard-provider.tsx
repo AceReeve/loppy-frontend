@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import { type Session } from "next-auth";
 
 interface ContextType {
@@ -24,7 +18,7 @@ export default function DashboardProvider({
   children: React.ReactNode;
   session: Session | null;
 }) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   // Toggle sidebar and preserve state to local storage
   const toggleSidebar = useCallback(() => {
@@ -35,11 +29,11 @@ export default function DashboardProvider({
   }, []);
 
   // Set initial value of sidebar collapse with local storage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setSidebarCollapsed(localStorage.getItem("sidebar-collapsed") === "true");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     setSidebarCollapsed(localStorage.getItem("sidebar-collapsed") === "true");
+  //   }
+  // }, []);
 
   return (
     <DashboardContext.Provider

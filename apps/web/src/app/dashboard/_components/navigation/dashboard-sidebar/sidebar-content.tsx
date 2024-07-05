@@ -167,7 +167,7 @@ export default function SidebarContent(props: SidebarContentProps) {
           key={index}
           className={cn(
             "bg-card px-3 pb-10 pt-5",
-            index && "mt-8",
+            index && "mt-6",
             collapsed
               ? "flex flex-col items-center gap-6 rounded-full"
               : "rounded-3xl",
