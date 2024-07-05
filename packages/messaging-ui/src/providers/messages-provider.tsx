@@ -49,13 +49,13 @@ import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { type InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/user";
 import { useGetContactsListQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/user.ts";
+import { type TwilioCredentialsPayloadAndResponse } from "@repo/redux-utils/src/endpoints/types/messaging";
 import {
   type ShowEmojiPickerProps,
   type ShowReactionPickerProps,
 } from "../messaging";
 import ManualPopover from "../components/manual-popover.tsx";
 import { MessagingFilters } from "../messaging.enum.ts";
-import { TwilioCredentialsPayloadAndResponse } from "@repo/redux-utils/src/endpoints/types/messaging";
 
 interface ContextType {
   accessToken: string | undefined;
