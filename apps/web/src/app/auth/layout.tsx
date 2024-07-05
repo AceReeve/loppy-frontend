@@ -44,13 +44,13 @@ export default function Layout({
             width={630}
             height={570}
             //className=" z-20  max-h-[630px] w[730px] -ml-40 my-auto size-full"
-            className=" z-20 m-auto select-none"
+            className=" z-20 m-auto hidden select-none xl:block"
             draggable={false}
           />
         </div>
 
         {/* Sign Up / Login Section */}
-        <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:p-0 lg:px-16 lg:py-12 xl:col-span-6">
+        <main className=" flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-12 lg:p-0 lg:px-16 lg:py-12 xl:col-span-6">
           <div className=" z-20 h-auto  flex-1 rounded-2xl bg-white p-10 drop-shadow-xl xl:max-w-[500px] xl:p-4">
             <Suspense>{children}</Suspense>
           </div>
