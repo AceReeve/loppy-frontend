@@ -1,19 +1,33 @@
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils.ts";
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    className={cn(
-      "bg-card text-card-foreground rounded-xl border shadow",
-      className,
-    )}
-    ref={ref}
-    {...props}
-  />
-));
+const buttonVariants = cva("shadow-soft rounded-xl", {
+  variants: {
+    variant: {
+      default: "bg-card text-white",
+      "gradient-primary":
+        "bg-gradient-to-b from-primary/60 to-primary text-white",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+export interface CardProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof buttonVariants> {}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant, ...props }, ref) => (
+    <div
+      className={cn(buttonVariants({ variant, className }))}
+      ref={ref}
+      {...props}
+    />
+  ),
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<
@@ -21,7 +35,7 @@ const CardHeader = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn("flex flex-col space-y-1.5 py-3 px-6", className)}
     ref={ref}
     {...props}
   />
@@ -34,7 +48,10 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   // eslint-disable-next-line jsx-a11y/heading-has-content --- remove lint errors
   <h3
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn(
+      "leading-none tracking-tight text-gray-800 text-lg font-semibold font-poppins",
+      className,
+    )}
     ref={ref}
     {...props}
   />

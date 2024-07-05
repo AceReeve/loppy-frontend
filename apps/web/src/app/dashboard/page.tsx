@@ -1,26 +1,27 @@
 "use client";
 
-import Image from "next/image";
 import React, { useState } from "react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { Call, Export, Global, Profile2User } from "iconsax-react";
+import { ArrowCircleRight, Call, Global, Profile2User } from "iconsax-react";
 import {
-  Button,
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-  DropdownMenuContent,
   ToggleGroup,
   ToggleGroupItem,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@repo/ui/components/ui";
-import { ArrowUpIcon } from "@heroicons/react/16/solid";
 import { Mail } from "lucide-react";
-import { DefaultAvatar } from "@repo/ui/components/custom";
-import RingProgress from "@/src/components/progress/ring-progress";
+import { StatCard } from "@repo/ui/components/custom";
 import ColumnChart from "@/src/components/charts/column-chart";
-import dashboardSampleData from "@/src/data/sample/dashboard-sample-data";
 import LineChart from "@/src/components/charts/line-chart";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import FunnelChart from "@/src/components/charts/funnel-chart";
+import UnsoldTicketsTable from "@/src/components/table/unsold-tickets-table";
 
 export default function Page() {
   const [leadSubmissionsValue, setLeadSubmissionsValue] = useState("1D");
@@ -55,335 +56,381 @@ export default function Page() {
       {/* Dashboard Header */}
       <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
-          <div className="s-hrink-0 relative h-[54px] w-[54px]">
-            <DefaultAvatar
-              className="size-full"
-              image={session?.user.image ?? ""}
-              name={session?.user.name ?? ""}
-            />
-            <svg
-              className="absolute left-0 top-0 -ml-[20%] -mt-[20%]"
-              height="140%"
-              style={{ transform: "rotate(-90deg)" }}
-              viewBox="0 0 160 160"
-              width="140%"
-            >
-              <circle
-                cx="80"
-                cy="80"
-                fill="transparent"
-                r="70"
-                stroke="#60e6a8"
-                strokeWidth="5px"
-                strokeDasharray="140 999"
-                // strokeDashoffset="109.9px"
-              />
-            </svg>
-          </div>
-          <div className="flex flex-col gap-[13px]">
-            <div className="font-nunito text-[2rem]/[1] font-bold text-black">
-              Welcome back, {session?.profile.given_name}!
+          <div className="inline-flex h-[68px] w-[171px] flex-col items-start justify-center">
+            <div className="font-poppins text-xl font-normal text-slate-500">
+              Service Hero
             </div>
-            <p className="font-open-sans text-sm font-normal tracking-wider text-gray-400">
-              We’ve recently added updates to the Call Center - Check them out{" "}
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid -- will add link later */}
-              <a className="text-primary" href="#">
-                here
-              </a>
-            </p>
+            <div className="w-[171px] font-poppins text-4xl font-semibold text-black">
+              Overview
+            </div>
+          </div>
+          <div className="h-[76px] w-[462px] font-['Poppins'] text-sm font-semibold leading-[30px]">
+            <span className="font-poppins font-semibold text-slate-500">
+              Hello{" "}
+            </span>
+            <span className="font-poppins font-semibold text-orange-500/70">
+              {session?.user.name ?? ""}
+            </span>
+            <span className="font-poppins font-normal text-slate-500">
+              , welcome to the Service Hero Dashboard, we hope you always see
+              updated business statistics for yourself.{" "}
+            </span>
           </div>
         </div>
         <div className="flex gap-4 self-end lg:gap-7">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="xs:flex-1 flex h-[46px] flex-initial items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] border border-gray-700/25 px-3.5 py-4"
-                variant="outline"
-              >
-                <div className="font-nunito text-base/[1] font-bold text-gray-600">
-                  This Month
-                </div>
-                <ChevronDownIcon className="relative h-[15px] w-[15px] text-gray-400" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>This Week</DropdownMenuItem>
-              <DropdownMenuItem>Today</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button className="bg-primary flex h-[46px] items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] px-6 py-4">
-            <Export className="relative h-6 w-6 text-[#fff]" />
-            <div className="font-nunito text-base/[1] font-bold text-[#fff]">
-              Export
-            </div>
-          </Button>
+          <Select defaultValue="month">
+            <SelectTrigger className="w-[138px]">
+              <SelectValue placeholder="Select range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+              <SelectItem value="year">This Year</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select defaultValue="all_sources">
+            <SelectTrigger className="w-[138px]" variant="outline">
+              <SelectValue placeholder="Select range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all_sources">All Sources</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+              <SelectItem value="option4">Option 4</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
-
       {/*  First Row Components */}
-      <div className="mt-5 grid grid-cols-12 gap-[38px]">
-        {[1, 2, 3].map((i) => (
-          <div
-            className="bg-card shadow-soft dark:border-secondary/40 relative col-span-12 flex flex-col gap-5 rounded-[14px] p-5 lg:col-span-6 xl:col-span-3 dark:border"
+      <div className="mt-20 grid grid-cols-2 gap-[38px] md:grid-cols-3 xl:grid-cols-5">
+        {Array.from(
+          {
+            length: 5,
+          },
+          (_, index) => index + 1,
+        ).map((i) => (
+          <StatCard
             key={i}
-          >
-            <div className="absolute right-[11px] top-[10px] flex h-[58px] w-[58px] items-center justify-center rounded-full border border-[#E6E6E6]">
-              <Profile2User className="h-[34.80px] w-[34.80px] text-black" />
-            </div>
-            <div className="font-open-sans mt-2 pr-[60px] text-lg font-semibold text-gray-500">
-              Total Customers
-            </div>
-            <h2 className="text-[38px] font-bold leading-10 text-gray-700">
-              450
-            </h2>
-            <div className="flex items-start justify-start gap-2.5">
-              <div className="relative w-[31px] self-stretch">
-                <Image
-                  alt=""
-                  className="absolute left-0 top-0 h-[17px] w-[31px] object-contain"
-                  fill
-                  src="/assets/icons/icon-trending-up.svg"
-                />
-              </div>
-              <div className="self-stretch">
-                <span className="text-sm font-semibold text-green-400">
-                  10%{" "}
-                </span>
-                <span className="text-sm font-normal text-slate-900" />
-                <span className="text-sm font-normal text-gray-600">
-                  vs. previous month
-                </span>
-              </div>
-            </div>
-          </div>
+            value="288"
+            name="Total Customers"
+            preText="$"
+            postText="k"
+            icon={<Profile2User className="size-full" />}
+          />
         ))}
-        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-12 flex flex-col gap-5 rounded-[14px] p-5 lg:col-span-6 xl:col-span-3 dark:border">
-          <div className="font-open-sans mt-2 text-lg font-semibold text-gray-500">
-            Top Lead Source
-          </div>
-          <div className="flex items-center gap-2.5">
-            <Image
-              alt=""
-              height={29}
-              src="/assets/icons/icon-facebook.png"
-              width={29}
-            />
-            <h2 className="text-2xl font-semibold text-gray-700">Facebook</h2>
-          </div>
-          <div className="text-sm font-normal text-gray-600">
-            Last Months TikTok
-          </div>
-        </div>
+        {Array.from(
+          {
+            length: 4,
+          },
+          (_, index) => index + 1,
+        ).map((i) => (
+          <StatCard key={i} value="450" name="Total Customers" />
+        ))}
+        <StatCard
+          preText="$"
+          postText="k"
+          value="450"
+          name="Revenue Goal"
+          variant="gradient-primary"
+        />
       </div>
-
       {/* Second Row Components */}
-      <div className="mt-5 grid grid-cols-12 gap-[38px]">
-        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex flex-col gap-5 rounded-[32px] p-6 lg:col-span-7 dark:border">
-          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
-            Website Analytics
-          </div>
-          {/*Chart Filter by Date */}
-          <div className="absolute right-4 top-5 inline-flex h-6 w-[104px] items-center justify-center gap-2.5 rounded-[3px] border border-zinc-300 px-3 py-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className="xs:flex-1 flex h-[23px] flex-initial items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] border border-gray-700/25 px-3.5 py-4"
-                  variant="outline"
-                >
-                  <div className="font-nunito text-base/[1] text-gray-600">
-                    Monthly
-                  </div>
-                  <ChevronDownIcon className="relative h-[15px] w-[15px] text-gray-400" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>This Week</DropdownMenuItem>
-                <DropdownMenuItem>Today</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="flex w-full flex-wrap gap-2">
-            {dashboardSampleData.analytics.map((item, index) => (
+      <div className="mt-11 grid grid-cols-12 gap-[22px]">
+        <Card className="relative col-span-full">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>Priority Customers</CardTitle>
+
+            <div className="flex gap-4">
+              <Select defaultValue="all">
+                <SelectTrigger className="w-[100px]" variant="outline">
+                  <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">View All</SelectItem>
+                  <SelectItem value="option2">Option 2</SelectItem>
+                  <SelectItem value="option3">Option 3</SelectItem>
+                  <SelectItem value="option4">Option 4</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent className="custom-scrollbar-neutral flex gap-6 overflow-auto scrollbar-thin">
+            {Array.from({ length: 6 }, (_, i) => i + 1).map((item) => (
               <div
-                className="flex flex-1 flex-col items-center gap-[40px]"
-                key={item.key}
+                key={item}
+                className="inline-flex items-center justify-start gap-[15px] rounded-lg border border-gray-300 py-2 pl-3 pr-[30px] font-inter"
               >
-                <div className="mx-auto">
-                  <RingProgress
-                    colorProgress={item.progressColor}
-                    value={item.value}
+                <div className="flex h-[49px] w-[49px] items-center justify-center overflow-hidden rounded-full">
+                  <img
+                    className="size-full object-cover"
+                    src="https://via.placeholder.com/98x94"
+                    alt=""
                   />
                 </div>
-                <div
-                  className={`relative flex h-[58px] w-full flex-col items-center justify-between border-zinc-300 ${index !== dashboardSampleData.analytics.length - 1 ? "border-r" : ""}`}
-                >
-                  <div className="relative flex flex-col items-start">
-                    <div className="font-roboto relative flex text-[26px] font-bold leading-[34px] text-gray-500">
-                      <div>{item.title}</div>
-                      <div className="flex items-center justify-start gap-1">
-                        <ArrowUpIcon className="relative inline-flex h-[18.01px] w-[18.01px] flex-col items-start justify-start text-emerald-500" />
-                        <div className="font-roboto text-right text-sm font-medium leading-snug text-emerald-500">
-                          {item.increase}%
-                        </div>
-                      </div>
-                    </div>
-                    <div className="font-roboto text-sm font-normal leading-snug text-gray-500">
-                      {item.subtitle}
-                    </div>
+                <div className="inline-flex flex-col items-start justify-start">
+                  <div className="whitespace-nowrap text-sm font-medium text-gray-900">
+                    Joseph Aaron
+                  </div>
+                  <div className="text-xs font-normal text-gray-900/50">
+                    Canada
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex flex-col gap-3 rounded-[32px] p-6 lg:col-span-5 dark:border">
-          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
-            Total Revenue
-          </div>
-          {/*  Filter */}
-          <div className="absolute right-4 top-5 inline-flex h-6 w-[104px] items-center justify-center gap-2.5 rounded-[3px] border border-zinc-300 px-3 py-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className="xs:flex-1 flex h-[23px] flex-initial items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] border border-gray-700/25 px-3.5 py-4"
-                  variant="outline"
-                >
-                  <div className="font-nunito text-base/[1]  text-gray-600">
-                    Monthly
-                  </div>
-                  <ChevronDownIcon className="relative h-[15px] w-[15px] text-gray-400" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>This Week</DropdownMenuItem>
-                <DropdownMenuItem>Today</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <div className="inline-flex h-10 w-full items-center justify-between">
-            <div className="flex items-center justify-start gap-3">
-              <img
-                alt=""
-                className="relative h-8 w-8"
-                src="/assets/icons/icon-growth-indicator.svg"
-              />
-              <div className="font-roboto text-[26px] font-bold text-green-500">
-                $313,233.35
-              </div>
-            </div>
-            <div className="inline-flex w-[91px] flex-col items-end justify-start gap-2">
-              <div className="font-open-sans text-right text-sm font-normal leading-none tracking-wide text-green-500">
-                -1.9%
-              </div>
-              <div className="font-open-sans text-right text-sm font-normal leading-none tracking-wide text-stone-500">
-                vs last week
-              </div>
-            </div>
-          </div>
-
-          <LineChart />
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/*  Third Row Components */}
-      <div className="bg-card shadow-soft dark:border-secondary/40 relative mt-8 rounded-[14px] p-1.5 dark:border">
-        {/*TODO: Use table from ui components package instead */}
-        {/*<Table />*/}
+      {/* Third Row Components */}
+      <div className="mt-11 grid grid-cols-12 gap-[22px]">
+        <Card className="relative col-span-full xl:col-span-4">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>Salesman Leaderboard</CardTitle>
+            <button
+              type="button"
+              className="inline-flex items-center justify-start gap-[5px]"
+            >
+              <div className="font-poppins text-sm font-semibold text-gray-500">
+                View All
+              </div>
+              <ArrowCircleRight className="relative size-[18px] text-primary" />
+            </button>
+          </CardHeader>
+          <CardContent className="flex gap-4">
+            <img
+              className="relative h-[248px] w-[168px] rounded-[15px] object-cover"
+              src="/assets/images/salesman.png"
+              alt=""
+            />
+            <div>
+              <div className="font-poppins text-base font-medium text-black">
+                John Maddux
+              </div>
+              <div className="mt-3 flex flex-col gap-1.5">
+                {Array.from({ length: 5 }, (_, i) => i + 1).map((item) => (
+                  <div className="flex gap-2" key={item}>
+                    {item === 1 ? (
+                      <>
+                        <div className="h-[31px] w-[106px] bg-black text-center font-inter text-lg font-bold text-white">
+                          $133,131
+                        </div>
+                        <div className="font-poppins text-xl font-bold uppercase text-primary">
+                          Sales
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="h-[31px] w-[106px] bg-gray-300/70 text-center font-inter text-lg font-bold text-black">
+                          51.9%
+                        </div>
+                        <div className="font-poppins text-base font-normal capitalize text-gray-900">
+                          Average
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="relative col-span-full xl:col-span-8">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>
+              Unsold Tickets{" "}
+              <span className="text-sm font-semibold text-gray-800/60">
+                (Rehash Department)
+              </span>
+            </CardTitle>
+
+            <button
+              type="button"
+              className="inline-flex items-center justify-start gap-[5px]"
+            >
+              <div className="font-poppins text-sm font-semibold text-gray-500">
+                View All
+              </div>
+              <ArrowCircleRight className="relative size-[18px] text-primary" />
+            </button>
+          </CardHeader>
+          <CardContent className="flex gap-4">
+            <UnsoldTicketsTable />
+          </CardContent>
+        </Card>
       </div>
-      {/*  Fourth Row Components */}
-      <div className="mt-5 grid grid-cols-12 gap-[38px]">
-        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex h-[364px] flex-col gap-5 rounded-[14px] p-5 lg:col-span-7 dark:border">
-          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
-            Lead Submissions
-          </div>
-          {/*Chart Filter by Date Range*/}
 
-          <ToggleGroup
-            className="absolute right-6 top-5 z-50 inline-flex w-auto flex-row items-center justify-start gap-[5px] rounded-[20px] border border-gray-100 bg-neutral-100 px-[5px] text-[#3A3F51]"
-            defaultValue="1D"
-            onValueChange={(value) => {
-              if (value) setLeadSubmissionsValue(value);
-            }}
-            type="single"
-            value={leadSubmissionsValue}
-          >
-            <ToggleGroupItem value="1D" variant="rounded">
-              {" "}
-              1D{" "}
-            </ToggleGroupItem>
-            <ToggleGroupItem value="1M" variant="rounded">
-              {" "}
-              1M{" "}
-            </ToggleGroupItem>
-            <ToggleGroupItem value="3M" variant="rounded">
-              {" "}
-              3M{" "}
-            </ToggleGroupItem>
-            <ToggleGroupItem value="1Y" variant="rounded">
-              {" "}
-              1Y{" "}
-            </ToggleGroupItem>
-          </ToggleGroup>
-          <ColumnChart />
-        </div>
-        <div className="bg-card shadow-soft dark:border-secondary/40 relative col-span-full flex h-[364px] flex-col gap-5 rounded-[14px] p-5 lg:col-span-5 dark:border">
-          <div className="font-montserrat pr-[60px] text-lg font-semibold text-gray-900">
-            Customer Leads
-          </div>
-          {/*  Filter */}
-          <div className="absolute right-4 top-5 ">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="xs:flex-1 flex h-[18px] flex-initial items-center justify-center gap-2.5 whitespace-nowrap rounded-[9px] border border-gray-700/25 px-3.5 py-4">
-                  <div className="font-nunito text-base/[1]  text-white">
-                    Monthly
-                  </div>
-                  <ChevronDownIcon className="relative h-[15px] w-[15px] text-white" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>This Week</DropdownMenuItem>
-                <DropdownMenuItem>Today</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+      {/* Fourth Row Components */}
+      <div className="mt-11 grid grid-cols-12 gap-6">
+        <Card className="relative col-span-full lg:col-span-7">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>Sales Funnel Analytics</CardTitle>
 
-          <div className="flex h-full flex-col items-center justify-center gap-7">
-            {customerLeads.map((lead, index) => {
-              const Icon = lead.icon;
-              return (
-                <div
-                  className="grid w-full grid-cols-12 items-center gap-2"
-                  key={lead.key}
-                >
-                  <div
-                    className="col-span-1 flex h-[46px] w-[46px] items-center justify-center rounded-[9px] bg-opacity-10"
-                    style={{ backgroundColor: `${colors[index]}1A` }}
-                  >
-                    <Icon className="text-[#2CD8CE]" size={24} />
-                  </div>
-                  <div className="col-span-3 text-center text-sm font-medium text-black">
-                    {lead.lead}
-                  </div>
-                  <div className="col-span-7 inline-flex h-[7px] w-full flex-col items-start justify-start gap-2.5 bg-stone-300">
-                    <div
-                      className="h-full bg-teal-400"
-                      style={{
-                        width: `${lead.value.toString()}%`,
-                        backgroundColor: colors[index],
-                      }}
-                    />
-                  </div>
-                  <div className="col-span-1 text-xs font-normal tracking-tight text-black">
-                    {lead.value}
-                  </div>
+            <div className="flex gap-4">
+              <Select defaultValue="month">
+                <SelectTrigger className="w-[100px]" variant="outline">
+                  <SelectValue placeholder="Select range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Daily</SelectItem>
+                  <SelectItem value="week">Weekly</SelectItem>
+                  <SelectItem value="month">Monthly</SelectItem>
+                  <SelectItem value="year">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select defaultValue="google">
+                <SelectTrigger className="w-[124px]" variant="outline">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="google">Google PPC</SelectItem>
+                  <SelectItem value="fb">Facebook</SelectItem>
+                  <SelectItem value="twitter">Twitter</SelectItem>
+                  <SelectItem value="insta">Instagram</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent className="mt-4">
+            <FunnelChart />
+          </CardContent>
+        </Card>
+        <Card className="relative col-span-full lg:col-span-5">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>Total Revenue</CardTitle>
+
+            <div className="flex gap-4">
+              <Select defaultValue="month">
+                <SelectTrigger className="w-[100px]" variant="outline">
+                  <SelectValue placeholder="Select range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Daily</SelectItem>
+                  <SelectItem value="week">Weekly</SelectItem>
+                  <SelectItem value="month">Monthly</SelectItem>
+                  <SelectItem value="year">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="inline-flex h-10 w-full items-center justify-between font-inter">
+              <div className="flex items-center justify-start gap-3">
+                <img
+                  alt=""
+                  className="relative h-8 w-8"
+                  src="/assets/icons/icon-growth-indicator.svg"
+                />
+                <div className="text-[26px] font-bold text-black">
+                  $313,233.35
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              </div>
+              <div className="inline-flex w-[91px] flex-col items-end justify-start gap-2">
+                <div className="text-right text-sm font-normal leading-none tracking-wide text-red-500">
+                  -1.9%
+                </div>
+                <div className="text-right text-sm font-normal leading-none tracking-wide text-stone-500">
+                  vs last week
+                </div>
+              </div>
+            </div>
+            <LineChart />
+          </CardContent>
+        </Card>
+      </div>
+      {/*Fifth Row Components*/}
+      <div className="mt-11 grid grid-cols-12 gap-6">
+        <Card className="relative col-span-full lg:col-span-7">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>Lead Submissions</CardTitle>
+
+            <div className="flex gap-4">
+              <ToggleGroup
+                className="inline-flex w-auto flex-row items-center justify-start gap-[5px] rounded-[20px] border border-gray-100 bg-neutral-100 px-[5px] text-[#3A3F51]"
+                defaultValue="1D"
+                onValueChange={(value) => {
+                  if (value) setLeadSubmissionsValue(value);
+                }}
+                type="single"
+                value={leadSubmissionsValue}
+              >
+                <ToggleGroupItem value="1D" variant="rounded">
+                  {" "}
+                  1D{" "}
+                </ToggleGroupItem>
+                <ToggleGroupItem value="1M" variant="rounded">
+                  {" "}
+                  1M{" "}
+                </ToggleGroupItem>
+                <ToggleGroupItem value="3M" variant="rounded">
+                  {" "}
+                  3M{" "}
+                </ToggleGroupItem>
+                <ToggleGroupItem value="1Y" variant="rounded">
+                  {" "}
+                  1Y{" "}
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ColumnChart />
+          </CardContent>
+        </Card>
+        <Card className="relative col-span-full lg:col-span-5">
+          <CardHeader className="flex-row items-center justify-between">
+            <CardTitle>Lead Submissions</CardTitle>
+
+            <div className="flex gap-4">
+              <Select defaultValue="week">
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Select range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                  <SelectItem value="year">This Year</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex h-full flex-col items-center justify-center gap-7">
+              {customerLeads.map((lead, index) => {
+                const Icon = lead.icon;
+                return (
+                  <div
+                    className="grid w-full grid-cols-12 items-center gap-2"
+                    key={lead.key}
+                  >
+                    <div
+                      className="col-span-1 flex h-[46px] w-[46px] items-center justify-center rounded-[9px] bg-opacity-10"
+                      style={{ backgroundColor: `${colors[index]}1A` }}
+                    >
+                      <Icon className="text-[#2CD8CE]" size={24} />
+                    </div>
+                    <div className="col-span-3 text-center text-sm font-medium text-black">
+                      {lead.lead}
+                    </div>
+                    <div className="col-span-7 inline-flex h-[7px] w-full flex-col items-start justify-start gap-2.5 bg-stone-300">
+                      <div
+                        className="h-full bg-teal-400"
+                        style={{
+                          width: `${lead.value.toString()}%`,
+                          backgroundColor: colors[index],
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-1 text-xs font-normal tracking-tight text-black">
+                      {lead.value}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -169,7 +169,7 @@ function Page() {
         <div className="m-auto h-[50px] w-[15px] content-center">
           <LoadingSpinner />
         </div>
-        <p className="font-nunito text-center text-lg">
+        <p className="text-center font-nunito text-lg">
           Loading please wait...
         </p>
       </div>
@@ -188,7 +188,7 @@ function Page() {
 
   if (!weather) return null;
   return (
-    <div className="p-10 lg:overflow-x-hidden">
+    <div className="rounded-xl bg-white p-10 lg:overflow-x-hidden">
       <div className="flex w-full justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger>
@@ -200,7 +200,7 @@ function Page() {
             <div className="h-auto">
               <form
                 onSubmit={handleSubmit}
-                className="h-full flex gap-2 content-center"
+                className="flex h-full content-center gap-2"
               >
                 <label className="content-center" htmlFor="input">
                   City:
@@ -230,24 +230,24 @@ function Page() {
                       className="h-[22.07px] w-[18.76px]"
                       src="/assets/icons/weather-forecast/icon-location.svg"
                     />
-                    <div className="font-nunito h-[30.89px] w-[87.17px] text-lg font-semibold leading-7 text-white">
+                    <div className="h-[30.89px] w-[87.17px] font-nunito text-lg font-semibold leading-7 text-white">
                       {city.toCapitalize()}
                     </div>
                   </div>
-                  <div className="font-montserrat text-right text-sm font-normal leading-tight text-white">
+                  <div className="text-right font-montserrat text-sm font-normal leading-tight text-white">
                     Today {getTimeWithOffset().toLocaleString()}
                   </div>
                 </div>
                 <div className="relative flex h-[178.74px] flex-col">
                   <div className="flex justify-center">
-                    <div className="font-nunito text-center text-[100px] font-normal leading-[140px] text-white">
+                    <div className="text-center font-nunito text-[100px] font-normal leading-[140px] text-white">
                       {convertToFahrenheit(weather.main.temp)}
                     </div>
-                    <div className="font-nunito text-center text-5xl font-normal leading-[67.20px] text-white">
+                    <div className="text-center font-nunito text-5xl font-normal leading-[67.20px] text-white">
                       °F
                     </div>
                   </div>
-                  <div className="font-nunito text-center text-base font-medium leading-snug text-white">
+                  <div className="text-center font-nunito text-base font-medium leading-snug text-white">
                     {weather.weather[0].description}
                   </div>
                 </div>
@@ -318,7 +318,7 @@ function Page() {
               alt="arrow"
             />
           </div>
-          <div className="font-nunito mt-7 text-base font-normal leading-snug text-gray-800">
+          <div className="mt-7 font-nunito text-base font-normal leading-snug text-gray-800">
             Today
           </div>
           <div className="mt-6">
@@ -339,7 +339,7 @@ function Page() {
                 if (index < 4) {
                   return (
                     <div
-                      className="font-nunito relative h-[110px] w-[77px]"
+                      className="relative h-[110px] w-[77px] font-nunito"
                       key={index}
                     >
                       <div
@@ -378,7 +378,7 @@ function Page() {
               ))}*/}
             </div>
           </div>
-          <div className="font-nunito mt-10 flex flex-col gap-7">
+          <div className="mt-10 flex flex-col gap-7 font-nunito">
             {/*            {Array.from({ length: 7 }).map((_item, index) => (
               <div className="relative h-[52px] w-72" key={index}>
                 <div className="font-['Plus Jakarta Sans'] absolute left-[144px] top-[12px] text-xl font-semibold leading-7 text-gray-800">

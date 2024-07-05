@@ -117,7 +117,7 @@ export default function ImportContactsDialogContent(
 
   const csvFileTemplate = {
     fileName: `servihero-import-contact-template.csv`,
-    columns: `first_name,last_name,email,phone_number,source,lifetime_value,last_campaign_ran,last_interaction`,
+    columns: `first_name,last_name,email,phone_number,source,last_campaign_ran,last_interaction`,
   };
 
   const handleImportContacts = () => {

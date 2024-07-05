@@ -167,30 +167,30 @@ export default function RegisterOTP(props: RegisterOTPProps) {
                   <FormItem>
                     <FormControl>
                       <InputOTP maxLength={6} {...field}>
-                        <InputOTPGroup className="my-5 justify-evenly flex w-[500px] mx-auto">
+                        <InputOTPGroup className="my-5 justify-evenly flex h-[100px] w-full mx-auto grid-cols-6 gap-5 content-center">
                           <InputOTPSlot
                             index={0}
-                            className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                            className="border-2 h-full w-full font-nunito  text-[44px] bg-gray-100"
                           />
                           <InputOTPSlot
                             index={1}
-                            className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                            className="border-2 h-full w-full font-nunito text-[44px] bg-gray-100"
                           />{" "}
                           <InputOTPSlot
                             index={2}
-                            className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                            className="border-2 h-full w-full  font-nunito text-[44px] bg-gray-100"
                           />
                           <InputOTPSlot
                             index={3}
-                            className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                            className="border-2 h-full w-full  font-nunito text-[44px] bg-gray-100"
                           />
                           <InputOTPSlot
                             index={4}
-                            className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                            className="border-2  h-full w-full font-nunito text-[44px] bg-gray-100"
                           />
                           <InputOTPSlot
                             index={5}
-                            className="border-2 h-[120px] w-[80px] font-nunito text-[48px] bg-gray-100"
+                            className="border-2 h-full w-full font-nunito text-[44px] bg-gray-100"
                           />
                         </InputOTPGroup>
                       </InputOTP>
