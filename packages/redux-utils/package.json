@@ -1,0 +1,25 @@
+{
+  "name": "@repo/redux-utils",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
+  "scripts": {
+    "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "@reduxjs/toolkit": "^2.2.5",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@stripe/stripe-js": "^3.4.0",
+    "@twilio/conversations": "^2.5.0",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "@types/react-redux": "^7.1.33",
+    "next-auth": "^5.0.0-beta.18",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.1.2",
+    "typescript": "^5.5.2"
+  }
+}
