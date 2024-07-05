@@ -21,6 +21,7 @@ export * from "./separator.tsx";
 export * from "./sheet.tsx";
 export * from "./skeleton.tsx";
 export * from "./slider.tsx";
+export * from "./switch.tsx";
 export * from "./table.tsx";
 export * from "./tabs.tsx";
 export * from "./toast.tsx";
