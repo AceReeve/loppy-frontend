@@ -36,7 +36,8 @@ export const unsoldTicketsColumns: ColumnDef<GetContactsResponse["data"][0]>[] =
       accessorKey: "lifetime_value",
       header: "Quoted",
       cell: ({ row }) => {
-        const amount = row.original.lifetime_value;
+        // @ts-expect-error -- ignore for now since this are just placeholder values
+        const amount = row.original.lifetime_value as number;
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",

@@ -77,7 +77,7 @@ export default function Page() {
             </span>
           </div>
         </div>
-        <div className="flex gap-4 self-end lg:gap-7">
+        <div className="flex gap-4 self-end lg:gap-3">
           <Select defaultValue="month">
             <SelectTrigger className="w-[138px]">
               <SelectValue placeholder="Select range" />

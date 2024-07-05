@@ -7,6 +7,7 @@ import {
   Setting2,
   VideoOctagon,
   I3DSquare,
+  CloudDrizzle,
 } from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
@@ -62,22 +63,22 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/pipelines",
       id: 4,
     },
+    // {
+    //   title: "Teams",
+    //   icon: <People className="relative size-6" />,
+    //   url: "/teams",
+    //   id: 5,
+    // },
+    {
+      title: "Weather",
+      icon: <CloudDrizzle className="relative size-6" />,
+      url: "/marketing/weather-forecasting",
+      id: 6,
+    },
     {
       title: "Workflows",
       icon: <VideoOctagon className="relative size-6" />,
       url: "/workflows",
-      id: 5,
-    },
-    {
-      title: "Teams",
-      icon: <VideoOctagon className="relative size-6" />,
-      url: "/teams",
-      id: 6,
-    },
-    {
-      title: "Weather",
-      icon: <VideoOctagon className="relative size-6" />,
-      url: "/marketing/weather-forecasting",
       id: 7,
     },
   ];

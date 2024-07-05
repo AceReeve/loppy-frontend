@@ -1,8 +1,9 @@
 import { baseApi } from "../api";
+import { type TwilioCredentialsPayloadAndResponse } from "./types/messaging";
 
 const api = baseApi
   .enhanceEndpoints({
-    addTagTypes: ["messaging"],
+    addTagTypes: ["messaging", "twilio_credentials"],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -15,7 +16,35 @@ const api = baseApi
         },
         providesTags: ["messaging"],
       }),
+      setTwilioCredentials: builder.mutation<
+        TwilioCredentialsPayloadAndResponse,
+        TwilioCredentialsPayloadAndResponse
+      >({
+        query: (payload) => {
+          return {
+            url: "/messages/twilio-credentials",
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["twilio_credentials"],
+      }),
+      getTwilioCredentials: builder.query<
+        TwilioCredentialsPayloadAndResponse,
+        undefined
+      >({
+        query: () => {
+          return {
+            url: "/messages/get-twilio-credentials",
+          };
+        },
+        providesTags: ["twilio_credentials"],
+      }),
     }),
   });
 
-export const { useGetTwilioAccessTokenQuery } = api;
+export const {
+  useGetTwilioAccessTokenQuery,
+  useGetTwilioCredentialsQuery,
+  useSetTwilioCredentialsMutation,
+} = api;
