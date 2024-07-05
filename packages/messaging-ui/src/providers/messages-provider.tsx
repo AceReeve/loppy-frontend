@@ -55,6 +55,7 @@ import {
 } from "../messaging";
 import ManualPopover from "../components/manual-popover.tsx";
 import { MessagingFilters } from "../messaging.enum.ts";
+import { TwilioCredentialsPayloadAndResponse } from "@repo/redux-utils/src/endpoints/types/messaging";
 
 interface ContextType {
   accessToken: string | undefined;
@@ -75,6 +76,7 @@ interface ContextType {
   invitedUsers: InviteUserResponse | undefined;
   messageFilter: MessagingFilters;
   setMessageFilter: (filter: MessagingFilters) => void;
+  twilioCredentials: TwilioCredentialsPayloadAndResponse | undefined;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
@@ -373,6 +375,7 @@ export default function MessagesProvider({
         invitedUsers,
         messageFilter,
         setMessageFilter,
+        twilioCredentials,
       }}
     >
       {newConvoLoading ? <LoadingOverlay /> : null}
