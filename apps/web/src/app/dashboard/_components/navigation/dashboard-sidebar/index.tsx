@@ -30,6 +30,18 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/help",
       id: 1,
     },
+    {
+      title: "Connected Account",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/settings/connected-account",
+      id: 2,
+    },
+    {
+      title: "Notifications",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/settings/notifications",
+      id: 3,
+    },
   ];
 
   const dashboardItems: MenuLinkItem[] = [
