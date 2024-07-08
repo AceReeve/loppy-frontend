@@ -176,10 +176,10 @@ function Page() {
 */
 
   return (
-    <div className="rounded-xl bg-white p-10">
+    <div className="m-10 rounded-xl bg-card p-10">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-end gap-3">
-          <div className="font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
+          <div className="font-poppins text-4xl font-medium text-gray-800">
             Contacts
           </div>
           <div className="mb-2 font-montserrat text-sm font-normal text-gray-500">

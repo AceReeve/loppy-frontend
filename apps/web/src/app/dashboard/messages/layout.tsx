@@ -8,7 +8,7 @@ export default async function Layout({
 }>) {
   const session = await auth();
   return (
-    <div className="w-full h-screen flex items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center">
       <MessagesProvider session={session}>{children}</MessagesProvider>
     </div>
   );
