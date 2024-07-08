@@ -8,8 +8,7 @@ import React from "react";
 
 export default function Notifications() {
   return (
-    <div className="h-auto w-full rounded-xl bg-white p-6 py-10">
-      <h1 className="py-4 text-[32px] font-semibold">Notifications</h1>
+    <>
       <div className="flex h-auto w-1/2 flex-col gap-5 ">
         <div className="space-y-1">
           <h1 className="text-lg font-semibold">Email Notifications</h1>
@@ -101,6 +100,6 @@ export default function Notifications() {
           <Button> Save Changes</Button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

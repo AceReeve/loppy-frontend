@@ -13,7 +13,6 @@ import { Menu } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 import { SunIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { DefaultAvatar } from "@repo/ui/components/custom";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 
@@ -21,7 +20,7 @@ export default function DashboardHeader() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   const { session } = useDashboardState();
 
@@ -29,7 +28,7 @@ export default function DashboardHeader() {
     setMounted(true);
   }, []);
 
-  if (pathname === "/dashboard/messages") return null;
+  // if (pathname === "/dashboard/messages") return null;
 
   if (!session) return null;
 

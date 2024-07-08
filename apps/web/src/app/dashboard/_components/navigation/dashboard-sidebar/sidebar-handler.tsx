@@ -50,7 +50,7 @@ export default function SidebarHandler(props: SidebarHandlerProps) {
         </Link>
       </div>
 
-      <div className="custom-scrollbar-tiny mt-[33px] h-[85%] overflow-hidden pr-4 hover:overflow-auto">
+      <div className="custom-scrollbar-tiny mt-[33px] h-[85%] overflow-hidden pr-4 hover:overflow-y-auto">
         {props.children}
       </div>
 

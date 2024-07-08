@@ -35,7 +35,7 @@ export default function ConversationView() {
   if (!openedConversation) return <NewConversationView />;
 
   return (
-    <section className="flex flex-auto flex-col border-l border-gray-200">
+    <section className="flex flex-auto flex-col bg-card">
       <div className="chat-header flex flex-none flex-row items-center justify-between px-6 py-4 shadow">
         <div className="flex">
           <div className="relative mr-4 flex size-12 flex-shrink-0">

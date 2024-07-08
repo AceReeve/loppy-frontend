@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Separator } from "@repo/ui/components/ui";
+import { Button } from "@repo/ui/components/ui";
 import AccountComponent from "@/src/app/dashboard/settings/connected-account/component-account";
 
 export default function ConnectedAccounts() {
@@ -66,8 +66,8 @@ export default function ConnectedAccounts() {
 
   // Update the state with the updated accounts array
   return (
-    <div className="m-5 h-auto rounded-xl bg-white p-8">
-      <div className=" grid h-auto w-full  grid-cols-5 gap-x-[50px] p-4 lg:grid-cols-10">
+    <>
+      <div className="grid h-auto w-full grid-cols-5 gap-x-[50px] lg:grid-cols-10">
         {accounts.map((account, index) => (
           <AccountComponent
             key={account.id}
@@ -81,11 +81,10 @@ export default function ConnectedAccounts() {
         ))}
       </div>
       <div className="col-span-4">
-        <Separator />
-        <div className="- mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end">
           <Button> Save Changes</Button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

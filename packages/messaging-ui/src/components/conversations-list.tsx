@@ -161,7 +161,7 @@ export default function ConversationsList() {
                 <ConversationLabel participants={participants[convo.sid]} />
               </p>
               <div className="text-xs font-medium leading-none text-neutral-400">
-                {convo.lastMessage.dateCreated
+                {convo.lastMessage?.dateCreated
                   ? moment(convo.lastMessage.dateCreated).fromNow()
                   : null}
               </div>
@@ -203,7 +203,7 @@ export default function ConversationsList() {
   ]);
 
   return (
-    <section className="custom-scrollbar-neutral group flex w-24 flex-none flex-col overflow-auto transition-all duration-300 ease-in-out md:w-2/5 lg:max-w-sm">
+    <section className="custom-scrollbar-neutral bg-card group flex w-24 flex-none flex-col overflow-auto transition-all duration-300 ease-in-out md:w-2/5 lg:max-w-sm">
       <div className="header flex flex-none flex-row items-center justify-between p-4">
         <p className="text-md hidden font-bold group-hover:block md:block">
           Messages

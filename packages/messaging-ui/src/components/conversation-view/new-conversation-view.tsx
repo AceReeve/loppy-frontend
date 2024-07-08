@@ -13,7 +13,7 @@ export default function NewConversationView() {
   const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
 
   return (
-    <section className="flex flex-auto flex-col border-l border-gray-200">
+    <section className="flex flex-auto flex-col bg-card">
       <div className="chat-header flex flex-none flex-row items-center justify-between px-6 py-4 shadow">
         <div className="flex w-full flex-col">
           <div className="text-md">
@@ -31,7 +31,7 @@ export default function NewConversationView() {
       </div>
       {client ? (
         <>
-          <div className="custom-scrollbar-neutral column-reverse chat-body flex size-full flex-1 overflow-y-scroll bg-gray-100 p-4 pl-4">
+          <div className="bg-card custom-scrollbar-neutral column-reverse chat-body flex size-full flex-1 overflow-y-scroll bg-gray-100 p-4 pl-4">
             {/*<div className="inline-flex w-full flex-col items-start justify-start gap-1">*/}
             {/*  test*/}
             {/*</div>*/}
