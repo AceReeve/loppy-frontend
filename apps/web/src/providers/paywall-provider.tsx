@@ -131,6 +131,7 @@ export default function PaywallProvider({
       type: paymentPlan.plan,
       confirmationToken,
     })
+      .unwrap()
       .then(async () => {
         await refetchPaymentStatus();
       })

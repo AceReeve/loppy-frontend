@@ -5,6 +5,9 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Form,
   FormControl,
@@ -21,6 +24,7 @@ import {
   useSetTwilioCredentialsMutation,
 } from "@repo/redux-utils/src/endpoints/messaging.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { AlertCircle } from "lucide-react";
 
 const MessagingCredsSchema = z.object({
   twilio_account_sid: z.string().min(1),
@@ -32,11 +36,16 @@ const MessagingCredsSchema = z.object({
 });
 
 export default function Page() {
-  const { data: twilioCredentials, isLoading: isGetLoading } =
-    useGetTwilioCredentialsQuery(undefined);
+  const {
+    data: twilioCredentials,
+    isLoading: isGetLoading,
+    error: getError,
+  } = useGetTwilioCredentialsQuery(undefined);
 
-  const [setTwilioCredentials, { isLoading: isSetLoading }] =
+  const [setTwilioCredentials, { isLoading: isSetLoading, error: setError }] =
     useSetTwilioCredentialsMutation();
+
+  const error = getError || setError;
 
   const form = useForm<z.infer<typeof MessagingCredsSchema>>({
     resolver: zodResolver(MessagingCredsSchema),
@@ -55,16 +64,11 @@ export default function Page() {
   const isLoading = isSetLoading || isGetLoading;
 
   const onSubmit = (values: z.infer<typeof MessagingCredsSchema>) => {
-    setTwilioCredentials(values)
+    void setTwilioCredentials(values)
+      .unwrap()
       .then(() => {
         toast({
           description: "Successfully saved",
-        });
-      })
-      .catch((e: unknown) => {
-        toast({
-          description: getErrorMessage(e),
-          variant: "destructive",
         });
       });
   };
@@ -72,6 +76,14 @@ export default function Page() {
   return (
     <>
       <div className="relative">
+        {error ? (
+          <Alert variant="destructive" className="mb-3">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{getErrorMessage(error)}</AlertDescription>
+          </Alert>
+        ) : null}
+
         <div className="font-inter text-lg font-semibold leading-normal text-gray-800">
           Twilio Credentials
         </div>

@@ -26,6 +26,7 @@ export * from "./switch.tsx";
 export * from "./table.tsx";
 export * from "./tabs.tsx";
 export * from "./tabs-nav.tsx";
+export * from "./textarea.tsx";
 export * from "./toast.tsx";
 export * from "./toaster.tsx";
 export * from "./toggle.tsx";
