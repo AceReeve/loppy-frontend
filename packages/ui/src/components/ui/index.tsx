@@ -16,6 +16,7 @@ export * from "./multiselect.tsx";
 export * from "./navigation-menu.tsx";
 export * from "./input-otp.tsx";
 export * from "./popover.tsx";
+export * from "./radio-cards.tsx";
 export * from "./radio-group.tsx";
 export * from "./select.tsx";
 export * from "./separator.tsx";
