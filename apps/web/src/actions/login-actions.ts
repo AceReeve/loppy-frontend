@@ -25,25 +25,19 @@ export const handleRegisterDetails = async (
     return { error: "Failed to Register details" };
   }
 
-  const authResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/user-info`,
-
-    {
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/user-info`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-    },
-  );
-
-  if (authResponse.ok) {
-    //await handleCredentialsSignUp(values, callbackURL);
-    return;
+    });
+  } catch (error) {
+    // Throw proper error response from backend server
+    return {
+      error: getErrorMessage({ data: error }),
+    };
   }
-
-  // Throw proper error response from backend server
-  const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage({ data: res }));
 };
 
 export const handleConfirmOTP = async (
