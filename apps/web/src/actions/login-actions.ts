@@ -24,17 +24,6 @@ export const handleRegisterDetails = async (
   if (!validateFields.success) {
     return { error: "Failed to Register details" };
   }
-  // const {
-  //   first_name,
-  //   last_name,
-  //   gender,
-  //   birthday,
-  //   address,
-  //   city,
-  //   state,
-  //   zipCode,
-  //   contact_no,
-  // } = validateFields.data;
 
   const authResponse = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/user/user-info`,
@@ -54,7 +43,7 @@ export const handleRegisterDetails = async (
 
   // Throw proper error response from backend server
   const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage(res));
+  throw new Error(getErrorMessage({ data: res }));
 };
 
 export const handleConfirmOTP = async (
@@ -123,7 +112,9 @@ export const handleSendOTP = async (
 
   // Throw proper error response from backend server
   const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage(res));
+
+  // Add data to properly get error message (we optimize getErrorMessage soon so that we don't need to do this)
+  throw new Error(getErrorMessage({ data: res }));
 };
 
 export const handleCredentialsSignUp = async (
@@ -162,7 +153,7 @@ export const handleCredentialsSignUp = async (
   }
   // Throw proper error response from backend server
   const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage(res));
+  throw new Error(getErrorMessage({ data: res }));
 };
 
 export const handleCredentialsSignIn = async (

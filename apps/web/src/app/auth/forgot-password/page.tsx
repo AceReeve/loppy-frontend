@@ -32,6 +32,7 @@ export default function ForgotPassword() {
   const [sendRequest, { isLoading }] = useSendResetPasswordMutation();
   const onSubmit = async () => {
     await sendRequest(form.getValues())
+      .unwrap()
       .then(() => {
         nextProcess();
       })

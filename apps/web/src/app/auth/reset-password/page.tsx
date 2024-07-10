@@ -46,6 +46,7 @@ export default function ResetPassword() {
   const onSubmit = async () => {
     form.setValue("token", token ?? "");
     await setNewPassword(form.getValues())
+      .unwrap()
       .then(() => {
         nextProcess();
       })
