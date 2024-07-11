@@ -1,6 +1,7 @@
-import { RadioCardsItem } from "@repo/ui/components/ui";
+"use client";
 import React from "react";
 import { Check } from "lucide-react";
+import { RadioCardsItem } from "@repo/ui/components/ui";
 
 interface CardProps {
   header: string;

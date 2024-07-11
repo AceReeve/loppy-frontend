@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import ContestCategory from "@/src/app/dashboard/marketing/branding/branding-views/contest-category";
-import ContestBrief from "@/src/app/dashboard/marketing/branding/branding-views/contest-brief";
-import BrandingSteps from "@/src/app/dashboard/marketing/branding/branding-components/branding-steps.tsx";
+import ContestCategory from "@/src/app/dashboard/branding/branding-views/contest-category";
+import ContestBrief from "@/src/app/dashboard/branding/branding-views/contest-brief";
+import BrandingSteps from "@/src/app/dashboard/branding/branding-components/branding-steps.tsx";
 
 export default function Page() {
   const [step, setStep] = useState(0);

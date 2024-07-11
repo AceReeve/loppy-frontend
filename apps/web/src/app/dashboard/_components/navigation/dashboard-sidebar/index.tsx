@@ -1,5 +1,5 @@
 "use client";
-import {Setting2, VideoOctagon} from "iconsax-react";
+import { Setting2, VideoOctagon } from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
@@ -82,7 +82,7 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
     {
       title: "Branding",
       icon: <VideoOctagon className="relative size-6" />,
-      url: "/marketing/branding",
+      url: "/branding",
       id: 9,
     },
   ];

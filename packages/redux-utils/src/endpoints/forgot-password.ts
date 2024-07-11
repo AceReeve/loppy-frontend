@@ -2,7 +2,7 @@ import { baseApi } from "../api";
 import {
   type CreateNewPasswordPayload,
   type CreateResetPasswordPayload,
-  GetResetPasswordResponse,
+  type GetResetPasswordResponse,
 } from "./types/forgot-password.ts";
 
 const api = baseApi

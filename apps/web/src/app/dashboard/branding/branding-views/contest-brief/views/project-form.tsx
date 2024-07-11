@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button, Input, RadioCards, Textarea } from "@repo/ui/components/ui";
 import Link from "next/link";
-import FormRadioCard from "@/src/app/dashboard/marketing/branding/_components/form-radio-selection.tsx";
+import FormRadioCard from "@/src/app/dashboard/branding/_components/form-radio-selection.tsx";
 
 interface ProjectProps {
   handleNext: () => void;

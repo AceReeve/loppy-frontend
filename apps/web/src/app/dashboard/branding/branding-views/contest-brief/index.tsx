@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import GetStarted from "@/src/app/dashboard/marketing/branding/branding-views/contest-brief/views/get-started.tsx";
-import ProjectForm from "@/src/app/dashboard/marketing/branding/branding-views/contest-brief/views/project-form.tsx";
-import ProjectGeneration from "@/src/app/dashboard/marketing/branding/branding-views/contest-brief/views/project-generation.tsx";
+import GetStarted from "@/src/app/dashboard/branding/branding-views/contest-brief/views/get-started.tsx";
+import ProjectForm from "@/src/app/dashboard/branding/branding-views/contest-brief/views/project-form.tsx";
+import ProjectGeneration from "@/src/app/dashboard/branding/branding-views/contest-brief/views/project-generation.tsx";
 
 export default function ContestBrief() {
   const [step, setStep] = useState(0);

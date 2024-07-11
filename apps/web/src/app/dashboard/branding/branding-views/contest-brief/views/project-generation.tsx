@@ -117,7 +117,9 @@ export default function ProjectGeneration(props: ProjectProps) {
 
           <div className=" mt-10 flex justify-between">
             <Button onClick={props.handlePrev}>Previous</Button>
-            <Button onClick={props.handleNext}>Generate Project Brief</Button>
+            <Button onClick={props.handleNext} className="hidden">
+              Generate Project Brief
+            </Button>
           </div>
         </div>
       </div>

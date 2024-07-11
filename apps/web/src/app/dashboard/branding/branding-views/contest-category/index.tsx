@@ -1,6 +1,6 @@
 import React from "react";
 import { Separator } from "@repo/ui/components/ui";
-import BrandingCard from "@/src/app/dashboard/marketing/branding/branding-components/branding-card.tsx";
+import BrandingCard from "@/src/app/dashboard/branding/branding-components/branding-card.tsx";
 
 interface CategoryProps {
   handleNextStep: () => void;
