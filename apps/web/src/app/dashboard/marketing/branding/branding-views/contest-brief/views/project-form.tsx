@@ -37,14 +37,14 @@ export default function ProjectForm(props: ProjectProps) {
       checked: false,
     },
   ];
-  const [openURL, setOpenURL] = useState("0");
+  const [openURL, setOpenURL] = useState("1");
   const openURLs = [
     {
       id: 1,
       header: "Yes",
       description: "But Minor variations are allowed",
       value: "0",
-      isRecommended: true,
+      isRecommended: false,
       checked: false,
     },
     {
@@ -52,7 +52,7 @@ export default function ProjectForm(props: ProjectProps) {
       header: "No",
       description: "Domain should exactly match the name",
       value: "1",
-      isRecommended: false,
+      isRecommended: true,
       checked: false,
     },
   ];
@@ -132,7 +132,6 @@ export default function ProjectForm(props: ProjectProps) {
           </h1>
           <RadioCards
             className="mt-4 flex"
-            defaultValue="checked"
             value={matchingDomain}
             onValueChange={setMatchingDomain}
           >
@@ -160,7 +159,6 @@ export default function ProjectForm(props: ProjectProps) {
 
           <RadioCards
             className="mt-4 flex "
-            defaultValue="1"
             value={openURL}
             onValueChange={setOpenURL}
           >
