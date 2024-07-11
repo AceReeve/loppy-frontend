@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Button, Input, RadioCards, Textarea } from "@repo/ui/components/ui";
 import Link from "next/link";
 import FormRadioCard from "@/src/app/dashboard/marketing/branding/_components/form-radio-selection.tsx";
@@ -8,6 +10,10 @@ interface ProjectProps {
   handlePrev: () => void;
 }
 export default function ProjectForm(props: ProjectProps) {
+  const [matchingDomain, setMatchingDomain] = useState("0");
+
+  console.log(matchingDomain);
+
   return (
     <div className="mt-16 ">
       <div className="m-auto w-[700px] text-center font-open-sans">
@@ -84,24 +90,32 @@ export default function ProjectForm(props: ProjectProps) {
           <h1 className=" text-[14px] font-bold">
             Do you want a matching domain (.com URL) with your name?
           </h1>
-          <RadioCards className="mt-4 flex" defaultValue="checked">
+          <RadioCards
+            className="mt-4 flex"
+            defaultValue="checked"
+            value={matchingDomain}
+            onValueChange={setMatchingDomain}
+          >
             <FormRadioCard
               isRecommended
               value="0"
               header="Yes"
               description="But Minor variations are allowed"
+              checked={matchingDomain === "0"}
             />
             <FormRadioCard
               isRecommended={false}
               value="1"
               header="Yes"
               description="Domain should exactly match the name "
+              checked={matchingDomain === "1"}
             />
             <FormRadioCard
               isRecommended={false}
               value="2"
               header="No"
               description="I am only looking for a name, not a Domain"
+              checked={matchingDomain === "2"}
             />
           </RadioCards>
           <p className="mt-4 font-open-sans text-[12px] text-gray-400">
