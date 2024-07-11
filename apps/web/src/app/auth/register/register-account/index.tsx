@@ -89,7 +89,7 @@ export default function Registration({
     <>
       <div className="mt-10 font-open-sans text-[15px] lg:mt-0">
         <div className="text-center">
-          <h1 className="font-montserrat  text-2xl font-semibold sm:text-[24px] text-black">
+          <h1 className="font-montserrat  text-2xl font-semibold text-black sm:text-[24px]">
             Create an Account
           </h1>
 
@@ -120,7 +120,7 @@ export default function Registration({
 */}
 
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-nunito shadow-none  h-[38px]"
+                className="mt-1 h-[38px] w-full border-[#D0D3DB] font-nunito  shadow-none"
                 id="Email"
                 type="email"
                 placeholder={"Email"}
@@ -134,14 +134,14 @@ export default function Registration({
               ) : null}
             </div>
 
-            <div className="col-span-6 relative">
+            <div className="relative col-span-6">
               {/*              <label className="block text-sm font-bold" htmlFor="Password">
                 {" "}
                 Password{" "}
               </label>*/}
 
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-nunito shadow-none  h-[38px]"
+                className="mt-1 h-[38px] w-full border-[#D0D3DB] font-nunito  shadow-none"
                 id="Password"
                 type={showPassword ? "text" : "password"}
                 placeholder={"Password"}
@@ -149,7 +149,7 @@ export default function Registration({
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center px-2"
+                className="absolute inset-y-0 right-0 mt-1 flex max-h-[38px] items-center px-2"
                 onClick={togglePasswordVisibility}
               >
                 {showPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -161,7 +161,7 @@ export default function Registration({
               ) : null}
             </div>
 
-            <div className="col-span-6 relative">
+            <div className="relative col-span-6">
               {/*
               <label className="block text-sm font-bold" htmlFor="Password">
                 {" "}
@@ -169,7 +169,7 @@ export default function Registration({
               </label>
 */}
               <input
-                className="mt-1 w-full border-[#D0D3DB] font-nunito shadow-none h-[38px]"
+                className="mt-1 h-[38px] w-full border-[#D0D3DB] font-nunito shadow-none"
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm Password"
@@ -177,7 +177,7 @@ export default function Registration({
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center px-2"
+                className="absolute inset-y-0 right-0 mt-1 flex max-h-[38px] items-center px-2"
                 onClick={toggleConfirmPasswordVisibility}
               >
                 {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -226,7 +226,7 @@ export default function Registration({
               </p>
             </div>
 
-            <div className="col-span-6 mt-3 sm:flex sm:items-center sm:gap-4 m-auto">
+            <div className="col-span-6 m-auto mt-3 sm:flex sm:items-center sm:gap-4">
               <p className="font-nunito text-sm font-bold">
                 Have an account?{" "}
                 <Link className="text-primary underline" href="/auth/login">

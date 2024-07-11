@@ -81,6 +81,12 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/workflows",
       id: 7,
     },
+    {
+      title: "Branding",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/marketing/branding",
+      id: 8,
+    },
   ];
 
   const menuItems: MenuItem = {
