@@ -43,7 +43,9 @@ export const handleRegisterDetails = async (
 
   // Throw proper error response from backend server
   const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage({ data: res }));
+  return {
+    error: getErrorMessage({ data: res }),
+  };
 };
 
 export const handleConfirmOTP = async (
@@ -79,7 +81,9 @@ export const handleConfirmOTP = async (
 
   // Throw proper error response from backend server
   const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage(res));
+  return {
+    error: getErrorMessage({ data: res }),
+  };
 };
 export const handleSendOTP = async (
   values: z.infer<typeof SendRegisterOTPSchema>,
@@ -114,7 +118,9 @@ export const handleSendOTP = async (
   const res: unknown = await authResponse.json();
 
   // Add data to properly get error message (we optimize getErrorMessage soon so that we don't need to do this)
-  throw new Error(getErrorMessage({ data: res }));
+  return {
+    error: getErrorMessage({ data: res }),
+  };
 };
 
 export const handleCredentialsSignUp = async (
@@ -153,7 +159,9 @@ export const handleCredentialsSignUp = async (
   }
   // Throw proper error response from backend server
   const res: unknown = await authResponse.json();
-  throw new Error(getErrorMessage({ data: res }));
+  return {
+    error: getErrorMessage({ data: res }),
+  };
 };
 
 export const handleCredentialsSignIn = async (

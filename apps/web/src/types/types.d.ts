@@ -6,6 +6,7 @@ export interface MenuLinkItem {
   isVisible?: boolean;
   children?: MenuLinkItem[];
   icon?: string | React.ReactNode;
+  imageIcon?: string;
   collapsible?: boolean;
 }
 

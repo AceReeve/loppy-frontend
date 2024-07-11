@@ -1,14 +1,5 @@
 "use client";
-import {
-  Home,
-  Message,
-  Profile2User,
-  RouteSquare,
-  Setting2,
-  VideoOctagon,
-  I3DSquare,
-  CloudDrizzle,
-} from "iconsax-react";
+import {Setting2, VideoOctagon} from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
@@ -26,7 +17,7 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
     },
     {
       title: "Help",
-      icon: <I3DSquare className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-help.svg",
       url: "/help",
       id: 1,
     },
@@ -35,31 +26,31 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
   const dashboardItems: MenuLinkItem[] = [
     {
       title: "Home",
-      icon: <Home className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-home.svg",
       url: "",
       id: 0,
     },
     {
       title: "Messages",
-      icon: <Message className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-messages.svg",
       url: "/messages",
       id: 1,
     },
     {
       title: "Contacts",
-      icon: <Profile2User className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-contacts.svg",
       url: "/contacts",
       id: 2,
     },
     {
       title: "Marketing",
-      icon: <RouteSquare className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-marketing.svg",
       url: "/marketing",
       id: 3,
     },
     {
       title: "Pipelines",
-      icon: <VideoOctagon className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-pipelines.svg",
       url: "/pipelines",
       id: 4,
     },
@@ -69,23 +60,30 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
     //   url: "/teams",
     //   id: 5,
     // },
-    {
-      title: "Weather",
-      icon: <CloudDrizzle className="relative size-6" />,
-      url: "/marketing/weather-forecasting",
-      id: 6,
-    },
+    // {
+    //   title: "Weather",
+    //   icon: <CloudDrizzle className="relative size-6" />,
+    //   url: "/marketing/weather-forecasting",
+    //   id: 6,
+    // },
     {
       title: "Workflows",
-      icon: <VideoOctagon className="relative size-6" />,
+      imageIcon: "/assets/icons/sidebar-icons/icon-workflows.svg",
       url: "/workflows",
       id: 7,
+    },
+
+    {
+      title: "Reporting",
+      imageIcon: "/assets/icons/sidebar-icons/icon-reporting.svg",
+      url: "/reporting",
+      id: 8,
     },
     {
       title: "Branding",
       icon: <VideoOctagon className="relative size-6" />,
       url: "/marketing/branding",
-      id: 8,
+      id: 9,
     },
   ];
 
