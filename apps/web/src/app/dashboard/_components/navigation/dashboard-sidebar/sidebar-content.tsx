@@ -31,8 +31,11 @@ export default function SidebarContent(props: SidebarContentProps) {
     "relative transition-all duration-500 text-gray-900 text-sm text-gray-700";
   const activeTitleClass = "text-white";
 
-  const iconClass = "text-[#5D7495]";
+  const iconClass = "text-black";
   const activeIconClass = "!text-white";
+
+  const imageIconClass = "relative h-6 w-6 dark:invert dark:hue-rotate-180";
+  const activeImageIconClass = "invert hue-rotate-180";
 
   function getPath(path: string[] | string) {
     if (typeof path === "string") {
@@ -42,19 +45,31 @@ export default function SidebarContent(props: SidebarContentProps) {
   }
 
   function isActive(path: string[] | string) {
-    return getPath(path) === pathName;
+    const fullPath = getPath(path);
+    // if item is "Home"
+    if (path === "") {
+      return pathName === fullPath;
+    }
+    return pathName.startsWith(fullPath);
   }
 
-  const renderMenuIcon = (icon: MenuLinkItem["icon"], active: boolean) => (
+  const renderMenuIcon = (
+    icon: MenuLinkItem["icon"],
+    imageIcon: MenuLinkItem["imageIcon"],
+    active: boolean,
+  ) => (
     <>
-      {icon && typeof icon === "string" ? (
-        <img src={icon} alt="" className="relative h-6 w-6" />
+      {imageIcon ? (
+        <img
+          src={imageIcon}
+          alt=""
+          className={cn(imageIconClass, active && activeImageIconClass)}
+        />
       ) : (
         <div className={cn(iconClass, active && activeIconClass)}>{icon}</div>
       )}
     </>
   );
-
   const renderNavItems = (items: MenuLinkItem[]) =>
     items.map((menuItem) =>
       !menuItem.children?.length ? (
@@ -73,7 +88,12 @@ export default function SidebarContent(props: SidebarContentProps) {
                 aria-hidden="true"
               />
             )}
-            {renderMenuIcon(menuItem.icon, isActive(menuItem.url))}
+
+            {renderMenuIcon(
+              menuItem.icon,
+              menuItem.imageIcon,
+              isActive(menuItem.url),
+            )}
             <span
               className={cn(
                 titleClass,
@@ -99,7 +119,7 @@ export default function SidebarContent(props: SidebarContentProps) {
                   className={`flex items-center text-left ${menuItemClass} ${menuItem.collapsible === false ? "pointer-events-none" : ""}`}
                 >
                   <>
-                    {renderMenuIcon(menuItem.icon, false)}
+                    {renderMenuIcon(menuItem.icon, menuItem.imageIcon, false)}
                     {menuItem.collapsible === false ? (
                       <span
                         className={`${titleClass} font-montserrat text-sm font-semibold uppercase tracking-wide text-[#fff] text-opacity-50`}
@@ -138,6 +158,7 @@ export default function SidebarContent(props: SidebarContentProps) {
 
                     {renderMenuIcon(
                       subItem.icon,
+                      subItem.imageIcon,
                       isActive([menuItem.url, subItem.url]),
                     )}
                     <span
