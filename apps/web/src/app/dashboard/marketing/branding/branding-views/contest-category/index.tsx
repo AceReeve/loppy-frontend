@@ -1,7 +1,6 @@
 import React from "react";
-import BrandingSteps from "@/src/app/dashboard/marketing/branding/branding-components/branding-steps.tsx";
-import BrandingCard from "@/src/app/dashboard/marketing/branding/branding-components/branding-card.tsx";
 import { Separator } from "@repo/ui/components/ui";
+import BrandingCard from "@/src/app/dashboard/marketing/branding/branding-components/branding-card.tsx";
 
 interface CategoryProps {
   handleNextStep: () => void;
@@ -12,17 +11,20 @@ export default function ContestCategory(props: CategoryProps) {
       id: 1,
       title: "Name",
       description: "Get up and running with the perfect name.",
+      icon: [{ id: 1, source: "/assets/icons/branding/icon-name.svg" }],
     },
     {
       id: 2,
       title: "Logo",
       description: "Kickstart you venture with a unique, memorable logo.",
+      icon: [{ id: 1, source: "/assets/icons/branding/icon-logo.svg" }],
     },
     {
       id: 3,
       title: "Tagline or Slogan",
       description:
         "Connect deeply with your target audience with an on-target tagline",
+      icon: [{ id: 1, source: "/assets/icons/branding/icon-tagline.svg" }],
     },
   ];
 
@@ -32,30 +34,52 @@ export default function ContestCategory(props: CategoryProps) {
       title: "Name + Logo",
       description:
         "Get the essentials needed to establish your brand together and save.",
+      icon: [
+        { id: 1, source: "/assets/icons/branding/icon-name.svg" },
+        { id: 2, source: "/assets/icons/branding/icon-logo.svg" },
+      ],
     },
     {
       id: 2,
       title: "Name + Logo + Tagline",
       description:
         "Establish your entire brand identity and save with this bundle",
+      icon: [
+        { id: 1, source: "/assets/icons/branding/icon-name.svg" },
+        { id: 2, source: "/assets/icons/branding/icon-logo.svg" },
+        { id: 3, source: "/assets/icons/branding/icon-tagline.svg" },
+      ],
     },
     {
       id: 3,
       title: "Name + Tagline",
       description:
         "Communicate your vision with the perfect name/tagline combo.",
+      icon: [
+        { id: 1, source: "/assets/icons/branding/icon-name.svg" },
+        { id: 2, source: "/assets/icons/branding/icon-tagline.svg" },
+      ],
     },
     {
       id: 4,
       title: "Logo + Tagline",
       description:
         "Get a great logo design and a catch slogan / tagline for your brand.",
+      icon: [
+        { id: 1, source: "/assets/icons/branding/icon-logo.svg" },
+        { id: 2, source: "/assets/icons/branding/icon-tagline.svg" },
+      ],
     },
     {
       id: 5,
       title: "Logo + Business Cards + Stationary",
       description:
         "Get your logo, business cards and stationary designed together and save.",
+      icon: [
+        { id: 1, source: "/assets/icons/branding/icon-name.svg" },
+        { id: 2, source: "/assets/icons/branding/icon-logo.svg" },
+        { id: 3, source: "/assets/icons/branding/icon-tagline.svg" },
+      ],
     },
   ];
 
@@ -76,6 +100,7 @@ export default function ContestCategory(props: CategoryProps) {
             title={category.title}
             description={category.description}
             handleNextStep={props.handleNextStep}
+            icon={category.icon}
           />
         ))}
       </div>
@@ -96,6 +121,7 @@ export default function ContestCategory(props: CategoryProps) {
             title={bundle.title}
             description={bundle.description}
             handleNextStep={props.handleNextStep}
+            icon={bundle.icon}
           />
         ))}
       </div>

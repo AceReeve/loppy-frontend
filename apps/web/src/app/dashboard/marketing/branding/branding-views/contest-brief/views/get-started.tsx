@@ -1,4 +1,6 @@
 import { Button } from "@repo/ui/components/ui";
+import { ArrowRight } from "lucide-react";
+
 interface GetStartedProps {
   handleNextView: () => void;
 }
@@ -30,7 +32,7 @@ export default function GetStarted({ handleNextView }: GetStartedProps) {
       </div>
       <Button onClick={handleNextView} className="w-full p-6 text-[30px]">
         {" "}
-        Get Started -&gt;
+        Get Started <ArrowRight />
       </Button>
     </div>
   );

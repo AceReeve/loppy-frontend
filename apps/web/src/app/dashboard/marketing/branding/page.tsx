@@ -45,11 +45,11 @@ export default function Page() {
   const getState = (processId: number) => {
     if (processId < step + 1) {
       return "done";
-    } else if (processId === step + 1) {
-      return "current";
-    } else {
-      return "disabled";
     }
+    if (processId === step + 1) {
+      return "current";
+    }
+    return "disabled";
   };
 
   return (

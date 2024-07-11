@@ -16,7 +16,7 @@ export default function FormRadioCard(props: CardProps) {
       value={props.value}
     >
       <div
-        className={`${props.isRecommended ? "block" : "hidden"}  absolute -top-3 left-0 right-0 mx-auto block w-[100px] rounded-full border-2 border-white bg-orange-500 p-1 text-center text-[8px] text-white`}
+        className={`${props.isRecommended ? "block" : "hidden"}   ${props.checked ? "bg-orange-500" : "bg-gray-400"} absolute -top-3 left-0 right-0 mx-auto block w-[100px] rounded-full border-2 border-white  p-1 text-center text-[8px] text-white`}
       >
         Recommended
       </div>

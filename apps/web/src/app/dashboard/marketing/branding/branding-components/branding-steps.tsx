@@ -1,3 +1,6 @@
+import { Check } from "lucide-react";
+import React from "react";
+
 interface ProcessProps {
   id: number;
   name: string;
@@ -38,22 +41,7 @@ export default function BrandingSteps(prop: ProcessProps) {
         {prop.state !== "done" ? (
           prop.id.toString()
         ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="14"
-            viewBox="0 0 18 14"
-            fill="none"
-            className="m-auto flex size-4 flex-col items-center"
-          >
-            <path
-              d="M1.80005 8.05L5.91433 12.25L16.2 1.75"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <Check className="m-auto- size-7" />
         )}
       </div>
       <h1 className="text-md px-2 lg:text-sm">{prop.name}</h1>

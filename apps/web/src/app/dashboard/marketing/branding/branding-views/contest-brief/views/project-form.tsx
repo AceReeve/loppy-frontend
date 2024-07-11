@@ -11,8 +11,51 @@ interface ProjectProps {
 }
 export default function ProjectForm(props: ProjectProps) {
   const [matchingDomain, setMatchingDomain] = useState("0");
-
-  console.log(matchingDomain);
+  const matchingDomains = [
+    {
+      id: 1,
+      header: "Yes",
+      description: "But Minor variations are allowed",
+      value: "0",
+      isRecommended: true,
+      checked: false,
+    },
+    {
+      id: 2,
+      header: "Yes",
+      description: "Domain should exactly match the name",
+      value: "1",
+      isRecommended: false,
+      checked: false,
+    },
+    {
+      id: 3,
+      header: "No",
+      description: "I am only looking for a name, not a Domain",
+      value: "2",
+      isRecommended: false,
+      checked: false,
+    },
+  ];
+  const [openURL, setOpenURL] = useState("0");
+  const openURLs = [
+    {
+      id: 1,
+      header: "Yes",
+      description: "But Minor variations are allowed",
+      value: "0",
+      isRecommended: true,
+      checked: false,
+    },
+    {
+      id: 2,
+      header: "No",
+      description: "Domain should exactly match the name",
+      value: "1",
+      isRecommended: false,
+      checked: false,
+    },
+  ];
 
   return (
     <div className="mt-16 ">
@@ -36,10 +79,7 @@ export default function ProjectForm(props: ProjectProps) {
         </div>
         <div>
           <h1 className=" text-[14px] font-bold">Give your project a title</h1>
-          <Input
-            className="mt-2"
-            placeholder={"Health & Air Conditioning"}
-          ></Input>
+          <Input className="mt-2" placeholder="Health & Air Conditioning" />
         </div>
 
         <div>
@@ -66,7 +106,7 @@ export default function ProjectForm(props: ProjectProps) {
             Select from these options or type in any word or short phrase that
             captures your ideal positioning.
           </p>
-          <Input className="mt-2" placeholder={"Fun and playful"} />
+          <Input className="mt-2" placeholder="Fun and playful" />
         </div>
 
         <div>
@@ -96,27 +136,16 @@ export default function ProjectForm(props: ProjectProps) {
             value={matchingDomain}
             onValueChange={setMatchingDomain}
           >
-            <FormRadioCard
-              isRecommended
-              value="0"
-              header="Yes"
-              description="But Minor variations are allowed"
-              checked={matchingDomain === "0"}
-            />
-            <FormRadioCard
-              isRecommended={false}
-              value="1"
-              header="Yes"
-              description="Domain should exactly match the name "
-              checked={matchingDomain === "1"}
-            />
-            <FormRadioCard
-              isRecommended={false}
-              value="2"
-              header="No"
-              description="I am only looking for a name, not a Domain"
-              checked={matchingDomain === "2"}
-            />
+            {matchingDomains.map((matching) => (
+              <FormRadioCard
+                key={matching.id}
+                header={matching.header}
+                description={matching.description}
+                value={matching.value}
+                isRecommended={matching.isRecommended}
+                checked={matchingDomain === matching.value.toString()}
+              />
+            ))}
           </RadioCards>
           <p className="mt-4 font-open-sans text-[12px] text-gray-400">
             If you want a matching domain, our platform will only accept those
@@ -129,19 +158,22 @@ export default function ProjectForm(props: ProjectProps) {
             Are you open to any other URL extensions besides (.com)?
           </h1>
 
-          <RadioCards className="mt-4 flex " defaultValue="1">
-            <FormRadioCard
-              isRecommended={false}
-              value={"0"}
-              header={"Yes"}
-              description={"I'm open to other URL extensions"}
-            />
-            <FormRadioCard
-              isRecommended={true}
-              value="1"
-              header="No"
-              description="I am only looking for a (.com) domain"
-            />
+          <RadioCards
+            className="mt-4 flex "
+            defaultValue="1"
+            value={openURL}
+            onValueChange={setOpenURL}
+          >
+            {openURLs.map((open) => (
+              <FormRadioCard
+                key={open.id}
+                header={open.header}
+                description={open.description}
+                value={open.value}
+                isRecommended={open.isRecommended}
+                checked={openURL === open.value.toString()}
+              />
+            ))}
           </RadioCards>
         </div>
         <div className=" mt-10 flex justify-between">
