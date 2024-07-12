@@ -22,6 +22,7 @@
     "@stripe/stripe-js": "^3.4.0",
     "@tanstack/react-table": "^8.17.3",
     "apexcharts": "^3.49.1",
+    "external-svg-loader": "^1.7.1",
     "gsap": "^3.12.5",
     "iconsax-react": "^0.0.8",
     "lucide-react": "^0.378.0",
