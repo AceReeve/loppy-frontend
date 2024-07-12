@@ -2,6 +2,7 @@ import { baseApi } from "../api";
 import {
   type CreateNewPasswordPayload,
   type CreateResetPasswordPayload,
+  type GetResetPasswordResponse,
 } from "./types/forgot-password.ts";
 
 const api = baseApi
@@ -11,7 +12,7 @@ const api = baseApi
   .injectEndpoints({
     endpoints: (builder) => ({
       sendResetPassword: builder.mutation<
-        undefined,
+        GetResetPasswordResponse,
         CreateResetPasswordPayload
       >({
         query: (payload) => {

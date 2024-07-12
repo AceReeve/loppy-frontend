@@ -1,5 +1,5 @@
 "use client";
-import { Setting2 } from "iconsax-react";
+import { Setting2, VideoOctagon } from "iconsax-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
@@ -72,11 +72,18 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/workflows",
       id: 7,
     },
+
     {
       title: "Reporting",
       imageIcon: "/assets/icons/sidebar-icons/icon-reporting.svg",
       url: "/reporting",
       id: 8,
+    },
+    {
+      title: "Branding",
+      icon: <VideoOctagon className="relative size-6" />,
+      url: "/branding",
+      id: 9,
     },
   ];
 

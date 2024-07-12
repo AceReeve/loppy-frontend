@@ -37,7 +37,7 @@ export default function ForgotPassword() {
         nextProcess();
       })
       .catch((e: unknown) => {
-        setError("Failed to Submit");
+        setError(getErrorMessage(e));
         toast({
           description: getErrorMessage(e),
         });
