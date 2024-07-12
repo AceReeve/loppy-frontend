@@ -33,3 +33,4 @@ export * from "./toaster.tsx";
 export * from "./toggle.tsx";
 export * from "./toggle-group.tsx";
 export * from "./use-toast.ts";
+export * from "./vertical-menu.tsx";

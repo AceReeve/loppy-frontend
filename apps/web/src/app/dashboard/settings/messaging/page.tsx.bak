@@ -35,7 +35,7 @@ const MessagingCredsSchema = z.object({
   twilio_number: z.string().min(1),
 });
 
-export default function Page() {
+export default function PageTsx() {
   const {
     data: twilioCredentials,
     isLoading: isGetLoading,

@@ -1,4 +1,4 @@
-import { Separator, Switch } from "@repo/ui/components/ui";
+import { Switch } from "@repo/ui/components/ui";
 import Image from "next/image";
 import React from "react";
 
@@ -17,9 +17,8 @@ export default function AccountComponent(accountProp: AccountProp) {
   };
   return (
     <div className="col-span-5">
-      {accountProp.index < 2 && <Separator />}
-      <div className=" h- flex h-[90px] gap-3 bg-white p-4">
-        <div className="flex  items-center">
+      <div className="flex h-[90px] gap-3 p-4">
+        <div className="flex items-center">
           <Image
             //ref={loginObject}
             alt="login-cover"
@@ -38,14 +37,13 @@ export default function AccountComponent(accountProp: AccountProp) {
           </div>
           <div className="flex items-center justify-center ">
             <Switch
-              className="bg-orange-500"
+              className="bg-primary"
               checked={accountProp.isConnected}
               onChange={handleToggleSwitch}
             />
           </div>
         </div>
       </div>
-      <Separator />
     </div>
   );
 }

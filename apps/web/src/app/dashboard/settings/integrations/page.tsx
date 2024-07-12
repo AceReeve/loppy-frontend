@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@repo/ui/components/ui";
-import AccountComponent from "@/src/app/dashboard/settings/connected-account/component-account";
+import AccountComponent from "./component-account";
 
 export default function ConnectedAccounts() {
   const [accounts, setAccounts] = useState([
