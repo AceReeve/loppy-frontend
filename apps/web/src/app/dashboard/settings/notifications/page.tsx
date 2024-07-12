@@ -9,7 +9,7 @@ import React from "react";
 export default function Notifications() {
   return (
     <>
-      <div className="flex h-auto w-1/2 flex-col gap-5 ">
+      <div className="flex h-auto max-w-3xl flex-col gap-5">
         <div className="space-y-1">
           <h1 className="text-lg font-semibold">Email Notifications</h1>
           <p className="text-sm text-gray-500">
@@ -62,7 +62,7 @@ export default function Notifications() {
         </div>
         <div className="space-y-4">
           <RadioGroup className="flex flex-col content-center justify-between gap-5 space-y-4 ">
-            <div className="flex h-[20px] flex-row content-center gap-5">
+            <div className="flex flex-row content-center gap-5">
               <RadioGroupItem className="my-auto" value="SendEmail" />
               <div>
                 <p className="text-md font-nunito ">Most secure</p>
@@ -72,7 +72,7 @@ export default function Notifications() {
                 </p>
               </div>
             </div>
-            <div className="flex h-[20px] flex-row content-center gap-5">
+            <div className="flex flex-row content-center gap-5">
               <RadioGroupItem className="my-auto" value="OnceAnHour" />
               <div>
                 <p className="text-md font-nunito ">Standard</p>
@@ -82,7 +82,7 @@ export default function Notifications() {
                 </p>
               </div>
             </div>
-            <div className="flex h-[20px] flex-row content-center gap-5">
+            <div className="flex flex-row content-center gap-5">
               <RadioGroupItem className="my-auto" value="Never" />
               <div>
                 <p className="text-md font-nunito ">

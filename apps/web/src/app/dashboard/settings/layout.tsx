@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { VerticalMenu, VerticalMenuLink } from "@repo/ui/components/ui";
 import React from "react";
 import { cn } from "@repo/ui/utils";
+import { BellAlertIcon } from "@heroicons/react/20/solid";
 import { type MenuLinkItem } from "@/src/types/types";
 import IconOrganizationSettings from "@/src/app/dashboard/settings/icons/icon-organization-settings.tsx";
 import IconUsers from "@/src/app/dashboard/settings/icons/icon-users.tsx";
@@ -95,6 +96,12 @@ export default function Layout({
           url: "/referrals",
           id: 8,
         },
+        {
+          title: "Notifications",
+          icon: <BellAlertIcon />,
+          url: "/notifications",
+          id: 9,
+        },
       ],
     },
     {
@@ -106,13 +113,13 @@ export default function Layout({
           title: "Billing Overview",
           icon: <IconBillingOverview />,
           url: "/billing-overview",
-          id: 9,
+          id: 10,
         },
         {
           title: "Credit Usage",
           icon: <IconCreditUsage />,
           url: "/credit-usage",
-          id: 10,
+          id: 11,
         },
       ],
     },
@@ -125,19 +132,19 @@ export default function Layout({
           title: "OAuth Applications",
           icon: <IconOAuthApplications />,
           url: "/oauth-applications",
-          id: 11,
+          id: 12,
         },
         {
           title: "Public API Tokens",
           icon: <IconOAuthApplications />,
           url: "/public-api-tokens",
-          id: 12,
+          id: 13,
         },
         {
           title: "Authorized Apps",
           icon: <IconOAuthApplications />,
           url: "/authorized-apps",
-          id: 13,
+          id: 14,
         },
       ],
     },
@@ -180,7 +187,7 @@ export default function Layout({
         </VerticalMenu>
       </div>
 
-      <div className="relative w-full rounded-3xl bg-card">{children}</div>
+      <div className="relative w-full rounded-3xl bg-card p-10">{children}</div>
     </div>
   );
 }
