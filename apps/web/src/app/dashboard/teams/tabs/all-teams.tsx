@@ -1,7 +1,7 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Button, Input } from "@repo/ui/components/ui";
 import React from "react";
-import AccountComponent from "@/src/app/dashboard/settings/connected-account/component-account";
+import AccountComponent from "@/src/app/dashboard/settings/integrations/component-account";
 
 export default function AllTeams() {
   return (
