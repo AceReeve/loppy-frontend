@@ -12,6 +12,7 @@ export * from "./dropdown-menu.tsx";
 export * from "./file-dropzone.tsx";
 export * from "./form.tsx";
 export * from "./input.tsx";
+export * from "./label.tsx";
 export * from "./multiselect.tsx";
 export * from "./navigation-menu.tsx";
 export * from "./input-otp.tsx";

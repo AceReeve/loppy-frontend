@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary, react-hooks/exhaustive-deps -- remove ternary errors, */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- remove tabIndex errors */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition -- remove tabIndex errors */
+/* eslint-disable jsx-a11y/aria-props -- remove aria-description errors */
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";

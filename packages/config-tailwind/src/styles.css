@@ -90,7 +90,7 @@
     .input
     {
         @apply focus:outline-none focus:ring-primary focus:border-primary p-3.5
-        border-[#EAEAEA] border rounded-lg bg-white shadow-soft font-nunito placeholder-[#ADA7A7]
+        border-[#EAEAEA] border rounded-lg bg-white shadow-soft font-nunito placeholder-[#ADA7A7] placeholder:font-light
     }
 
     [type='checkbox'] {

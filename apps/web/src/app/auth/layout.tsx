@@ -51,7 +51,7 @@ export default function Layout({
 
         {/* Sign Up / Login Section */}
         <main className=" flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-12 lg:p-0 lg:px-16 lg:py-12 xl:col-span-6">
-          <div className=" z-20 h-auto  flex-1 rounded-2xl bg-white p-10 drop-shadow-xl xl:max-w-[500px] xl:p-4">
+          <div className="z-20 h-auto flex-1 rounded-2xl bg-white p-4 drop-shadow-xl md:p-8 xl:max-w-[500px]">
             <Suspense>{children}</Suspense>
           </div>
         </main>

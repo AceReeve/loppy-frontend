@@ -1,26 +1,26 @@
 import Image from "next/image";
+import { Button } from "@repo/ui/components/ui";
 import { handleOAuthSignin } from "@/src/actions/login-actions";
 
 export default function FacebookSignInButton() {
   return (
-    <button
-      className="relative flex h-12 flex-1 items-center  gap-2 rounded-lg border border-[#DBDBDB] bg-white"
+    <Button
+      className="relative flex h-12 flex-1 items-center  gap-2 rounded-lg border border-[#DBDBDB] bg-white py-2"
       onClick={async () => {
         await handleOAuthSignin("facebook");
       }}
-      type="button"
+      variant="ghost"
     >
       <Image
         src="/assets/icons/icon-fb-colored.svg"
-        width={0}
-        height={0}
-        sizes="100vw"
-        className="size-5 absolute  mx-3"
+        width={15}
+        height={15}
+        className="size-auto"
         alt=""
       />
-      <div className="font-nunito text-center text-sm font-semibold text-gray-800 m-auto">
+      <div className="m-auto text-center font-nunito text-sm font-semibold text-gray-800">
         Login with Facebook
       </div>
-    </button>
+    </Button>
   );
 }
