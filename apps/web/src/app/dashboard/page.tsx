@@ -373,7 +373,7 @@ export default function Page() {
               </ToggleGroup>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative">
             <ColumnChart />
           </CardContent>
         </Card>
