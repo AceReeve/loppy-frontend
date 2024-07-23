@@ -131,7 +131,7 @@ export default function ColumnChart() {
   };
 
   return (
-    <div className="absolute left-0 top-3 size-full px-4 py-5">
+    <div className="h-[244px] w-full">
       <Chart
         height="100%"
         options={options}
