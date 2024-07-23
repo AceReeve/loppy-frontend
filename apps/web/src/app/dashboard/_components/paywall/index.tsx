@@ -20,7 +20,7 @@ export default function Paywall() {
 
   const views = [
     {
-      label: "Register Details",
+      label: "Register TeamDetails",
       id: "register-details",
       component: RegisterDetails,
     },

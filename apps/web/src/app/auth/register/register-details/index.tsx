@@ -120,14 +120,14 @@ export default function RegisterDetails() {
         setViewIndex(1);
         toast({
           title: "Updated Successfully",
-          description: "User Details has been created.",
+          description: "User TeamDetails has been created.",
           variant: "success",
         });
         form.reset();
       } else if (response.error) {
         // Handle submission failure
         toast({
-          title: "Create User Details Error",
+          title: "Create User TeamDetails Error",
           description:
             //response.error
             //? response.error.toString() :
@@ -153,7 +153,7 @@ export default function RegisterDetails() {
       <>
         <svg
           aria-hidden="true"
-          className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400"
+          className="mb-3 h-8 w-8 text-gray-500 dark:text-gray-400"
           fill="none"
           viewBox="0 0 20 16"
           xmlns="http://www.w3.org/2000/svg"
@@ -192,9 +192,9 @@ export default function RegisterDetails() {
     //<div className="relative m-auto p-8 flex min-h-[85%] max-h-full h-full w-full max-w-[1283px] flex-col rounded-[29px] border border-neutral-300 bg-gradient-to-b from-indigo-950 to-purple-950">
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="rounded-[29px] min-h-[800px]  bg-white flex m-5">
+        <div className="m-5 flex  min-h-[800px] rounded-[29px] bg-white">
           <div className=" w-full  px-10 py-20 ">
-            <div className="justify-between flex flex-col gap-5">
+            <div className="flex flex-col justify-between gap-5">
               <div className="text-left">
                 <h1 className="font-montserrat text-2xl font-bold text-primary sm:text-[42px]">
                   Complete your profile details
@@ -263,7 +263,7 @@ export default function RegisterDetails() {
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="grid-cols-2 h-[40px]  content-center "
+                          className="h-[40px] grid-cols-2  content-center "
                         >
                           <FormItem
                             className="flex items-center
@@ -373,10 +373,10 @@ export default function RegisterDetails() {
             </div>
           </div>
 
-          <div className=" w-3/5 flex flex-col gap-10 py-20 border-l-2">
+          <div className=" flex w-3/5 flex-col gap-10 border-l-2 py-20">
             <Dialog>
               <DialogTrigger>
-                <div className="rounded-full w-[200px] h-[200px] bg-slate-300 mx-auto"></div>
+                <div className="mx-auto h-[200px] w-[200px] rounded-full bg-slate-300"></div>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -389,8 +389,8 @@ export default function RegisterDetails() {
                   //onValueChange={props.setFiles}
                   // value={props.files}
                 >
-                  <FileInput className="outline-dashed outline-1 outline-gray-500 py-10">
-                    <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full">
+                  <FileInput className="py-10 outline-dashed outline-1 outline-gray-500">
+                    <div className="flex w-full flex-col items-center justify-center pb-4 pt-3">
                       <FileSvgDraw />
                     </div>
                   </FileInput>
@@ -400,11 +400,11 @@ export default function RegisterDetails() {
                 </div>
               </DialogContent>
             </Dialog>
-            <p className="mt-2 text-[13px] font-normal text-gray-500 text-center">
+            <p className="mt-2 text-center text-[13px] font-normal text-gray-500">
               Please select your image
             </p>
             <Button
-              className="mx-auto w-[200px] h-[50px] text-lg"
+              className="mx-auto h-[50px] w-[200px] text-lg"
               type="submit"
             >
               {isPending ? <LoadingSpinner /> : null}
