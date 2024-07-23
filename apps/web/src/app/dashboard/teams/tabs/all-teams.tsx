@@ -1,7 +1,6 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Button, Input } from "@repo/ui/components/ui";
 import React from "react";
-import AccountComponent from "@/src/app/dashboard/settings/integrations/component-account";
 
 export default function AllTeams() {
   return (
@@ -25,10 +24,6 @@ export default function AllTeams() {
       </div>
 
       <div className="m-auto mt-5 grid w-full grid-cols-1 gap-5 px-20 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" />
-      <AccountComponent />
-      <AccountComponent />
-      <AccountComponent />
-      <AccountComponent />
     </>
   );
 }

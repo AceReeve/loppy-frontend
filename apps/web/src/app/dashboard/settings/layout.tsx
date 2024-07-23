@@ -85,7 +85,7 @@ export default function Layout({
       url: "",
       children: [
         {
-          title: "Personal Settings",
+          title: "Personal",
           icon: <IconPersonalSettings />,
           url: "/personal-settings",
           id: 7,
@@ -124,7 +124,7 @@ export default function Layout({
       ],
     },
     {
-      title: "Developer Settings",
+      title: "Developer",
       id: 3,
       url: "",
       children: [
