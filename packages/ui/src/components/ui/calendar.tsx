@@ -1,13 +1,64 @@
-/* eslint-disable react/no-unstable-nested-components -- remove lint errors */
 "use client";
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
-import { cn } from "../../lib/utils.ts";
+import { DayPicker, type DropdownProps } from "react-day-picker";
+import { cn } from "../../lib/utils";
 import { buttonVariants } from "./button.tsx";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select.tsx";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+
+function Dropdown({ value, onChange, children, ...props }: DropdownProps) {
+  const options = React.Children.toArray(children) as React.ReactElement<
+    React.HTMLProps<HTMLOptionElement>
+  >[];
+  const selected = options.find((child) => child.props.value === value);
+  const handleChange = (val: string) => {
+    const changeEvent = {
+      target: { value: val },
+    } as React.ChangeEvent<HTMLSelectElement>;
+    onChange?.(changeEvent);
+  };
+  return (
+    <Select
+      value={value?.toString()}
+      onValueChange={(val) => {
+        handleChange(val);
+      }}
+      {...props}
+    >
+      <SelectTrigger className="pr-1.5 focus:ring-0" variant="outline">
+        <SelectValue>{selected?.props.children}</SelectValue>
+      </SelectTrigger>
+      <SelectContent position="popper">
+        <div className="custom-scrollbar-neutral overflow-y-auto h-80">
+          {options.map((option, id: number) => (
+            <SelectItem
+              key={`${option.props.value?.toString() ?? ""}-${id.toString()}`}
+              value={option.props.value?.toString() ?? ""}
+            >
+              {option.props.children}
+            </SelectItem>
+          ))}
+        </div>
+      </SelectContent>
+    </Select>
+  );
+}
+
+function IconLeft() {
+  return <ChevronLeft className="h-4 w-4" />;
+}
+function IconRight() {
+  return <ChevronRight className="h-4 w-4" />;
+}
 
 function Calendar({
   className,
@@ -17,12 +68,18 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+      showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
+        vhidden: "vhidden hidden",
         caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium",
+        caption_dropdowns: cn(
+          "flex justify-between gap-1",
+          props.captionLayout === "dropdown" && "w-full",
+        ),
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
@@ -32,8 +89,7 @@ function Calendar({
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
-        head_cell:
-          "text-gray-500 rounded-md w-9 font-normal text-[0.8rem] dark:text-gray-400",
+        head_cell: "text-muted-foreground w-9 font-medium text-[0.8rem]",
         row: "flex w-full mt-2",
         cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-100/50 [&:has([aria-selected])]:bg-gray-100 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 dark:[&:has([aria-selected].day-outside)]:bg-gray-800/50 dark:[&:has([aria-selected])]:bg-gray-800",
         day: cn(
@@ -41,8 +97,7 @@ function Calendar({
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
         ),
         day_range_end: "day-range-end",
-        day_selected:
-          "bg-gray-900 text-gray-50 hover:bg-gray-900 hover:text-gray-50 focus:bg-gray-900 focus:text-gray-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50 dark:hover:text-gray-900 dark:focus:bg-gray-50 dark:focus:text-gray-900",
+        day_selected: buttonVariants({ variant: "default" }),
         day_today:
           "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50",
         day_outside:
@@ -54,10 +109,10 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
-        IconRight: () => <ChevronRight className="h-4 w-4" />,
+        Dropdown,
+        IconLeft,
+        IconRight,
       }}
-      showOutsideDays={showOutsideDays}
       {...props}
     />
   );

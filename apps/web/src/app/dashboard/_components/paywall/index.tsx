@@ -9,7 +9,6 @@ import { usePaywallState } from "@/src/providers/paywall-provider";
 import PaywallSteps from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps";
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
-import RegisterDetails from "../../../auth/register/register-details";
 
 export default function Paywall() {
   const router = useRouter();
@@ -19,11 +18,6 @@ export default function Paywall() {
   const viewParam = searchParams.get("view");
 
   const views = [
-    {
-      label: "Register TeamDetails",
-      id: "register-details",
-      component: RegisterDetails,
-    },
     {
       label: "Plan Selection",
       id: "plan-selection",
@@ -39,10 +33,6 @@ export default function Paywall() {
       id: "team-setup",
       component: PaywallTeamSetup,
     },
-    // {
-    //   label: "Team Setup",
-    //   component: PaywallPaymentMethod,
-    // },
   ];
 
   const viewsMap = useMemo(
@@ -86,20 +76,20 @@ export default function Paywall() {
     }
     if (paymentStatus?.stripeSubscriptionStatus === PaymentStatus.SUCCEEDED) {
       return (
-        <div className="relative m-auto flex min-h-[85%] w-full max-w-[1283px] flex-col rounded-[29px] border border-neutral-300 bg-gradient-to-b from-indigo-950 to-purple-950">
+        <div className="relative m-auto flex min-h-[85%] w-full max-w-[1283px] flex-col rounded-[29px] bg-gradient-to-b from-indigo-950 to-purple-950">
           <PaywallTeamSetup />
         </div>
       );
     }
     return (
-      <div className="relative m-auto flex min-h-[85%] w-full max-w-[1283px] flex-col rounded-[29px] border border-neutral-300 bg-gradient-to-b from-indigo-950 to-purple-950">
+      <div className="relative m-auto flex w-full max-w-[1283px] flex-col rounded-[29px] bg-gradient-to-b from-[#2e1249] to-[#401a64]">
         <Components />
       </div>
     );
   };
 
   return (
-    <div className="absolute left-0 top-0 z-10 flex size-full">
+    <div className="absolute left-0 top-0 z-10 flex min-h-full min-w-full p-5 pt-[55px]">
       <div className="absolute left-0 top-0 size-full bg-black bg-opacity-40 backdrop-blur-md" />
       {renderComponent()}
     </div>

@@ -90,7 +90,7 @@
     .input
     {
         @apply focus:outline-none focus:ring-primary focus:border-primary p-3.5
-        border-[#EAEAEA] border rounded-lg bg-white shadow-soft font-nunito placeholder-[#ADA7A7] placeholder:font-light
+        border-[#EAEAEA] border rounded-lg bg-white font-nunito placeholder-gray-400 placeholder:font-light
     }
 
     [type='checkbox'] {
@@ -116,6 +116,15 @@
 
     h2, h3 {
         @apply font-roboto;
+    }
+
+    /* Remove arrow buttons on number input */
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number'] {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield !important;
     }
 }
 

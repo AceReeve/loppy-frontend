@@ -11,6 +11,10 @@ import {
 } from "@repo/redux-utils/src/endpoints/payment.ts";
 import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
+import { useForm, type UseFormReturn } from "react-hook-form";
+import type { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RegisterDetailsSchema } from "@/src/schemas";
 import type { PlanDetails } from "@/src/data/payment-plan-details";
 
 interface ContextType {
@@ -20,17 +24,20 @@ interface ContextType {
   paymentPlan: PlanDetails | undefined;
   toNextView: () => void;
   toNextStep: () => void;
-  toStepIndex: (_index: number) => void;
-  setViewIndex: (_index: number) => void;
-  onPlanSelect: (_plan: PlanDetails) => void;
-  onSubmit: (_e: React.SyntheticEvent) => void;
-  onPromoCodeSubmit: (_e: React.SyntheticEvent) => void;
+  toStepIndex: (index: number) => void;
+  setViewIndex: (index: number) => void;
+  onPlanSelect: (plan: PlanDetails) => void;
+  onSubmit: (e: React.SyntheticEvent) => void;
+  onPromoCodeSubmit: (e: React.SyntheticEvent) => void;
   clientSecret: string | undefined;
   confirmationToken: string | undefined;
   storage: { plan: PaymentPlan } | undefined;
   setStorage: ({ plan }: { plan: PaymentPlan }) => void;
   paymentStatus: GetPaymentStatusResponse | null | undefined;
   isPaymentProcessing: boolean;
+  nextStepEnabled: boolean;
+  setNextStepEnabled: (enabled: boolean) => void;
+  form: UseFormReturn<z.infer<typeof RegisterDetailsSchema>>;
 }
 
 const PaywallContext = createContext<ContextType | null>(null);
@@ -40,6 +47,23 @@ export default function PaywallProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const form = useForm<z.infer<typeof RegisterDetailsSchema>>({
+    resolver: zodResolver(RegisterDetailsSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      address: "",
+      address2: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      contact_no: "",
+      birthday: undefined,
+      gender: "",
+    },
+    mode: "all",
+  });
+
   const [createPaymentIntent, { data: clientSecret, isLoading }] =
     useCreatePaymentIntentMutation();
 
@@ -53,6 +77,7 @@ export default function PaywallProvider({
   const [stepIndex, setStepIndex] = useState(0);
   const [paymentPlan, setPaymentPlan] = useState<PlanDetails>();
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
+  const [nextStepEnabled, setNextStepEnabled] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
@@ -101,6 +126,20 @@ export default function PaywallProvider({
           stripe
             ?.createConfirmationToken({
               elements,
+              params: {
+                payment_method_data: {
+                  billing_details: {
+                    address: {
+                      city: form.getValues().city,
+                      state: form.getValues().state,
+                      line1: form.getValues().address,
+                      line2: form.getValues().address2,
+                    },
+                    name: `${form.getValues().first_name} ${form.getValues().last_name}`,
+                    phone: form.getValues().contact_no,
+                  },
+                },
+              },
             })
             .then((confirmTokenResult) => {
               if (confirmTokenResult.error) {
@@ -231,6 +270,9 @@ export default function PaywallProvider({
         setStorage,
         paymentStatus,
         isPaymentProcessing,
+        nextStepEnabled,
+        setNextStepEnabled,
+        form,
       }}
     >
       {isLoading ? <LoadingOverlay /> : null}

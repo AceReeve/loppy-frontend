@@ -26,7 +26,7 @@ const SelectTrigger = React.forwardRef<
     className={cn(
       "flex h-10 w-full",
       buttonVariants({ variant, size, className }),
-      "items-center justify-between",
+      "items-center justify-between data-[placeholder]:text-gray-400",
     )}
     {...props}
   >

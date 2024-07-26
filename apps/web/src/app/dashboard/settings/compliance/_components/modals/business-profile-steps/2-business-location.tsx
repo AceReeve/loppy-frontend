@@ -33,6 +33,7 @@ export default function BusinessLocation({
     defaultValues: {
       business_locations: [],
     },
+    mode: "onBlur",
   });
 
   const onSubmit = (data: z.infer<typeof businessLocationSchema>) => {

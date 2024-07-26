@@ -1,13 +1,15 @@
 import Image from "next/image";
 import { formatDecimal } from "@repo/hooks-and-utils/number-utils";
+import { Input } from "@repo/ui/components/ui";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 
 export default function PaywallOrderDetails() {
-  const { onPromoCodeSubmit, onSubmit, paymentPlan } = usePaywallState();
+  const { onPromoCodeSubmit, onSubmit, paymentPlan, nextStepEnabled } =
+    usePaywallState();
   const tax = 10;
 
   return (
-    <div className="font-nunito mx-auto max-w-[336px]">
+    <div className="mx-auto max-w-[336px] font-nunito">
       <div className="mb-5 text-lg font-bold leading-[18px] text-black">
         Order Details
       </div>
@@ -70,10 +72,7 @@ export default function PaywallOrderDetails() {
           </button>
         </div>
         <div className="mt-2 flex justify-between">
-          <input
-            type="text"
-            className="shadow-soft mt-1 block h-12 flex-1 rounded-lg border border-gray-200 bg-white"
-          />
+          <Input type="text" />
         </div>
       </form>
 
@@ -82,6 +81,7 @@ export default function PaywallOrderDetails() {
           className="btn-gradient-primary-lg mt-7 w-full"
           onClick={onSubmit}
           type="button"
+          disabled={!nextStepEnabled}
         >
           Next
         </button>

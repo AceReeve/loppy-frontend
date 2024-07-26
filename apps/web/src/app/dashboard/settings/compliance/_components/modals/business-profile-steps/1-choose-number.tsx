@@ -55,6 +55,7 @@ export default function ChooseNumber({
 }: StepComponentProps) {
   const form = useForm<z.infer<typeof chooseNumberSchema>>({
     resolver: zodResolver(chooseNumberSchema),
+    mode: "onBlur",
   });
 
   const onSubmit = (data: z.infer<typeof chooseNumberSchema>) => {
