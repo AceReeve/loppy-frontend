@@ -11,3 +11,5 @@ export interface InviteUserResponse {
     | undefined;
   invited_by: string;
 }
+
+export interface InviteUser {}

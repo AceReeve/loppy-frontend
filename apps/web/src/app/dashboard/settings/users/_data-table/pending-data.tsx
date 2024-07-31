@@ -47,7 +47,7 @@ interface DataTableProps<TData, TValue> {
   enablePagination?: boolean;
 }
 
-export function MemberDataTable<TData, TValue>({
+export function PendingDataTable<TData, TValue>({
   columns,
   data,
   noResultsComponent,
@@ -97,9 +97,9 @@ export function MemberDataTable<TData, TValue>({
   const [value, setValue] = useState("name");
 
   return (
-    <div className="w-full">
+    <div className="w-full font-poppins">
       <div className="flex place-content-center items-center py-2">
-        <div className="mb-6 flex w-full items-center justify-between">
+        <div className=" flex w-full items-center justify-between">
           {/*  <div className="relative flex w-full flex-row justify-start gap-4">
             <MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-5 w-5 text-gray-500" />
             <Input
@@ -112,9 +112,10 @@ export function MemberDataTable<TData, TValue>({
               value={(table.getColumn(value)?.getFilterValue() as string) ?? ""}
             />
           </div>*/}
-          <div className="flex w-full flex-row items-center justify-between">
-            <div className="relative flex w-full flex-row justify-between ">
+          <div className="block w-full  items-center py-4 ">
+            {/*            <div className="relative flex w-full flex-row justify-between ">
               <MagnifyingGlassIcon className="absolute left-2 top-1.5 h-5 w-5 text-gray-500 " />
+
               <Input
                 className="max-w-60 pl-10"
                 onChange={(event) =>
@@ -126,53 +127,18 @@ export function MemberDataTable<TData, TValue>({
                   (table.getColumn(value)?.getFilterValue() as string) ?? ""
                 }
               />
-            </div>
-            <Dialog>
-              <DialogTrigger>
-                <Button className="px-5">Add Member</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[800px] font-poppins">
-                <div className="flex justify-between">
-                  <div className="text-2xl">Invite Member</div>
-                  <p className="text-[12px]">
-                    <b>3</b> of <b>3</b> seats used
-                  </p>
-                </div>
-
-                <Separator />
-                <p className="text-[12px]">
-                  Chose the role and then enter the e-mail address or name of
-                  the person you wish to invite or search your team members.
-                </p>
-                <div className="flex justify-between space-x-2 p-1">
-                  <input className="h-10 w-full" placeholder="Email" />
-                  <div className="w-[250px]">
-                    <Select defaultValue="Administrator">
-                      <SelectTrigger
-                        className="text-md h-[40px] text-slate-500"
-                        variant="outline"
-                      >
-                        <SelectValue placeholder="Filter" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Administrator">
-                          Administrator
-                        </SelectItem>
-                        <SelectItem value="Manager">Manager</SelectItem>
-                        <SelectItem value="Member">Member</SelectItem>
-                        <SelectItem value="Observer">Observer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button className="text-md  px-5">Invite</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            </div>*/}
+            <h1 className="text-2xl text-slate-500 ">
+              Pending Invites ({data.length})
+            </h1>
+            <p className="text-sm font-light italic text-slate-400">
+              User that have not been accepted your invitation
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="w-full">
+      <div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

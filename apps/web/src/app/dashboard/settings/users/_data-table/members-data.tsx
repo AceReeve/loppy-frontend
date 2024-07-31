@@ -22,6 +22,12 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Input,
   Select,
   SelectContent,
@@ -39,6 +45,14 @@ import {
 } from "@repo/ui/components/ui";
 import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { SendInviteUsersSchema } from "@/src/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { useSendInviteUserMutation } from "@repo/redux-utils/src/endpoints/settings-user.ts";
+import { InviteUserPayload } from "@repo/redux-utils/src/endpoints/types/user";
+import { GetSendInviteUserPayload } from "@repo/redux-utils/src/endpoints/types/settings-user";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -95,6 +109,108 @@ export function MemberDataTable<TData, TValue>({
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("name");
+  const [error, setError] = useState("");
+
+  const [inviteUser, { isLoading, isError }] = useSendInviteUserMutation();
+
+  const formSchema = SendInviteUsersSchema;
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      users: [
+        {
+          email: "",
+          role: "",
+        },
+      ],
+    },
+  });
+
+  const onSubmit = async () => {
+    try {
+      const userInvite: GetSendInviteUserPayload = form.getValues();
+      const response = await inviteUser(userInvite)
+        .unwrap()
+        .then(() => {
+          console.log("success");
+          if (isLoading) {
+            return <div>isLoading</div>;
+          }
+        })
+        .catch((e: unknown) => {
+          setError(getErrorMessage(e));
+        });
+    } catch (error) {
+      return <div>isError + {getErrorMessage(error)}</div>;
+    }
+  };
+
+  const formComponent = (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {error ? (
+          <div
+            className="mb-5 rounded border-s-4 border-red-500 bg-red-50 p-4"
+            role="alert"
+          >
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        ) : null}
+        <div className="flex justify-between space-x-2 p-1">
+          <FormField
+            control={form.control}
+            name={`users.${0}.email`}
+            render={({ field }) => {
+              return (
+                <FormItem className="h-10 w-full">
+                  <FormControl>
+                    <Input autoComplete="off" placeholder="Email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name={`users.${0}.role`}
+            render={({ field }) => {
+              return (
+                <FormItem className="w-[250px]">
+                  <FormControl>
+                    <Select
+                      defaultValue="Administrator"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger
+                        className="text-md h-[40px] text-slate-500"
+                        variant="outline"
+                      >
+                        <SelectValue placeholder="Select Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Administrator">
+                          Administrator
+                        </SelectItem>
+                        <SelectItem value="Manager">Manager</SelectItem>
+                        <SelectItem value="Member">Member</SelectItem>
+                        <SelectItem value="Observer">Observer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <Button type="submit" className="text-md  px-5">
+            Invite
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
 
   return (
     <div className="w-full">
@@ -128,8 +244,8 @@ export function MemberDataTable<TData, TValue>({
               />
             </div>
             <Dialog>
-              <DialogTrigger>
-                <Button className="px-5">Add Member</Button>
+              <DialogTrigger asChild>
+                <Button className="px-5">Invite User</Button>
               </DialogTrigger>
               <DialogContent className="max-w-[800px] font-poppins">
                 <div className="flex justify-between">
@@ -138,34 +254,12 @@ export function MemberDataTable<TData, TValue>({
                     <b>3</b> of <b>3</b> seats used
                   </p>
                 </div>
-
                 <Separator />
                 <p className="text-[12px]">
                   Chose the role and then enter the e-mail address or name of
                   the person you wish to invite or search your team members.
                 </p>
-                <div className="flex justify-between space-x-2 p-1">
-                  <input className="h-10 w-full" placeholder="Email" />
-                  <div className="w-[250px]">
-                    <Select defaultValue="Administrator">
-                      <SelectTrigger
-                        className="text-md h-[40px] text-slate-500"
-                        variant="outline"
-                      >
-                        <SelectValue placeholder="Filter" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Administrator">
-                          Administrator
-                        </SelectItem>
-                        <SelectItem value="Manager">Manager</SelectItem>
-                        <SelectItem value="Member">Member</SelectItem>
-                        <SelectItem value="Observer">Observer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button className="text-md  px-5">Invite</Button>
-                </div>
+                {formComponent}
               </DialogContent>
             </Dialog>
           </div>

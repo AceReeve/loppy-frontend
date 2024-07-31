@@ -1,9 +1,12 @@
 "use client";
-import type { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@repo/ui/components/ui";
-import type { GetTeamMembersResponse } from "@repo/redux-utils/src/endpoints/types/team-roles.d.tsx";
 
-export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
+import type { ColumnDef } from "@tanstack/react-table";
+import { Button, Checkbox } from "@repo/ui/components/ui";
+import { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
+
+export const pendingColumns: ColumnDef<
+  GetInviteUserResponse["users"][number]
+>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -34,14 +37,14 @@ export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
     accessorKey: "name",
     header: "Name ",
     cell: ({ row }) => {
-      const name = `${row.original.first_name} ${row.original.last_name}`;
-      const email = row.original.email.toString();
+      //  const name = `${row.original.first_name} ${row.original.last_name}`;
+      // const email = row.original.email;
       return (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary" />
           <div className="flex flex-col">
-            <div className="font-medium">{name}</div>
-            <div className="text-gray-700">{email}</div>
+            {/*<div className="font-medium">{name}</div>*/}
+            <div className="text-gray-700">{row.original.email}</div>
           </div>
         </div>
       );
@@ -52,38 +55,39 @@ export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
     header: "Role",
 
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.role}</div>;
+      return <div className="font-medium">{row.original.role.role_name}</div>;
     },
   },
   {
     id: "actions",
-    cell: () => (
-      <div className="inline flex h-8 cursor-pointer flex-col items-end">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-          />
-        </svg>
-      </div>
-      /*      <Checkbox
-              aria-label="Select row"
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => {
-                row.toggleSelected(Boolean(value));
-              }}
-            />*/
-    ),
-    enableSorting: false,
-    enableHiding: false,
+    cell: () => {
+      /*      const [cancelInvite] = useCancelInviteMutation();
+
+      const handleOnSubmit = async () => {
+        try {
+          const response = await cancelInvite({
+            email: "cocoaic",
+          });
+        } catch (error) {}
+      };*/
+
+      return (
+        <div className="inline flex h-8 cursor-pointer flex-col items-end">
+          <Button variant={"destructive"}>Cancel Invite</Button>
+        </div>
+      );
+    },
+
+    /*      <Checkbox
+                aria-label="Select row"
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => {
+                  row.toggleSelected(Boolean(value));
+                }}
+              />*/
+
+    /*    enableSorting: false,
+    enableHiding: false,*/
   },
   /*  {
       accessorKey: "phone_number",

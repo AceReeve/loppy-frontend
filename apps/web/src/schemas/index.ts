@@ -210,3 +210,28 @@ export const CreateContactsFormSchema = z.object({
 
   tags: z.array(tagSchema).optional(),
 });
+
+export const SendInviteUserSchema = z.object({
+  email: z.string().min(1, {
+    message: "Email is Required",
+  }),
+  role: z.string().min(1, {
+    message: "Role is Required!",
+  }),
+});
+
+export const SendInviteUsersSchema1 = z.object({
+  users: z.array(SendInviteUserSchema),
+});
+
+export const SendInviteUsersSchema = z.object({
+  users: z.array(
+    z.object({
+      email: z
+        .string()
+        .min(1, { message: "Email is Required" })
+        .email({ message: "Invalid email format" }),
+      role: z.string().min(4, { message: "Role is Required" }),
+    }),
+  ),
+});
