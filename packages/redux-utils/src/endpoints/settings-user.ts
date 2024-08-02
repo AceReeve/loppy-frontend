@@ -28,10 +28,14 @@ const api = baseApi
       }),
 
       cancelInvite: builder.mutation<string, GetCancelInvitedUserPayload>({
-        query: (params) => {
-          //const queryParams = new URLSearchParams(params).toString();
+        query: (payload) => {
+          const params = new URLSearchParams({
+            email: payload.email,
+          }).toString();
           return {
             url: `user/cancel-invited-user?${params}`,
+            method: "POST",
+            body: payload,
           };
         },
         invalidatesTags: ["settings-user"],

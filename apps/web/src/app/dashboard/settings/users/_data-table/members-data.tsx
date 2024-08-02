@@ -43,17 +43,23 @@ import {
   TableRow,
   Textarea,
 } from "@repo/ui/components/ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { SendInviteUsersSchema } from "@/src/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { useSendInviteUserMutation } from "@repo/redux-utils/src/endpoints/settings-user.ts";
 import { InviteUserPayload } from "@repo/redux-utils/src/endpoints/types/user";
 import { GetSendInviteUserPayload } from "@repo/redux-utils/src/endpoints/types/settings-user";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { CheckCircle } from "lucide-react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -79,14 +85,14 @@ export function MemberDataTable<TData, TValue>({
 
   const [isFilterMode, setIsFilterMode] = useState(false);
 
-  interface FilterObject {
+  /*  interface FilterObject {
     label: string;
     value: string[];
-  }
+  }*/
 
-  const filterItems = (itemLabel: string) => {
+  /*  const filterItems = (itemLabel: string) => {
     return itemLabel.toLowerCase().includes(searchTerm.toLowerCase());
-  };
+  };*/
 
   const table = useReactTable({
     data,
@@ -107,12 +113,10 @@ export function MemberDataTable<TData, TValue>({
     },
   });
 
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState("name");
   const [error, setError] = useState("");
-
+  const [isSuccess, setIsSuccess] = useState(false);
   const [inviteUser, { isLoading, isError }] = useSendInviteUserMutation();
-
   const formSchema = SendInviteUsersSchema;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -126,16 +130,32 @@ export function MemberDataTable<TData, TValue>({
     },
   });
 
+  const {
+    reset,
+    formState: { errors },
+  } = form;
+
+  /*
+  const [users, setUsers] = useState([{ email: "", role: "" }]);
+  const addField = () => {
+    const newUsers = [...users, { email: "", role: "" }];
+    setUsers(newUsers);
+    // form.setValue("users", newUsers);
+  };
+*/
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "users",
+  });
+
   const onSubmit = async () => {
     try {
       const userInvite: GetSendInviteUserPayload = form.getValues();
       const response = await inviteUser(userInvite)
         .unwrap()
         .then(() => {
-          console.log("success");
-          if (isLoading) {
-            return <div>isLoading</div>;
-          }
+          setIsSuccess(true);
         })
         .catch((e: unknown) => {
           setError(getErrorMessage(e));
@@ -144,51 +164,76 @@ export function MemberDataTable<TData, TValue>({
       return <div>isError + {getErrorMessage(error)}</div>;
     }
   };
+  /*
+  useEffect(() => {
+    form.setValue("users", users);
+  }, [users]);
+*/
+
+  const [open, setOpen] = useState(false);
+  const [rolesOpen, setRolesOpen] = useState(false);
+  const handleDialogOpenChange = (open: boolean) => {
+    if (open) {
+      reset(); // Reset the form when the dialog opens
+      setIsSuccess(false);
+      setError("");
+    }
+  };
 
   const formComponent = (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {error ? (
+    <FormProvider {...form}>
+      <p className="text-[12px]">
+        Chose the role and then enter the e-mail address or name of the person
+        you wish to invite or search your team members.
+      </p>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/*        {isError && <p className="px-3">Error</p>}*/}
+        {error && (
           <div
             className="mb-5 rounded border-s-4 border-red-500 bg-red-50 p-4"
             role="alert"
           >
-            <p className="text-sm text-red-700">{error}</p>
+            <p className="text-sm text-red-700">Invitation Failed: {error}</p>
           </div>
-        ) : null}
-        <div className="flex justify-between space-x-2 p-1">
-          <FormField
-            control={form.control}
-            name={`users.${0}.email`}
-            render={({ field }) => {
-              return (
-                <FormItem className="h-10 w-full">
-                  <FormControl>
+        )}
+        {fields.map((field, index) => (
+          <div key={field.id} className="mb-4 flex flex-col space-y-2">
+            <div className="flex items-start space-x-2">
+              <Controller
+                name={`users.${index}.email`}
+                control={form.control}
+                render={({ field }) => (
+                  <div className=" w-full">
                     <Input autoComplete="off" placeholder="Email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-          <FormField
-            control={form.control}
-            name={`users.${0}.role`}
-            render={({ field }) => {
-              return (
-                <FormItem className="w-[250px]">
-                  <FormControl>
-                    <Select
-                      defaultValue="Administrator"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    {errors.users &&
+                    errors.users[index] &&
+                    errors.users[index].email ? (
+                      <p className="mt-2 text-[0.8rem] font-medium text-error">
+                        {errors.users[index].email.message}
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+              />
+              <Controller
+                name={`users.${index}.role`}
+                control={form.control}
+                render={({ field }) => (
+                  <div className="w-[250px]">
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger
                         className="text-md h-[40px] text-slate-500"
                         variant="outline"
                       >
                         <SelectValue placeholder="Select Role" />
                       </SelectTrigger>
+                      {errors.users &&
+                      errors.users[index] &&
+                      errors.users[index].role ? (
+                        <p className="mt-2 text-[0.8rem] font-medium text-error">
+                          {errors.users[index].role.message}
+                        </p>
+                      ) : null}
                       <SelectContent>
                         <SelectItem value="Administrator">
                           Administrator
@@ -198,20 +243,60 @@ export function MemberDataTable<TData, TValue>({
                         <SelectItem value="Observer">Observer</SelectItem>
                       </SelectContent>
                     </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-          <Button type="submit" className="text-md  px-5">
+                  </div>
+                )}
+              />
+              {fields.length > 1 && (
+                <Button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className=""
+                  variant="outline"
+                >
+                  -
+                </Button>
+              )}
+            </div>
+          </div>
+        ))}
+        <Button
+          type="button"
+          onClick={() => append({ email: "", role: "" })}
+          className="text-md mb-4 w-full px-5"
+          variant="outline"
+        >
+          + Add More
+        </Button>
+        <Separator />
+        <div className="flex justify-between">
+          <p className="text-slate-500">
+            Total Members to Invite: {fields.length}
+          </p>
+          <Button type="submit" className="text-md px-5">
             Invite
           </Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
+  );
+  const loadingView = (
+    <div className="flex h-[176px] flex-col items-center justify-center space-y-6">
+      <LoadingSpinner />
+      <p>Loading, please wait...</p>
+    </div>
   );
 
+  const successView = (
+    <div>
+      <div className="flex h-[176px] flex-col items-center justify-center space-y-6">
+        <CheckCircle className="text-green-600" width={70} height={70} />
+        <p className="text-2xl">Team members were invited Successfully!</p>
+      </div>
+      {/*      <Button className="w-full text-xl" onClick={}>
+        Done
+      </Button>*/}
+    </div>
+  );
   return (
     <div className="w-full">
       <div className="flex place-content-center items-center py-2">
@@ -221,7 +306,7 @@ export function MemberDataTable<TData, TValue>({
             <Input
               className="max-w-60 pl-10"
               onChange={(event) =>
-                table.getColumn(value)?.setFilterValue(event.target.value)
+                table.getColumn(value)?.setFilterValue(evenzt.target.value)
               }
               placeholder="Search Role"
               type="search"
@@ -243,23 +328,24 @@ export function MemberDataTable<TData, TValue>({
                 }
               />
             </div>
-            <Dialog>
+            <Dialog onOpenChange={handleDialogOpenChange}>
               <DialogTrigger asChild>
                 <Button className="px-5">Invite User</Button>
               </DialogTrigger>
-              <DialogContent className="max-w-[800px] font-poppins">
-                <div className="flex justify-between">
+              <DialogContent className="max-w-[800px]  font-poppins">
+                <div className=" flex justify-between ">
                   <div className="text-2xl">Invite Member</div>
                   <p className="text-[12px]">
                     <b>3</b> of <b>3</b> seats used
                   </p>
                 </div>
                 <Separator />
-                <p className="text-[12px]">
-                  Chose the role and then enter the e-mail address or name of
-                  the person you wish to invite or search your team members.
-                </p>
-                {formComponent}
+
+                {isLoading
+                  ? loadingView
+                  : isSuccess
+                    ? successView
+                    : formComponent}
               </DialogContent>
             </Dialog>
           </div>
