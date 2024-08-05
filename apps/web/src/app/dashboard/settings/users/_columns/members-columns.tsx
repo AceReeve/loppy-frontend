@@ -1,8 +1,15 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@repo/ui/components/ui";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/ui";
 import { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
+import { EllipsisVertical } from "lucide-react";
 
 export const memberColumns: ColumnDef<
   GetInviteUserResponse["users"][number]
@@ -61,9 +68,23 @@ export const memberColumns: ColumnDef<
   {
     id: "actions",
     cell: () => (
-      <div className="inline flex h-8 cursor-pointer flex-col items-end">
-        <Button variant={"destructive"}>Cancel Invite</Button>
-      </div>
+      <DropdownMenu>
+        <div className="inline flex w-full justify-end">
+          <DropdownMenuTrigger>
+            <EllipsisVertical />
+          </DropdownMenuTrigger>
+        </div>
+
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <p className="cursor-pointer">Remove Member </p>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <p className="cursor-pointer">Manage Roles and Permissions</p>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       /*      <Checkbox
                 aria-label="Select row"
                 checked={row.getIsSelected()}

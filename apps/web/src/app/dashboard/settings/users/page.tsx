@@ -25,8 +25,9 @@ export default function Page() {
 
   if (usersIsLoading) {
     return (
-      <div>
+      <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
         <LoadingSpinner />
+        <p>Loading, please wait...</p>
       </div>
     );
   }

@@ -1,9 +1,16 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@repo/ui/components/ui";
+import {
+  Checkbox,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/ui";
 import type { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
 import ActionCell from "@/src/app/dashboard/settings/users/_components/delete-action-cell.tsx";
+import { EllipsisVertical } from "lucide-react";
 
 export const pendingColumns: ColumnDef<
   GetInviteUserResponse["users"][number]
@@ -61,6 +68,23 @@ export const pendingColumns: ColumnDef<
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionCell email={row.original.email.toString()} />,
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <div className="inline flex w-full justify-end">
+            <DropdownMenuTrigger>
+              <EllipsisVertical />
+            </DropdownMenuTrigger>
+          </div>
+
+          <DropdownMenuContent>
+            <DropdownMenuItem>
+              <p className="cursor-pointer"> Resend Invite </p>
+            </DropdownMenuItem>
+            <ActionCell email={row.original.email.toString()} />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];

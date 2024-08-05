@@ -77,7 +77,7 @@ export default function RolesPermission() {
   // Initialize selectedRole if rolesData changes
   useEffect(() => {
     if (rolesData && rolesData.length > 0) {
-      setSelectedRole(rolesData[0]._id);
+      setSelectedRole(rolesData[1]._id);
     }
   }, [rolesData]);
 
@@ -86,8 +86,9 @@ export default function RolesPermission() {
   }, []);
   if (rolesIsLoading)
     return (
-      <div>
+      <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
         <LoadingSpinner />
+        <p>Loading, please wait...</p>
       </div>
     );
 
@@ -98,18 +99,21 @@ export default function RolesPermission() {
       <div className="min-w-[200px] max-w-[300px]">
         <VerticalMenu className=" !shadow-none">
           {rolesData ? (
-            rolesData.map((role) => (
-              <VerticalMenuLink
-                active={role._id === selectedRole}
-                key={role._id}
-                className="cursor-pointer"
-                onClick={() => {
-                  handleChangeRole(role._id);
-                }}
-              >
-                {role.role_name}
-              </VerticalMenuLink>
-            ))
+            rolesData.map(
+              (role) =>
+                role.role_name !== "Owner" && (
+                  <VerticalMenuLink
+                    active={role._id === selectedRole}
+                    key={role._id}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      handleChangeRole(role._id);
+                    }}
+                  >
+                    {role.role_name}
+                  </VerticalMenuLink>
+                ),
+            )
           ) : (
             <div>No Data</div>
           )}

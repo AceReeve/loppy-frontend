@@ -65,7 +65,7 @@ export default function PendingInvites(props: ActiveMembersProps) {
           noResultsComponent={NoResultsComponent}
         />
       ) : (
-        <div>ERROR: Users data is not available</div>
+        NoResultsComponent
       )}
     </div>
   );

@@ -126,6 +126,7 @@ export const handleSendOTP = async (
 export const handleCredentialsSignUp = async (
   values: z.infer<typeof RegisterSchema>,
   callbackUrl?: string | null,
+  token?: string | null,
 ) => {
   if (!process.env.NEXT_PUBLIC_API_URL)
     throw new Error("NEXT_PUBLIC_API_URL is not detected");
@@ -137,20 +138,22 @@ export const handleCredentialsSignUp = async (
   }
 
   const { email, password } = validatedFields.data;
-
-  const authResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/register`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const endpoint = token
+    ? `/user/invited-user/register?token=${token}`
+    : "/user/register";
+  const fullUrl = `${apiUrl}${endpoint}`;
+  const authResponse = await fetch(fullUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      email,
+      password,
+      token,
+    }),
+  });
 
   // Throw proper error response from backend server
   if (authResponse.ok) {

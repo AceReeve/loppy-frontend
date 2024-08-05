@@ -1,7 +1,5 @@
 import { useCancelInviteMutation } from "@repo/redux-utils/src/endpoints/settings-user";
-import { Button, toast } from "@repo/ui/components/ui";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import React, { useState } from "react";
+import { DropdownMenuItem, toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 interface ActionCellProps {
@@ -9,7 +7,7 @@ interface ActionCellProps {
 }
 export default function ActionCell(props: ActionCellProps) {
   //const email = { props.email }; // Extract email from row data
-  const [cancelInvite, { isLoading }] = useCancelInviteMutation();
+  const [cancelInvite] = useCancelInviteMutation();
 
   const handleCancelInvite = async () => {
     try {
@@ -34,13 +32,13 @@ export default function ActionCell(props: ActionCellProps) {
 
   return (
     <div className="inline flex h-8 flex-col items-end">
-      <Button
-        variant={"destructive"}
+      <DropdownMenuItem
         onClick={handleCancelInvite}
-        className="space-x-2 px-4 py-2"
+        className="h-full w-full cursor-pointer"
       >
-        <p>Cancel</p> {isLoading ? <LoadingSpinner /> : null}
-      </Button>
+        <p>Revoke Invite</p>
+        {/* <p>Cancel</p> {isLoading ? <LoadingSpinner /> : null}*/}
+      </DropdownMenuItem>
     </div>
   );
 }

@@ -66,7 +66,7 @@ export default function ActiveMembers(props: ActiveMembersProps) {
           noResultsComponent={NoResultsComponent}
         />
       ) : (
-        <div>ERROR: Users data is not available</div>
+        NoResultsComponent
       )}
     </div>
   );
