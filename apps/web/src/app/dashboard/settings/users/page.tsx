@@ -6,11 +6,11 @@ import {
   TabsTrigger,
 } from "@repo/ui/components/ui";
 import React from "react";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/settings-user.ts";
 import ActiveMembers from "@/src/app/dashboard/settings/users/_tabs/active-members.tsx";
 import PendingInvites from "@/src/app/dashboard/settings/users/_tabs/pending-invites.tsx";
 import RolesPermission from "@/src/app/dashboard/settings/users/_tabs/roles-and-permissions.tsx";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/settings-user.ts";
 
 export default function Page() {
   const {

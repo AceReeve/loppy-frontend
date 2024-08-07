@@ -15,7 +15,7 @@ export default function ActionCell(props: ActionCellProps) {
         .unwrap()
         .then(() => {
           toast({
-            description: props.email + " invite has been cancelled",
+            description: `${props.email} invite has been cancelled`,
             variant: "success",
           });
         })

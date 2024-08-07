@@ -1,42 +1,12 @@
 import React from "react";
+import type { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
 import { PendingDataTable } from "@/src/app/dashboard/settings/users/_data-table/pending-data.tsx";
-import { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
 import { pendingColumns } from "@/src/app/dashboard/settings/users/_columns/pending-columns.tsx";
+
 interface ActiveMembersProps {
   usersData?: GetInviteUserResponse["users"];
 }
 export default function PendingInvites(props: ActiveMembersProps) {
-  const memberList = [
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Administrator",
-      members: 1,
-    },
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Manager",
-      members: 4,
-    },
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Member",
-      members: 2,
-    },
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Observer",
-      members: 1,
-    },
-  ];
-
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
       <div className="text-center font-montserrat text-4xl font-medium leading-[48px] text-gray-800">

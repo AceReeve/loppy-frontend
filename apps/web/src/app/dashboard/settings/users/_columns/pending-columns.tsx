@@ -5,12 +5,12 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
+import { EllipsisVertical } from "lucide-react";
 import type { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
 import ActionCell from "@/src/app/dashboard/settings/users/_components/delete-action-cell.tsx";
-import { EllipsisVertical } from "lucide-react";
+import InviteActionCell from "@/src/app/dashboard/settings/users/_components/invite-action-cell.tsx";
 
 export const pendingColumns: ColumnDef<
   GetInviteUserResponse["users"][number]
@@ -76,11 +76,12 @@ export const pendingColumns: ColumnDef<
               <EllipsisVertical />
             </DropdownMenuTrigger>
           </div>
-
           <DropdownMenuContent>
-            <DropdownMenuItem>
-              <p className="cursor-pointer"> Resend Invite </p>
-            </DropdownMenuItem>
+            <InviteActionCell
+              email={row.original.email.toString()}
+              role={row.original.role.role_name.toString()}
+            />
+
             <ActionCell email={row.original.email.toString()} />
           </DropdownMenuContent>
         </DropdownMenu>

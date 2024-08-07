@@ -2,13 +2,12 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
-import { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
+import type { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
 import { EllipsisVertical } from "lucide-react";
 
 export const memberColumns: ColumnDef<
