@@ -1,15 +1,10 @@
 import { baseApi } from "../api.ts";
 import {
-  GetCancelInvitedUserPayload,
-  GetInviteUserResponse,
-  GetRolesResponse,
-  GetSendInviteUserPayload,
+  type GetCancelInvitedUserPayload,
+  type GetInviteUserResponse,
+  type GetRolesResponse,
+  type GetSendInviteUserPayload,
 } from "./types/settings-user";
-import { SearchParamsType } from "../index.tsx";
-import {
-  CreateContactPayload,
-  GetCreateContactResponse,
-} from "./types/contacts";
 
 const api = baseApi
   .enhanceEndpoints({
@@ -17,12 +12,12 @@ const api = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getRoles: builder.query<GetRolesResponse[], void>({
+      getRoles: builder.query<GetRolesResponse[], undefined>({
         query: () => "/role",
         providesTags: ["settings-user"],
       }),
 
-      getInvitedUsers: builder.query<GetInviteUserResponse, void>({
+      getInvitedUsers: builder.query<GetInviteUserResponse, undefined>({
         query: () => "user/get-invited-user",
         providesTags: ["settings-user"],
       }),

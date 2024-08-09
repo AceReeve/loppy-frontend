@@ -85,7 +85,7 @@ function BuyNumberModal() {
           <Button
             className="w-full"
             type="submit"
-            onClick={onNextStep}
+            onClick={currentStep < steps.length - 1 ? onNextStep : undefined}
             disabled={!saveEnabled}
           >
             {currentStep < steps.length - 1 ? "Next" : "Purchase Number"}

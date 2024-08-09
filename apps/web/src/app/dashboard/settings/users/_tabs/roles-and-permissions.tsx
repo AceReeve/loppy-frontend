@@ -70,13 +70,13 @@ export default function RolesPermission() {
     data: rolesData,
     error: rolesError,
     isLoading: rolesIsLoading,
-  } = useGetRolesQuery();
+  } = useGetRolesQuery(undefined);
 
   const [selectedRole, setSelectedRole] = useState<string>("");
 
   // Initialize selectedRole if rolesData changes
   useEffect(() => {
-    if (rolesData && rolesData.length > 0) {
+    if (rolesData?.[1]) {
       setSelectedRole(rolesData[1]._id);
     }
   }, [rolesData]);

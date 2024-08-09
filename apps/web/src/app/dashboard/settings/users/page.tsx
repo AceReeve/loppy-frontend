@@ -17,7 +17,7 @@ export default function Page() {
     data: usersData,
     error: usersError,
     isLoading: usersIsLoading,
-  } = useGetInvitedUsersQuery();
+  } = useGetInvitedUsersQuery(undefined);
 
   if (usersError) {
     return <div>Error Loading Data</div>;
@@ -60,7 +60,7 @@ export default function Page() {
       <div className=" w-full ">
         <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
           <TabsList className="flex justify-between">
-            <div>
+            <div className="relative h-full">
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.id} value={tab.id}>
                   {tab.label}
