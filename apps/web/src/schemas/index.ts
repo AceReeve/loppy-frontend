@@ -18,9 +18,10 @@ export const ResetSchema = z.object({
 });
 
 export const RegisterDetailsSchema = z.object({
-  first_name: z.string().min(3, { message: "First Name is required" }),
-  last_name: z.string().min(3, { message: "Last Name is required" }),
-  address: z.string().min(3, { message: "Address is required" }),
+  first_name: z.string().min(1, { message: "First name is required" }),
+  last_name: z.string().min(1, { message: "Last name is required" }),
+  address: z.string().min(1, { message: "Address is required" }),
+  address2: z.string().optional(),
   city: z.string().min(1, { message: "City is required" }),
   state: z.string().min(1, { message: "State is required" }),
   gender: z.string().min(1, { message: "Gender is required" }),
@@ -28,13 +29,15 @@ export const RegisterDetailsSchema = z.object({
     message: "Mobile Number must be numeric and at least 6 digits",
   }),
 
-  birthday: z.string().min(1, {
-    message: "Date of Birth must be a valid date",
-  }),
+  birthday: z
+    .date({
+      required_error: "A date of birth is required.",
+    })
+    .optional(),
   zipCode: z
     .string()
-    .min(4, { message: "Invalid Zip Code" })
-    .max(4, { message: "Invalid Zip Code" }),
+    // eslint-disable-next-line prefer-named-capture-group -- disregard lint error
+    .regex(/(^\d{5}$)|(^\d{5}-\d{4}$)/, { message: "Invalid zip code" }),
 });
 
 export const LoginSchema = z.object({
@@ -209,4 +212,29 @@ export const CreateContactsFormSchema = z.object({
   }),*/
 
   tags: z.array(tagSchema).optional(),
+});
+
+export const SendInviteUserSchema = z.object({
+  email: z.string().min(1, {
+    message: "Email is Required",
+  }),
+  role: z.string().min(1, {
+    message: "Role is Required!",
+  }),
+});
+
+export const SendInviteUsersSchema1 = z.object({
+  users: z.array(SendInviteUserSchema),
+});
+
+export const SendInviteUsersSchema = z.object({
+  users: z.array(
+    z.object({
+      email: z
+        .string()
+        .min(1, { message: "Email is Required" })
+        .email({ message: "Invalid email format" }),
+      role: z.string().min(4, { message: "Role is Required" }),
+    }),
+  ),
 });

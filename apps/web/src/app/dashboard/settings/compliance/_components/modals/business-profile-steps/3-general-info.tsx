@@ -33,6 +33,7 @@ export default function GeneralInfo({
 }: StepComponentProps) {
   const form = useForm<z.infer<typeof generalInfoSchema>>({
     resolver: zodResolver(generalInfoSchema),
+    mode: "onBlur",
   });
   const onSubmit = (data: z.infer<typeof generalInfoSchema>) => {
     setFormData((prevState) => ({ ...prevState, ...data }));

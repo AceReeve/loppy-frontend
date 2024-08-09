@@ -1,7 +1,7 @@
 "use client";
-import type { GetTeamMembersResponse } from "@repo/redux-utils/src/endpoints/types/tean-roles.d.tsx";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@repo/ui/components/ui";
+import type { GetTeamMembersResponse } from "@repo/redux-utils/src/endpoints/types/team-roles.d.tsx";
 
 export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
   {
@@ -35,7 +35,7 @@ export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
     header: "Name ",
     cell: ({ row }) => {
       const name = `${row.original.first_name} ${row.original.last_name}`;
-      const email = row.original.email;
+      const email = row.original.email.toString();
       return (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary" />

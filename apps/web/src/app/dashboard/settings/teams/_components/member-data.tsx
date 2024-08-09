@@ -115,7 +115,6 @@ export function MemberDataTable<TData, TValue>({
           <div className="flex w-full flex-row items-center justify-between">
             <div className="relative flex w-full flex-row justify-between ">
               <MagnifyingGlassIcon className="absolute left-2 top-1.5 h-5 w-5 text-gray-500 " />
-
               <Input
                 className="max-w-60 pl-10"
                 onChange={(event) =>

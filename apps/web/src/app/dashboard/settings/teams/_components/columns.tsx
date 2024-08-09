@@ -1,6 +1,6 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { GetRolesResponse } from "@repo/redux-utils/src/endpoints/types/tean-roles.d.tsx";
+import type { GetRolesResponse } from "@repo/redux-utils/src/endpoints/types/team-roles.d.tsx";
 
 export const roleColumns: ColumnDef<GetRolesResponse["data"]>[] = [
   /* {

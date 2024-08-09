@@ -62,7 +62,7 @@ export default function Roles() {
           />
         </div>
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button className="px-5">Add Role</Button>
           </DialogTrigger>
           <DialogContent className="max-w-[800px] font-poppins">

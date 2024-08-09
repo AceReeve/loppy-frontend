@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { memberColumns } from "@/src/app/dashboard/settings/teams/_components/member-columns.tsx";
 import { MemberDataTable } from "@/src/app/dashboard/settings/teams/_components/member-data.tsx";

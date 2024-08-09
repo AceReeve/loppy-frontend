@@ -25,6 +25,7 @@ export default function BusinessInfo({
 }: StepComponentProps) {
   const form = useForm<z.infer<typeof businessInfoSchema>>({
     resolver: zodResolver(businessInfoSchema),
+    mode: "onBlur",
   });
   const onSubmit = (data: z.infer<typeof businessInfoSchema>) => {
     setFormData((prevState) => ({ ...prevState, ...data }));

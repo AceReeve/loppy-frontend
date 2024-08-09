@@ -9,12 +9,12 @@ import {
   DialogTrigger,
 } from "@repo/ui/components/ui";
 import { type StepItem } from "@/src/types/settings";
-import ChooseNumber from "./business-profile-steps/1-choose-number.tsx";
 import BusinessLocation from "./business-profile-steps/2-business-location.tsx";
 import GeneralInfo from "./business-profile-steps/3-general-info.tsx";
 import BusinessInfo from "./business-profile-steps/4-business-info.tsx";
 import PeopleToContact from "./business-profile-steps/5-people-to-contact.tsx";
 import TermsOfService from "./business-profile-steps/6-terms-of-service.tsx";
+import ChooseNumberBusinessProfile from "./business-profile-steps/1-choose-number.tsx";
 
 function BusinessProfileModal() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -30,7 +30,7 @@ function BusinessProfileModal() {
     {
       title: "Choose Number",
       id: "choose-number",
-      component: ChooseNumber,
+      component: ChooseNumberBusinessProfile,
       footerNote:
         "You can always change this number later or replace with your existing number, landline, or Aircall number.",
     },

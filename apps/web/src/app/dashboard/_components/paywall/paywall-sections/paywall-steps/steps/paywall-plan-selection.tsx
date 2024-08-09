@@ -13,15 +13,15 @@ export default function PaywallPlanSelection() {
   if (isLoading) return <LoadingOverlay />;
 
   return (
-    <div className="m-auto p-5">
+    <div className="m-auto p-5 pb-7">
       <Image
         alt=""
-        className="absolute left-[50%] top-0 -ml-[66px] -mt-[80px] size-32 object-contain"
+        className="absolute left-[50%] top-0 -ml-[66px] -mt-[60px] size-32 object-contain"
         height={141}
         src="/assets/images/logo.png"
         width={138}
       />
-      <div className="flex flex-col items-center gap-7 text-center">
+      <div className="mt-14 flex flex-col items-center gap-3 text-center">
         <h1 className="self-stretch text-4xl font-bold text-[#fff]">
           The Right Plan for Your Business
         </h1>
@@ -29,21 +29,21 @@ export default function PaywallPlanSelection() {
           <div className="text-md font-montserrat font-bold tracking-wide text-[#fff]">
             Bill Monthly
           </div>
-          <div className="inline-flex h-7 w-14 items-center justify-start rounded-[40px] bg-white px-[5px] pb-1.5  pt-[5px]">
+          <div className="inline-flex h-7 w-14 items-center justify-start rounded-[40px] bg-white px-[5px] pb-1.5 pt-[5px]">
             <div className="relative h-full w-5 rounded-[40px] bg-gradient-to-br from-orange-500 to-yellow-500" />
           </div>
           <div className="text-md font-montserrat font-bold tracking-wide text-[#fff]">
             Bill Annually
           </div>
         </div>
-        <div className="relative flex items-start gap-[53px]">
+        <div className="relative mt-3 flex items-start gap-[53px]">
           {Object.entries(paymentPlanDetails).map(([key, item], index) => (
             <div
               className={`relative flex max-w-[323px] flex-1 flex-col items-center rounded-[32px] px-[25px] py-[18px] ${index % 2 === 1 ? "bg-gradient-to-br from-orange-500 to-yellow-500" : "bg-white"}`}
               key={key}
             >
               <div className={index % 2 === 1 ? "text-white" : "text-black"}>
-                <div className="font-montserrat w-full text-center">
+                <div className="w-full text-center font-montserrat">
                   <div className="text-sm font-medium leading-normal tracking-wide">
                     {item.name}
                   </div>
@@ -95,7 +95,7 @@ export default function PaywallPlanSelection() {
           ))}
         </div>
         <button
-          className="text-primary -mt-5 underline"
+          className="-mt-5 text-primary underline"
           onClick={() => {
             setIsLoading(true);
             void signOut({ callbackUrl: "/" });

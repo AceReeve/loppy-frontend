@@ -73,20 +73,20 @@ export default function PaywallTeamSetup() {
   const StepComponent = steps[stepIndex].component;
 
   return (
-    <div className="m-auto p-5">
+    <div className="m-auto p-10">
       {isLoading ? <LoadingOverlay /> : null}
       <div className="flex max-w-[668px] flex-col items-center gap-7 text-center">
         {stepIndex < steps.length - 1 ? (
-          <div className="font-nunito text-card text-center text-[35px] font-bold">
+          <div className="text-center font-nunito text-[35px] font-bold text-card">
             Thanks for Signing up To Service Hero! <br />
             Now, Let’s Setup Your Team!
           </div>
         ) : (
           <div>
-            <div className="font-nunito text-card text-center text-[35px] font-bold">
+            <div className="text-center font-nunito text-[35px] font-bold text-card">
               Thanks for Signing up To Service Hero!
             </div>
-            <div className="text-md text-card mt-4 text-center">
+            <div className="text-md mt-4 text-center text-card">
               Manage your clients and streamline your workflow all in one place.
               <br />
               We&apos;re excited to help you enhance your productivity and
@@ -98,7 +98,7 @@ export default function PaywallTeamSetup() {
         <div className="relative flex w-full justify-between">
           <div className="absolute top-[50%] -mt-[3px] h-1.5 w-full bg-gray-300" />
           <div
-            className="bg-primary absolute top-[50%] -mt-[3px] h-1.5"
+            className="absolute top-[50%] -mt-[3px] h-1.5 bg-primary"
             style={{
               width: `${((stepIndex / (steps.length - 1)) * 100).toString()}%`,
             }}

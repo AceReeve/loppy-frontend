@@ -20,6 +20,7 @@ export default function PeopleToContact({
 }: StepComponentProps) {
   const form = useForm<z.infer<typeof peopleToContactSchema>>({
     resolver: zodResolver(peopleToContactSchema),
+    mode: "onBlur",
   });
   const onSubmit = (data: z.infer<typeof peopleToContactSchema>) => {
     setFormData((prevState) => ({ ...prevState, ...data }));

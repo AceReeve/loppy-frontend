@@ -118,6 +118,7 @@ export default function Permissions() {
       <div className="space-y-4">
         {settings.map((permission) => (
           <ToggleData
+            id={permission.id}
             title={permission.title}
             description={permission.description}
             isToggled={permission.isChecked}
