@@ -24,7 +24,7 @@ import { cn } from "@repo/ui/utils";
 import { CalendarIcon } from "lucide-react";
 import moment from "moment";
 import { usePaywallState } from "@/src/providers/paywall-provider.tsx";
-import { states } from "@/src/data/us-states";
+import { states } from "@/src/data/states";
 
 export default function PaywallUserInformation() {
   const { setNextStepEnabled, form } = usePaywallState();
@@ -201,7 +201,7 @@ export default function PaywallUserInformation() {
                     <SelectValue placeholder="Select a state" />
                   </SelectTrigger>
                   <SelectContent>
-                    {states.map((state) => (
+                    {states.US.map((state) => (
                       <SelectItem key={state.value} value={state.value}>
                         {state.label}
                       </SelectItem>

@@ -12,8 +12,9 @@ import React, {
   useState,
 } from "react";
 import { cn } from "../../lib/utils.ts";
-import { Badge } from "./badge.tsx";
 import { Command, CommandEmpty, CommandItem, CommandList } from "./command.tsx";
+import { Button } from "./button.tsx";
+import { inputClass } from "./input.tsx";
 
 type MultiSelectorProps = {
   values: string[];
@@ -159,35 +160,30 @@ const MultiSelectorTrigger = forwardRef<
   return (
     <div
       className={cn(
-        "border-muted bg-background flex flex-wrap gap-1 rounded-lg border p-1 py-2",
+        inputClass,
+        "items-center py-0 px-2 gap-1 flex-wrap",
         className,
       )}
       ref={ref}
       {...props}
     >
       {value.map((item, index) => (
-        <Badge
+        <Button
           className={cn(
             "flex items-center gap-1 rounded-xl px-1",
             activeIndex === index && "ring-muted-foreground ring-2 ",
           )}
           key={item}
           variant="secondary"
+          size="sm"
+          onClick={() => {
+            onValueChange(item);
+          }}
+          onMouseDown={mousePreventDefault}
         >
           <span className="text-xs">{item}</span>
-          <button
-            aria-label={`Remove ${item} option`}
-            aria-roledescription="button to remove option"
-            onClick={() => {
-              onValueChange(item);
-            }}
-            onMouseDown={mousePreventDefault}
-            type="button"
-          >
-            <span className="sr-only">Remove {item} option</span>
-            <RemoveIcon className="hover:stroke-destructive h-4 w-4" />
-          </button>
-        </Badge>
+          <RemoveIcon className="hover:stroke-destructive size-3" />
+        </Button>
       ))}
       {children}
     </div>
@@ -206,7 +202,7 @@ const MultiSelectorInput = forwardRef<
     <CommandPrimitive.Input
       {...props}
       className={cn(
-        "placeholder:text-muted-foreground ml-2 flex-1 bg-transparent outline-none",
+        "flex-1 bg-transparent outline-none h-full border-none text-sm focus:ring-0 min-h-10 px-1 py-2",
         className,
         activeIndex !== -1 && "caret-transparent",
       )}
@@ -249,7 +245,7 @@ const MultiSelectorList = forwardRef<
   return (
     <CommandList
       className={cn(
-        "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg bg-background border-muted absolute top-0 z-10 flex w-full flex-col gap-2 rounded-md border p-2 shadow-md transition-colors",
+        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white text-gray-900 shadow-md",
         className,
       )}
       ref={ref}
@@ -283,9 +279,8 @@ const MultiSelectorItem = forwardRef<
       ref={ref}
       {...props}
       className={cn(
-        "flex cursor-pointer justify-between rounded-md px-2 py-1 transition-colors ",
+        "relative flex cursor-pointer rounded-sm px-2 py-1.5 pl-7 pr-2 focus:bg-gray-100 focus:text-gray-900 text-sm",
         className,
-        isIncluded && "cursor-default opacity-50",
         props.disabled && "cursor-not-allowed opacity-50",
       )}
       onMouseDown={mousePreventDefault}
@@ -294,8 +289,12 @@ const MultiSelectorItem = forwardRef<
         setInputValue("");
       }}
     >
+      {isIncluded ? (
+        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+          <Check className="size-4" />
+        </span>
+      ) : null}
       {children}
-      {isIncluded ? <Check className="h-4 w-4" /> : null}
     </CommandItem>
   );
 });

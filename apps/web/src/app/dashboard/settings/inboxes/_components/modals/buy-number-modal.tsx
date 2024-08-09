@@ -9,14 +9,9 @@ import {
   DialogTrigger,
 } from "@repo/ui/components/ui";
 import { type StepItem } from "@/src/types/settings";
-import BusinessLocation from "./business-profile-steps/2-business-location.tsx";
-import GeneralInfo from "./business-profile-steps/3-general-info.tsx";
-import BusinessInfo from "./business-profile-steps/4-business-info.tsx";
-import PeopleToContact from "./business-profile-steps/5-people-to-contact.tsx";
-import TermsOfService from "./business-profile-steps/6-terms-of-service.tsx";
-import ChooseNumberBusinessProfile from "./business-profile-steps/1-choose-number.tsx";
+import CreateNewInbox from "@/src/app/dashboard/settings/inboxes/_components/modals/buy-number-steps/1-create-new-inbox.tsx";
 
-function BusinessProfileModal() {
+function BuyNumberModal() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [saveEnabled, setSaveEnabled] = useState(false);
@@ -28,36 +23,11 @@ function BusinessProfileModal() {
 
   const steps: StepItem[] = [
     {
-      title: "Choose Number",
-      id: "choose-number",
-      component: ChooseNumberBusinessProfile,
+      title: "Create New Inbox",
+      id: "create-new-inbox",
+      component: CreateNewInbox,
       footerNote:
-        "You can always change this number later or replace with your existing number, landline, or Aircall number.",
-    },
-    {
-      title: "Business Location",
-      id: "business-location",
-      component: BusinessLocation,
-    },
-    {
-      title: "General Info",
-      id: "general-info",
-      component: GeneralInfo,
-    },
-    {
-      title: "Business Info",
-      id: "business-info",
-      component: BusinessInfo,
-    },
-    {
-      title: "People to Contact",
-      id: "people-to-contact",
-      component: PeopleToContact,
-    },
-    {
-      title: "Terms of Service and Privacy Policy",
-      id: "terms-of-service",
-      component: TermsOfService,
+        "* Due to A2P 10DLC regulations, registration is required and additional fees will apply.",
     },
   ];
 
@@ -72,7 +42,7 @@ function BusinessProfileModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm">Register</Button>
+        <Button>Create New Inbox</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -109,7 +79,7 @@ function BusinessProfileModal() {
             onClick={onNextStep}
             disabled={!saveEnabled}
           >
-            {currentStep < steps.length - 1 ? "Next" : "Submit for review"}
+            {currentStep < steps.length - 1 ? "Next" : "Purchase Number"}
           </Button>
         </DialogFooter>
         {steps[currentStep].footerNote ? (
@@ -122,4 +92,4 @@ function BusinessProfileModal() {
   );
 }
 
-export default BusinessProfileModal;
+export default BuyNumberModal;
