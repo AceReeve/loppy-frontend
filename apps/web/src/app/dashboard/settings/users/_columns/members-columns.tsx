@@ -1,10 +1,19 @@
 "use client";
-import type { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@repo/ui/components/ui";
-import type { GetTeamMembersResponse } from "@repo/redux-utils/src/endpoints/types/team-roles.d.tsx";
 
-export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
-  {
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/ui";
+import type { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
+import { EllipsisVertical } from "lucide-react";
+
+export const memberColumns: ColumnDef<
+  GetInviteUserResponse["users"][number]
+>[] = [
+  /* {
     id: "select",
     header: ({ table }) => (
       <Checkbox
@@ -29,19 +38,19 @@ export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },
+  },*/
   {
     accessorKey: "name",
     header: "Name ",
     cell: ({ row }) => {
-      const name = `${row.original.first_name} ${row.original.last_name}`;
-      const email = row.original.email.toString();
+      //  const name = `${row.original.first_name} ${row.original.last_name}`;
+      // const email = row.original.email;
       return (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary" />
           <div className="flex flex-col">
-            <div className="font-medium">{name}</div>
-            <div className="text-gray-700">{email}</div>
+            {/*<div className="font-medium">{name}</div>*/}
+            <div className="text-gray-700">{row.original.email}</div>
           </div>
         </div>
       );
@@ -52,35 +61,36 @@ export const memberColumns: ColumnDef<GetTeamMembersResponse["data"]>[] = [
     header: "Role",
 
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.role}</div>;
+      return <div className="font-medium">{row.original.role.role_name}</div>;
     },
   },
   {
     id: "actions",
     cell: () => (
-      <div className="inline flex h-8 cursor-pointer flex-col items-end">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-          />
-        </svg>
-      </div>
+      <DropdownMenu>
+        <div className="inline flex w-full justify-end">
+          <DropdownMenuTrigger>
+            <EllipsisVertical />
+          </DropdownMenuTrigger>
+        </div>
+
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <p className="cursor-pointer">Remove Member </p>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <p className="cursor-pointer">Manage Roles and Permissions</p>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       /*      <Checkbox
-              aria-label="Select row"
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => {
-                row.toggleSelected(Boolean(value));
-              }}
-            />*/
+                aria-label="Select row"
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => {
+                  row.toggleSelected(Boolean(value));
+                }}
+              />*/
     ),
     enableSorting: false,
     enableHiding: false,

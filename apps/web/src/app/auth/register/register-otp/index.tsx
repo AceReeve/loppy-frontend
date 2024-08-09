@@ -68,7 +68,10 @@ export default function RegisterOTP(props: RegisterOTPProps) {
         });
     });
   };
-
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const errorParam = searchParams.get("error");
+  const token = searchParams.get("token");
   const SubmitOTPConfirmation = (values: z.infer<typeof ConfirmOTPSchema>) => {
     setError("");
     setSuccess("");
@@ -86,7 +89,7 @@ export default function RegisterOTP(props: RegisterOTPProps) {
           } else {
             //props.handleOpenDetails(true);
             startTransition(() => {
-              handleCredentialsSignUp(props.data, callbackUrl)
+              handleCredentialsSignUp(props.data, callbackUrl, token)
                 .then((data) => {
                   if (data?.error) {
                     setError(data.error);
@@ -104,9 +107,6 @@ export default function RegisterOTP(props: RegisterOTPProps) {
     });
   };
 
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
-  const errorParam = searchParams.get("error");
   /*
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -155,7 +155,7 @@ export default function RegisterOTP(props: RegisterOTPProps) {
             className="w-full font-nunito text-black"
             onSubmit={confirmOTPForm.handleSubmit(SubmitOTPConfirmation)}
           >
-            <div className="block h-auto text-center mb-10">
+            <div className="mb-10 block h-auto text-center">
               <p className="text-[40px] font-bold">OTP Verification</p>
               <p className={" text-[16px] font-normal text-gray-500"}>
                 Enter OTP Code sent to Email
@@ -167,30 +167,30 @@ export default function RegisterOTP(props: RegisterOTPProps) {
                   <FormItem>
                     <FormControl>
                       <InputOTP maxLength={6} {...field}>
-                        <InputOTPGroup className="my-5 justify-evenly flex h-[100px] w-full mx-auto grid-cols-6 gap-5 content-center">
+                        <InputOTPGroup className="mx-auto my-5 flex h-[100px] w-full grid-cols-6 content-center justify-evenly gap-5">
                           <InputOTPSlot
                             index={0}
-                            className="border-2 h-full w-full font-nunito  text-[44px] bg-gray-100"
+                            className="h-full w-full border-2 bg-gray-100  font-nunito text-[44px]"
                           />
                           <InputOTPSlot
                             index={1}
-                            className="border-2 h-full w-full font-nunito text-[44px] bg-gray-100"
+                            className="h-full w-full border-2 bg-gray-100 font-nunito text-[44px]"
                           />{" "}
                           <InputOTPSlot
                             index={2}
-                            className="border-2 h-full w-full  font-nunito text-[44px] bg-gray-100"
+                            className="h-full w-full border-2  bg-gray-100 font-nunito text-[44px]"
                           />
                           <InputOTPSlot
                             index={3}
-                            className="border-2 h-full w-full  font-nunito text-[44px] bg-gray-100"
+                            className="h-full w-full border-2  bg-gray-100 font-nunito text-[44px]"
                           />
                           <InputOTPSlot
                             index={4}
-                            className="border-2  h-full w-full font-nunito text-[44px] bg-gray-100"
+                            className="h-full  w-full border-2 bg-gray-100 font-nunito text-[44px]"
                           />
                           <InputOTPSlot
                             index={5}
-                            className="border-2 h-full w-full font-nunito text-[44px] bg-gray-100"
+                            className="h-full w-full border-2 bg-gray-100 font-nunito text-[44px]"
                           />
                         </InputOTPGroup>
                       </InputOTP>
@@ -212,7 +212,7 @@ export default function RegisterOTP(props: RegisterOTPProps) {
                 Didn't receive OTP code?
               </p>
               <Link
-                className="text-primary underline text-[16px]"
+                className="text-[16px] text-primary underline"
                 href={"http://localhost:3000/auth/register"}
                 onClick={handleResendCode}
               >

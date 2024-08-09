@@ -136,7 +136,7 @@ export function RoleDataTable<TData, TValue>({
               value={(table.getColumn(value)?.getFilterValue() as string) ?? ""}
             />
           </div>*/}
-          {table.getFilteredRowModel().rows.length} roles.{" "}
+          {/* {table.getFilteredRowModel().rows.length} roles.{" "}*/}
         </div>
       </div>
 

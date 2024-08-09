@@ -2,6 +2,7 @@ import { Separator, Switch } from "@repo/ui/components/ui";
 import React from "react";
 
 interface DataProps {
+  id: number;
   title: string;
   description: string;
   isToggled: boolean;
@@ -18,7 +19,9 @@ export default function ToggleData(props: DataProps) {
         <Switch
           className="bg-primary"
           defaultChecked={props.isToggled}
-          onChange={() => props.onToggleChange}
+          onCheckedChange={() => {
+            props.onToggleChange(props.id);
+          }}
           //onChange={handleToggleSwitch}
         />
       </div>
