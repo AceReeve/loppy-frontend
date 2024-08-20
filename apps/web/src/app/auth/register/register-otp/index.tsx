@@ -213,7 +213,7 @@ export default function RegisterOTP(props: RegisterOTPProps) {
               </p>
               <Link
                 className="text-[16px] text-primary underline"
-                href={"http://localhost:3000/auth/register"}
+                href="/auth/register"
                 onClick={handleResendCode}
               >
                 Resend Code
