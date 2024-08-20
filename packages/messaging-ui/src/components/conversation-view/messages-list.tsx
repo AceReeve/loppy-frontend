@@ -230,7 +230,7 @@ export default function MessagesList(props: MessageListProps) {
   return (
     <div className="relative" {...getRootProps()}>
       <input {...getInputProps()} />
-      {messages.map((message) => {
+      {messages.map((message, index) => {
         const messageImages: ReduxMedia[] = [];
         const messageFiles: ReduxMedia[] = [];
         const currentDateCreated = message.dateCreated ?? null;
@@ -263,11 +263,16 @@ export default function MessagesList(props: MessageListProps) {
           cut: true,
         });
 
-        const isOutbound = message.author === session?.user?.email;
+        const isOutbound = message.author !== session?.user?.email;
+
+        // show avatar if outbound and avoid repeatedly showing the avatar if the message is sent by the same author
+        const isShowAvatar =
+          isOutbound &&
+          (!index || messages[index - 1].author !== message.author);
 
         return (
           <div
-            className={`group mt-1 ${reactionsCount ? "mb-6" : ""}`}
+            className={`group ${reactionsCount ? "mb-6" : ""} ${isShowAvatar ? "mt-4" : "mt-1"}`}
             key={message.sid}
           >
             {currentDateCreated && firstMessagePerDay.includes(message.sid) ? (
@@ -279,25 +284,22 @@ export default function MessagesList(props: MessageListProps) {
               </p>
             ) : null}
             <div
-              className={`flex flex-row ${isOutbound ? "justify-end" : "justify-start"}`}
+              className={`flex flex-row ${isOutbound ? "justify-start" : "justify-end"}`}
               key={`${message.sid}.message`}
             >
               <div className="messages grid grid-flow-row gap-2 text-sm text-gray-800">
                 <div
-                  className={`relative flex ${isOutbound ? "flex-row-reverse" : "flex-row"} items-center`}
+                  className={`relative flex ${isOutbound ? "flex-row" : "flex-row-reverse"} items-start`}
                   ref={(el) => (refs.current[message.sid] = el)}
                 >
-                  {!isOutbound && (
-                    <div className="relative mr-4 flex h-8 w-8 flex-shrink-0">
-                      <DefaultAvatar
-                        image=""
-                        name={conversation.friendlyName ?? ""}
-                      />
+                  {isShowAvatar && (
+                    <div className="relative flex h-8 w-8 flex-shrink-0">
+                      <DefaultAvatar image="" name={message.author ?? ""} />
                     </div>
                   )}
 
                   <div
-                    className={`relative ml-2 max-w-xs rounded-lg ${isOutbound ? "bg-sky-200 dark:bg-blue-800" : "bg-white"} px-4 py-2 lg:max-w-md`}
+                    className={`relative max-w-xs rounded-lg ${isShowAvatar ? "ml-4" : "ml-12"} ${isOutbound ? "bg-white" : "bg-sky-200 dark:bg-blue-800"} px-4 py-2 lg:max-w-md`}
                   >
                     {wrappedBody}
                     <MessageMedia
@@ -334,7 +336,7 @@ export default function MessagesList(props: MessageListProps) {
                     />
 
                     <div
-                      className={`absolute -bottom-[16px] flex gap-0.5 ${isOutbound ? "right-0" : "left-0"}`}
+                      className={`absolute -bottom-[16px] flex gap-0.5 ${isOutbound ? "left-0" : "right-0"}`}
                     >
                       {reactions
                         ? Object.entries(reactions).map(([key, value]) => {
