@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
+import React from "react";
 import { Button } from "@repo/ui/components/ui";
 import { Handle, Position } from "@xyflow/react";
-import { Add } from "iconsax-react";
 
 export interface BaseNodeProps {
   data: {
@@ -12,7 +12,7 @@ export interface BaseNodeProps {
 }
 
 export default function BaseNode({
-  data: { title, onButtonClick },
+  data: { onButtonClick },
   children,
 }: BaseNodeProps) {
   const handleClick = () => {

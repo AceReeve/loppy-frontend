@@ -1,7 +1,7 @@
 "use client";
-
+import React, { useMemo, useState } from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import "@xyflow/react/dist/style.css";
-import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
 import {
   Button,
   Dialog,
@@ -15,12 +15,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/ui/components/ui";
-import React, { useMemo, useState } from "react";
+import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
 import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
 import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
+
 export default function Page() {
   const tabs = [
     {
@@ -73,7 +73,8 @@ export default function Page() {
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [displayedTemplates, setdisplayedTemplates] = useState(templates);
+  //const [displayedTemplates, setdisplayedTemplates] = useState(templates);
+  const displayedTemplates = templates;
 
   const filteredTemplates = useMemo(() => {
     return displayedTemplates.filter((template) =>
@@ -81,7 +82,7 @@ export default function Page() {
     );
   }, [searchTerm, displayedTemplates]);
 
-  const [isWorkList, setIsWorkList] = useState(true);
+  const [isWorkList, setIsWorkList] = useState(false);
 
   const handleViewState = () => {
     setIsWorkList(!isWorkList);
@@ -98,7 +99,7 @@ export default function Page() {
           ))}
         </div>
         <div className="space-x-4">
-          <Button variant={"outline"} onClick={handleViewState}>
+          <Button variant="outline" onClick={handleViewState}>
             Return Hub
           </Button>
           <Button className="mr-2 rounded-md px-2 px-5 dark:text-slate-100">
@@ -106,7 +107,7 @@ export default function Page() {
           </Button>
         </div>
       </TabsList>
-      <div className="mt-2 w-full ">
+      <div className="mt-2 h-[800px] w-full ">
         {tabs.map((tab) => {
           // const TabComponent = tab.component;
           return (

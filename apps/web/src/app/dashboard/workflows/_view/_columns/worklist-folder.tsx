@@ -2,17 +2,13 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import {
-  Checkbox,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
 import { EllipsisVertical, Folder } from "lucide-react";
-import type { GetInviteUserResponse } from "@repo/redux-utils/src/endpoints/types/settings-user";
-import ActionCell from "@/src/app/dashboard/settings/users/_components/delete-action-cell.tsx";
-import InviteActionCell from "@/src/app/dashboard/settings/users/_components/invite-action-cell.tsx";
-import { GetWorkFolders } from "@repo/redux-utils/src/endpoints/types/workflow.d.tsx";
+import type { GetWorkFolders } from "@repo/redux-utils/src/endpoints/types/workflow.d.tsx";
 
 export const workFolders: ColumnDef<GetWorkFolders>[] = [
   /*    {
@@ -77,7 +73,7 @@ export const workFolders: ColumnDef<GetWorkFolders>[] = [
 
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: () => {
       return (
         <DropdownMenu>
           <div className="inline flex w-full justify-end">

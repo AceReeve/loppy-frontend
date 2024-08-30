@@ -1,16 +1,15 @@
 import React from "react";
-import { Add, Play } from "iconsax-react";
-import BaseNode, {
-  BaseNodeProps,
-} from "@/src/app/dashboard/workflows/_components/_custom-nodes/base-node.tsx";
+import { Add } from "iconsax-react";
+import type { BaseNodeProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/base-node.tsx";
+import BaseNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/base-node.tsx";
 
-function TriggerNode(props: BaseNodeProps) {
+/*function TriggerNode(props: BaseNodeProps) {
   return (
     <BaseNode {...props}>
       <Add className="rounded bg-slate-200 p-1 dark:text-gray-400" />
     </BaseNode>
   );
-}
+}*/
 
 function ActionNode(props: BaseNodeProps) {
   return (
@@ -25,4 +24,4 @@ function ActionNode(props: BaseNodeProps) {
   );
 }
 
-export { TriggerNode, ActionNode };
+export { ActionNode };

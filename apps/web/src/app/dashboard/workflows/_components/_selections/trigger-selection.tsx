@@ -19,7 +19,7 @@ export default function TriggerSelection(props: TriggerProps) {
       onClick={handleButtonClick}
     >
       {/*<MagnifyingGlassIcon className="size-10 rounded bg-orange-800/20 p-1 text-gray-500" />*/}
-      <div className="size-10 rounded bg-orange-800/20 p-1 text-gray-500">
+      <div className="flex size-10 items-center justify-center rounded bg-orange-500/30 p-1 text-gray-500">
         {props.icon}
       </div>
       <div className="">{props.name}</div>

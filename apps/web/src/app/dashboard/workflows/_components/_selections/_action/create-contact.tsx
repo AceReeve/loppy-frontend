@@ -10,12 +10,13 @@ import {
   Separator,
 } from "@repo/ui/components/ui";
 import React from "react";
+
 export default function CreateContact() {
   return (
     <div className="space-y-6 p-4">
       <SelectGroup>
         <Select defaultValue="ContactTag">
-          <p>Choose a Workflow Trigger</p>z`
+          <p>Choose a Workflow Trigger</p>
           <SelectTrigger variant="outline">
             <SelectValue defaultValue="ContactTag" />
           </SelectTrigger>

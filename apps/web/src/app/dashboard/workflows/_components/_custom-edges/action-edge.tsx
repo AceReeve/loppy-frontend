@@ -1,6 +1,6 @@
 import React from "react";
 import type { EdgeProps } from "@xyflow/react";
-import { getSmoothStepPath, getStraightPath } from "@xyflow/react";
+import { getSmoothStepPath } from "@xyflow/react";
 import { Button } from "@repo/ui/components/ui";
 
 interface ActionEdgeProps extends EdgeProps {

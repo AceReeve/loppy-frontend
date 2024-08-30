@@ -5,20 +5,18 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui";
-import React, { useState } from "react";
-import type { Node } from "@xyflow/react";
+import React from "react";
 
 export default function ContactTag() {
-  const [contactNode, setContactNode] = useState<Node>({
+  /*  const [contactNode, setContactNode] = useState<Node>({
     id: " ",
     type: "triggerNode",
     data: { title: "Add New Trigger" },
     position: { x: 375, y: 0 },
-  });
+  });*/
 
   return (
     <div className="space-y-10 p-4">

@@ -1,3 +1,4 @@
+/*
 import {
   Input,
   Separator,
@@ -8,8 +9,8 @@ import {
   SheetTitle,
 } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import React, { useEffect, useState } from "react";
 import TriggerSelection from "@/src/app/dashboard/workflows/_components/_selections/trigger-selection.tsx";
-import React, { useEffect, useMemo, useState } from "react";
 
 interface SheetProps {
   openSheet: boolean;
@@ -17,7 +18,7 @@ interface SheetProps {
 }
 
 export default function SelectionBar(props: SheetProps) {
-  const [isTriggers, setIsTriggers] = useState(true);
+  const isTriggers = true;
   const triggers = [
     {
       id: 1,
@@ -108,21 +109,21 @@ export default function SelectionBar(props: SheetProps) {
   ];
   const [displayedTriggers, setDisplayedTriggers] = useState(triggers);
 
-  useEffect(() => {
+/!*  useEffect(() => {
     if (isTriggers) {
       setDisplayedTriggers(triggers);
     } else {
       setDisplayedTriggers(actionTriggers);
     }
-  }, [isTriggers]);
+  }, [isTriggers]);*!/
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredTriggers = useMemo(() => {
+  /!*  const filteredTriggers = useMemo(() => {
     return displayedTriggers.filter((trigger) =>
       trigger.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  }, [searchTerm, displayedTriggers]);
+  }, [searchTerm, displayedTriggers]);*!/
   return (
     <Sheet open={props.openSheet} onOpenChange={props.setOpenSheet}>
       <SheetContent>
@@ -154,7 +155,7 @@ export default function SelectionBar(props: SheetProps) {
             />
           </div>
 
-          <div className="space-y-2">
+          {/!* <div className="space-y-2">
             <p className="text-sm font-semibold text-slate-600">Contact</p>
             <div className="flex flex-col space-y-2 rounded border p-1">
               {filteredTriggers.map((trigger) => (
@@ -165,7 +166,7 @@ export default function SelectionBar(props: SheetProps) {
                 />
               ))}
             </div>
-          </div>
+          </div>*!/}
         </div>
 
         <SheetFooter />
@@ -173,3 +174,4 @@ export default function SelectionBar(props: SheetProps) {
     </Sheet>
   );
 }
+*/

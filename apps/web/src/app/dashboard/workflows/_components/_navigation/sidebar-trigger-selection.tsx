@@ -1,7 +1,18 @@
 import { Input, Separator } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CakeIcon, ContactRound } from "lucide-react";
+import {
+  ArrowLeft,
+  CakeIcon,
+  CalendarClockIcon,
+  ContactRound,
+  UserPlus,
+  UserRoundCog,
+  UserRoundPlus,
+  UserRoundSearch,
+  UserRoundX,
+} from "lucide-react";
+import { UserEdit } from "iconsax-react";
 import TriggerSelection from "@/src/app/dashboard/workflows/_components/_selections/trigger-selection.tsx";
 import BirthdayReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/birthday-reminder.tsx";
 import ContactChange from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contact-change.tsx";
@@ -37,28 +48,28 @@ export default function SidebarSelection(props: SheetProps) {
       id: 3,
       name: "Contact Created",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserPlus />,
       component: <BirthdayReminder />,
     },
     {
       id: 4,
       name: "Contact DND",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundX />,
       component: <BirthdayReminder />,
     },
     {
       id: 5,
       name: "Contact Tag",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundCog />,
       component: <ContactTag />,
     },
     {
       id: 6,
       name: "Custom Date Reminder",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <CalendarClockIcon />,
       component: <BirthdayReminder />,
     },
   ];
@@ -67,42 +78,42 @@ export default function SidebarSelection(props: SheetProps) {
       id: 1,
       name: "Create Contact",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundPlus />,
       component: <CreateContact />,
     },
     {
       id: 2,
       name: "Find Contact",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundSearch />,
       component: <BirthdayReminder />,
     },
     {
       id: 3,
       name: "Update Contact Field",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserEdit />,
       component: <BirthdayReminder />,
     },
     {
       id: 4,
       name: "Add Contact Tag",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundPlus />,
       component: <BirthdayReminder />,
     },
     {
       id: 5,
       name: "Assign to User",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundCog />,
       component: <BirthdayReminder />,
     },
     {
       id: 6,
       name: "Remove Assigned User",
       selection: TriggerSelection,
-      icon: <MagnifyingGlassIcon />,
+      icon: <UserRoundX />,
       component: <BirthdayReminder />,
     },
   ];
