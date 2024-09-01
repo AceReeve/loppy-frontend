@@ -4,6 +4,7 @@ import { Button } from "@repo/ui/components/ui";
 import { Handle, Position } from "@xyflow/react";
 
 export interface BaseNodeProps {
+  id: string;
   data: {
     title: string;
     onButtonClick?: (isTrigger: boolean) => void;

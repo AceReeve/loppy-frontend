@@ -11,6 +11,14 @@ import BaseNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/ba
   );
 }*/
 
+/*const endNode = (
+  <div className="flex items-center justify-center gap-2">
+    <Add className="h-8 w-8 rounded bg-orange-100/80 p-2 text-orange-500 " />
+    <p className="font-poppins text-[12px] text-slate-600">
+      {props.data.title}
+    </p>
+  </div>
+);*/
 function ActionNode(props: BaseNodeProps) {
   return (
     <BaseNode {...props}>

@@ -8,7 +8,7 @@ import {
   MiniMap,
 } from "@xyflow/react";
 import type { Node, Edge } from "@xyflow/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "@xyflow/react/dist/style.css";
 import { Edit } from "iconsax-react";
 import {
@@ -18,13 +18,19 @@ import {
   DialogTrigger,
   Input,
   Separator,
+  toast,
 } from "@repo/ui/components/ui";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { useCreateWorkflowMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import StartNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/start-node.tsx";
 import ActionEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/action-edge.tsx";
 import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigation/sidebar-trigger-selection.tsx";
 import TriggerNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
-import { ActionNode } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger.tsx";
 import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end-node.tsx";
+import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
 
 export default function Workflow() {
   const nodeTypes = {
@@ -37,111 +43,111 @@ export default function Workflow() {
   const [openSheet, setOpenSheet] = useState(false);
   const [openWorkName, setOpenWorkName] = useState(false);
   const [isTriggers, setIsTriggers] = useState(false);
-  const [primaryActionID, setPrimaryActionID] = useState("end");
+  /*  const [primaryActionID, setPrimaryActionID] = useState("a0");*/
+
+  const primaryActionID = useRef("a0");
+  const updatePrimaryActionID = (newID: string) => {
+    primaryActionID.current = newID;
+  };
 
   const handleOpenSheet = (isTrigger: boolean) => {
-    setOpenSheet(!openSheet);
+    setOpenSheet(true);
     setIsTriggers(isTrigger);
   };
 
-  /*  const actionNodes: Node[] = [
+  const triggerNodes = calculatePositions([
     {
-      id: "a1",
+      id: "0",
+      type: "triggerNode",
+      data: {
+        title: "Add New Trigger",
+        onButtonClick: handleOpenSheet,
+      },
+      position: { x: 0, y: 0 },
+    },
+  ]);
+
+  const actionNodes = calculateActionPositions([
+    {
+      id: "a0",
       type: "actionNode",
-      data: { title: "end" },
+      data: { title: "End" },
       position: { x: 67, y: 250 },
     },
-    {
-      id: "end",
-      type: "endNode",
-      data: { title: "end" },
-      position: { x: 67, y: 250 },
-    },
-  ];*/
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  ]);
+  const [nodes, setNodes] = useNodesState<Node>([
+    ...actionNodes,
+    ...triggerNodes,
+  ]);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments -- (description)
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [edges, setEdges] = useEdgesState<Edge>([]);
 
   useEffect(() => {
-    const triggerNodes = calculatePositions([
-      {
-        id: "1",
-        type: "triggerNode",
-        data: {
-          title: "Add New Trigger",
-          onButtonClick: () => {
-            AddNode(nodeSample);
-          },
-        },
-        position: { x: 0, y: 0 },
-      },
-    ]);
+    /*    setNodes([...actionNodes, ...triggerNodes]);*/
 
-    const actionNodes = calculateActionPositions([
-      /*      {
-        id: "a1",
-        type: "actionNode",
-        data: { title: "Action" },
-        position: { x: 67, y: 250 },
-      },*/
-      {
-        id: "end",
-        type: "actionNode",
-        data: { title: "End" },
-        position: { x: 67, y: 250 },
+    // Define the new edge
+    const newEdge = {
+      id: "n0-a0",
+      source: "0",
+      target: primaryActionID.current,
+      type: "actionEdge",
+      animated: false,
+      data: {
+        onButtonClick: handleOpenSheet,
       },
-    ]);
+    };
 
-    setNodes([...actionNodes, ...triggerNodes]);
-    const edge = [
-      {
-        id: "e1-end",
-        source: "1",
-        target: primaryActionID,
-        type: "actionEdge",
-        animated: false,
-        data: { onButtonClick: handleOpenSheet },
-      },
-    ];
-    setEdges(edge);
-  }, []);
+    // Update edges
+    setEdges((currentEdges) => {
+      // Find the index of the existing edge
+      const existingEdgeIndex = currentEdges.findIndex(
+        (edge) => edge.id === newEdge.id,
+      );
 
-  function calculatePositions(triggerNodes: Node[]): Node[] {
+      if (existingEdgeIndex >= 0) {
+        const updatedEdges = [...currentEdges];
+        updatedEdges[existingEdgeIndex] = newEdge;
+        return updatedEdges;
+      }
+      return [...currentEdges, newEdge];
+    });
+  }, [primaryActionID.current, nodes]);
+
+  function calculatePositions(tNodes: Node[]): Node[] {
     const baseOffset = 250;
-    const startOffset = (triggerNodes.length - 1) * -125;
-    return triggerNodes.map((node, index) => {
+    const startOffset = (tNodes.length - 1) * -125;
+    return tNodes.map((node, index) => {
       const xPosition = startOffset + index * baseOffset;
       return {
         ...node,
-        data: {
+        /*        data: {
           title: `Trigger ID: ${node.id}`,
-          onButtonClick: () => {
-            AddNode(nodeSample);
-          },
-        },
-        position: { x: xPosition, y: 0 }, // Adjust y as needed
+          onButtonClick: handleOpenSheet,
+        },*/
+        position: { x: xPosition, y: 0 },
       };
     });
   }
 
-  function calculateActionPositions(actionNodes: Node[]): Node[] {
+  function calculateActionPositions(aNodes: Node[]): Node[] {
     const baseOffset = 250;
     const startOffset = 250;
-    return actionNodes.map((node, index) => {
+    return aNodes.map((node, index) => {
       const yPosition = startOffset + index * baseOffset;
       return {
         ...node,
-        data: {
-          title: `Action ID: ${node.id}`,
+        /*        data: {
+          /!* title: `Action ID: ${node.id}`,*!/
           onButtonClick: () => {
             AddActionNode(nodeSample);
           },
-        },
-        position: { x: 0, y: yPosition }, // Adjust y as needed
+        },*/
+        position: { x: 0, y: yPosition },
       };
     });
   }
 
+  /*
   const nodeSample: Node = {
     id: "",
     type: "actionNode",
@@ -151,6 +157,9 @@ export default function Workflow() {
     },
     position: { x: 200, y: 0 },
   };
+*/
+
+  /*  useEffect(() => {}, [primaryActionID.current]);*/
 
   const AddNode = useCallback(
     (node: Node) => {
@@ -161,7 +170,7 @@ export default function Workflow() {
         const existingActionNodes = currentNodes.filter(
           (n) => n.type === "triggerNode",
         );
-        // Generate new node ID based on currentNodes length to ensure uniqueness
+
         lastNodeId =
           currentNodes.length > 0
             ? extractNumericId(
@@ -171,24 +180,20 @@ export default function Workflow() {
 
         newNodeId = (lastNodeId + 1).toString();
 
-        // Create the new node with default position
         const newNode: Node = {
           ...node,
           id: newNodeId,
           type: "triggerNode",
-          position: { x: 0, y: 0 }, // Position will be recalculated
+          position: { x: 0, y: 0 },
         };
 
-        // Add the new node to the nodes list
         const updatedTriggerNodes = [
           ...currentNodes.filter((n) => n.type === "triggerNode"),
           newNode,
         ];
 
-        // Calculate positions for all trigger nodes only
         const positionedNodes = calculatePositions(updatedTriggerNodes);
 
-        // Update nodes by combining with action nodes
         return [
           ...currentNodes.filter((n) => n.type !== "triggerNode"),
           ...positionedNodes,
@@ -197,25 +202,23 @@ export default function Workflow() {
 
       setEdges((currentEdges: Edge[]) => {
         const newEdge: Edge = {
-          id: `e${newNodeId}`,
+          id: `n${newNodeId}-${primaryActionID.current}`,
           source: newNodeId,
-          target: primaryActionID,
+          /*          target: "a1",*/
+          target: primaryActionID.current,
           type: "smoothstep",
           animated: false,
           data: { onButtonClick: handleOpenSheet },
         };
+
         return [...currentEdges, newEdge];
       });
     },
-    [handleOpenSheet],
+    [handleOpenSheet, primaryActionID.current],
   );
 
-  /*  function extractNumericId(id: string): number {
-    const match = id.match(/\d+$/); // Regex to find digits at the end of the string
-    return match ? parseInt(match[0], 10) : 0;
-  }*/
   function extractNumericId(id: string): number {
-    const regex = /\d+$/; // Regex to find digits at the end of the string
+    const regex = /\d+$/;
     const match = regex.exec(id);
     return match ? parseInt(match[0], 10) : 0;
   }
@@ -227,85 +230,67 @@ export default function Workflow() {
       let existingActionNodes: Node[] = [];
 
       setNodes((currentNodes: Node[]) => {
-        // Filter existing action nodes
         existingActionNodes = currentNodes.filter(
           (n) => n.type === "actionNode",
         );
-
-        // Generate new node ID based on the last action node's ID
         lastNodeId =
           existingActionNodes.length > 0
-            ? extractNumericId(
-                existingActionNodes[existingActionNodes.length - 1].id,
-              )
+            ? extractNumericId(existingActionNodes[0].id)
             : 0;
-
-        // Create a new node ID for the new action node
         newNodeId = `a${(lastNodeId + 1).toString()}`;
 
-        // Create the new action node with default position
         const newNode: Node = {
           ...node,
           id: newNodeId,
           type: "actionNode",
-          position: { x: 0, y: 0 }, // Position will be recalculated
+          position: { x: 0, y: 0 },
         };
 
-        // Unshift the new node to the beginning of the action nodes list
         existingActionNodes.unshift(newNode);
+        /*setPrimaryActionID(existingActionNodes[0].id);*/
+        updatePrimaryActionID(existingActionNodes[0].id);
 
-        // Calculate positions for all action nodes
         const positionedNodes = calculateActionPositions(existingActionNodes);
 
-        // Update nodes by combining with other nodes
         return [
           ...currentNodes.filter((n) => n.type !== "actionNode"),
           ...positionedNodes,
         ];
       });
 
-      setPrimaryActionID(newNodeId);
-
-      // Now setEdges can use the newNodeId
       setEdges((currentEdges: Edge[]) => {
+        const filteredEdges = currentEdges.filter(
+          (edge) =>
+            edge.id.startsWith("n") && edge.target !== primaryActionID.current,
+        );
+
+        const updatedEdges = filteredEdges.map((edge) => ({
+          ...edge,
+          target: primaryActionID.current,
+        }));
+
         const newEdge: Edge = {
-          id: `e${newNodeId}`,
-          // source: "a" + lastNodeId.toString(), // Adjust this based on your specific logic
-          source:
-            existingActionNodes[existingActionNodes.length - 1].id.toString(),
-          target: newNodeId,
-          type: "smoothstep",
+          id: `a${newNodeId}-${existingActionNodes[1].id.toString()}`,
+          source: newNodeId,
+          target: existingActionNodes[1].id.toString(),
+          type: "actionEdge",
           animated: false,
           data: { onButtonClick: handleOpenSheet },
         };
-        return [...currentEdges, newEdge];
+
+        return [
+          ...updatedEdges,
+          ...currentEdges.filter(
+            (edge) =>
+              !edge.id.startsWith("n") ||
+              edge.target === primaryActionID.current,
+          ),
+          newEdge,
+        ];
       });
     },
     [handleOpenSheet],
   );
-
-  /*  const deleteNode = useCallback((nodeId: string) => {
-    setNodes((currentNodes) =>
-      currentNodes.filter((node) => node.id !== nodeId),
-    );
-    setEdges((currentEdges) =>
-      currentEdges.filter(
-        (edge) => edge.source !== nodeId && edge.target !== nodeId,
-      ),
-    );
-  }, []);*/
-
-  /*  const onConnect = useCallback(
-    (connection: Connection) => {
-      const edge: Edge = {
-        ...connection,
-        animated: true,
-        id: `${edges.length} + 1`,
-      };
-      setEdges((prevEdges) => addEdge(edge, prevEdges));
-    },
-    [edges],
-  );*/
 
   const [workflowName, setWorkflowName] = useState("12598271215");
   const [inputValue, setInputValue] = useState(workflowName);
@@ -321,9 +306,122 @@ export default function Workflow() {
     actionEdge: ActionEdge,
   };
 
+  const handleAddNodeClick = (node: Node) => {
+    AddNode(node);
+    setOpenSheet(false);
+  };
+  const handleAddActionNodeClick = (node: Node) => {
+    AddActionNode(node);
+    setOpenSheet(false);
+  };
+
+  // INTEGRATION PART
+
+  const formSchema = z.object({
+    trigger: z.object({
+      id: z.string().min(1, "Trigger ID is required"),
+      trigger_name: z.string().min(1, "Trigger name is required"),
+      content: z.array(z.string().min(1, "Trigger Content cannot be empty")),
+    }),
+    action: z.object({
+      id: z.string().min(1, "Action ID is required"),
+      action_name: z.string().min(1, "Action name is required"),
+      content: z.string().min(1, "Action Content is required"),
+    }),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      trigger: {
+        id: "",
+        trigger_name: "",
+        content: [],
+      },
+      action: {
+        id: "",
+        action_name: "",
+        content: "",
+      },
+    },
+  });
+
+  const [createWorkflow] = useCreateWorkflowMutation();
+  const SaveWorkflow = async () => {
+    try {
+      const existingActionNodes = nodes.filter(
+        (n) => n.type === "actionNode" && n.id !== "a0",
+      );
+
+      const existingTriggerNodes = nodes.filter(
+        (n) => n.type === "triggerNode" && n.id !== "0",
+      );
+
+      if (existingTriggerNodes.length > 0) {
+        const firstTriggerNode = existingTriggerNodes[0];
+
+        form.setValue("trigger.id", firstTriggerNode.id);
+        form.setValue(
+          "trigger.trigger_name",
+          firstTriggerNode.data.title as string,
+        );
+        form.setValue("trigger.content", [
+          firstTriggerNode.data.content as string,
+        ]);
+      }
+
+      if (existingActionNodes.length > 0) {
+        const firstActionNode = existingActionNodes[0];
+
+        form.setValue("action.id", firstActionNode.id);
+        form.setValue(
+          "action.action_name",
+          firstActionNode.data.title as string,
+        );
+        form.setValue("action.content", firstActionNode.data.content as string);
+      }
+
+      // Perform workflow creation
+      /*
+      await createWorkflow(form.getValues()).unwrap();
+*/
+
+      const response = await createWorkflow(form.getValues()).unwrap();
+
+      if ((response as { work_flow_name: string }).work_flow_name) {
+        // Handle successful submission
+        toast({
+          title: "Workflow created Successfully",
+          description: "New workflow has been created.",
+          variant: "success",
+        });
+        form.reset();
+      } else {
+        // Handle submission failure
+        toast({
+          title: "Creation of Workflow Failed",
+          description: "Failed to create workflow",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Create Workflow Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="border-5 h-[725px] w-full border-gray-900">
-      <div className="flex w-full justify-center gap-2 rounded-md bg-white p-4">
+      <div className="flex w-full items-center justify-center gap-2 rounded-md bg-white p-4">
+        <Button
+          className="absolute right-5 rounded px-4"
+          onClick={SaveWorkflow}
+        >
+          Publish
+        </Button>
         <p className="font-semibold">New Workflow: {workflowName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
@@ -341,8 +439,8 @@ export default function Workflow() {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        /*        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}*/
         /*        onConnect={onConnect}*/
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
@@ -352,6 +450,8 @@ export default function Workflow() {
           openSheet={openSheet}
           setOpenSheet={setOpenSheet}
           isTriggers={isTriggers}
+          addActionNode={handleAddActionNodeClick}
+          addTriggerNode={handleAddNodeClick}
         />
         <Background className="rounded-xl !bg-slate-200" />
         <Controls />

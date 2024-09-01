@@ -214,6 +214,18 @@ export const CreateContactsFormSchema = z.object({
   tags: z.array(tagSchema).optional(),
 });
 
+export const CreateBirthReminderSchema = z.object({
+  birthDate: z.date().refine((date) => {
+    // Ensure date is valid
+    return !isNaN(date.getTime());
+  }),
+});
+export const CreateEmailActionSchema = z.object({
+  message: z.string().min(1, {
+    message: "Message is Required",
+  }),
+});
+
 export const SendInviteUserSchema = z.object({
   email: z.string().min(1, {
     message: "Email is Required",

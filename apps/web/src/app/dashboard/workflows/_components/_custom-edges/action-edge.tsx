@@ -32,7 +32,7 @@ export default function ActionEdge({
 
   const handleClick = () => {
     if (data.onButtonClick) {
-      data.onButtonClick(false); // Call the function with the boolean parameter
+      data.onButtonClick(false);
     }
   };
 
@@ -55,7 +55,7 @@ export default function ActionEdge({
           <Button
             variant="outline"
             onClick={handleClick}
-            className={`text-md cursor-pointer rounded rounded-full border border-black bg-white p-1 text-slate-600 dark:bg-slate-100 w-[${buttonWidth.toString()}px] h-[${buttonHeight.toString()}px] flex items-center justify-center`}
+            className={`text-md cursor-pointer rounded rounded-full border border-slate-500 bg-white p-1 text-slate-600 dark:bg-slate-100 w-[${buttonWidth.toString()}px] h-[${buttonHeight.toString()}px] flex items-center justify-center`}
           >
             {buttonContent}
           </Button>
