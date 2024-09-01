@@ -12,6 +12,7 @@ import {
   UserRoundPlus,
   UserRoundX,
 } from "lucide-react";
+import type { CustomNode } from "@repo/redux-utils/src/endpoints/types/workflow";
 import { UserEdit } from "iconsax-react";
 import TriggerSelection from "@/src/app/dashboard/workflows/_components/_selections/trigger-selection.tsx";
 import BirthdayReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/birthday-reminder.tsx";
@@ -24,8 +25,8 @@ interface SheetProps {
   openSheet: boolean;
   setOpenSheet: (open: boolean) => void;
   isTriggers: boolean;
-  addTriggerNode: (node: Node) => void;
-  addActionNode: (node: Node) => void;
+  addTriggerNode: (node: CustomNode) => void;
+  addActionNode: (node: CustomNode) => void;
 }
 
 export default function SidebarSelection(props: SheetProps) {

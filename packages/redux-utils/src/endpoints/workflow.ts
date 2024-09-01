@@ -1,6 +1,5 @@
 import { baseApi } from "../api";
-import { type SearchParamsType } from "../index.tsx";
-import {
+import type {
   CreateWorkflowPayload,
   GetCreateWorkflowResponse,
 } from "./types/workflow";

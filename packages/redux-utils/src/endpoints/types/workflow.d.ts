@@ -15,6 +15,16 @@ export interface Action {
   content: string;
 }
 
+export interface CustomNode extends Node {
+  id: string;
+  type: string;
+  data: {
+    title: string;
+    content: string;
+  };
+  position: { x: number; y: number };
+}
+
 // If you want to combine them into a single interface:
 export interface CreateWorkflowPayload {
   trigger: Trigger;

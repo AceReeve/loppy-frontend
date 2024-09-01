@@ -11,10 +11,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { CustomNode } from "@repo/redux-utils/src/endpoints/types/workflow";
 import { CreateEmailActionSchema } from "@/src/schemas";
 
 interface SendEmailProps {
-  onHandleClick: (node: Node) => void;
+  onHandleClick: (node: CustomNode) => void;
   onAddNodes: () => void;
 }
 
@@ -39,7 +40,7 @@ export default function SendEmail(prop: SendEmailProps) {
   };
 
   const onSubmit = () => {
-    prop.onHandleClick(emailNode);
+    prop.onHandleClick(emailNode as CustomNode);
     prop.onAddNodes();
   };
 

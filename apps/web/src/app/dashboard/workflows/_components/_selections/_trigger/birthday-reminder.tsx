@@ -16,19 +16,11 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { CustomNode } from "@repo/redux-utils/src/endpoints/types/workflow";
 import { CreateBirthReminderSchema } from "@/src/schemas";
 
-interface CustomNode extends Node {
-  id: string;
-  type: string;
-  data: {
-    title: string;
-    content: string;
-  };
-  position: { x: number; y: number };
-}
 interface BirthdayReminderProps {
-  onHandleClick: (node: Node) => void;
+  onHandleClick: (node: CustomNode) => void;
   onAddNodes: () => void;
 }
 
