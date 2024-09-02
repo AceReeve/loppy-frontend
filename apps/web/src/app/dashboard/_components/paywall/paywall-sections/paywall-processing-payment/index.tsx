@@ -7,7 +7,8 @@ export default function PaywallProcessingPayment() {
       <LoadingSpinner />
       <AlertTitle>Processing Payment</AlertTitle>
       <AlertDescription>
-        Almost there, we&apos;re finalizing your payment.
+        Almost there, we&apos;re finalizing your payment. <br />
+        It might take some time for some providers to process your payment.
       </AlertDescription>
     </Alert>
   );

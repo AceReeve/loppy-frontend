@@ -238,3 +238,12 @@ export const SendInviteUsersSchema = z.object({
     }),
   ),
 });
+
+export const OrganizationSchema = z.object({
+  organization_name: z.string().trim().min(1, {
+    message: "Organization name is required",
+  }),
+  description: z.string().trim().min(1, {
+    message: "Description is required",
+  }),
+});

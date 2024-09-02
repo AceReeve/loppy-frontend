@@ -22,24 +22,20 @@ export default function PaywallPlanSelection() {
         width={138}
       />
       <div className="mt-14 flex flex-col items-center gap-3 text-center">
-        <h1 className="self-stretch text-4xl font-bold text-[#fff]">
+        <h1 className="font-nunito text-[35px] font-bold">
           The Right Plan for Your Business
         </h1>
         <div className="flex items-center gap-5">
-          <div className="text-md font-montserrat font-bold tracking-wide text-[#fff]">
-            Bill Monthly
-          </div>
+          <div className="text-md">Bill Monthly</div>
           <div className="inline-flex h-7 w-14 items-center justify-start rounded-[40px] bg-white px-[5px] pb-1.5 pt-[5px]">
             <div className="relative h-full w-5 rounded-[40px] bg-gradient-to-br from-orange-500 to-yellow-500" />
           </div>
-          <div className="text-md font-montserrat font-bold tracking-wide text-[#fff]">
-            Bill Annually
-          </div>
+          <div className="text-md">Bill Annually</div>
         </div>
         <div className="relative mt-3 flex items-start gap-[53px]">
           {Object.entries(paymentPlanDetails).map(([key, item], index) => (
             <div
-              className={`relative flex max-w-[323px] flex-1 flex-col items-center rounded-[32px] px-[25px] py-[18px] ${index % 2 === 1 ? "bg-gradient-to-br from-orange-500 to-yellow-500" : "bg-white"}`}
+              className={`relative flex max-w-[323px] flex-1 flex-col items-center rounded-[32px] border border-gray-200 px-[25px] py-[18px] shadow-xl hover:border-primary ${index % 2 === 1 ? "bg-gradient-to-br from-orange-500 to-yellow-500" : "bg-white"}`}
               key={key}
             >
               <div className={index % 2 === 1 ? "text-white" : "text-black"}>
@@ -47,7 +43,7 @@ export default function PaywallPlanSelection() {
                   <div className="text-sm font-medium leading-normal tracking-wide">
                     {item.name}
                   </div>
-                  <div className="text-center text-xl font-extrabold capitalize leading-normal tracking-wide">
+                  <div className="text-center text-xl font-bold leading-normal tracking-wide">
                     {item.title}
                   </div>
                 </div>

@@ -15,7 +15,13 @@ export const getErrorMessage = (
 
   // fetchBaseQuery error
   // @ts-ignore -- ignore
-  if (typeof error === "object" && !error?.data && "status" in error) {
+  if (
+    error &&
+    typeof error === "object" &&
+    !error?.message &&
+    !error?.data &&
+    "status" in error
+  ) {
     console.log("fetchBaseQuery");
     return errors["default-fetch"];
   }
