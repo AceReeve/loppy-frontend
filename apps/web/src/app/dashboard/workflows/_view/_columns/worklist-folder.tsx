@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
 import { EllipsisVertical, Folder } from "lucide-react";
-import type { GetWorkFolders } from "@repo/redux-utils/src/endpoints/types/workflow.d.tsx";
+import type { GetWorkFolders } from "@repo/redux-utils/src/endpoints/types/workflow.d.ts";
 
 export const workFolders: ColumnDef<GetWorkFolders>[] = [
   /*    {

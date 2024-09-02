@@ -4,13 +4,14 @@ import { Add } from "iconsax-react";
 import { Handle, Position } from "@xyflow/react";
 
 interface TriggerNodeProps {
+  id: string;
   data: {
     title: string;
     onButtonClick?: (isTrigger: boolean) => void; // onButtonClick is optional
   };
 }
-
 export default function TriggerNode({
+  id,
   data: { title, onButtonClick },
 }: TriggerNodeProps) {
   const handleClick = () => {
@@ -18,7 +19,8 @@ export default function TriggerNode({
       onButtonClick(true); // Call the function with the boolean parameter
     }
   };
-  return (
+
+  const triggerNode = (
     <Button
       variant="outline"
       className=" w-[200px] justify-start  rounded px-4 dark:bg-slate-100"
@@ -34,4 +36,24 @@ export default function TriggerNode({
       <Handle type="source" position={Position.Bottom} />
     </Button>
   );
+
+  const startNode = (
+    <Button
+      variant="outline"
+      className=" w-[200px] justify-start rounded border border-dashed  border-orange-500 px-4 py-3 dark:bg-slate-100"
+      onClick={handleClick}
+    >
+      <div className="flex items-center justify-center gap-2">
+        <Add className="h-8 w-8 rounded bg-slate-200 p-2 dark:text-gray-400" />
+        <div className="flex flex-col text-left">
+          <p className=" font-poppins text-[12px] text-orange-500">
+            Add a new Trigger
+          </p>
+        </div>
+      </div>
+      <Handle type="source" position={Position.Bottom} />
+    </Button>
+  );
+
+  return id !== "0" ? triggerNode : startNode;
 }
