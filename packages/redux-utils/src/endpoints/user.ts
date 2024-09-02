@@ -1,5 +1,15 @@
 import { baseApi } from "../api.ts";
-import type { InviteUserPayload, InviteUserResponse } from "./types/user";
+import {
+  type GetUserInfoResponse,
+  type InviteUserPayload,
+  type InviteUserResponse,
+  type SaveUserInfoPayload,
+  type SaveUserInfoResponse,
+} from "./types/user";
+import type {
+  GetInviteUserResponse,
+  GetSendInviteUserPayload,
+} from "./types/settings-user";
 
 const api = baseApi
   .enhanceEndpoints({
@@ -25,8 +35,8 @@ const api = baseApi
         providesTags: ["user"],
       }),
       validateInviteUser: builder.mutation<
-        InviteUserResponse,
-        InviteUserPayload
+        GetInviteUserResponse,
+        GetSendInviteUserPayload
       >({
         query: (payload) => {
           return {
@@ -36,6 +46,24 @@ const api = baseApi
           };
         },
       }),
+      getUserInfo: builder.query<GetUserInfoResponse, undefined>({
+        query: () => {
+          return {
+            url: `/user/profile`,
+          };
+        },
+      }),
+      saveUserInfo: builder.mutation<SaveUserInfoResponse, SaveUserInfoPayload>(
+        {
+          query: (payload) => {
+            return {
+              url: `/user/user-info`,
+              method: "POST",
+              body: payload,
+            };
+          },
+        },
+      ),
     }),
   });
 
@@ -43,4 +71,6 @@ export const {
   useGetInvitedUsersQuery,
   useInviteUserMutation,
   useValidateInviteUserMutation,
+  useSaveUserInfoMutation,
+  useGetUserInfoQuery,
 } = api;

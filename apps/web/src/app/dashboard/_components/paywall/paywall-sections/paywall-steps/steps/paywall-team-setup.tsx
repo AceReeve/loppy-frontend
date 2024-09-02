@@ -1,32 +1,49 @@
-import { Fragment, useState } from "react";
-import { toast } from "@repo/ui/components/ui";
+import React, { Fragment, useState } from "react";
+import { Alert, AlertDescription, Button, toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useValidateInviteUserMutation } from "@repo/redux-utils/src/endpoints/user.ts";
-import { PaymentPlan } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
-import { usePaywallState } from "@/src/providers/paywall-provider";
+import { Check } from "lucide-react";
+import { useSendInviteUserMutation } from "@repo/redux-utils/src/endpoints/settings-user.ts";
+import { type z } from "zod";
+import { useCreateOrganizationMutation } from "@repo/redux-utils/src/endpoints/organization.ts";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import {
+  type OrganizationSchema,
+  type SendInviteUsersSchema,
+} from "@/src/schemas";
+import TeamsOrganization from "./team-setup-steps/teams-organization.tsx";
 import TeamsAddTeam from "./team-setup-steps/teams-add-team.tsx";
-import TeamsPermissionSetup from "./team-setup-steps/teams-permission-setup.tsx";
 import TeamsSubmit from "./team-setup-steps/teams-submit.tsx";
 
 export default function PaywallTeamSetup() {
   const [stepIndex, setStepIndex] = useState(0);
-  const { setStorage } = usePaywallState();
-  const [validateInviteUser, { data: invitedUsersData, isLoading }] =
+
+  const [organization, setOrganization] =
+    useState<z.infer<typeof OrganizationSchema>>();
+
+  const [invitedUsers, setInvitedUsers] =
+    useState<z.infer<typeof SendInviteUsersSchema>>();
+
+  const [createOrganization, { isLoading: isCreateOrganizationLoading }] =
+    useCreateOrganizationMutation();
+
+  const [validateInviteUser, { isLoading: isValidateInviteUserLoading }] =
     useValidateInviteUserMutation();
 
-  const handleSubmitInvitedList = (invitesList: string[]) => {
-    validateInviteUser({
-      email: invitesList,
-    })
+  const [inviteUser, { isLoading: isInviteUserLoading }] =
+    useSendInviteUserMutation();
+
+  const isLoading = isValidateInviteUserLoading;
+
+  const handleSubmitInvitedList = (
+    data: z.infer<typeof SendInviteUsersSchema>,
+  ) => {
+    validateInviteUser(data)
       .unwrap()
-      .then((res) => {
-        if (res.emails?.length) {
-          setStepIndex(stepIndex + 1);
-        } else {
-          // Skip permissions setup if no emails entered
-          setStepIndex(2);
-        }
+      .then(() => {
+        setInvitedUsers(data);
+        setStepIndex(stepIndex + 1);
       })
       .catch((e: unknown) => {
         toast({
@@ -35,7 +52,14 @@ export default function PaywallTeamSetup() {
           variant: "destructive",
         });
       });
-    // }
+    // setStepIndex(stepIndex + 1);
+  };
+
+  const handleSubmitOrganization = (
+    data: z.infer<typeof OrganizationSchema>,
+  ) => {
+    setOrganization(data);
+    setStepIndex(stepIndex + 1);
   };
 
   const handleSubmitPermissions = () => {
@@ -43,25 +67,48 @@ export default function PaywallTeamSetup() {
   };
 
   const handleFinalSubmit = () => {
-    if (stepIndex < steps.length - 1) {
-      setStepIndex(stepIndex + 1);
-    } else {
-      setStorage({
-        plan: PaymentPlan.CORPORATE,
+    if (!organization) return;
+    if (!invitedUsers) return;
+
+    inviteUser(invitedUsers)
+      .unwrap()
+      .then(() => {
+        createOrganization(organization)
+          .unwrap()
+          .catch((err: unknown) => {
+            toast({
+              title: "Create Organization Error",
+              description: getErrorMessage(err),
+              variant: "destructive",
+            });
+          });
+      })
+      .catch((e: unknown) => {
+        toast({
+          title: "Invite User Error",
+          description: getErrorMessage(e),
+          variant: "destructive",
+        });
       });
-    }
+  };
+
+  const onPrevClicked = () => {
+    setStepIndex(stepIndex - 1);
+  };
+  const onNextClicked = () => {
+    setStepIndex(stepIndex + 1);
   };
 
   const steps = [
     {
-      label: "Add Team",
-      id: "add-team",
-      component: TeamsAddTeam,
+      label: "Organization",
+      id: "organization",
+      component: TeamsOrganization,
     },
     {
-      label: "Permissions",
-      id: "permissions",
-      component: TeamsPermissionSetup,
+      label: "Members",
+      id: "add-team",
+      component: TeamsAddTeam,
     },
     {
       label: "Submit",
@@ -70,23 +117,41 @@ export default function PaywallTeamSetup() {
     },
   ];
 
-  const StepComponent = steps[stepIndex].component;
-
   return (
-    <div className="m-auto p-10">
+    <div className="m-auto w-full p-10">
       {isLoading ? <LoadingOverlay /> : null}
-      <div className="flex max-w-[668px] flex-col items-center gap-7 text-center">
+      {isCreateOrganizationLoading ? (
+        <div className="absolute left-0 top-0 z-10 flex size-full items-center justify-center">
+          <Alert className="max-w-72">
+            <LoadingSpinner />
+            <AlertDescription>Creating your organization...</AlertDescription>
+          </Alert>
+        </div>
+      ) : null}
+      {isInviteUserLoading ? (
+        <div className="absolute left-0 top-0 z-10 flex size-full items-center justify-center">
+          <Alert className="max-w-72">
+            <LoadingSpinner />
+            <AlertDescription>Sending invites to users...</AlertDescription>
+          </Alert>
+        </div>
+      ) : null}
+      <div className="m-auto flex w-full max-w-[668px] flex-col items-center gap-7">
         {stepIndex < steps.length - 1 ? (
-          <div className="text-center font-nunito text-[35px] font-bold text-card">
-            Thanks for Signing up To Service Hero! <br />
-            Now, Let’s Setup Your Team!
+          <div className="flex flex-col gap-3">
+            <div className="text-center font-nunito text-3xl font-bold">
+              Thanks for signing up to Service Hero!
+            </div>
+            <div className="text-center text-xl">
+              Now, let’s setup your team!
+            </div>
           </div>
         ) : (
           <div>
-            <div className="text-center font-nunito text-[35px] font-bold text-card">
+            <div className="text-center font-nunito text-[35px] font-bold">
               Thanks for Signing up To Service Hero!
             </div>
-            <div className="text-md mt-4 text-center text-card">
+            <div className="text-md mt-4 text-center">
               Manage your clients and streamline your workflow all in one place.
               <br />
               We&apos;re excited to help you enhance your productivity and
@@ -103,44 +168,66 @@ export default function PaywallTeamSetup() {
               width: `${((stepIndex / (steps.length - 1)) * 100).toString()}%`,
             }}
           />
-          {Array.from({ length: 3 }, (_, i) => i + 1).map((item, index) => (
-            <div
-              className={`relative size-[70px] rounded-full p-3 ${index <= stepIndex ? "bg-primary text-red-500" : "bg-gray-300 text-black"}`}
-              key={item}
-            >
-              <div className="flex size-full items-center justify-center rounded-full bg-white text-xl font-bold">
-                {index + 1}
+          {Array.from({ length: steps.length }, (_, i) => i + 1).map(
+            (item, index) => (
+              <div
+                className={`relative size-[70px] rounded-full p-3 ${index <= stepIndex ? "bg-primary text-red-500" : "bg-gray-300 text-black"}`}
+                key={item}
+              >
+                <div className="flex size-full items-center justify-center rounded-full bg-white text-xl font-bold">
+                  {index + 1}
+                </div>
               </div>
-            </div>
-          ))}
+            ),
+          )}
         </div>
         <div className="flex h-12 w-full items-center overflow-hidden rounded-xl border border-gray-300">
           {steps.map((item, index) => (
             <Fragment key={item.id}>
-              <button
-                className={`h-full flex-1 rounded-none bg-white font-medium ${index === stepIndex ? "text-primary" : "text-black"}
-                ${index < stepIndex ? "hover:bg-gray-200" : "pointer-events-none"}
+              <Button
+                className={`h-full flex-1 gap-1.5 rounded-none text-sm ${index === stepIndex ? "text-black shadow-sm" : "bg-gray-200 font-normal text-gray-800"}
+                ${index < stepIndex ? "hover:bg-gray-100" : "pointer-events-none"}
                 `}
                 onClick={() => {
                   index >= stepIndex ? null : setStepIndex(index);
                 }}
+                variant="ghost"
                 type="button"
               >
+                {index < stepIndex ? (
+                  <Check className="size-4 text-[#03AEB9]" />
+                ) : null}
+
                 {item.label}
-              </button>
+              </Button>
               {index < steps.length - 1 && (
                 <div className="h-full border-r border-gray-300" />
               )}
             </Fragment>
           ))}
         </div>
-        <StepComponent
-          emails={invitedUsersData?.emails}
-          handleFinalSubmit={handleFinalSubmit}
-          handleSubmitInvitedList={handleSubmitInvitedList}
-          handleSubmitPermissions={handleSubmitPermissions}
-          setStepIndex={setStepIndex}
-        />
+        {/* Step Content */}
+        <div className="w-full">
+          {steps.map((step, index) => {
+            if (index <= stepIndex) {
+              const StepComponent = step.component;
+              return (
+                <div key={step.id} hidden={index !== stepIndex}>
+                  <StepComponent
+                    handleFinalSubmit={handleFinalSubmit}
+                    handleSubmitInvitedList={handleSubmitInvitedList}
+                    handleSubmitPermissions={handleSubmitPermissions}
+                    handleSubmitOrganization={handleSubmitOrganization}
+                    setStepIndex={setStepIndex}
+                    onPrevClicked={onPrevClicked}
+                    onNextClicked={onNextClicked}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
       </div>
     </div>
   );

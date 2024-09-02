@@ -58,13 +58,13 @@ export default function PaywallSteps() {
 
   return (
     <div className="relative flex flex-1 flex-col p-8">
-      <div className="grid size-full flex-1 grid-cols-12 overflow-hidden rounded-[15px] bg-white">
-        <div className="col-span-8 size-full border-r border-[#E7E7E7] bg-white px-12 py-14">
+      <div className="grid size-full flex-1 grid-cols-12 gap-2 overflow-hidden">
+        <div className="col-span-8 size-full rounded-2xl bg-white px-12 py-14 shadow-card">
           {/* Stepper */}
           <div className="flex items-center justify-between gap-20">
             {steps.map((step, index) => (
               <button
-                className="flex items-center"
+                className="flex flex-wrap items-center justify-center gap-4"
                 key={step.id}
                 disabled={index >= currentStepIndex}
                 onClick={() => {
@@ -73,12 +73,12 @@ export default function PaywallSteps() {
                 type="button"
               >
                 <div
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-white ${index === currentStepIndex ? "bg-primary" : "bg-[#CECECE]"}`}
+                  className={`flex size-7 items-center justify-center rounded-full text-white ${index === currentStepIndex ? "bg-primary" : "bg-[#CECECE]"}`}
                 >
                   {index + 1}
                 </div>
                 <div
-                  className={`ml-2 font-nunito text-base leading-none ${index === currentStepIndex ? "font-medium text-primary" : "font-normal text-[#CECECE]"}`}
+                  className={`font-nunito text-base leading-none ${index === currentStepIndex ? "font-medium text-primary" : "font-normal text-[#CECECE]"}`}
                 >
                   {step.label}
                 </div>
@@ -103,7 +103,7 @@ export default function PaywallSteps() {
         </div>
 
         {/* Sidebar */}
-        <div className="col-span-4 size-full bg-white px-8 py-14">
+        <div className="col-span-4 size-full rounded-2xl bg-white px-8 py-14 shadow-card">
           <PaywallOrderDetails />
         </div>
       </div>

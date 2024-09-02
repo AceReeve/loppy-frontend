@@ -3,7 +3,8 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createQueryString } from "@repo/hooks-and-utils/query-utils";
-import { PaymentStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums";
+import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums";
+import { useGetOrganizationsQuery } from "@repo/redux-utils/src/endpoints/organization.ts";
 import PaywallPlanSelection from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-plan-selection";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 import PaywallSteps from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps";
@@ -12,6 +13,8 @@ import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/pa
 
 export default function Paywall() {
   const router = useRouter();
+
+  const { data: organizations } = useGetOrganizationsQuery(undefined);
   const searchParams = useSearchParams();
   const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
     usePaywallState();
@@ -66,7 +69,7 @@ export default function Paywall() {
 
     if (
       isPaymentProcessing ||
-      paymentStatus?.stripeSubscriptionStatus === PaymentStatus.PROCESSING
+      paymentStatus?.stripeSubscriptionStatus === SubscriptionStatus.PROCESSING
     ) {
       return (
         <div className="m-auto p-5">
@@ -74,21 +77,21 @@ export default function Paywall() {
         </div>
       );
     }
-    if (paymentStatus?.stripeSubscriptionStatus === PaymentStatus.SUCCEEDED) {
+    if (paymentStatus?.stripeSubscriptionStatus === SubscriptionStatus.ACTIVE) {
       return (
-        <div className="relative m-auto flex min-h-[85%] w-full max-w-[1283px] flex-col rounded-[29px] bg-gradient-to-b from-indigo-950 to-purple-950">
+        <div className="relative m-auto flex min-h-[85%] w-full max-w-[1000px] flex-col rounded-[29px] bg-white">
           <PaywallTeamSetup />
         </div>
       );
     }
     return (
-      <div className="relative m-auto flex w-full max-w-[1283px] flex-col rounded-[29px] bg-gradient-to-b from-[#2e1249] to-[#401a64]">
+      <div className="relative m-auto flex w-full max-w-[1283px] flex-col rounded-[29px] bg-gray-100">
         <Components />
       </div>
     );
   };
 
-  return (
+  return organizations?.length ? null : (
     <div className="absolute left-0 top-0 z-10 flex min-h-full min-w-full p-5 pt-[55px]">
       <div className="absolute left-0 top-0 size-full bg-black bg-opacity-40 backdrop-blur-md" />
       {renderComponent()}
