@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { type Session } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
+import type { GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
 import DashboardHeader from "@/src/app/dashboard/_components/navigation/dashboard-header";
 import DashboardSidebar from "@/src/app/dashboard/_components/navigation/dashboard-sidebar";
 import DashboardProvider from "@/src/providers/dashboard-provider";
@@ -12,6 +13,31 @@ import { auth } from "@/auth.ts";
 
 interface PaymentStatusError {
   error: string;
+}
+
+async function getOrganizationsList(
+  session: Session,
+): Promise<GetOrganizationResponse[] | undefined> {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/organization`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.jwt}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const res: unknown = await response.json();
+    return {
+      error: getErrorMessage({ data: res }),
+    };
+  }
+
+  return response.json() as Promise<GetOrganizationResponse[]>;
 }
 
 async function getPaymentStatus(
@@ -48,6 +74,7 @@ export default async function Layout({
   if (!session) return;
 
   const paymentStatus = await getPaymentStatus(session);
+  const organizationsList = await getOrganizationsList(session);
 
   /**
    * 1. Get if user has already purchased a plan
@@ -70,7 +97,8 @@ export default async function Layout({
           </div>
         </div>
       </DashboardProvider>
-      {(paymentStatus as PaymentStatusError).error ? (
+      {(paymentStatus as PaymentStatusError).error &&
+      !organizationsList?.length ? (
         <StripeElementsProvider>
           <PaywallProvider>
             <Paywall />

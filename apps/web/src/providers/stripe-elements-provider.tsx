@@ -45,7 +45,7 @@ export function StripeElementsProvider({
     ],
     amount: 99,
     currency: "usd",
-    mode: "payment",
+    mode: "subscription",
     payment_method_types: ["card"],
   };
   return (
