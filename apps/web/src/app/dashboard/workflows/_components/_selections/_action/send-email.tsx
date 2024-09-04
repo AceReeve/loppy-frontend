@@ -17,6 +17,7 @@ import { CreateEmailActionSchema } from "@/src/schemas";
 interface SendEmailProps {
   onHandleClick: (node: CustomNode) => void;
   onAddNodes: () => void;
+  icon?: React.ReactNode;
 }
 
 export default function SendEmail(prop: SendEmailProps) {
@@ -28,6 +29,9 @@ export default function SendEmail(prop: SendEmailProps) {
       message: "",
     },
   });
+  const {
+    formState: { errors },
+  } = form;
 
   const emailNode = {
     id: "1",
@@ -35,6 +39,7 @@ export default function SendEmail(prop: SendEmailProps) {
     data: {
       title: "Send Email",
       content: form.getValues("message"),
+      icon: prop.icon,
     },
     position: { x: 0, y: 0 },
   };
@@ -45,7 +50,7 @@ export default function SendEmail(prop: SendEmailProps) {
   };
 
   return (
-    <div className="space-y-2 p-4">
+    <div className="space-y-2 rounded border p-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
@@ -62,6 +67,11 @@ export default function SendEmail(prop: SendEmailProps) {
                       {...field}
                     />
                   </FormControl>
+                  {errors.message ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.message.message}
+                    </p>
+                  ) : null}
                 </FormItem>
               );
             }}

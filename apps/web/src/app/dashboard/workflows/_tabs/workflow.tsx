@@ -31,6 +31,7 @@ import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigat
 import TriggerNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end-node.tsx";
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
+import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 
 export default function Workflow() {
   const nodeTypes = {
@@ -206,7 +207,7 @@ export default function Workflow() {
           source: newNodeId,
           /*          target: "a1",*/
           target: primaryActionID.current,
-          type: "smoothstep",
+          type: "defaultEdge",
           animated: false,
           data: { onButtonClick: handleOpenSheet },
         };
@@ -304,6 +305,7 @@ export default function Workflow() {
 
   const edgeTypes = {
     actionEdge: ActionEdge,
+    defaultEdge: DefaultEdge,
   };
 
   const handleAddNodeClick = (node: Node) => {
@@ -448,8 +450,8 @@ export default function Workflow() {
       >
         <SidebarSelection
           openSheet={openSheet}
-          setOpenSheet={setOpenSheet}
           isTriggers={isTriggers}
+          setOpenSheet={setOpenSheet}
           addActionNode={handleAddActionNodeClick}
           addTriggerNode={handleAddNodeClick}
         />

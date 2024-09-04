@@ -15,7 +15,7 @@ export default function TriggerSelection(props: TriggerProps) {
   return (
     <Button
       variant="outline"
-      className="flex items-center justify-start space-x-2  rounded border"
+      className="flex w-full items-center justify-start space-x-2 rounded border"
       onClick={handleButtonClick}
     >
       {/*<MagnifyingGlassIcon className="size-10 rounded bg-orange-800/20 p-1 text-gray-500" />*/}

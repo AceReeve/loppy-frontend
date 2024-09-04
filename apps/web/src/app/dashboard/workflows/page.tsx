@@ -82,7 +82,7 @@ export default function Page() {
     );
   }, [searchTerm, displayedTemplates]);
 
-  const [isWorkList, setIsWorkList] = useState(false);
+  const [isWorkList, setIsWorkList] = useState(true);
 
   const handleViewState = () => {
     setIsWorkList(!isWorkList);

@@ -6,7 +6,7 @@ import {
   CakeIcon,
   CalendarClockIcon,
   ContactRound,
-  MailboxIcon,
+  MailIcon,
   UserPlus,
   UserRoundCog,
   UserRoundPlus,
@@ -47,6 +47,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -66,6 +67,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -78,6 +80,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -97,6 +100,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -113,11 +117,12 @@ export default function SidebarSelection(props: SheetProps) {
       id: 2,
       name: "Send Email",
       selection: TriggerSelection,
-      icon: <MailboxIcon />,
+      icon: <MailIcon />,
       component: (
         <SendEmail
           onHandleClick={props.addActionNode}
           onAddNodes={closeTriggerView}
+          icon={<MailIcon />}
         />
       ),
     } /*
@@ -137,6 +142,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -149,6 +155,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -161,6 +168,7 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
@@ -173,11 +181,33 @@ export default function SidebarSelection(props: SheetProps) {
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
           onAddNodes={closeTriggerView}
+          icon={<CakeIcon />}
         />
       ),
     },
   ];
   const [displayedTriggers, setDisplayedTriggers] = useState(triggers);
+
+  /*
+  const handleDisplayNodeInfo = useCallback(
+    (node: CustomNode) => {
+      let filtered;
+      if (node.type === "triggerNode") {
+        filtered = triggers.filter(
+          (trigger) => trigger.name === node.data.title,
+        );
+      } else {
+        filtered = actionTriggers.filter(
+          (trigger) => trigger.name === node.data.title,
+        );
+      }
+      setIsTriggerDetailsView(true);
+      setDisplayedTriggers(filtered);
+      setIsTriggerDetailsView(true);
+    },
+    [isTriggerDetailsView, displayedTriggers],
+  );
+*/
 
   const handleClose = () => {
     isTriggerDetailsView
@@ -203,6 +233,7 @@ export default function SidebarSelection(props: SheetProps) {
     <BirthdayReminder
       onHandleClick={props.addTriggerNode}
       onAddNodes={closeTriggerView}
+      icon={<CakeIcon />}
     />,
   );
 
@@ -220,6 +251,7 @@ export default function SidebarSelection(props: SheetProps) {
       setIsTriggerDetailsView(!isTriggerDetailsView);
     }
   };
+
   return (
     props.openSheet && (
       <div className="absolute right-0 top-0 z-10 h-full w-[500px] bg-white p-10 ">
@@ -240,36 +272,42 @@ export default function SidebarSelection(props: SheetProps) {
             </p>
           </div>
         </div>
-        <Separator className="mt-5" />
+        <Separator className="my-5" />
         <div className="flex flex-col gap-5">
-          <div className="relative mt-5 flex w-full flex-row justify-between gap-4">
-            <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-500 " />
-            <Input
-              className="h-[35px] pl-10 "
-              placeholder={`Search Work ${workflowCategory}`}
-              type="search"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-              }}
-            />
-          </div>
-
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-600">Contact</p>
-            <div className="flex flex-col space-y-2 rounded border p-1">
+            <div className="flex flex-col space-y-2  p-1">
               {isTriggerDetailsView ? (
                 <div>{currentTriggerView}</div>
               ) : (
-                filteredTriggers.map((trigger) => (
-                  <TriggerSelection
-                    key={trigger.id}
-                    id={trigger.id}
-                    name={trigger.name}
-                    icon={trigger.icon}
-                    onButtonClick={handleTriggerClick}
-                  />
-                ))
+                <>
+                  <p className="text-sm font-semibold text-slate-600">
+                    Selection
+                  </p>
+                  <div className="relative flex w-full flex-row justify-between gap-4">
+                    <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-500 " />
+                    <Input
+                      className="h-[35px] pl-10 "
+                      placeholder={`Search Work ${workflowCategory}`}
+                      type="search"
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="w-full space-y-2 rounded border p-1">
+                    {filteredTriggers.map((trigger) => (
+                      <TriggerSelection
+                        key={trigger.id}
+                        id={trigger.id}
+                        name={trigger.name}
+                        icon={trigger.icon}
+                        onButtonClick={handleTriggerClick}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>

@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface GetWorkFolders {
   name: string;
   lastUpdated: string;
@@ -21,6 +23,7 @@ export interface CustomNode extends Node {
   data: {
     title: string;
     content: string;
+    icon?: ReactNode.Node;
   };
   position: { x: number; y: number };
 }
