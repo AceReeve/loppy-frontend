@@ -90,7 +90,7 @@ export default function PaywallProvider({
   const [confirmationToken, setConfirmationToken] = useState<string>();
 
   useEffect(() => {
-    if (userInfoData) {
+    if (userInfoData?.userInfo) {
       const {
         first_name,
         last_name,
