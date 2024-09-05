@@ -63,15 +63,17 @@ export default function ProfileTab() {
       setProfileSrc(userProfile?.userInfo?.profile?.image_1?.path);
 
       profileForm.reset({
-        first_name: userProfile.userInfo?.first_name,
-        last_name: userProfile.userInfo?.last_name,
-        birthday: formatDate(userProfile.userInfo?.birthday),
-        gender: userProfile.userInfo?.gender,
-        contact_no: userProfile.userInfo?.contact_no.toString(),
-        city: userProfile.userInfo?.city,
-        state: userProfile.userInfo?.state,
-        zipCode: userProfile.userInfo?.zipCode.toString(),
-        address: userProfile.userInfo?.address,
+        first_name: userProfile?.userInfo?.first_name || "",
+        last_name: userProfile?.userInfo?.last_name || "",
+        birthday: userProfile?.userInfo?.birthday
+          ? formatDate(userProfile?.userInfo?.birthday)
+          : "",
+        gender: userProfile?.userInfo?.gender || "",
+        contact_no: userProfile?.userInfo?.contact_no.toString() || "",
+        city: userProfile?.userInfo?.city || "",
+        state: userProfile?.userInfo?.state || "",
+        zipCode: userProfile?.userInfo?.zipCode.toString() || "",
+        address: userProfile?.userInfo?.address || "",
       });
     }
   }, [userProfile, profileForm]);
@@ -137,7 +139,7 @@ export default function ProfileTab() {
             <div className="flex w-[190px] flex-col justify-center">
               <UploadImage
                 handleSetProfileSrc={handleSetProfileSrc}
-                userId={userProfile?.userInfo._id || ""}
+                userId={userProfile?.userInfo?._id || ""}
               />
 
               <p className=" text-center text-[12px] italic text-slate-300">
