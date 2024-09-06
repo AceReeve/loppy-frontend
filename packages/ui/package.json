@@ -41,6 +41,8 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@repo/eslint-config": "*",
+    "@repo/hooks-and-utils": "*",
+    "@repo/redux-utils": "*",
     "@repo/tailwind-config": "*",
     "@repo/typescript-config": "*",
     "@types/react": "^18.2.61",

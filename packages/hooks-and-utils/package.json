@@ -16,7 +16,6 @@
   "dependencies": {
     "@repo/eslint-config": "*",
     "@repo/redux-utils": "*",
-    "@repo/ui": "*",
     "next": "^14.2.4",
     "next-themes": "^0.3.0"
   },

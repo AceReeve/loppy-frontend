@@ -6,10 +6,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import {
-  useCreateSubscriptionMutation,
-  useGetPaymentStatusQuery,
-} from "@repo/redux-utils/src/endpoints/payment.ts";
+import { useCreateSubscriptionMutation } from "@repo/redux-utils/src/endpoints/payment.ts";
 import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { useForm, type UseFormReturn } from "react-hook-form";
@@ -19,6 +16,8 @@ import {
   useGetUserInfoQuery,
   useSaveUserInfoMutation,
 } from "@repo/redux-utils/src/endpoints/user.ts";
+import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
+import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import type { PlanDetails } from "@/src/data/payment-plan-details";
 
@@ -37,7 +36,7 @@ interface ContextType {
   onPromoCodeSubmit: (e: React.SyntheticEvent) => void;
   clientSecret: string | undefined;
   confirmationToken: string | undefined;
-  paymentStatus: GetPaymentStatusResponse | null | undefined;
+  organizationsList: GetOrganizationResponse[];
   isPaymentProcessing: boolean;
   nextStepEnabled: boolean;
   setNextStepEnabled: (enabled: boolean) => void;
@@ -47,8 +46,14 @@ interface ContextType {
 const PaywallContext = createContext<ContextType | null>(null);
 
 export default function PaywallProvider({
+  refetch,
+  paymentStatus,
+  organizationsList,
   children,
 }: {
+  refetch: () => void;
+  paymentStatus: GetPaymentStatusResponse | { error: string };
+  organizationsList: GetOrganizationResponse[];
   children: React.ReactNode;
 }) {
   const form = useForm<z.infer<typeof RegisterDetailsSchema>>({
@@ -72,8 +77,6 @@ export default function PaywallProvider({
     useCreateSubscriptionMutation();
   const [saveUserInfo] = useSaveUserInfoMutation();
   const { data: userInfoData } = useGetUserInfoQuery(undefined);
-
-  const { data: paymentStatus, refetch } = useGetPaymentStatusQuery(undefined);
 
   const stripe = useStripe();
   const elements = useElements();
@@ -107,11 +110,11 @@ export default function PaywallProvider({
         first_name,
         last_name,
         address,
-        zipCode: zipCode.toString(),
+        zipCode: zipCode?.toString(),
         city,
         state,
-        birthday: new Date(birthday),
-        contact_no: contact_no.toString(),
+        birthday: birthday ? new Date(birthday) : undefined,
+        contact_no: contact_no?.toString(),
         gender,
       });
     }
@@ -221,6 +224,7 @@ export default function PaywallProvider({
             .catch((e: unknown) => {
               toast({
                 description: getErrorMessage(e),
+                variant: "destructive",
               });
             });
         } else {
@@ -230,6 +234,7 @@ export default function PaywallProvider({
       .catch((e: unknown) => {
         toast({
           description: getErrorMessage(e),
+          variant: "destructive",
         });
       });
   };
@@ -281,21 +286,30 @@ export default function PaywallProvider({
 
   async function refetchPaymentStatus() {
     setIsPaymentProcessing(true);
+    refetch();
     // TODO: Add retries limit for refetching
-    const res = await refetch();
+    // const res = await refetch();
     await new Promise((r) => {
       setTimeout(r, 2000);
     });
 
-    if (res.data) {
-      setIsPaymentProcessing(false);
-      toast({
-        title: "Payment Successful!",
-        description: "Thanks for signing up! Let's setup your team.",
-      });
-    } else {
+    if (
+      (paymentStatus as { error: string }).error ||
+      (paymentStatus as GetPaymentStatusResponse).stripeSubscriptionStatus !==
+        SubscriptionStatus.ACTIVE
+    ) {
       await refetchPaymentStatus();
     }
+    //
+    // if (res.data) {
+    //   setIsPaymentProcessing(false);
+    //   toast({
+    //     title: "Payment Successful!",
+    //     description: "Thanks for signing up! Let's setup your team.",
+    //   });
+    // } else {
+    //   await refetchPaymentStatus();
+    // }
   }
 
   const onPromoCodeSubmit = (e: React.SyntheticEvent) => {
@@ -338,7 +352,7 @@ export default function PaywallProvider({
         clientSecret: clientSecret?.subscription?.clientSecret,
         confirmationToken,
         isLoading,
-        paymentStatus,
+        organizationsList,
         isPaymentProcessing,
         nextStepEnabled,
         setNextStepEnabled,

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowCircleRight, Call, Global, Profile2User } from "iconsax-react";
+import { ArrowCircleRight, Call, Global } from "iconsax-react";
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -16,12 +16,12 @@ import {
   SelectItem,
 } from "@repo/ui/components/ui";
 import { Mail } from "lucide-react";
-import { StatCard } from "@repo/ui/components/custom";
 import ColumnChart from "@/src/components/charts/column-chart";
 import LineChart from "@/src/components/charts/line-chart";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import FunnelChart from "@/src/components/charts/funnel-chart";
 import UnsoldTicketsTable from "@/src/components/table/unsold-tickets-table";
+import StatCards from "@/src/app/dashboard/_components/dashboard/stat-cards.tsx";
 
 export default function Page() {
   const [leadSubmissionsValue, setLeadSubmissionsValue] = useState("1D");
@@ -103,37 +103,8 @@ export default function Page() {
         </div>
       </div>
       {/*  First Row Components */}
-      <div className="mt-20 grid grid-cols-2 gap-[38px] md:grid-cols-3 xl:grid-cols-5">
-        {Array.from(
-          {
-            length: 5,
-          },
-          (_, index) => index + 1,
-        ).map((i) => (
-          <StatCard
-            key={i}
-            value="288"
-            name="Total Customers"
-            preText="$"
-            postText="k"
-            icon={<Profile2User className="size-full" />}
-          />
-        ))}
-        {Array.from(
-          {
-            length: 4,
-          },
-          (_, index) => index + 1,
-        ).map((i) => (
-          <StatCard key={i} value="450" name="Total Customers" />
-        ))}
-        <StatCard
-          preText="$"
-          postText="k"
-          value="450"
-          name="Revenue Goal"
-          variant="gradient-primary"
-        />
+      <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3 xl:grid-cols-5">
+        <StatCards />
       </div>
       {/* Second Row Components */}
       <div className="mt-11 grid grid-cols-12 gap-[22px]">

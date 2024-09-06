@@ -28,6 +28,7 @@ export enum SubscriptionStatus {
   INCOMPLETE_EXPIRED = "incomplete_expired",
   TRIALING = "trialing",
   ACTIVE = "active",
+  INACTIVE = "inactive",
   PAST_DUE = "past_due",
   CANCELED = "canceled",
   UNPAID = "unpaid",
