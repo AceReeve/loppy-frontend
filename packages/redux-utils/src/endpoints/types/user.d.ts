@@ -16,19 +16,19 @@ export interface UserProfile {
   user_id: string;
   first_name: string;
   last_name: string;
-  address: string;
-  zipCode: number;
-  city: string;
-  state: string;
-  contact_no: number;
-  gender: string;
-  company: string;
-  birthday: string;
-  role: string | null;
   status: string;
   _id: string;
   created_at: string;
   updated_at: string;
+  address?: string;
+  zipCode?: number;
+  city?: string;
+  state?: string;
+  contact_no?: number;
+  gender?: string;
+  company?: string;
+  birthday?: string;
+  role?: string | null;
 }
 
 export interface SaveUserInfoPayload {

@@ -1,3 +1,5 @@
+import { type GetSendInviteUserPayload } from "./settings-user";
+
 export interface CreateOrganizationResponse {
   organization_name: string;
   description: string;
@@ -6,6 +8,7 @@ export interface CreateOrganizationResponse {
 export interface CreateOrganizationPayload {
   organization_name: string;
   description: string;
+  users?: GetSendInviteUserPayload["users"];
 }
 
 export interface GetOrganizationResponse {

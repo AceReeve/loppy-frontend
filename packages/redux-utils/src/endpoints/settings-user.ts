@@ -11,6 +11,7 @@ const api = baseApi
     addTagTypes: ["settings-user"],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       getRoles: builder.query<GetRolesResponse[], undefined>({
         query: () => "/role",

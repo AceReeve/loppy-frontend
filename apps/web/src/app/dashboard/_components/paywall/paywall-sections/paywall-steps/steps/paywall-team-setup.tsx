@@ -1,10 +1,11 @@
+"use client";
+
 import React, { Fragment, useState } from "react";
 import { Alert, AlertDescription, Button, toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useValidateInviteUserMutation } from "@repo/redux-utils/src/endpoints/user.ts";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { Check } from "lucide-react";
-import { useSendInviteUserMutation } from "@repo/redux-utils/src/endpoints/settings-user.ts";
 import { type z } from "zod";
 import { useCreateOrganizationMutation } from "@repo/redux-utils/src/endpoints/organization.ts";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
@@ -16,7 +17,7 @@ import TeamsOrganization from "./team-setup-steps/teams-organization.tsx";
 import TeamsAddTeam from "./team-setup-steps/teams-add-team.tsx";
 import TeamsSubmit from "./team-setup-steps/teams-submit.tsx";
 
-export default function PaywallTeamSetup() {
+export default function PaywallTeamSetup({ refetch }: { refetch: () => void }) {
   const [stepIndex, setStepIndex] = useState(0);
 
   const [organization, setOrganization] =
@@ -30,9 +31,6 @@ export default function PaywallTeamSetup() {
 
   const [validateInviteUser, { isLoading: isValidateInviteUserLoading }] =
     useValidateInviteUserMutation();
-
-  const [inviteUser, { isLoading: isInviteUserLoading }] =
-    useSendInviteUserMutation();
 
   const isLoading = isValidateInviteUserLoading;
 
@@ -68,25 +66,19 @@ export default function PaywallTeamSetup() {
 
   const handleFinalSubmit = () => {
     if (!organization) return;
-    if (!invitedUsers) return;
 
-    inviteUser(invitedUsers)
+    createOrganization({
+      ...organization,
+      ...invitedUsers,
+    })
       .unwrap()
       .then(() => {
-        createOrganization(organization)
-          .unwrap()
-          .catch((err: unknown) => {
-            toast({
-              title: "Create Organization Error",
-              description: getErrorMessage(err),
-              variant: "destructive",
-            });
-          });
+        refetch();
       })
-      .catch((e: unknown) => {
+      .catch((err: unknown) => {
         toast({
-          title: "Invite User Error",
-          description: getErrorMessage(e),
+          title: "Create Organization Error",
+          description: getErrorMessage(err),
           variant: "destructive",
         });
       });
@@ -125,14 +117,6 @@ export default function PaywallTeamSetup() {
           <Alert className="max-w-72">
             <LoadingSpinner />
             <AlertDescription>Creating your organization...</AlertDescription>
-          </Alert>
-        </div>
-      ) : null}
-      {isInviteUserLoading ? (
-        <div className="absolute left-0 top-0 z-10 flex size-full items-center justify-center">
-          <Alert className="max-w-72">
-            <LoadingSpinner />
-            <AlertDescription>Sending invites to users...</AlertDescription>
           </Alert>
         </div>
       ) : null}

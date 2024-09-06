@@ -31,7 +31,6 @@ import {
   upsertConversation,
 } from "@repo/redux-utils/src/slices/messaging/conversation-slice.ts";
 import { getSdkMessageObject } from "@repo/redux-utils/src/utils/messaging/conversations-objects.ts";
-import { handlePromiseRejection } from "@repo/hooks-and-utils/helpers";
 import type { Session } from "@repo/redux-utils/src";
 import { updateParticipants } from "@repo/redux-utils/src/slices/messaging/participants-slice.ts";
 import {
@@ -50,6 +49,7 @@ import { type InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/u
 import { useGetContactsListQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/user.ts";
 import { type TwilioCredentialsPayloadAndResponse } from "@repo/redux-utils/src/endpoints/types/messaging";
+import { handlePromiseRejection } from "../helpers/helpers.ts";
 import {
   type ShowEmojiPickerProps,
   type ShowReactionPickerProps,

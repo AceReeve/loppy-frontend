@@ -3,12 +3,12 @@ import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 export default function PaywallProcessingPayment() {
   return (
-    <Alert className="min-w-72">
+    <Alert className="w-full max-w-96">
       <LoadingSpinner />
       <AlertTitle>Processing Payment</AlertTitle>
       <AlertDescription>
         Almost there, we&apos;re finalizing your payment. <br />
-        It might take some time for some providers to process your payment.
+        This might take some time.
       </AlertDescription>
     </Alert>
   );

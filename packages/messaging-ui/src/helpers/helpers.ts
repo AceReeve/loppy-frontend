@@ -1,5 +1,5 @@
 import { toast, type ToastProps } from "@repo/ui/components/ui";
-import { getErrorMessage } from "./error-utils.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 export const handlePromiseRejection = async (
   func: () => Promise<void> | void,

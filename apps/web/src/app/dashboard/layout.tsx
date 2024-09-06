@@ -1,8 +1,12 @@
+"use server";
+
 import React, { Suspense } from "react";
 import { type Session } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import type { GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
+import { revalidateTag } from "next/cache";
+import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 import DashboardHeader from "@/src/app/dashboard/_components/navigation/dashboard-header";
 import DashboardSidebar from "@/src/app/dashboard/_components/navigation/dashboard-sidebar";
 import DashboardProvider from "@/src/providers/dashboard-provider";
@@ -10,14 +14,19 @@ import { StripeElementsProvider } from "@/src/providers/stripe-elements-provider
 import PaywallProvider from "@/src/providers/paywall-provider";
 import Paywall from "@/src/app/dashboard/_components/paywall";
 import { auth } from "@/auth.ts";
+import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
+import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup.tsx";
 
-interface PaymentStatusError {
-  error: string;
+// eslint-disable-next-line @typescript-eslint/require-await -- no await but needs to be a server function
+async function refetch() {
+  "use server";
+  revalidateTag("payment-status");
+  revalidateTag("organization");
 }
 
 async function getOrganizationsList(
   session: Session,
-): Promise<GetOrganizationResponse[] | undefined> {
+): Promise<GetOrganizationResponse[]> {
   if (!process.env.NEXT_PUBLIC_API_URL)
     throw new Error("NEXT_PUBLIC_API_URL is not detected");
 
@@ -27,30 +36,30 @@ async function getOrganizationsList(
       headers: {
         Authorization: `Bearer ${session.jwt}`,
       },
+      next: {
+        tags: ["organization"],
+      },
     },
   );
-
-  if (!response.ok) {
-    const res: unknown = await response.json();
-    return {
-      error: getErrorMessage({ data: res }),
-    };
-  }
 
   return response.json() as Promise<GetOrganizationResponse[]>;
 }
 
 async function getPaymentStatus(
   session: Session,
-): Promise<GetPaymentStatusResponse | PaymentStatusError> {
+): Promise<GetPaymentStatusResponse | { error: string }> {
   if (!process.env.NEXT_PUBLIC_API_URL)
     throw new Error("NEXT_PUBLIC_API_URL is not detected");
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/user-info`,
+    `${process.env.NEXT_PUBLIC_API_URL}/payment/payment-status`,
     {
       headers: {
         Authorization: `Bearer ${session.jwt}`,
+      },
+      next: {
+        revalidate: 3000,
+        tags: ["payment-status"],
       },
     },
   );
@@ -84,6 +93,39 @@ export default async function Layout({
    *       - show dashboard page
    */
 
+  const renderPaywallComponents = () => {
+    // TODO: Implement view if subscriptionStatus is REQUIRES_ACTION, REQUIRES_PAYMENT_METHOD, or REQUIRES_CONFIRMATION
+
+    if (
+      !(paymentStatus as { error: string }).error &&
+      (paymentStatus as GetPaymentStatusResponse).stripeSubscriptionStatus ===
+        SubscriptionStatus.PROCESSING
+    ) {
+      return (
+        <div className="m-auto p-5">
+          <PaywallProcessingPayment />
+        </div>
+      );
+    }
+    if (
+      !(paymentStatus as { error: string }).error &&
+      (paymentStatus as GetPaymentStatusResponse).stripeSubscriptionStatus ===
+        SubscriptionStatus.ACTIVE &&
+      !organizationsList.length
+    ) {
+      return (
+        <div className="relative m-auto flex min-h-[85%] w-full max-w-[1000px] flex-col rounded-[29px] bg-white">
+          <PaywallTeamSetup refetch={refetch} />
+        </div>
+      );
+    }
+    return (
+      <div className="relative m-auto flex w-full max-w-[1283px] flex-col rounded-[29px] bg-gray-100">
+        <Paywall />
+      </div>
+    );
+  };
+
   return (
     <Suspense>
       <DashboardProvider session={session}>
@@ -97,11 +139,25 @@ export default async function Layout({
           </div>
         </div>
       </DashboardProvider>
-      {(paymentStatus as PaymentStatusError).error &&
-      !organizationsList?.length ? (
+
+      {/**
+       - If no active subscription (paymentStatus)
+       - and no organizations setup, show setup modal
+       **/}
+
+      {/* TODO: Ask payment status to have a default status returned instead of error */}
+      {(paymentStatus as { error: string }).error ||
+      !organizationsList.length ? (
         <StripeElementsProvider>
-          <PaywallProvider>
-            <Paywall />
+          <PaywallProvider
+            refetch={refetch}
+            organizationsList={organizationsList}
+            paymentStatus={paymentStatus}
+          >
+            <div className="absolute left-0 top-0 z-10 flex min-h-full min-w-full p-5 pt-[55px]">
+              <div className="absolute left-0 top-0 size-full bg-black bg-opacity-40 backdrop-blur-md" />
+              {renderPaywallComponents()}
+            </div>
           </PaywallProvider>
         </StripeElementsProvider>
       ) : null}
