@@ -13,27 +13,26 @@ import {
 } from "@repo/ui/components/ui";
 import React, { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import ToggleData from "@/src/app/dashboard/settings/teams/_components/toggle-data.tsx";
-import { securitySchema } from "../schemas/personal-settings-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useSendResetPasswordMutation } from "@repo/redux-utils/src/endpoints/forgot-password";
+import { type z } from "zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { useChangePasswordMutation } from "@repo/redux-utils/src/endpoints/user";
+import ToggleData from "@/src/app/dashboard/settings/teams/_components/toggle-data.tsx";
+import { securitySchema } from "../schemas/personal-settings-schemas";
 
 export default function SecurityTab() {
   /* const [showConfirmPassword, setConfirmShowPassword] = useState(false);*/
 
   // password types
-  type PasswordField = {
+  interface PasswordField {
     id: number;
     field: "current_password" | "new_password" | "confirm_new_password";
     label: string;
     placeHolder: string;
     isShown: boolean;
-  };
+  }
 
   // Use the type in your useState call
   const [passwordInputs, setPasswordInputs] = useState<PasswordField[]>([
@@ -72,6 +71,7 @@ export default function SecurityTab() {
   const [sendRequest, { isLoading }] = useChangePasswordMutation();
   const onSubmit = async (data: z.infer<typeof securitySchema>) => {
     // remove the confirm_new_password
+    // eslint-disable-next-line -- remove confirm_new_password from data
     const { confirm_new_password, ...newData } = data;
 
     await sendRequest(newData)

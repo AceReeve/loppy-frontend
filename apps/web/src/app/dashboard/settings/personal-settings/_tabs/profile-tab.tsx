@@ -18,20 +18,20 @@ import {
   toast,
 } from "@repo/ui/components/ui";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import React, { useEffect, useState } from "react";
-import { profileSchema } from "../schemas/personal-settings-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import UploadImage from "./_components/upload-image";
 import {
   useGetUserProfileQuery,
   useUpdateUserInfoMutation,
 } from "@repo/redux-utils/src/endpoints/user";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { profileSchema } from "../schemas/personal-settings-schemas";
+import UploadImage from "./_components/upload-image";
 
 export default function ProfileTab() {
-  const [profileSrc, setProfileSrc] = useState("");
+  const [profileSrc, setProfileSrc] = useState<string>("");
 
   const profileForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -60,20 +60,18 @@ export default function ProfileTab() {
   useEffect(() => {
     if (userProfile) {
       // Set the image source of profile picture
-      setProfileSrc(userProfile?.userInfo?.profile?.image_1?.path);
+      setProfileSrc(userProfile.userInfo.profile?.image_1.path ?? "");
 
       profileForm.reset({
-        first_name: userProfile?.userInfo?.first_name || "",
-        last_name: userProfile?.userInfo?.last_name || "",
-        birthday: userProfile?.userInfo?.birthday
-          ? formatDate(userProfile?.userInfo?.birthday)
-          : "",
-        gender: userProfile?.userInfo?.gender || "",
-        contact_no: userProfile?.userInfo?.contact_no.toString() || "",
-        city: userProfile?.userInfo?.city || "",
-        state: userProfile?.userInfo?.state || "",
-        zipCode: userProfile?.userInfo?.zipCode.toString() || "",
-        address: userProfile?.userInfo?.address || "",
+        first_name: userProfile.userInfo.first_name,
+        last_name: userProfile.userInfo.last_name,
+        birthday: formatDate(userProfile.userInfo.birthday),
+        gender: userProfile.userInfo.gender,
+        contact_no: userProfile.userInfo.contact_no.toString(),
+        city: userProfile.userInfo.city,
+        state: userProfile.userInfo.state,
+        zipCode: userProfile.userInfo.zipCode.toString(),
+        address: userProfile.userInfo.address,
       });
     }
   }, [userProfile, profileForm]);
@@ -90,7 +88,7 @@ export default function ProfileTab() {
 
     await sendRequest(formattedData)
       .unwrap()
-      .then((res) => {
+      .then(() => {
         toast({
           title: "Profile Updated Successfully!",
         });
@@ -123,14 +121,20 @@ export default function ProfileTab() {
                   // src="/assets/images/logo.png"
                   src={profileSrc}
                   alt=""
-                  onError={() => setProfileSrc("/assets/images/logo.png")}
+                  onError={() => {
+                    setProfileSrc("/assets/images/logo.png");
+                  }}
                   width={138}
                   height={141}
                   className="m-auto size-[120px] w-[120px] object-contain transition-all duration-500"
                 />
               </div>
               <div>
-                <h1 className="text-xl">{`${userProfile?.userInfo?.first_name} ${userProfile?.userInfo?.last_name}`}</h1>
+                <h1 className="text-xl">
+                  {userProfile
+                    ? `${userProfile.userInfo.first_name} ${userProfile.userInfo.last_name}`
+                    : ""}{" "}
+                </h1>
                 <div className="w-[100px] rounded-md bg-orange-500">
                   <p className="text-center text-white">Admin</p>
                 </div>
@@ -139,7 +143,7 @@ export default function ProfileTab() {
             <div className="flex w-[190px] flex-col justify-center">
               <UploadImage
                 handleSetProfileSrc={handleSetProfileSrc}
-                userId={userProfile?.userInfo?._id || ""}
+                userId={userProfile?.userInfo._id ?? ""}
               />
 
               <p className=" text-center text-[12px] italic text-slate-300">
@@ -225,7 +229,9 @@ export default function ProfileTab() {
                           <FormLabel>Gender</FormLabel>
                           <Select
                             value={field.value}
-                            onValueChange={(value) => field.onChange(value)}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                            }}
                           >
                             <SelectTrigger
                               className="text-md h-[40px] text-slate-500"

@@ -1,3 +1,5 @@
+/* eslint-disable -- disable errors for index */
+
 // interface DetailsProps {
 //   count: number;
 //   title: string;
@@ -22,19 +24,19 @@ import {
 } from "@repo/ui/components/ui";
 import { CalendarIcon } from "lucide-react";
 import { addDays, format } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { type DateRange } from "react-day-picker";
 import { cn } from "@repo/ui/utils";
 
 // Define types for data structure
-type DataSection = {
+interface DataSection {
   type: string;
   items: DataItem[];
-};
+}
 
-type DataItem = {
+interface DataItem {
   title: string;
   value: string | number;
-};
+}
 
 export default function Overall() {
   const data: DataSection[] = [
@@ -96,6 +98,17 @@ export default function Overall() {
     to: addDays(new Date(2022, 0, 20), 20),
   });
 
+  const renderDate = () => {
+    if (!date?.from) return <span>Pick a date</span>;
+    if (date.to)
+      return (
+        <>
+          {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+        </>
+      );
+    return format(date.from, "LLL dd, y");
+  };
+
   return (
     <div className="p-4">
       <div className="flex items-center justify-between">
@@ -106,25 +119,14 @@ export default function Overall() {
             <PopoverTrigger asChild>
               <Button
                 id="date"
-                variant={"outline"}
+                variant="outline"
                 className={cn(
                   "w-[300px] justify-start text-left font-normal",
                   !date && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date</span>
-                )}
+                {renderDate()}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -162,14 +164,14 @@ export default function Overall() {
               {item.type}
             </h1>
             <div className="grid grid-cols-12 gap-4">
-              {item.items.map((item, itemIndex) => (
+              {item.items.map((item2, itemIndex) => (
                 <Card
                   key={itemIndex}
                   className="col-span-12 border text-center lg:col-span-4"
                 >
                   <CardHeader className="p-8">
-                    <h6 className="text-slate-500">{item.title}</h6>
-                    <p className="text-2xl text-slate-500">{item.value}</p>
+                    <h6 className="text-slate-500">{item2.title}</h6>
+                    <p className="text-2xl text-slate-500">{item2.value}</p>
                   </CardHeader>
                 </Card>
               ))}

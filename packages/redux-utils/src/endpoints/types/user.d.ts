@@ -42,12 +42,16 @@ export interface GetUserProfileResponse {
     status: string;
     created_at: string;
     updated_at: string;
-    profile?: Profile | null;
+    profile?: Profile;
   };
 }
 
 interface Profile {
   image_1: ProfileImage;
+}
+
+interface ProfileImage {
+  path: string;
 }
 
 export interface UpdateUserInfoPayload {

@@ -19,9 +19,11 @@ import {
 } from "@repo/ui/components/ui";
 import { CalendarIcon } from "lucide-react";
 import { addDays, format } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { type DateRange } from "react-day-picker";
 import { cn } from "@repo/ui/utils";
-import Chart from "react-apexcharts";
+// eslint-disable-next-line import/default -- will fix later
+import ReactApexChart from "react-apexcharts";
+import { type ApexOptions } from "apexcharts";
 
 export default function Contacts() {
   // date range
@@ -59,7 +61,7 @@ export default function Contacts() {
     },
   ];
 
-  const options: ApexCharts.ApexOptions = {
+  const options: ApexOptions = {
     chart: {
       height: 350,
       type: chartType,
@@ -108,6 +110,17 @@ export default function Contacts() {
     },
   };
 
+  const renderDate = () => {
+    if (!date?.from) return <span>Pick a date</span>;
+    if (date.to)
+      return (
+        <>
+          {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+        </>
+      );
+    return format(date.from, "LLL dd, y");
+  };
+
   return (
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
@@ -118,25 +131,14 @@ export default function Contacts() {
             <PopoverTrigger asChild>
               <Button
                 id="date"
-                variant={"outline"}
+                variant="outline"
                 className={cn(
                   "w-[300px] justify-start text-left font-normal",
                   !date && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date</span>
-                )}
+                {renderDate()}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -196,14 +198,18 @@ export default function Contacts() {
               <ToggleGroupItem
                 className="rounded-none"
                 value="line"
-                onClick={() => handleChartTypeChange("line")}
+                onClick={() => {
+                  handleChartTypeChange("line");
+                }}
               >
                 Line
               </ToggleGroupItem>
               <ToggleGroupItem
                 className="rounded-none"
                 value="bar"
-                onClick={() => handleChartTypeChange("bar")}
+                onClick={() => {
+                  handleChartTypeChange("bar");
+                }}
               >
                 Bar
               </ToggleGroupItem>
@@ -217,28 +223,36 @@ export default function Contacts() {
               <ToggleGroupItem
                 className="rounded-none"
                 value="day"
-                onClick={() => handleDataRangeChange("day")}
+                onClick={() => {
+                  handleDataRangeChange("day");
+                }}
               >
                 Day
               </ToggleGroupItem>
               <ToggleGroupItem
                 className="rounded-none"
                 value="week"
-                onClick={() => handleDataRangeChange("week")}
+                onClick={() => {
+                  handleDataRangeChange("week");
+                }}
               >
                 Week
               </ToggleGroupItem>
               <ToggleGroupItem
                 className="rounded-none"
                 value="month"
-                onClick={() => handleDataRangeChange("month")}
+                onClick={() => {
+                  handleDataRangeChange("month");
+                }}
               >
                 Month
               </ToggleGroupItem>
               <ToggleGroupItem
                 className="rounded-none"
                 value="year"
-                onClick={() => handleDataRangeChange("year")}
+                onClick={() => {
+                  handleDataRangeChange("year");
+                }}
               >
                 Year
               </ToggleGroupItem>
@@ -246,7 +260,7 @@ export default function Contacts() {
           </div>
         </div>
 
-        <Chart
+        <ReactApexChart
           options={options}
           series={series}
           type={chartType}

@@ -17,7 +17,7 @@ import {
 } from "@repo/ui/components/ui";
 import { CalendarIcon } from "lucide-react";
 import { addDays, format } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { type DateRange } from "react-day-picker";
 import { cn } from "@repo/ui/utils";
 
 export default function Conversions() {
@@ -25,6 +25,17 @@ export default function Conversions() {
     from: new Date(2022, 0, 20),
     to: addDays(new Date(2022, 0, 20), 20),
   });
+
+  const renderDate = () => {
+    if (!date?.from) return <span>Pick a date</span>;
+    if (date.to)
+      return (
+        <>
+          {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+        </>
+      );
+    return format(date.from, "LLL dd, y");
+  };
 
   return (
     <div className="p-4">
@@ -36,25 +47,14 @@ export default function Conversions() {
             <PopoverTrigger asChild>
               <Button
                 id="date"
-                variant={"outline"}
+                variant="outline"
                 className={cn(
                   "w-[300px] justify-start text-left font-normal",
                   !date && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date</span>
-                )}
+                {renderDate()}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
