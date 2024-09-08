@@ -52,7 +52,7 @@ const api = baseApi
         },
         providesTags: ["user"],
       }),
-      updateUserInfo: builder.mutation<undefined, UpdateUserInfoPayload>({
+      updateUserInfo: builder.mutation<unknown, UpdateUserInfoPayload>({
         query: (payload) => {
           return {
             url: `/user/user-info`,

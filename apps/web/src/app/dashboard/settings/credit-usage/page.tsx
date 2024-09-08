@@ -1,19 +1,14 @@
 "use client";
 import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTrigger,
   Input,
   Separator,
-  Textarea,
   VerticalMenu,
   VerticalMenuLink,
 } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import React, { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+
 const Overall = dynamic(() => import("./_components/overall"), { ssr: false });
 const Conversations = dynamic(() => import("./_components/conversations"), {
   ssr: false,
@@ -109,7 +104,7 @@ export default function CreditUsage() {
           <Separator className="mt-2" />
           {filteredCreditUsageTabs.map((creditUsageTab) => (
             <VerticalMenuLink
-              active={creditUsageTab.id === currentCreditUsageTab?.id}
+              active={creditUsageTab.id === currentCreditUsageTab.id}
               key={creditUsageTab.id}
               className="cursor-pointer"
               onClick={() => {
@@ -123,7 +118,7 @@ export default function CreditUsage() {
       </div>
       <div className=" h-full min-h-[1000px] border-l border-gray-300" />
 
-      <div className=" w-full ">{currentCreditUsageTab?.component}</div>
+      <div className=" w-full ">{currentCreditUsageTab.component}</div>
     </div>
   );
 

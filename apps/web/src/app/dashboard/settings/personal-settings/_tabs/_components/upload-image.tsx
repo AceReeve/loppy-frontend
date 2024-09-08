@@ -11,11 +11,19 @@ import {
   toast,
 } from "@repo/ui/components/ui";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import React, { ChangeEvent, useState } from "react";
+import React, { type ChangeEvent, useState } from "react";
 
 interface UploadImageProps {
   handleSetProfileSrc: (src: string) => void;
   userId: string;
+}
+
+interface ProfileResponse {
+  profile: {
+    image_1: {
+      path: string;
+    };
+  };
 }
 
 export default function UploadImage(props: UploadImageProps) {
@@ -57,17 +65,17 @@ export default function UploadImage(props: UploadImageProps) {
 
     await sendRequest({ userId: props.userId, payload: formData })
       .unwrap()
-      .then((res: any) => {
+      .then((res: unknown) => {
+        const response = res as ProfileResponse;
         toast({
           description: "Profile picture updated successfully",
         });
-        console.log(res?.profile?.image_1?.path);
-        handleSetProfileSrc(res?.profile?.image_1?.path);
+        handleSetProfileSrc(response.profile.image_1.path);
         setSelectedImage(null);
       })
-      .catch((e: unknown) => {
+      .catch((err: unknown) => {
         toast({
-          description: getErrorMessage(e),
+          description: getErrorMessage(err),
         });
       });
   };
