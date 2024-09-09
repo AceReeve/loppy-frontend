@@ -6,20 +6,31 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Form,
+  FormField,
+  FormItem,
   Input,
   Separator,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
+  toast,
 } from "@repo/ui/components/ui";
 import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
 import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
 import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
+import { CreateWorkFolderSchema } from "@/src/schemas";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCreateWorkflowFolderMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 export default function Page() {
   const tabs = [
@@ -58,7 +69,7 @@ export default function Page() {
       description:
         ' "A customizable email template designed to streamline your communication. This template allows you to easily craft professional and consistent emails, with predefined layouts and styling that can be tailored to fit various messaging needs.',
     },
-    {
+    /*    {
       id: 4,
       title: "Email Template",
       description:
@@ -69,7 +80,7 @@ export default function Page() {
       title: "Email Template",
       description:
         ' "A customizable email template designed to streamline your communication. This template allows you to easily craft professional and consistent emails, with predefined layouts and styling that can be tailored to fit various messaging needs.',
-    },
+    },*/
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -87,6 +98,16 @@ export default function Page() {
   const handleViewState = () => {
     setIsWorkList(!isWorkList);
   };
+
+  //INTEGRATION
+
+  const formSchema = CreateWorkFolderSchema;
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      folder_name: "",
+    },
+  });
 
   const WorkflowView = (
     <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
@@ -119,6 +140,38 @@ export default function Page() {
       </div>
     </Tabs>
   );
+  const [createFolder] = useCreateWorkflowFolderMutation();
+
+  const onSubmit = async () => {
+    try {
+      const response = await createFolder(form.getValues()).unwrap();
+      if ((response as { created_at: string }).created_at) {
+        // Handle successful submission
+        toast({
+          title: "Workflow Folder Created Successfully",
+          description: "New workflow has been created.",
+          variant: "success",
+        });
+        form.reset();
+      } else {
+        // Handle submission failure
+        toast({
+          title: "Creation of Workflow Failed",
+          description: "Failed to create workflow",
+          variant: "destructive",
+        });
+      }
+      setOpen(!open);
+    } catch (error) {
+      toast({
+        title: "Create Workflow Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
+    }
+  };
+
+  const [open, setOpen] = useState(false);
 
   const WorkflowHub = (
     <div className="p-10">
@@ -131,20 +184,42 @@ export default function Page() {
           </p>
         </div>
         <div className="flex gap-4">
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">+ Create Folder</Button>
             </DialogTrigger>
             <DialogContent className="max-w-[700px]">
-              <DialogTitle className="font-normal">Create a Folder</DialogTitle>
-              <Separator />
-              <div className="flex items-center">
-                <p className="w-1/4">Folder Name: </p>
-                <Input />
-              </div>
-              <div className="flex justify-end">
-                <Button className="rounded px-4">Create</Button>
-              </div>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormField
+                    control={form.control}
+                    name="folder_name"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="flex flex-col">
+                          <DialogTitle className="font-normal">
+                            Create folder
+                          </DialogTitle>
+                          <Separator />
+                          <div className="flex items-center">
+                            <p className="w-1/4">Folder Name: </p>
+                            <Input {...field} />
+                          </div>
+                          <div className="flex justify-end">
+                            <Button className="rounded px-4">Create</Button>
+                          </div>
+                          {/*                          {errors.birthDate ? (
+                            <p className="mt-2 text-[0.8rem] font-medium text-error">
+                              {errors.birthDate.message}
+                            </p>
+                          ) : null}*/}
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </form>
+              </Form>
+              <DialogDescription />
             </DialogContent>
           </Dialog>
           <Dialog>
@@ -180,6 +255,7 @@ export default function Page() {
                   ))}
                 </div>
               </div>
+              <DialogDescription />
             </DialogContent>
           </Dialog>
         </div>

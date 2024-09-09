@@ -43,3 +43,24 @@ export interface GetCreateWorkflowResponse {
   created_at: string;
   updated_at: string;
 }
+
+export interface GetFolderResponse {
+  _id: string;
+  folder_name: string;
+  created_by: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface CreateFolderPayload {
+  folder_name: string;
+}
+
+export interface GetIDPayload {
+  id: string;
+}
+
+export interface GetEditFolderPayload {
+  id: string;
+  folder_name: string;
+}

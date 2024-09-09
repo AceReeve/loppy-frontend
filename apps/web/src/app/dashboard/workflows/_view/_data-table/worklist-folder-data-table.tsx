@@ -180,7 +180,7 @@ export function WorkFoldersDataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                   key={row.id}
                   onClick={() => {
-                    console.log("clicked");
+                    console.log("row CLicked");
                   }}
                   className="cursor-pointer"
                 >
