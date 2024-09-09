@@ -13,11 +13,12 @@ import {
   type OrganizationSchema,
   type SendInviteUsersSchema,
 } from "@/src/schemas";
+import { revalidateOrganization } from "@/src/actions/paywall-actions.ts";
 import TeamsOrganization from "./team-setup-steps/teams-organization.tsx";
 import TeamsAddTeam from "./team-setup-steps/teams-add-team.tsx";
 import TeamsSubmit from "./team-setup-steps/teams-submit.tsx";
 
-export default function PaywallTeamSetup({ refetch }: { refetch: () => void }) {
+export default function PaywallTeamSetup() {
   const [stepIndex, setStepIndex] = useState(0);
 
   const [organization, setOrganization] =
@@ -72,8 +73,8 @@ export default function PaywallTeamSetup({ refetch }: { refetch: () => void }) {
       ...invitedUsers,
     })
       .unwrap()
-      .then(() => {
-        refetch();
+      .then(async () => {
+        await revalidateOrganization();
       })
       .catch((err: unknown) => {
         toast({
