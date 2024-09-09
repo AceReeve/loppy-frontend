@@ -1,36 +1,34 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  Input,
-  Separator,
-  Textarea,
-} from "@repo/ui/components/ui";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import React from "react";
-import { RoleDataTable } from "@/src/app/dashboard/settings/teams/_components/role-data.tsx";
-import { roleColumns } from "@/src/app/dashboard/settings/teams/_components/columns.tsx";
+import React, { useEffect } from "react";
+import { useGetAllRolesByTeamIdQuery } from "@repo/redux-utils/src/endpoints/manage-team";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { RoleDataTable } from "../_components/role-data-table";
+import { roleColumns } from "../_components/role-columns";
 
-export default function Roles() {
-  const roleList = [
-    {
-      role: "Administrator",
-      members: 1,
-    },
-    {
-      role: "Manager",
-      members: 4,
-    },
-    {
-      role: "Member",
-      members: 2,
-    },
-    {
-      role: "Observer",
-      members: 1,
-    },
-  ];
+export interface TeamDetailsProps {
+  team: Team;
+}
+
+interface Team {
+  _id: string;
+  team: string;
+  description: string;
+  // eslint-disable-next-line -- team members type is still unknown
+  team_members: any[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export default function Roles(props: TeamDetailsProps) {
+  const {
+    data: roleList = [],
+    isLoading,
+    refetch,
+  } = useGetAllRolesByTeamIdQuery(props.team._id);
+
+  useEffect(() => {
+    void refetch();
+  }, [props.team]);
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -52,47 +50,19 @@ export default function Roles() {
 
   return (
     <div className="p-4">
-      <div className="flex flex-row items-center justify-between">
-        <div className="relative flex w-[225px] w-full flex-row justify-between gap-4">
-          <MagnifyingGlassIcon className="absolute left-2 top-1.5 h-5 w-5 text-gray-500 " />
-          <Input
-            className="h-[35px] max-w-60 pl-10"
-            placeholder="Search Roles"
-            type="search"
-          />
+      {isLoading ? (
+        <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+          <LoadingSpinner />
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="px-5">Add Role</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[800px] font-poppins">
-            <div className="text-2xl">Create Role</div>
-            <Separator />
-            <div className="">
-              <p className="text-sm font-light">Role Name</p>
-              <input
-                className="h-10 w-[250px] text-sm"
-                placeholder="Enter a Role"
-              />
-            </div>
-            <div className="p-1">
-              <p className="text-sm font-light">Description</p>
-              <Textarea
-                placeholder="Role Description"
-                className="resize-none font-light"
-              />
-            </div>
-            <div className="flex justify-end">
-              <Button className="text-md">Create</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <RoleDataTable
-        columns={roleColumns}
-        data={roleList}
-        noResultsComponent={NoResultsComponent}
-      />
+      ) : (
+        <RoleDataTable
+          teamId={props.team._id}
+          refetch={refetch}
+          columns={roleColumns}
+          data={roleList}
+          noResultsComponent={NoResultsComponent}
+        />
+      )}
     </div>
   );
 }

@@ -3,7 +3,22 @@ import React from "react";
 import { memberColumns } from "@/src/app/dashboard/settings/teams/_components/member-columns.tsx";
 import { MemberDataTable } from "@/src/app/dashboard/settings/teams/_components/member-data.tsx";
 
-export default function Members() {
+export interface TeamDetailsProps {
+  team: Team;
+}
+
+interface Team {
+  _id: string;
+  team: string;
+  description: string;
+  // eslint-disable-next-line -- team members type is still unknown
+  team_members: any[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export default function Members(props: TeamDetailsProps) {
   const memberList = [
     {
       first_name: "Antonio",
@@ -37,6 +52,8 @@ export default function Members() {
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+      {/* TODO: remove this */}
+      <p className="hidden">{props.team.team}</p>
       <div className="text-center font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
         Time to get organized
       </div>

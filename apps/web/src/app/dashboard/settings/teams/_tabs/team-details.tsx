@@ -1,8 +1,24 @@
 import Image from "next/image";
 import { Separator } from "@repo/ui/components/ui";
+import { format } from "date-fns";
 import DetailsCard from "@/src/app/dashboard/settings/teams/_components/details-card.tsx";
 
-export default function TeamDetails() {
+interface TeamDetailsProps {
+  team: Team;
+}
+
+interface Team {
+  _id: string;
+  team: string;
+  description: string;
+  // eslint-disable-next-line -- team members type is still unknown
+  team_members: any[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export default function TeamDetails(props: TeamDetailsProps) {
   const overview = [
     {
       id: 1,
@@ -41,7 +57,7 @@ export default function TeamDetails() {
 
   return (
     <div className="relative">
-      <div className="flex flex-wrap space-x-4 p-8 ">
+      <div className="flex flex-wrap space-x-4 p-8 pb-0">
         <div className="my-4 flex min-h-[100px] min-w-[100px] flex-wrap content-center rounded-full bg-slate-200 shadow-lg">
           <Image
             src="/assets/images/logo.png"
@@ -53,17 +69,18 @@ export default function TeamDetails() {
         </div>
 
         <div className="m-auto block flex flex-col font-poppins">
-          <h1 className="font-nunito text-[16px] ">MARKETING</h1>
+          <h1 className="font-nunito text-[16px] ">{props.team.team}</h1>
           <p className="mt-2 max-w-[600px] font-light leading-7 text-slate-400">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac
-            consequat arcu. Maecenas sagittis odio at diam varius commodo.
-            Vestibulum viverra ante eu diam imperdiet dignissim.
+            {props.team.description}
           </p>
         </div>
-        <p className="flex flex-col justify-end text-[12px] font-light  italic text-slate-400">
-          Date created June 25, 2024
+      </div>
+      <div className="flex flex-col justify-end">
+        <p className=" text-end text-[12px] font-light italic text-slate-400">
+          Date created: {format(props.team.created_at, "MMMM d, yyyy")}
         </p>
       </div>
+
       <div className="font-poppins">
         <h1 className="text-[18px]">Overview</h1>
         <Separator />
