@@ -5,7 +5,6 @@ import { type Session } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import type { GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
-import { revalidateTag } from "next/cache";
 import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 import DashboardHeader from "@/src/app/dashboard/_components/navigation/dashboard-header";
 import DashboardSidebar from "@/src/app/dashboard/_components/navigation/dashboard-sidebar";
@@ -16,13 +15,6 @@ import Paywall from "@/src/app/dashboard/_components/paywall";
 import { auth } from "@/auth.ts";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup.tsx";
-
-// eslint-disable-next-line @typescript-eslint/require-await -- no await but needs to be a server function
-async function refetch() {
-  "use server";
-  revalidateTag("payment-status");
-  revalidateTag("organization");
-}
 
 async function getOrganizationsList(
   session: Session,
@@ -115,15 +107,11 @@ export default async function Layout({
     ) {
       return (
         <div className="relative m-auto flex min-h-[85%] w-full max-w-[1000px] flex-col rounded-[29px] bg-white">
-          <PaywallTeamSetup refetch={refetch} />
+          <PaywallTeamSetup />
         </div>
       );
     }
-    return (
-      <div className="relative m-auto flex w-full max-w-[1283px] flex-col rounded-[29px] bg-gray-100">
-        <Paywall />
-      </div>
-    );
+    return <Paywall />;
   };
 
   return (
@@ -149,11 +137,7 @@ export default async function Layout({
       {(paymentStatus as { error: string }).error ||
       !organizationsList.length ? (
         <StripeElementsProvider>
-          <PaywallProvider
-            refetch={refetch}
-            organizationsList={organizationsList}
-            paymentStatus={paymentStatus}
-          >
+          <PaywallProvider paymentStatus={paymentStatus}>
             <div className="absolute left-0 top-0 z-10 flex min-h-full min-w-full p-5 pt-[55px]">
               <div className="absolute left-0 top-0 size-full bg-black bg-opacity-40 backdrop-blur-md" />
               {renderPaywallComponents()}

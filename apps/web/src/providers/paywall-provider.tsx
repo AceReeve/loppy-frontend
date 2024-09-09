@@ -7,7 +7,6 @@ import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useCreateSubscriptionMutation } from "@repo/redux-utils/src/endpoints/payment.ts";
-import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import type { z } from "zod";
@@ -16,13 +15,13 @@ import {
   useGetUserInfoQuery,
   useSaveUserInfoMutation,
 } from "@repo/redux-utils/src/endpoints/user.ts";
-import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
 import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
+import { type GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import type { PlanDetails } from "@/src/data/payment-plan-details";
+import { revalidatePaymentStatus } from "@/src/actions/paywall-actions.ts";
 
 interface ContextType {
-  isLoading: boolean;
   viewIndex: number;
   stepIndex: number;
   paymentPlan: PlanDetails | undefined;
@@ -36,7 +35,6 @@ interface ContextType {
   onPromoCodeSubmit: (e: React.SyntheticEvent) => void;
   clientSecret: string | undefined;
   confirmationToken: string | undefined;
-  organizationsList: GetOrganizationResponse[];
   isPaymentProcessing: boolean;
   nextStepEnabled: boolean;
   setNextStepEnabled: (enabled: boolean) => void;
@@ -46,14 +44,10 @@ interface ContextType {
 const PaywallContext = createContext<ContextType | null>(null);
 
 export default function PaywallProvider({
-  refetch,
   paymentStatus,
-  organizationsList,
   children,
 }: {
-  refetch: () => void;
   paymentStatus: GetPaymentStatusResponse | { error: string };
-  organizationsList: GetOrganizationResponse[];
   children: React.ReactNode;
 }) {
   const form = useForm<z.infer<typeof RegisterDetailsSchema>>({
@@ -73,10 +67,17 @@ export default function PaywallProvider({
     mode: "all",
   });
 
-  const [createSubscription, { data: clientSecret, isLoading }] =
-    useCreateSubscriptionMutation();
-  const [saveUserInfo] = useSaveUserInfoMutation();
-  const { data: userInfoData } = useGetUserInfoQuery(undefined);
+  const [
+    createSubscription,
+    { data: clientSecret, isLoading: isLoadingCreateSubscription },
+  ] = useCreateSubscriptionMutation();
+  const [saveUserInfo, { isLoading: isLoadingSaveUserInfo }] =
+    useSaveUserInfoMutation();
+  const { data: userInfoData, isLoading: isLoadingUserInfo } =
+    useGetUserInfoQuery(undefined);
+
+  const isLoading =
+    isLoadingCreateSubscription || isLoadingSaveUserInfo || isLoadingUserInfo;
 
   const stripe = useStripe();
   const elements = useElements();
@@ -87,8 +88,6 @@ export default function PaywallProvider({
   const [paymentPlan, setPaymentPlan] = useState<PlanDetails>();
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [nextStepEnabled, setNextStepEnabled] = useState(false);
-
-  const [mounted, setMounted] = useState(false);
 
   const [confirmationToken, setConfirmationToken] = useState<string>();
 
@@ -286,7 +285,8 @@ export default function PaywallProvider({
 
   async function refetchPaymentStatus() {
     setIsPaymentProcessing(true);
-    refetch();
+    await revalidatePaymentStatus();
+
     // TODO: Add retries limit for refetching
     // const res = await refetch();
     await new Promise((r) => {
@@ -331,10 +331,6 @@ export default function PaywallProvider({
     }
   };
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
     <PaywallContext.Provider
       value={{
@@ -351,8 +347,6 @@ export default function PaywallProvider({
         onPromoCodeSubmit,
         clientSecret: clientSecret?.subscription?.clientSecret,
         confirmationToken,
-        isLoading,
-        organizationsList,
         isPaymentProcessing,
         nextStepEnabled,
         setNextStepEnabled,
@@ -360,7 +354,7 @@ export default function PaywallProvider({
       }}
     >
       {isLoading ? <LoadingOverlay /> : null}
-      {mounted ? children : null}
+      {children}
     </PaywallContext.Provider>
   );
 }
