@@ -1,46 +1,34 @@
 "use client";
 import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTrigger,
   Input,
   Separator,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Textarea,
   VerticalMenu,
   VerticalMenuLink,
 } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useGetTeamsQuery } from "@repo/redux-utils/src/endpoints/manage-team";
 import TeamDetails from "@/src/app/dashboard/settings/teams/_tabs/team-details.tsx";
 import Members from "@/src/app/dashboard/settings/teams/_tabs/members.tsx";
 import Roles from "@/src/app/dashboard/settings/teams/_tabs/roles.tsx";
 import Permissions from "@/src/app/dashboard/settings/teams/_tabs/permissions.tsx";
 import TeamSettings from "@/src/app/dashboard/settings/teams/_tabs/team-settings.tsx";
+import CreateTeam from "./_components/create-team";
 
-const teams = [
-  {
-    name: "Front-End Developers",
-    id: 0,
-  },
-  {
-    name: "Back-End Developers",
-    id: 1,
-  },
-  {
-    name: "UI Artists",
-    id: 2,
-  },
-  {
-    name: "Quality Assurance",
-    id: 3,
-  },
-];
+interface Team {
+  _id: string;
+  team: string;
+  description: string;
+  // eslint-disable-next-line -- team members type is still unknown
+  team_members: any[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
 
 const tabs = [
   {
@@ -71,31 +59,49 @@ const tabs = [
 ];
 
 export default function Page() {
-  const [currentTeam, setCurrentTeam] = useState(0);
+  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]); // Manage teams state here
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const { data: fetchedTeams = null } = useGetTeamsQuery(undefined);
+
+  useEffect(() => {
+    if (fetchedTeams && fetchedTeams.length > 0 && teams.length === 0) {
+      setTeams(fetchedTeams);
+    }
+  }, [fetchedTeams, teams]);
+
+  useEffect(() => {
+    if (teams.length > 0 && !currentTeam) {
+      setCurrentTeam(teams[0]);
+    }
+  }, [teams, currentTeam]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+    setSearchTerm(e.target.value);
   }, []);
 
-  const handleChangeTeam = useCallback((teamId: number) => {
-    setCurrentTeam(teamId);
+  const handleChangeTeam = useCallback((team: Team) => {
+    setCurrentTeam(team);
+  }, []);
+
+  const handleAddTeam = useCallback((newTeam: Team) => {
+    setTeams((prevTeams) => [...prevTeams, newTeam]);
+    setCurrentTeam(newTeam); // Optionally set the newly added team as the current team
   }, []);
 
   const filteredTeams = useMemo(() => {
-    return teams.filter((team) =>
-      team.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    return teams.filter((team: Team) =>
+      team.team.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  }, [searchTerm]);
+  }, [searchTerm, teams]);
 
   const TeamResultComponent = (
     <div className="flex gap-5 space-x-4">
       <div className="min-w-[200px] max-w-[300px]">
-        <VerticalMenu className=" !shadow-none">
+        <VerticalMenu className="!shadow-none">
           <div className="relative flex w-[225px] w-full flex-row justify-between gap-2">
-            <MagnifyingGlassIcon className="absolute left-2 top-1.5 h-5 w-5 text-gray-500 " />
+            <MagnifyingGlassIcon className="absolute left-2 top-1.5 h-5 w-5 text-gray-500" />
             <Input
               className="h-[35px] w-[225px] rounded-none pl-10"
               placeholder="Search Team"
@@ -107,40 +113,42 @@ export default function Page() {
           <Separator className="mt-2" />
           {filteredTeams.map((team) => (
             <VerticalMenuLink
-              active={team.id === currentTeam}
-              key={team.id}
+              active={team._id === currentTeam?._id}
+              key={team._id}
               className="cursor-pointer"
               onClick={() => {
-                handleChangeTeam(team.id);
+                handleChangeTeam(team);
               }}
             >
-              {team.name}
+              {team.team}
             </VerticalMenuLink>
           ))}
         </VerticalMenu>
       </div>
-      <div className=" h-full min-h-[1000px] border-l border-gray-300" />
+      <div className="h-full min-h-[1000px] border-l border-gray-300" />
 
-      <div className=" w-full ">
-        <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
-          <TabsList>
-            {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id}>
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <div className="mt-2 w-full">
-            {tabs.map((tab) => {
-              const TabComponent = tab.component;
-              return (
-                <TabsContent key={tab.id} value={tab.id}>
-                  <TabComponent />
-                </TabsContent>
-              );
-            })}
-          </div>
-        </Tabs>
+      <div className="w-full">
+        {currentTeam ? (
+          <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
+            <TabsList>
+              {tabs.map((tab) => (
+                <TabsTrigger key={tab.id} value={tab.id}>
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <div className="mt-2 w-full">
+              {tabs.map((tab) => {
+                const TabComponent = tab.component;
+                return (
+                  <TabsContent key={tab.id} value={tab.id}>
+                    <TabComponent team={currentTeam} />
+                  </TabsContent>
+                );
+              })}
+            </div>
+          </Tabs>
+        ) : null}
       </div>
     </div>
   );
@@ -148,7 +156,7 @@ export default function Page() {
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
       <div className="text-center font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
-        Doesn &apos;t have a team yet?
+        Doesn&apos;t have a team yet?
       </div>
       <div className="mt-4 max-w-[641px] text-center font-nunito text-sm font-normal leading-normal text-gray-700">
         Start by creating your teams and adding the necessary details. Once your
@@ -168,60 +176,7 @@ export default function Page() {
     <div className="w-full">
       <div className="flex items-center justify-between">
         <h1 className="text-[36px]">Team</h1>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Create Team</Button>
-          </DialogTrigger>
-          <DialogContent className=" max-w-[800px] font-poppins">
-            <div className="text-2xl ">Create Team</div>
-            <Separator />
-            <div className="flex gap-6 px-8 py-4">
-              <div className="flex w-[200px] flex-col justify-between space-y-6">
-                <div className=" flex h-[200px] w-[200px] flex-col content-center rounded-full bg-slate-200 shadow-lg">
-                  <Image
-                    src="/assets/images/logo.png"
-                    alt=""
-                    width={138}
-                    height={141}
-                    className="m-auto size-[150px] w-[150px] object-contain transition-all duration-500"
-                  />
-                </div>
-                <div>
-                  <Button variant="outline" className="w-full rounded-none">
-                    Upload Image
-                  </Button>
-                  <p className=" text-center text-[12px] italic text-slate-300">
-                    We recommend an image of at least 512x512 resolution.
-                  </p>
-                </div>
-              </div>
-
-              <div className="m-auto w-full space-y-4 font-poppins">
-                <div>
-                  <p className="font-light">TEAM NAME </p>
-                  <input
-                    type="text"
-                    className=" w-[300px] bg-slate-100 text-sm"
-                    placeholder="MARKETING"
-                  />
-                </div>
-                <div>
-                  <p className="font-light"> DESCRIPTION </p>
-                  <Textarea
-                    className="mt-2 h-[140px] resize-none bg-slate-100 font-light leading-7"
-                    placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac
-            consequat arcu. Maecenas sagittis odio at diam varius commodo.
-            Vestibulum viverra ante eu diam imperdiet dignissim."
-                  />
-                </div>
-              </div>
-            </div>
-            <Separator />
-            <div className="flex items-end justify-end">
-              <Button className="text-md px-10">Create</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <CreateTeam onAddTeam={handleAddTeam} />
       </div>
 
       <Separator className="my-2" />

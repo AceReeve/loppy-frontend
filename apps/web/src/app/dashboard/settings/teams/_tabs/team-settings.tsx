@@ -3,7 +3,22 @@ import { useState } from "react";
 import { Button, Separator, Textarea } from "@repo/ui/components/ui";
 import ToggleData from "@/src/app/dashboard/settings/teams/_components/toggle-data.tsx";
 
-export default function TeamSettings() {
+interface TeamDetailsProps {
+  team: Team;
+}
+
+interface Team {
+  _id: string;
+  team: string;
+  description: string;
+  // eslint-disable-next-line -- team members type is still unknown
+  team_members: any[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export default function TeamSettings(props: TeamDetailsProps) {
   const [settings, setSettings] = useState([
     {
       id: 1,
@@ -65,6 +80,8 @@ export default function TeamSettings() {
   };
   return (
     <div className="relative">
+      {/* TODO: remove this */}
+      <p className="hidden">{props.team.team}</p>
       <div className="flex flex-wrap space-x-10 p-8 ">
         <div className="flex w-[200px] flex-col justify-between">
           <div className="my-4 flex h-[200px] w-[200px] flex-col content-center rounded-full bg-slate-200 shadow-lg">
