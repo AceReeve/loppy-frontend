@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- (temporary) need for debugging */
 import NextAuth, { type Profile } from "next-auth";
 import { signJwt } from "@repo/hooks-and-utils/jwt-utils";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
@@ -15,6 +16,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, account, user, profile }) {
       if (account) {
         if (account.provider === "google" && profile) {
+          console.log("====START====");
+
+          console.log("profile", profile);
+          console.log("user", user);
+
+          console.log("sub", token.sub);
+          console.log("id_token", account.id_token);
+          console.log("access_token", account.access_token);
+          console.log("expires_at", account.expires_at);
+          console.log("email", user.email);
+          console.log("image", user.image);
+
           const jwt = await signJwt({
             sub: token.sub,
             id_token: account.id_token,
@@ -31,6 +44,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             picture: profile.picture as string,
             token: jwt,
           });
+
+          console.log("profile.email", profile.email);
+          console.log("profile.given_name", profile.given_name);
+          console.log("profile.family_name", profile.family_name);
+          console.log("profile.picture", profile.picture);
+          console.log("jwt", jwt);
+          console.log("res access token", res.access_token);
+          console.log("====END====");
 
           return {
             ...token,
@@ -119,5 +140,7 @@ async function saveGoogleInfo(payload: {
 
   // Throw proper error response from backend server
   const res: unknown = await response.json();
+  console.log("ERROR GOOGLE SAVE!", res);
+
   throw new Error(getErrorMessage(res));
 }
