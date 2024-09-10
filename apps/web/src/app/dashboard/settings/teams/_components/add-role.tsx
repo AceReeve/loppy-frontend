@@ -30,7 +30,7 @@ interface AddRoleProps {
 
 const AddRoleSchema = z.object({
   role: z.string().min(1, {
-    message: "Description is required",
+    message: "Role is required",
   }),
   description: z.string().min(1, {
     message: "Description is required",
