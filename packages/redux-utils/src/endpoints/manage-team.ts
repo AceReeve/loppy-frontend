@@ -3,7 +3,9 @@ import type {
   addRoleByTeamIdPayload,
   CreateTeamPayload,
   CreateTeamResponse,
+  GetTeamMemberResponse,
   GetTeamsResponse,
+  InviteTeamMembersPayload,
   RolesByTeamIdResponse,
 } from "./types/manage-team.ts";
 
@@ -30,6 +32,25 @@ const api = baseApi
           };
         },
       }),
+      // get team members
+      getTeamMembers: builder.query<GetTeamMemberResponse, string>({
+        query: (teamId: string) => {
+          return {
+            url: `/manage-team/team/${teamId}`,
+          };
+        },
+      }),
+      // invite team member
+      inviteTeamMember: builder.mutation<undefined, InviteTeamMembersPayload>({
+        query: (payload) => {
+          return {
+            url: `/manage-team/invite-member`,
+            method: "POST",
+            body: payload,
+          };
+        },
+      }),
+
       // get all roles by team id
       getAllRolesByTeamId: builder.query<RolesByTeamIdResponse[], string>({
         query: (teamId: string) => {
@@ -53,6 +74,8 @@ const api = baseApi
 export const {
   useGetTeamsQuery,
   useCreateTeamMutation,
+  useGetTeamMembersQuery,
+  useInviteTeamMemberMutation,
   useGetAllRolesByTeamIdQuery,
   useAddRoleByTeamIdMutation,
 } = api;
