@@ -34,15 +34,30 @@ export default function SidebarSelection(props: SheetProps) {
   const workflowCategory = props.isTriggers ? "Trigger" : "Action";
   const [isTriggerDetailsView, setIsTriggerDetailsView] = useState(false);
 
-  const closeTriggerView = () => {
-    setIsTriggerDetailsView(false);
-  };
-  const triggers = [
+  /*  const triggerNodeData = [
     {
-      id: 1,
-      name: "Birthday Reminder",
-      selection: TriggerSelection,
-      icon: <CakeIcon />,
+      id: "1",
+      data: {
+        title: "Birthday Reminder",
+        content: "",
+        icon: <CakeIcon />,
+      },
+      position: { x: 0, y: 0 },
+    },
+    {
+      id: "2",
+      data: {
+        title: "Send Email",
+        content: "",
+        icon: <MailIcon />,
+      },
+      position: { x: 0, y: 0 },
+    },
+  ];*/
+
+  /*  const triggerComponents = [
+    {
+      id: "1",
       component: (
         <BirthdayReminder
           onHandleClick={props.addTriggerNode}
@@ -51,73 +66,9 @@ export default function SidebarSelection(props: SheetProps) {
         />
       ),
     },
+
     {
-      id: 2,
-      name: "Contact Changed",
-      selection: TriggerSelection,
-      icon: <ContactRound />,
-      component: <ContactChange />,
-    },
-    {
-      id: 3,
-      name: "Contact Created",
-      selection: TriggerSelection,
-      icon: <UserPlus />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
-    },
-    {
-      id: 4,
-      name: "Contact DND",
-      selection: TriggerSelection,
-      icon: <UserRoundX />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
-    },
-    {
-      id: 5,
-      name: "Contact Tag",
-      selection: TriggerSelection,
-      icon: <UserRoundCog />,
-      component: <ContactTag />,
-    },
-    {
-      id: 6,
-      name: "Custom Date Reminder",
-      selection: TriggerSelection,
-      icon: <CalendarClockIcon />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
-    },
-  ];
-  const actionTriggers = [
-    {
-      id: 1,
-      name: "Create Contact",
-      selection: TriggerSelection,
-      icon: <UserRoundPlus />,
-      component: <CreateContact />,
-    },
-    {
-      id: 2,
-      name: "Send Email",
-      selection: TriggerSelection,
-      icon: <MailIcon />,
+      id: "2",
       component: (
         <SendEmail
           onHandleClick={props.addActionNode}
@@ -125,6 +76,96 @@ export default function SidebarSelection(props: SheetProps) {
           icon={<MailIcon />}
         />
       ),
+    },
+  ];*/
+  const showNodeData = (node: CustomNode) => {
+    const selectedNodeComponent =
+      node.type === "triggerNode"
+        ? triggerComponents[node.data.title]
+        : actionComponents[node.data.title];
+    setIsTriggerDetailsView(true);
+    setCurrentTriggerView(selectedNodeComponent);
+    props.setOpenSheet(true);
+  };
+
+  const onHandleAddNode = (node: CustomNode) => {
+    node.type === "triggerNode"
+      ? props.addTriggerNode(node)
+      : props.addActionNode(node);
+    setIsTriggerDetailsView(false);
+  };
+
+  const triggerComponents: Record<string, React.ReactNode> = {
+    "Birthday Reminder": (
+      <BirthdayReminder
+        onHandleClick={onHandleAddNode}
+        onNodeClick={showNodeData}
+        icon={<CakeIcon />}
+      />
+    ),
+  };
+
+  const actionComponents: Record<string, React.ReactNode> = {
+    "Send Email": (
+      <SendEmail
+        onHandleClick={onHandleAddNode}
+        icon={<MailIcon />}
+        onNodeClick={showNodeData}
+      />
+    ),
+  };
+
+  const triggers = [
+    {
+      id: 1,
+      name: "Birthday Reminder",
+      icon: <CakeIcon />,
+      component: triggerComponents["Birthday Reminder"],
+    },
+    {
+      id: 2,
+      name: "Contact Changed",
+      icon: <ContactRound />,
+      component: <ContactChange />,
+    },
+    {
+      id: 3,
+      name: "Contact Created",
+      icon: <UserPlus />,
+      component: triggerComponents["Birthday Reminder"],
+    },
+    {
+      id: 4,
+      name: "Contact DND",
+      icon: <UserRoundX />,
+      component: triggerComponents["Birthday Reminder"],
+    },
+    {
+      id: 5,
+      name: "Contact Tag",
+      icon: <UserRoundCog />,
+      component: <ContactTag />,
+    },
+    {
+      id: 6,
+      name: "Custom Date Reminder",
+      icon: <CalendarClockIcon />,
+      component: triggerComponents["Birthday Reminder"],
+    },
+  ];
+
+  const actionTriggers = [
+    {
+      id: 1,
+      name: "Create Contact",
+      icon: <UserRoundPlus />,
+      component: <CreateContact />,
+    },
+    {
+      id: 2,
+      name: "Send Email",
+      icon: <MailIcon />,
+      component: actionComponents["Send Email"],
     } /*
     {
       id: 2,
@@ -136,54 +177,26 @@ export default function SidebarSelection(props: SheetProps) {
     {
       id: 3,
       name: "Update Contact Field",
-      selection: TriggerSelection,
       icon: <UserEdit />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
+      component: actionComponents["Send Email"],
     },
     {
       id: 4,
       name: "Add Contact Tag",
-      selection: TriggerSelection,
       icon: <UserRoundPlus />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
+      component: actionComponents["Send Email"],
     },
     {
       id: 5,
       name: "Assign to User",
-      selection: TriggerSelection,
       icon: <UserRoundCog />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
+      component: actionComponents["Send Email"],
     },
     {
       id: 6,
       name: "Remove Assigned User",
-      selection: TriggerSelection,
       icon: <UserRoundX />,
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
+      component: actionComponents["Send Email"],
     },
   ];
   const [displayedTriggers, setDisplayedTriggers] = useState(triggers);
@@ -230,11 +243,7 @@ export default function SidebarSelection(props: SheetProps) {
   }, [searchTerm, displayedTriggers]);
 
   const [currentTriggerView, setCurrentTriggerView] = useState<React.ReactNode>(
-    <BirthdayReminder
-      onHandleClick={props.addTriggerNode}
-      onAddNodes={closeTriggerView}
-      icon={<CakeIcon />}
-    />,
+    triggerComponents["Birthday Reminder"],
   );
 
   /*  const handleTriggerClick = (component: React.ReactNode) => {

@@ -20,17 +20,17 @@ import {
   TabsTrigger,
   toast,
 } from "@repo/ui/components/ui";
-import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
-import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
-import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";
-import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
-import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
-import { CreateWorkFolderSchema } from "@/src/schemas";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateWorkflowFolderMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
+import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
+import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
+import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
+import { CreateWorkFolderSchema } from "@/src/schemas";
+import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";
 
 export default function Page() {
   const tabs = [

@@ -19,16 +19,7 @@ import {
 } from "@tanstack/react-table";
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
   Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Separator,
   Table,
   TableBody,
@@ -36,12 +27,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Textarea,
 } from "@repo/ui/components/ui";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Clock4, History, List } from "lucide-react";
-import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -60,16 +49,18 @@ export function WorkFoldersDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  /*  const [filterSheetOpen, setFilterSheetOpen] = useState(false);*/
 
   // Function to filter items based on search term
 
-  const [isFilterMode, setIsFilterMode] = useState(false);
+  /*  const [isFilterMode, setIsFilterMode] = useState(false);*/
 
+  /*
   interface FilterObject {
     label: string;
     value: string[];
   }
+*/
 
   /*
   const filterItems = (itemLabel: string) => {
@@ -96,8 +87,8 @@ export function WorkFoldersDataTable<TData, TValue>({
     },
   });
 
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("name");
+  /*  const [open, setOpen] = useState(false);*/
+  const value = "name";
   return (
     <div className="w-full  font-poppins">
       <div className="flex place-content-center items-center">

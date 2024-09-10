@@ -21,7 +21,7 @@ import { CreateBirthReminderSchema } from "@/src/schemas";
 
 interface BirthdayReminderProps {
   onHandleClick: (node: CustomNode) => void;
-  onAddNodes: () => void;
+  onNodeClick: (node: CustomNode) => void;
   icon: React.ReactNode;
 }
 
@@ -38,7 +38,6 @@ export default function BirthdayReminder(prop: BirthdayReminderProps) {
 
   const onSubmit = () => {
     prop.onHandleClick(birthdayNode as CustomNode);
-    prop.onAddNodes();
   };
 
   const formSchema = CreateBirthReminderSchema;
@@ -61,10 +60,14 @@ export default function BirthdayReminder(prop: BirthdayReminderProps) {
       title: "Birthday Reminder",
       content: moment(form.getValues("birthDate")).format("L"),
       icon: prop.icon,
+      onButtonClick: () => {
+        onNodeClick();
+      },
     },
-    position: { x: 0, y: 0 },
   };
-
+  const onNodeClick = () => {
+    prop.onNodeClick(birthdayNode as CustomNode);
+  };
   const today = new Date(Date.now());
   today.setHours(0, 0, 0, 0);
 

@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { WorkFoldersDataTable } from "@/src/app/dashboard/workflows/_view/_data-table/worklist-folder-data-table.tsx";
 import {
   useEditFolderMutation,
   useGetWorkflowListQuery,
 } from "@repo/redux-utils/src/endpoints/workflow.ts";
-import { workFolders } from "@/src/app/dashboard/workflows/_view/_columns/worklist-folder.tsx";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import {
   Alert,
@@ -24,10 +22,12 @@ import {
 } from "@repo/ui/components/ui";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { EditWorkFolderSchema } from "@/src/schemas";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { workFolders } from "@/src/app/dashboard/workflows/_view/_columns/worklist-folder.tsx";
+import { WorkFoldersDataTable } from "@/src/app/dashboard/workflows/_view/_data-table/worklist-folder-data-table.tsx";
+import { EditWorkFolderSchema } from "@/src/schemas";
 
 export default function WorkflowList() {
   /*  const workFolderLists = [

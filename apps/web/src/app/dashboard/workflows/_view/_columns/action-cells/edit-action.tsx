@@ -1,9 +1,9 @@
 import { DropdownMenuItem } from "@repo/ui/components/ui";
 
-interface EditActionCellProps {
+/*interface EditActionCellProps {
   id: string;
-}
-export default function EditActionCell(prop: EditActionCellProps) {
+}*/
+export default function EditActionCell() {
   return (
     <div className="inline flex h-8 flex-col items-end">
       <DropdownMenuItem className="h-full w-full cursor-pointer">

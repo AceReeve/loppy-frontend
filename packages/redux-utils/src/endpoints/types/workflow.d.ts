@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
-export interface GetWorkFolders {
+/*export interface GetWorkFolders {
   name: string;
   lastUpdated: string;
   createdOn: string;
-}
+}*/
 export interface Trigger {
   id: string;
   trigger_name: string;
@@ -19,11 +19,12 @@ export interface Action {
 
 export interface CustomNode extends Node {
   id: string;
-  type: string;
+  type?: string;
   data: {
     title: string;
-    content: string;
+    content?: string;
     icon?: ReactNode.Node;
+    onButtonClick?: OnButtonClickFunction;
   };
   position: { x: number; y: number };
 }

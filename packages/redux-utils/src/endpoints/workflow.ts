@@ -1,12 +1,14 @@
 import { baseApi } from "../api";
-import type {
+import {
   CreateWorkflowPayload,
   GetCreateWorkflowResponse,
   GetFolderResponse,
   GetIDPayload,
 } from "./types/workflow";
-import { GetContactsListResponse } from "./types/contacts";
-import { CreateFolderPayload, GetEditFolderPayload } from "./types/workflow";
+import type {
+  CreateFolderPayload,
+  GetEditFolderPayload,
+} from "./types/workflow";
 
 const api = baseApi
   .enhanceEndpoints({
