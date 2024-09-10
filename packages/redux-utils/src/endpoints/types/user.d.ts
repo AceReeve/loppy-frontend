@@ -71,6 +71,7 @@ export interface GetUserProfileResponse {
     status: string;
     login_by: string;
     login_count: number;
+    role: Role;
     created_at: string;
     updated_at: string;
     reset_password_token: string;
@@ -94,6 +95,15 @@ export interface GetUserProfileResponse {
     updated_at: string;
     profile?: Profile;
   };
+}
+
+interface Role {
+  _id: string;
+  role_name: string;
+  description: string;
+  role_status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Profile {
