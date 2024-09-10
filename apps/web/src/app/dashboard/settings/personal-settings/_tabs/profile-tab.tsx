@@ -48,8 +48,11 @@ export default function ProfileTab() {
     },
   });
 
-  const { data: userProfile, isLoading: userProfileIsLoading } =
-    useGetUserProfileQuery(undefined);
+  const {
+    data: userProfile,
+    isLoading: userProfileIsLoading,
+    refetch,
+  } = useGetUserProfileQuery(undefined);
 
   // Function to format date to YYYY-MM-DD
   const formatDate = (isoDate: string) => {
@@ -58,9 +61,11 @@ export default function ProfileTab() {
 
   // Update the form values when userProfile data is fetched
   useEffect(() => {
-    if (userProfile) {
+    if (userProfile?.userInfo) {
       // Set the image source of profile picture
-      setProfileSrc(userProfile.userInfo.profile?.image_1.path ?? "");
+      setProfileSrc(
+        userProfile.userInfo.profile?.image_1.path ?? "/assets/images/logo.png",
+      );
 
       profileForm.reset({
         first_name: userProfile.userInfo.first_name,
@@ -92,6 +97,8 @@ export default function ProfileTab() {
         toast({
           title: "Profile Updated Successfully!",
         });
+
+        void refetch();
       })
       .catch((e: unknown) => {
         toast({
@@ -131,19 +138,21 @@ export default function ProfileTab() {
               </div>
               <div>
                 <h1 className="text-xl">
-                  {userProfile
+                  {userProfile?.userInfo
                     ? `${userProfile.userInfo.first_name} ${userProfile.userInfo.last_name}`
-                    : ""}{" "}
+                    : userProfile?.userDetails.email}{" "}
                 </h1>
                 <div className="w-[100px] rounded-md bg-orange-500">
-                  <p className="text-center text-white">Admin</p>
+                  <p className="text-center text-white">
+                    {userProfile?.userDetails.role.role_name}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="flex w-[190px] flex-col justify-center">
               <UploadImage
                 handleSetProfileSrc={handleSetProfileSrc}
-                userId={userProfile?.userInfo._id ?? ""}
+                userId={userProfile?.userInfo ? userProfile.userInfo._id : ""}
               />
 
               <p className=" text-center text-[12px] italic text-slate-300">

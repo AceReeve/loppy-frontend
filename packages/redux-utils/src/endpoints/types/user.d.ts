@@ -21,11 +21,12 @@ export interface GetUserProfileResponse {
     status: string;
     login_by: string;
     login_count: number;
+    role: UserRole;
     created_at: string;
     updated_at: string;
     reset_password_token: string;
   };
-  userInfo: {
+  userInfo?: {
     _id: string;
     user_id: string;
     first_name: string;
@@ -44,6 +45,15 @@ export interface GetUserProfileResponse {
     updated_at: string;
     profile?: Profile;
   };
+}
+
+export interface UserRole {
+  _id: string;
+  role_name: string;
+  description: string;
+  role_status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Profile {
