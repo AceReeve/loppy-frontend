@@ -2,6 +2,7 @@
 import Image from "next/image";
 import {
   Button,
+  Calendar,
   Form,
   FormControl,
   FormField,
@@ -9,6 +10,9 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -27,6 +31,9 @@ import {
 } from "@repo/redux-utils/src/endpoints/user";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { cn } from "@repo/ui/utils";
+import moment from "moment";
+import { CalendarIcon } from "lucide-react";
 import { profileSchema } from "../schemas/personal-settings-schemas";
 import UploadImage from "./_components/upload-image";
 
@@ -215,15 +222,57 @@ export default function ProfileTab() {
                       control={profileForm.control}
                       name="birthday"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Birth Date</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="date"
-                              placeholder="Birth Date"
-                              {...field}
-                            />
-                          </FormControl>
+                        <FormItem className="col-span-6">
+                          <FormLabel>Date of birth</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "min-h-10 w-full text-left",
+                                    !field.value && "text-gray-400",
+                                  )}
+                                  onBlur={field.onBlur}
+                                >
+                                  {field.value ? (
+                                    moment(field.value).format("LL")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 font-light text-gray-700" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                captionLayout="dropdown"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                initialFocus
+                                onSelect={(date) => {
+                                  if (date) {
+                                    const formattedDate =
+                                      moment(date).format("YYYY-MM-DD");
+                                    field.onChange(formattedDate);
+                                  }
+                                }}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                fromYear={1960}
+                                toYear={new Date().getFullYear()}
+                              />
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage />
                         </FormItem>
                       )}

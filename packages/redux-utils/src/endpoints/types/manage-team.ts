@@ -19,6 +19,18 @@ export interface GetTeamMemberResponse {
   description: string;
   role: string;
   team_members: TeamMembers[];
+  overview: Overview;
+  roles: Roles[];
+}
+
+interface Overview {
+  members: number;
+  roles: number;
+}
+
+interface Roles {
+  role_name: string;
+  count: number;
 }
 
 export interface addRoleByTeamIdPayload {

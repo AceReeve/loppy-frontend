@@ -80,6 +80,8 @@ export default function SecurityTab() {
         toast({
           description: "Password changed successfully",
         });
+
+        securityForm.reset();
       })
       .catch((e: unknown) => {
         toast({
@@ -188,6 +190,7 @@ export default function SecurityTab() {
                               {...field}
                             />
                             <button
+                              tabIndex={-1}
                               type="button"
                               className="absolute inset-y-0 right-0 flex items-center px-2"
                               onClick={() => {
