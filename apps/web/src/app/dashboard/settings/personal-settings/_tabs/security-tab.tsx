@@ -1,32 +1,92 @@
 "use client";
-import { Button, Separator } from "@repo/ui/components/ui";
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Separator,
+  toast,
+} from "@repo/ui/components/ui";
 import React, { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { type z } from "zod";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { useChangePasswordMutation } from "@repo/redux-utils/src/endpoints/user";
 import ToggleData from "@/src/app/dashboard/settings/teams/_components/toggle-data.tsx";
+import { securitySchema } from "../schemas/personal-settings-schemas";
 
 export default function SecurityTab() {
   /* const [showConfirmPassword, setConfirmShowPassword] = useState(false);*/
 
-  const [passwordInputs, setPasswordInputs] = useState([
+  // password types
+  interface PasswordField {
+    id: number;
+    field: "current_password" | "new_password" | "confirm_new_password";
+    label: string;
+    placeHolder: string;
+    isShown: boolean;
+  }
+
+  // Use the type in your useState call
+  const [passwordInputs, setPasswordInputs] = useState<PasswordField[]>([
     {
       id: 1,
+      field: "current_password",
       label: "Current Password",
       placeHolder: "",
       isShown: false,
     },
     {
       id: 2,
+      field: "new_password",
       label: "New Password",
       placeHolder: "",
       isShown: false,
     },
     {
       id: 3,
+      field: "confirm_new_password",
       label: "Confirm New Password",
       placeHolder: "",
       isShown: false,
     },
   ]);
+
+  const securityForm = useForm<z.infer<typeof securitySchema>>({
+    resolver: zodResolver(securitySchema),
+    defaultValues: {
+      current_password: "",
+      new_password: "",
+      confirm_new_password: "",
+    },
+  });
+
+  const [sendRequest, { isLoading }] = useChangePasswordMutation();
+  const onSubmit = async (data: z.infer<typeof securitySchema>) => {
+    // remove the confirm_new_password
+    // eslint-disable-next-line -- remove confirm_new_password from data
+    const { confirm_new_password, ...newData } = data;
+
+    await sendRequest(newData)
+      .unwrap()
+      .then(() => {
+        toast({
+          description: "Password changed successfully",
+        });
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
+  };
 
   /*  const toggleConfirmPasswordVisibility = () => {
     setConfirmShowPassword(!showConfirmPassword);
@@ -105,38 +165,61 @@ export default function SecurityTab() {
       <div className="flex w-[200px] w-full flex-col space-y-2 border-2 border-gray-300 px-7 py-6">
         <h1 className="text-xl text-slate-600"> Change Password</h1>
         <Separator />
-        <div className="flex w-[400px] flex-col space-y-4 py-4">
-          {passwordInputs.map((password) => (
-            <div key={password.id}>
-              <p className="text-sm">{password.label}</p>
-              <div className="relative">
-                <input
-                  className="mt-1 h-[38px] w-full border-[#D0D3DB] font-medium shadow-none"
-                  id="confirm_password"
-                  placeholder={password.placeHolder}
-                  type={password.isShown ? "text" : "password"}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 flex items-center px-2"
-                  onClick={() => {
-                    handleShowPassword(password.id);
-                  }}
-                >
-                  {password.isShown ? <EyeIcon /> : <EyeOffIcon />}
-                </button>
-                {/*          {errors.confirm_password ? (
-            <p className="mt-2 text-[0.8rem] font-medium text-error">
-              {errors.confirm_password.message}
-            </p>
-          ) : null}*/}
-              </div>
+        <Form {...securityForm}>
+          <form
+            onSubmit={securityForm.handleSubmit(onSubmit)}
+            className="space-y-12"
+          >
+            <div className="lex w-[400px] flex-col space-y-4 py-4">
+              {passwordInputs.map((password) => (
+                <div key={password.id}>
+                  <FormField
+                    control={securityForm.control}
+                    name={password.field}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{password.label}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              autoCapitalize="off"
+                              type={password.isShown ? "text" : "password"}
+                              placeholder={password.placeHolder}
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              className="absolute inset-y-0 right-0 flex items-center px-2"
+                              onClick={() => {
+                                handleShowPassword(password.id);
+                              }}
+                            >
+                              {password.isShown ? <EyeIcon /> : <EyeOffIcon />}
+                            </button>
+                          </div>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="flex justify-end">
-          <Button className="w-[150px] text-xl">Save</Button>
-        </div>
+
+            <div className="flex justify-end">
+              <Button className="w-[150px] text-xl" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <LoadingSpinner /> Saving
+                  </>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
       <div className="flex w-[200px] w-full flex-col space-y-2 border-2 border-gray-300 px-7 py-6">
         <h1 className="text-xl text-slate-600"> Authentication</h1>

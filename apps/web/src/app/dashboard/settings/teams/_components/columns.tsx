@@ -69,7 +69,10 @@ export const roleColumns: ColumnDef<GetRolesResponse["data"]>[] = [
       return (
         <div className="flex items-center gap-3">
           <div className="flex flex-col">
-            <div className="font-medium">{row.original.members.toString()}</div>
+            {/* TODO: add members count */}
+            <div className="font-medium">
+              {row.original.members ? row.original.members : 1}
+            </div>
           </div>
           <svg
             xmlns="http://www.w3.org/2000/svg"

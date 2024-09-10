@@ -6,10 +6,10 @@ const nextConfig = {
   transpilePackages: ["@repo/ui"],
   webpack(config) {
     config.plugins.push(
-        new webpack.NormalModuleReplacementPlugin(
-            /^isomorphic-form-data$/,
-            `${config.context}/form-data-mock.js`,
-        ),
+      new webpack.NormalModuleReplacementPlugin(
+        /^isomorphic-form-data$/,
+        `${config.context}/form-data-mock.js`,
+      ),
     );
     return config;
   },
@@ -20,6 +20,9 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   output: "standalone",
+  images: {
+    domains: ["sandbox.servihero.com"],
+  },
 };
 
 export default nextConfig;
