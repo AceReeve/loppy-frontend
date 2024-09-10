@@ -1,10 +1,14 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Skeleton,
+} from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { AlertCircle } from "lucide-react";
 import { useSummarizePaymentMutation } from "@repo/redux-utils/src/endpoints/payment.ts";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { usePaywallState } from "@/src/providers/paywall-provider";
 
 export default function PaywallOrderSummary() {
@@ -29,9 +33,7 @@ export default function PaywallOrderSummary() {
   }, [confirmationToken, summarizePayment]);
 
   const renderContentSummary = () => {
-    if (isLoading || summarizePaymentLoading) {
-      return <LoadingSpinner />;
-    } else if (error) {
+    if (error) {
       return (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -42,26 +44,34 @@ export default function PaywallOrderSummary() {
     }
     return (
       <>
-        <div className="rounded-xl border border-zinc-300 bg-white p-2">
-          <div className="mb-2 mt-4">
+        <div className="rounded-md border border-gray-300 bg-white p-4">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
             <strong>Full Name:</strong>{" "}
-            {paymentMethodPreview?.billing_details.name}
+            {isLoading || summarizePaymentLoading ? (
+              <Skeleton className="h-4 w-[250px]" />
+            ) : (
+              paymentMethodPreview?.billing_details.name
+            )}
           </div>
           {/*<div className="mb-2 mt-4">*/}
           {/*  <strong>Email:</strong> {paymentDetails.cardNumber}*/}
           {/*</div>*/}
-          <div className="mb-2 mt-4">
+          <div className="flex flex-wrap items-center gap-2">
             <strong>Address:</strong>{" "}
-            {paymentMethodPreview?.billing_details.address?.line1}
+            {isLoading || summarizePaymentLoading ? (
+              <Skeleton className="h-4 w-[250px]" />
+            ) : (
+              paymentMethodPreview?.billing_details.address?.line1
+            )}
           </div>
         </div>
 
         {/* Payment Info */}
-        <div className="mb-5 mt-5 text-lg font-bold leading-[18px] text-black">
+        <div className="mb-5 mt-8 text-lg font-bold leading-[18px] text-black">
           Payment Method
         </div>
-        <div className="rounded-xl border border-zinc-300 bg-white p-2">
-          <div className="mb-2 mt-4 flex items-center justify-between">
+        <div className="rounded-md border border-gray-300 bg-white p-4">
+          <div className="mb-2 flex items-center justify-between">
             <label className="inline-flex items-center">
               <input
                 checked={paymentMethodPreview?.type === "card"}
@@ -86,20 +96,29 @@ export default function PaywallOrderSummary() {
               />
             </div>
           </div>
-          <div className="border border-zinc-300" />
 
           {/* Display fetched payment details */}
           {/*<div className="mb-2 mt-4">*/}
           {/*  <strong>Name on Card:</strong> {paymentDetails.nameOnCard}*/}
           {/*</div>*/}
-          <div className="mb-2 mt-4">
-            <strong>Card Number:</strong> *****************
-            {paymentMethodPreview?.card?.last4}
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <strong>Card Number:</strong>
+            {isLoading || summarizePaymentLoading ? (
+              <Skeleton className="h-4 w-[250px]" />
+            ) : (
+              <>**** **** **** {paymentMethodPreview?.card?.last4}</>
+            )}
           </div>
-          <div className="mb-2 mt-4">
+          <div className="flex flex-wrap items-center gap-2">
             <strong>Expiration Date:</strong>{" "}
-            {paymentMethodPreview?.card?.exp_month}/
-            {paymentMethodPreview?.card?.exp_year}
+            {isLoading || summarizePaymentLoading ? (
+              <Skeleton className="h-4 w-[250px]" />
+            ) : (
+              <>
+                {paymentMethodPreview?.card?.exp_month}/
+                {paymentMethodPreview?.card?.exp_year}
+              </>
+            )}
           </div>
         </div>
       </>

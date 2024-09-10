@@ -34,12 +34,10 @@ import { useSearchParams } from "next/navigation";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { handleRegisterDetails } from "@/src/actions/login-actions.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useCreateContactMutation } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useRegisterDetailsMutation } from "@repo/redux-utils/src/endpoints/register.ts";
 
 export default function RegisterDetails() {
-  const { viewIndex, setViewIndex, paymentStatus, isPaymentProcessing } =
-    usePaywallState();
+  const { setViewIndex } = usePaywallState();
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");

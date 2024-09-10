@@ -1,29 +1,33 @@
+/* eslint-disable camelcase -- disable temporarily */
+
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
-import { toast, ToastAction } from "@repo/ui/components/ui";
+import { toast } from "@repo/ui/components/ui";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import type { PaymentPlan } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
-import {
-  useCreatePaymentIntentMutation,
-  useGetPaymentStatusQuery,
-} from "@repo/redux-utils/src/endpoints/payment.ts";
-import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
+import { useCreateSubscriptionMutation } from "@repo/redux-utils/src/endpoints/payment.ts";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  useGetUserInfoQuery,
+  useSaveUserInfoMutation,
+} from "@repo/redux-utils/src/endpoints/user.ts";
+import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
+import { type GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
 import { RegisterDetailsSchema } from "@/src/schemas";
 import type { PlanDetails } from "@/src/data/payment-plan-details";
+import { revalidatePaymentStatus } from "@/src/actions/paywall-actions.ts";
 
 interface ContextType {
-  isLoading: boolean;
   viewIndex: number;
   stepIndex: number;
   paymentPlan: PlanDetails | undefined;
   toNextView: () => void;
   toNextStep: () => void;
+  toPrevStep: () => void;
   toStepIndex: (index: number) => void;
   setViewIndex: (index: number) => void;
   onPlanSelect: (plan: PlanDetails) => void;
@@ -31,9 +35,6 @@ interface ContextType {
   onPromoCodeSubmit: (e: React.SyntheticEvent) => void;
   clientSecret: string | undefined;
   confirmationToken: string | undefined;
-  storage: { plan: PaymentPlan } | undefined;
-  setStorage: ({ plan }: { plan: PaymentPlan }) => void;
-  paymentStatus: GetPaymentStatusResponse | null | undefined;
   isPaymentProcessing: boolean;
   nextStepEnabled: boolean;
   setNextStepEnabled: (enabled: boolean) => void;
@@ -43,8 +44,10 @@ interface ContextType {
 const PaywallContext = createContext<ContextType | null>(null);
 
 export default function PaywallProvider({
+  paymentStatus,
   children,
 }: {
+  paymentStatus: GetPaymentStatusResponse | { error: string };
   children: React.ReactNode;
 }) {
   const form = useForm<z.infer<typeof RegisterDetailsSchema>>({
@@ -64,10 +67,17 @@ export default function PaywallProvider({
     mode: "all",
   });
 
-  const [createPaymentIntent, { data: clientSecret, isLoading }] =
-    useCreatePaymentIntentMutation();
+  const [
+    createSubscription,
+    { data: clientSecret, isLoading: isLoadingCreateSubscription },
+  ] = useCreateSubscriptionMutation();
+  const [saveUserInfo, { isLoading: isLoadingSaveUserInfo }] =
+    useSaveUserInfoMutation();
+  const { data: userInfoData, isLoading: isLoadingUserInfo } =
+    useGetUserInfoQuery(undefined);
 
-  const { data: paymentStatus, refetch } = useGetPaymentStatusQuery(undefined);
+  const isLoading =
+    isLoadingCreateSubscription || isLoadingSaveUserInfo || isLoadingUserInfo;
 
   const stripe = useStripe();
   const elements = useElements();
@@ -79,9 +89,35 @@ export default function PaywallProvider({
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [nextStepEnabled, setNextStepEnabled] = useState(false);
 
-  const [mounted, setMounted] = useState(false);
-
   const [confirmationToken, setConfirmationToken] = useState<string>();
+
+  useEffect(() => {
+    if (userInfoData?.userInfo) {
+      const {
+        first_name,
+        last_name,
+        address,
+        zipCode,
+        city,
+        state,
+        birthday,
+        contact_no,
+        gender,
+      } = userInfoData.userInfo;
+
+      form.reset({
+        first_name,
+        last_name,
+        address,
+        zipCode: zipCode?.toString(),
+        city,
+        state,
+        birthday: birthday ? new Date(birthday) : undefined,
+        contact_no: contact_no?.toString(),
+        gender,
+      });
+    }
+  }, [userInfoData]);
 
   const toNextView = () => {
     setViewIndex(viewIndex + 1);
@@ -89,6 +125,10 @@ export default function PaywallProvider({
 
   const toNextStep = () => {
     toStepIndex(stepIndex + 1);
+  };
+
+  const toPrevStep = () => {
+    toStepIndex(stepIndex - 1);
   };
 
   const toStepIndex = (index: number) => {
@@ -107,8 +147,41 @@ export default function PaywallProvider({
     elements
       ?.submit()
       .then((res) => {
+        const {
+          first_name,
+          last_name,
+          address,
+          zipCode,
+          city,
+          state,
+          birthday,
+          contact_no,
+          gender,
+        } = form.getValues();
         if (!res.error) {
-          toNextStep();
+          saveUserInfo({
+            first_name,
+            last_name,
+            address,
+            zipCode: Number(zipCode),
+            city,
+            state,
+            contact_no: Number(contact_no),
+            gender,
+            birthday: birthday?.toISOString() ?? "",
+            company: "",
+          })
+            .unwrap()
+            .then(() => {
+              toNextStep();
+            })
+            .catch((err: unknown) => {
+              toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: getErrorMessage(err),
+              });
+            });
         }
       })
       .catch((e: unknown) => {
@@ -150,6 +223,7 @@ export default function PaywallProvider({
             .catch((e: unknown) => {
               toast({
                 description: getErrorMessage(e),
+                variant: "destructive",
               });
             });
         } else {
@@ -159,57 +233,83 @@ export default function PaywallProvider({
       .catch((e: unknown) => {
         toast({
           description: getErrorMessage(e),
+          variant: "destructive",
         });
       });
   };
 
   const onFinalSubmit = (_e: React.SyntheticEvent) => {
     // TODO: Add loading
-    if (!confirmationToken || !paymentPlan?.plan) return;
-    createPaymentIntent({
+    if (!confirmationToken || !paymentPlan?.plan || !elements || !stripe)
+      return;
+    createSubscription({
       type: paymentPlan.plan,
       confirmationToken,
     })
       .unwrap()
-      .then(async () => {
-        await refetchPaymentStatus();
+      .then(async (res) => {
+        if (!res.success) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: getErrorMessage(res.message),
+          });
+          return;
+        }
+
+        const { error, paymentIntent } = await stripe.confirmPayment({
+          elements,
+          redirect: "if_required", // Add this to prevent redirect if next action is not required
+          clientSecret: res.subscription?.clientSecret ?? "",
+        });
+
+        if (error) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: getErrorMessage(error),
+          });
+          toPrevStep();
+        } else if (paymentIntent.status === "succeeded") {
+          await refetchPaymentStatus();
+        }
       })
       .catch((e: unknown) => {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
           description: getErrorMessage(e),
-          action: (
-            <ToastAction
-              altText="Try again"
-              onClick={() => {
-                onFinalSubmit(_e);
-              }}
-            >
-              Try again
-            </ToastAction>
-          ),
         });
       });
   };
 
   async function refetchPaymentStatus() {
     setIsPaymentProcessing(true);
+    await revalidatePaymentStatus();
+
     // TODO: Add retries limit for refetching
-    const res = await refetch();
+    // const res = await refetch();
     await new Promise((r) => {
       setTimeout(r, 2000);
     });
 
-    if (res.data) {
-      setIsPaymentProcessing(false);
-      toast({
-        title: "Payment Successful!",
-        description: "Thanks for signing up! Let's setup your team.",
-      });
-    } else {
+    if (
+      (paymentStatus as { error: string }).error ||
+      (paymentStatus as GetPaymentStatusResponse).stripeSubscriptionStatus !==
+        SubscriptionStatus.ACTIVE
+    ) {
       await refetchPaymentStatus();
     }
+    //
+    // if (res.data) {
+    //   setIsPaymentProcessing(false);
+    //   toast({
+    //     title: "Payment Successful!",
+    //     description: "Thanks for signing up! Let's setup your team.",
+    //   });
+    // } else {
+    //   await refetchPaymentStatus();
+    // }
   }
 
   const onPromoCodeSubmit = (e: React.SyntheticEvent) => {
@@ -231,25 +331,6 @@ export default function PaywallProvider({
     }
   };
 
-  // Temporary local storage
-  const [storage, setStorage] = useState<{
-    plan: PaymentPlan;
-  }>();
-
-  useEffect(() => {
-    if (storage) {
-      localStorage.setItem("storage", JSON.stringify(storage));
-    }
-  }, [storage]);
-
-  useEffect(() => {
-    const items = localStorage.getItem("storage");
-    if (items) {
-      setStorage(JSON.parse(items) as typeof storage);
-    }
-    setMounted(true);
-  }, []);
-
   return (
     <PaywallContext.Provider
       value={{
@@ -260,15 +341,12 @@ export default function PaywallProvider({
         setViewIndex,
         toNextView,
         toNextStep,
+        toPrevStep,
         onPlanSelect,
         onSubmit,
         onPromoCodeSubmit,
-        clientSecret: clientSecret?.client_secret,
+        clientSecret: clientSecret?.subscription?.clientSecret,
         confirmationToken,
-        isLoading,
-        storage,
-        setStorage,
-        paymentStatus,
         isPaymentProcessing,
         nextStepEnabled,
         setNextStepEnabled,
@@ -276,7 +354,7 @@ export default function PaywallProvider({
       }}
     >
       {isLoading ? <LoadingOverlay /> : null}
-      {mounted && !storage?.plan ? children : null}
+      {children}
     </PaywallContext.Provider>
   );
 }

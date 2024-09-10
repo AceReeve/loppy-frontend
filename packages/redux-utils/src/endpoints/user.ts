@@ -1,11 +1,15 @@
 import { baseApi } from "../api.ts";
-import type {
-  ChangePasswordPayload,
-  GetUserProfileResponse,
-  InviteUserPayload,
-  InviteUserResponse,
-  UpdateUserInfoPayload,
+import {
+  type GetUserInfoResponse,
+  type InviteUserPayload,
+  type InviteUserResponse,
+  type SaveUserInfoPayload,
+  type SaveUserInfoResponse,
 } from "./types/user";
+import type {
+  GetInviteUserResponse,
+  GetSendInviteUserPayload,
+} from "./types/settings-user";
 
 const api = baseApi
   .enhanceEndpoints({
@@ -31,8 +35,8 @@ const api = baseApi
         providesTags: ["user"],
       }),
       validateInviteUser: builder.mutation<
-        InviteUserResponse,
-        InviteUserPayload
+        GetInviteUserResponse,
+        GetSendInviteUserPayload
       >({
         query: (payload) => {
           return {
@@ -42,46 +46,24 @@ const api = baseApi
           };
         },
       }),
-
-      // personal settings
-      getUserProfile: builder.query<GetUserProfileResponse, undefined>({
+      getUserInfo: builder.query<GetUserInfoResponse, undefined>({
         query: () => {
           return {
             url: `/user/profile`,
           };
         },
-        providesTags: ["user"],
       }),
-      updateUserInfo: builder.mutation<unknown, UpdateUserInfoPayload>({
-        query: (payload) => {
-          return {
-            url: `/user/user-info`,
-            method: "POST",
-            body: payload,
-          };
-        },
-      }),
-      uploadProfile: builder.mutation<
-        undefined,
-        { userId: string; payload: FormData }
-      >({
-        query: ({ userId, payload }) => {
-          return {
-            url: `/user/upload-profile?id=${userId}`,
-            method: "POST",
-            body: payload,
-          };
-        },
-      }),
-      changePassword: builder.mutation<undefined, ChangePasswordPayload>({
-        query: (payload) => {
-          return {
-            url: `/user/change-password`,
-            method: "POST",
-            body: payload,
-          };
-        },
-      }),
+      saveUserInfo: builder.mutation<SaveUserInfoResponse, SaveUserInfoPayload>(
+        {
+          query: (payload) => {
+            return {
+              url: `/user/user-info`,
+              method: "POST",
+              body: payload,
+            };
+          },
+        }
+      ),
     }),
   });
 
@@ -89,8 +71,6 @@ export const {
   useGetInvitedUsersQuery,
   useInviteUserMutation,
   useValidateInviteUserMutation,
-  useGetUserProfileQuery,
-  useUpdateUserInfoMutation,
-  useUploadProfileMutation,
-  useChangePasswordMutation,
+  useSaveUserInfoMutation,
+  useGetUserInfoQuery,
 } = api;

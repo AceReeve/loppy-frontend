@@ -1,10 +1,12 @@
 import { baseApi } from "../api.ts";
-import type {
-  CreatePaymentIntentPayload,
-  CreatePaymentIntentResponse,
-  GetPaymentStatusResponse,
-  SummarizePaymentPayload,
-  SummarizePaymentResponse,
+import {
+  type CreatePaymentIntentPayload,
+  type CreatePaymentIntentResponse,
+  type CreateSubscriptionPayload,
+  type CreateSubscriptionResponse,
+  type GetPaymentStatusResponse,
+  type SummarizePaymentPayload,
+  type SummarizePaymentResponse,
 } from "./types/payment";
 
 const api = baseApi
@@ -39,6 +41,19 @@ const api = baseApi
         },
         invalidatesTags: ["payment"],
       }),
+      createSubscription: builder.mutation<
+        CreateSubscriptionResponse,
+        CreateSubscriptionPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/payment/create-subscription`,
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["payment"],
+      }),
       getPaymentStatus: builder.query<
         GetPaymentStatusResponse | null,
         undefined
@@ -55,6 +70,7 @@ const api = baseApi
 
 export const {
   useCreatePaymentIntentMutation,
+  useCreateSubscriptionMutation,
   useSummarizePaymentMutation,
   useGetPaymentStatusQuery,
 } = api;
