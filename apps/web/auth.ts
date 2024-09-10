@@ -36,6 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: user.email,
             image: user.image,
           });
+          console.log("jwt", jwt);
 
           const res = await saveGoogleInfo({
             email: profile.email ?? "",
@@ -49,7 +50,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           console.log("profile.given_name", profile.given_name);
           console.log("profile.family_name", profile.family_name);
           console.log("profile.picture", profile.picture);
-          console.log("jwt", jwt);
           console.log("res access token", res.access_token);
           console.log("====END====");
 
