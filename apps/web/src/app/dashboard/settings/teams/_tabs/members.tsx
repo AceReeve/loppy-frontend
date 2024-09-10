@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
-import { memberColumns } from "@/src/app/dashboard/settings/teams/_components/member-columns.tsx";
-import { MemberDataTable } from "@/src/app/dashboard/settings/teams/_components/member-data.tsx";
+import React, { useEffect } from "react";
+import { useGetTeamMembersQuery } from "@repo/redux-utils/src/endpoints/manage-team";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { memberColumns } from "@/src/app/dashboard/settings/teams/_components/member-columns2.tsx";
+import { MemberDataTable } from "../_components/member-data-table";
 
 export interface TeamDetailsProps {
   team: Team;
@@ -11,44 +13,64 @@ interface Team {
   _id: string;
   team: string;
   description: string;
-  // eslint-disable-next-line -- team members type is still unknown
-  team_members: any[];
+  team_members: TeamMembers[];
   created_by: string;
   created_at: string;
   updated_at: string;
 }
 
+interface TeamMembers {
+  _id: string;
+  email: string;
+  role_name: string;
+  status: string;
+}
+
+interface GetTeamMemberResponse {
+  team_members: TeamMembers[];
+}
+
 export default function Members(props: TeamDetailsProps) {
-  const memberList = [
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Administrator",
-      members: 1,
-    },
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Manager",
-      members: 4,
-    },
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Member",
-      members: 2,
-    },
-    {
-      first_name: "Antonio",
-      last_name: "Bennet",
-      email: "hu@oru.net",
-      role: "Observer",
-      members: 1,
-    },
-  ];
+  const {
+    data: memberList = {} as GetTeamMemberResponse,
+    isLoading,
+    refetch,
+  } = useGetTeamMembersQuery(props.team._id);
+
+  useEffect(() => {
+    void refetch();
+  }, [props.team]);
+
+  // const memberList = [
+  //   {
+  //     first_name: "Antonio",
+  //     last_name: "Bennet",
+  //     email: "hu@oru.net",
+  //     role: "Administrator",
+  //     members: 1,
+  //   },
+  //   {
+  //     first_name: "Antonio",
+  //     last_name: "Bennet",
+  //     email: "hu@oru.net",
+  //     role: "Manager",
+  //     members: 4,
+  //   },
+  //   {
+  //     first_name: "Antonio",
+  //     last_name: "Bennet",
+  //     email: "hu@oru.net",
+  //     role: "Member",
+  //     members: 2,
+  //   },
+  //   {
+  //     first_name: "Antonio",
+  //     last_name: "Bennet",
+  //     email: "hu@oru.net",
+  //     role: "Observer",
+  //     members: 1,
+  //   },
+  // ];
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -72,11 +94,24 @@ export default function Members(props: TeamDetailsProps) {
 
   return (
     <div className="p-4">
-      <MemberDataTable
+      {/* <MemberDataTable
         columns={memberColumns}
         data={memberList}
         noResultsComponent={NoResultsComponent}
-      />
+      /> */}
+      {isLoading ? (
+        <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <MemberDataTable
+          teamId={props.team._id}
+          refetch={refetch}
+          columns={memberColumns}
+          data={memberList.team_members}
+          noResultsComponent={NoResultsComponent}
+        />
+      )}
     </div>
   );
 }

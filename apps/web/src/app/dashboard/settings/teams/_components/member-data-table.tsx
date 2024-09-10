@@ -24,9 +24,9 @@ import {
   TableRow,
 } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import AddRole from "./add-role";
+import AddMember from "./add-member";
 
-interface RoleDataTableProps<TData, TValue> {
+interface MemberDataTableProps<TData, TValue> {
   teamId: string;
   refetch: () => void;
   columns: ColumnDef<TData, TValue>[];
@@ -34,13 +34,13 @@ interface RoleDataTableProps<TData, TValue> {
   noResultsComponent?: React.ReactNode;
 }
 
-export function RoleDataTable<TData, TValue>({
+export function MemberDataTable<TData, TValue>({
   teamId,
   refetch,
   columns,
   data,
   noResultsComponent,
-}: RoleDataTableProps<TData, TValue>) {
+}: MemberDataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -75,12 +75,12 @@ export function RoleDataTable<TData, TValue>({
           <div className="relative flex w-full flex-row justify-between ">
             <MagnifyingGlassIcon className="absolute left-2 top-2 h-5 w-5 text-gray-500 " />
             <Input
-              placeholder="Search role"
+              placeholder="Search member"
               value={
-                (table.getColumn("role")?.getFilterValue() as string) || ""
+                (table.getColumn("email")?.getFilterValue() as string) || ""
               }
               onChange={(event) =>
-                table.getColumn("role")?.setFilterValue(event.target.value)
+                table.getColumn("email")?.setFilterValue(event.target.value)
               }
               className="pl-10"
             />
@@ -130,7 +130,8 @@ export function RoleDataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu> */}
-        <AddRole teamId={teamId} refetch={refetch} />
+        {/* <AddRole teamId={teamId} refetch={refetch} /> */}
+        <AddMember teamId={teamId} refetch={refetch} />
       </div>
 
       {/* Table */}
@@ -212,7 +213,8 @@ export function RoleDataTable<TData, TValue>({
   ) : (
     <>
       <div className="mt-[18px] flex justify-end">
-        <AddRole teamId={teamId} refetch={refetch} />
+        {/* <AddRole teamId={teamId} refetch={refetch} /> */}
+        <AddMember teamId={teamId} refetch={refetch} />
       </div>
       {noResultsComponent}
     </>

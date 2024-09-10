@@ -15,8 +15,9 @@ import type { CustomNode } from "@repo/redux-utils/src/endpoints/types/workflow"
 import { CreateEmailActionSchema } from "@/src/schemas";
 
 interface SendEmailProps {
+  onNodeClick: (node: CustomNode) => void;
   onHandleClick: (node: CustomNode) => void;
-  onAddNodes: () => void;
+  icon?: React.ReactNode;
 }
 
 export default function SendEmail(prop: SendEmailProps) {
@@ -28,24 +29,32 @@ export default function SendEmail(prop: SendEmailProps) {
       message: "",
     },
   });
+  const {
+    formState: { errors },
+  } = form;
 
   const emailNode = {
-    id: "1",
+    id: "2",
     type: "actionNode",
     data: {
       title: "Send Email",
       content: form.getValues("message"),
+      icon: prop.icon,
+      onButtonClick: () => {
+        onNodeClick();
+      },
     },
-    position: { x: 0, y: 0 },
   };
 
+  const onNodeClick = () => {
+    prop.onNodeClick(emailNode as CustomNode);
+  };
   const onSubmit = () => {
     prop.onHandleClick(emailNode as CustomNode);
-    prop.onAddNodes();
   };
 
   return (
-    <div className="space-y-2 p-4">
+    <div className="space-y-2 rounded border p-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
@@ -62,6 +71,11 @@ export default function SendEmail(prop: SendEmailProps) {
                       {...field}
                     />
                   </FormControl>
+                  {errors.message ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.message.message}
+                    </p>
+                  ) : null}
                 </FormItem>
               );
             }}

@@ -8,12 +8,13 @@ export interface ActionNodeProps {
   data: {
     title: string;
     onButtonClick?: (isTrigger: boolean) => void;
+    icon?: React.ReactNode;
   };
 }
 
 export default function ActionNode({
   id,
-  data: { title, onButtonClick },
+  data: { title, onButtonClick, icon },
 }: ActionNodeProps) {
   const handleClick = () => {
     if (onButtonClick) {
@@ -24,11 +25,17 @@ export default function ActionNode({
   const actionNode = (
     <Button
       variant="outline"
-      className=" h-[60px] w-[200px] justify-start  rounded px-4 dark:bg-slate-100"
+      className=" h-[60px] w-[200px] justify-start  rounded px-2.5 dark:bg-slate-100"
       onClick={handleClick}
     >
       <div className="flex items-center justify-center gap-2">
-        <Add className="h-8 w-8 rounded bg-orange-100/80 p-2 text-orange-500 " />
+        {!icon ? (
+          <Add className="h-8 w-8 rounded bg-slate-200 p-2 dark:text-gray-400" />
+        ) : (
+          <div className="rounded border border-orange-500 bg-orange-500/10 p-2 text-gray-600">
+            {icon}
+          </div>
+        )}
         <p className="font-poppins text-[12px] text-slate-600">{title}</p>
       </div>
       <Handle type="source" position={Position.Bottom} />
