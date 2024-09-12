@@ -77,8 +77,6 @@ export default async function Layout({
   const paymentStatus = await getPaymentStatus(session);
   const organizationsList = await getOrganizationsList(session);
 
-  console.log("organizationsList", organizationsList);
-
   /**
    * 1. Get if user has already purchased a plan
    *    - if NOT PURCHASED yet:
