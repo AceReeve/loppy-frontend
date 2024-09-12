@@ -23,7 +23,7 @@ async function getOrganizationsList(
     throw new Error("NEXT_PUBLIC_API_URL is not detected");
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/organization`,
+    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/organizations`,
     {
       headers: {
         Authorization: `Bearer ${session.jwt}`,
@@ -76,6 +76,8 @@ export default async function Layout({
 
   const paymentStatus = await getPaymentStatus(session);
   const organizationsList = await getOrganizationsList(session);
+
+  console.log("organizationsList", organizationsList);
 
   /**
    * 1. Get if user has already purchased a plan

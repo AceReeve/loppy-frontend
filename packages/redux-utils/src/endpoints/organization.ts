@@ -14,7 +14,7 @@ const api = baseApi
       getOrganizations: builder.query<GetOrganizationResponse[], undefined>({
         query: () => {
           return {
-            url: `/twilio-messaging/organization`,
+            url: `/twilio-messaging/organizations`,
           };
         },
         providesTags: ["organization"],
