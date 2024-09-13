@@ -31,6 +31,7 @@ import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigat
 import TriggerNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end-node.tsx";
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
+import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 
 export default function Workflow() {
   const nodeTypes = {
@@ -167,15 +168,22 @@ export default function Workflow() {
       let lastNodeId = 0;
 
       setNodes((currentNodes: Node[]) => {
-        const existingActionNodes = currentNodes.filter(
+        const existingNodes = currentNodes.filter(
           (n) => n.type === "triggerNode",
         );
 
+        const isDuplicate = existingNodes.some(
+          (n: Node) => n.data.title === node.data.title,
+        );
+
+        if (isDuplicate) {
+          setDuplicateNode(true);
+          return currentNodes;
+        }
+
         lastNodeId =
           currentNodes.length > 0
-            ? extractNumericId(
-                existingActionNodes[existingActionNodes.length - 1].id,
-              )
+            ? extractNumericId(existingNodes[existingNodes.length - 1].id)
             : 0;
 
         newNodeId = (lastNodeId + 1).toString();
@@ -184,7 +192,6 @@ export default function Workflow() {
           ...node,
           id: newNodeId,
           type: "triggerNode",
-          position: { x: 0, y: 0 },
         };
 
         const updatedTriggerNodes = [
@@ -206,7 +213,7 @@ export default function Workflow() {
           source: newNodeId,
           /*          target: "a1",*/
           target: primaryActionID.current,
-          type: "smoothstep",
+          type: "defaultEdge",
           animated: false,
           data: { onButtonClick: handleOpenSheet },
         };
@@ -223,6 +230,19 @@ export default function Workflow() {
     return match ? parseInt(match[0], 10) : 0;
   }
 
+  const [duplicateNode, setDuplicateNode] = useState<boolean>(false);
+  useEffect(() => {
+    if (duplicateNode) {
+      toast({
+        title: "Notice",
+        description: "Node already exists",
+        variant: "destructive",
+      });
+      // Reset duplicate state after showing the toast
+      setDuplicateNode(false);
+    }
+  }, [duplicateNode]);
+
   const AddActionNode = useCallback(
     (node: Node) => {
       let newNodeId = "";
@@ -233,6 +253,16 @@ export default function Workflow() {
         existingActionNodes = currentNodes.filter(
           (n) => n.type === "actionNode",
         );
+
+        const isDuplicate = existingActionNodes.some(
+          (n: Node) => n.data.title === node.data.title,
+        );
+
+        if (isDuplicate) {
+          setDuplicateNode(true);
+          return currentNodes;
+        }
+
         lastNodeId =
           existingActionNodes.length > 0
             ? extractNumericId(existingActionNodes[0].id)
@@ -304,6 +334,7 @@ export default function Workflow() {
 
   const edgeTypes = {
     actionEdge: ActionEdge,
+    defaultEdge: DefaultEdge,
   };
 
   const handleAddNodeClick = (node: Node) => {
@@ -448,8 +479,8 @@ export default function Workflow() {
       >
         <SidebarSelection
           openSheet={openSheet}
-          setOpenSheet={setOpenSheet}
           isTriggers={isTriggers}
+          setOpenSheet={setOpenSheet}
           addActionNode={handleAddActionNodeClick}
           addTriggerNode={handleAddNodeClick}
         />

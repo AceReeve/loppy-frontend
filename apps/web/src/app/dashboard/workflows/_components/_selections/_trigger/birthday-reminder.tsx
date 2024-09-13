@@ -21,7 +21,8 @@ import { CreateBirthReminderSchema } from "@/src/schemas";
 
 interface BirthdayReminderProps {
   onHandleClick: (node: CustomNode) => void;
-  onAddNodes: () => void;
+  onNodeClick: (node: CustomNode) => void;
+  icon: React.ReactNode;
 }
 
 export default function BirthdayReminder(prop: BirthdayReminderProps) {
@@ -37,7 +38,6 @@ export default function BirthdayReminder(prop: BirthdayReminderProps) {
 
   const onSubmit = () => {
     prop.onHandleClick(birthdayNode as CustomNode);
-    prop.onAddNodes();
   };
 
   const formSchema = CreateBirthReminderSchema;
@@ -49,15 +49,27 @@ export default function BirthdayReminder(prop: BirthdayReminderProps) {
     },
   });
 
+  const {
+    formState: { errors },
+  } = form;
+
   const birthdayNode = {
     id: "1",
     type: "triggerNode",
     data: {
       title: "Birthday Reminder",
       content: moment(form.getValues("birthDate")).format("L"),
+      icon: prop.icon,
+      onButtonClick: () => {
+        onNodeClick();
+      },
     },
-    position: { x: 0, y: 0 },
   };
+  const onNodeClick = () => {
+    prop.onNodeClick(birthdayNode as CustomNode);
+  };
+  const today = new Date(Date.now());
+  today.setHours(0, 0, 0, 0);
 
   return (
     <div className="space-y-2 p-2">
@@ -78,6 +90,7 @@ export default function BirthdayReminder(prop: BirthdayReminderProps) {
                           className="w-full pl-3 text-left font-normal"
                         >
                           {moment(field.value).format("L")}
+
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -91,11 +104,19 @@ export default function BirthdayReminder(prop: BirthdayReminderProps) {
                           field.onChange(date);
                           setCalendarOpen(!calendarOpen); // Close the calendar after selecting a date
                         }}
-                        disabled={(date) => date < new Date("1900-01-01")}
+                        disabled={(date) =>
+                          date < new Date("1900-01-01") ||
+                          date.toDateString() === today.toDateString()
+                        }
                         initialFocus
                       />
                     </PopoverContent>
                   </Popover>
+                  {errors.birthDate ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.birthDate.message}
+                    </p>
+                  ) : null}
                 </FormItem>
               );
             }}

@@ -1,8 +1,10 @@
-export interface GetWorkFolders {
+import type { ReactNode } from "react";
+
+/*export interface GetWorkFolders {
   name: string;
   lastUpdated: string;
   createdOn: string;
-}
+}*/
 export interface Trigger {
   id: string;
   trigger_name: string;
@@ -17,10 +19,12 @@ export interface Action {
 
 export interface CustomNode extends Node {
   id: string;
-  type: string;
+  type?: string;
   data: {
     title: string;
-    content: string;
+    content?: string;
+    icon?: ReactNode.Node;
+    onButtonClick?: OnButtonClickFunction;
   };
   position: { x: number; y: number };
 }
@@ -39,4 +43,25 @@ export interface GetCreateWorkflowResponse {
   _id: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface GetFolderResponse {
+  _id: string;
+  folder_name: string;
+  created_by: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface CreateFolderPayload {
+  folder_name: string;
+}
+
+export interface GetIDPayload {
+  id: string;
+}
+
+export interface GetEditFolderPayload {
+  id: string;
+  folder_name: string;
 }

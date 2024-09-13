@@ -23,7 +23,7 @@ async function getOrganizationsList(
     throw new Error("NEXT_PUBLIC_API_URL is not detected");
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/organization`,
+    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/organizations`,
     {
       headers: {
         Authorization: `Bearer ${session.jwt}`,

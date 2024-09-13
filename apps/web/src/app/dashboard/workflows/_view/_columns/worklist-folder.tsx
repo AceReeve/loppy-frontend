@@ -7,10 +7,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
+import moment from "moment";
 import { EllipsisVertical, Folder } from "lucide-react";
-import type { GetWorkFolders } from "@repo/redux-utils/src/endpoints/types/workflow.d.ts";
+import type { GetFolderResponse } from "@repo/redux-utils/src/endpoints/types/workflow.d.ts";
+import DeleteActionCell from "@/src/app/dashboard/workflows/_view/_columns/action-cells/delete-action.tsx";
 
-export const workFolders: ColumnDef<GetWorkFolders>[] = [
+type OnEditFunction = (id: string) => void;
+export const workFolders = (
+  onEdit: OnEditFunction,
+): ColumnDef<GetFolderResponse[][number]>[] => [
   /*    {
       id: "select",
       header: ({ table }) => (
@@ -46,7 +51,7 @@ export const workFolders: ColumnDef<GetWorkFolders>[] = [
       return (
         <div className="flex items-center gap-3">
           <Folder />
-          <div className="text-gray-700">{row.original.name}</div>
+          <div className="text-gray-700">{row.original.folder_name}</div>
         </div>
       );
     },
@@ -57,7 +62,11 @@ export const workFolders: ColumnDef<GetWorkFolders>[] = [
     cell: ({ row }) => {
       //  const name = `${row.original.first_name} ${row.original.last_name}`;
       // const email = row.original.email;
-      return <div className="text-gray-700">{row.original.lastUpdated}</div>;
+      return (
+        <div className="text-gray-700">
+          {moment(row.original.updated_at).format("ll")}
+        </div>
+      );
     },
   },
 
@@ -67,13 +76,20 @@ export const workFolders: ColumnDef<GetWorkFolders>[] = [
     cell: ({ row }) => {
       //  const name = `${row.original.first_name} ${row.original.last_name}`;
       // const email = row.original.email;
-      return <div className="text-gray-700">{row.original.createdOn}</div>;
+      return (
+        <div className="text-gray-700">
+          {moment(row.original.updated_at).format("ll")}
+        </div>
+      );
     },
   },
 
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const handleOnEdit = () => {
+        onEdit(row.original._id);
+      };
       return (
         <DropdownMenu>
           <div className="inline flex w-full justify-end">
@@ -82,9 +98,11 @@ export const workFolders: ColumnDef<GetWorkFolders>[] = [
             </DropdownMenuTrigger>
           </div>
           <DropdownMenuContent>
-            <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleOnEdit}>
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
-              Delete
+              <DeleteActionCell id={row.original._id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

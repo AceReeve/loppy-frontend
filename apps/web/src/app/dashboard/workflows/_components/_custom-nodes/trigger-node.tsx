@@ -8,11 +8,12 @@ interface TriggerNodeProps {
   data: {
     title: string;
     onButtonClick?: (isTrigger: boolean) => void; // onButtonClick is optional
+    icon?: React.ReactNode;
   };
 }
 export default function TriggerNode({
   id,
-  data: { title, onButtonClick },
+  data: { icon, title, onButtonClick },
 }: TriggerNodeProps) {
   const handleClick = () => {
     if (onButtonClick) {
@@ -23,11 +24,17 @@ export default function TriggerNode({
   const triggerNode = (
     <Button
       variant="outline"
-      className=" w-[200px] justify-start  rounded px-4 dark:bg-slate-100"
+      className=" w-[200px] justify-start  rounded px-2.5 dark:bg-slate-100"
       onClick={handleClick}
     >
       <div className="flex items-center justify-center gap-2">
-        <Add className="h-8 w-8 rounded bg-slate-200 p-2 dark:text-gray-400" />
+        {!icon ? (
+          <Add className="h-8 w-8 rounded bg-slate-200 p-2 dark:text-gray-400" />
+        ) : (
+          <div className="rounded border border-orange-500 bg-orange-500/10 p-2 text-gray-600">
+            {icon}
+          </div>
+        )}
         <div className="flex flex-col text-left">
           <p className=" font-poppins text-[12px] text-orange-500">Trigger</p>
           <p className=" font-poppins text-[12px] text-slate-600">{title}</p>
