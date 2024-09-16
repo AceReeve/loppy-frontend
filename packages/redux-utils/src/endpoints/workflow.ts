@@ -4,6 +4,8 @@ import {
   GetCreateWorkflowResponse,
   GetFolderResponse,
   GetIDPayload,
+  GetWorkflowListPayload,
+  SaveWorkflowPayload,
 } from "./types/workflow";
 import type {
   CreateFolderPayload,
@@ -20,10 +22,23 @@ const api = baseApi
         GetCreateWorkflowResponse,
         CreateWorkflowPayload
       >({
-        query: (payload) => {
+        query: () => {
           return {
             url: `/react-flow/workflow`,
             method: "POST",
+          };
+        },
+        invalidatesTags: ["workflow"],
+      }),
+
+      saveWorkflow: builder.mutation<
+        GetCreateWorkflowResponse,
+        SaveWorkflowPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/react-flow/workflow`,
+            method: "PUT",
             body: payload,
           };
         },
@@ -36,7 +51,8 @@ const api = baseApi
       >({
         query: (payload) => {
           const queryParams = new URLSearchParams({
-            folder_name: payload.folder_name,
+            id: payload.id,
+            name: payload.name,
           }).toString();
           return {
             url: `/react-flow/folder?${queryParams}`,
@@ -47,10 +63,16 @@ const api = baseApi
         invalidatesTags: ["workflow"],
       }),
 
-      getWorkflowList: builder.query<GetFolderResponse[], undefined>({
-        query: () => {
+      getWorkflowList: builder.query<
+        GetFolderResponse[],
+        GetWorkflowListPayload
+      >({
+        query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
           return {
-            url: `/react-flow/folders`,
+            url: `/react-flow/folders${queryParams}`,
           };
         },
         providesTags: ["workflow"],
@@ -70,16 +92,15 @@ const api = baseApi
         invalidatesTags: ["workflow"],
       }),
 
-      editFolder: builder.mutation<GetFolderResponse, GetEditFolderPayload>({
+      editFolder: builder.mutation<undefined, GetEditFolderPayload>({
         query: (payload) => {
           const queryParams = new URLSearchParams({
             id: payload.id,
-            folder_name: payload.folder_name,
+            name: payload.name,
           }).toString();
           return {
-            url: `/react-flow/folder/${payload.id}?${queryParams}`,
+            url: `/react-flow/folder/?${queryParams}`,
             method: "PUT",
-            body: payload,
           };
         },
         invalidatesTags: ["workflow"],
@@ -90,7 +111,9 @@ const api = baseApi
 export const {
   useCreateWorkflowMutation,
   useCreateWorkflowFolderMutation,
-  useGetWorkflowListQuery,
   useDeleteFolderMutation,
   useEditFolderMutation,
+  useGetWorkflowListQuery,
+  useSaveWorkflowMutation,
+  useLazyGetWorkflowListQuery,
 } = api;

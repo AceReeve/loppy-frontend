@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useEditFolderMutation,
-  useGetWorkflowListQuery,
+  // useGetWorkflowListQuery,
+  useLazyGetWorkflowListQuery,
 } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
+  Breadcrumb,
+  BreadcrumbList,
   Button,
   Dialog,
   DialogContent,
@@ -19,6 +22,7 @@ import {
   Input,
   Separator,
   toast,
+  BreadcrumbLink,
 } from "@repo/ui/components/ui";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
@@ -50,13 +54,58 @@ export default function WorkflowList() {
       createdOn: "August 21, 2024",
     },
   ];*/
+  const [currentPath, setCurrentPath] = useState("");
+
+  /*
   const {
     data: workFolderLists,
     error,
     isLoading,
-  } = useGetWorkflowListQuery(undefined);
+  } = useGetWorkflowListQuery({ id: "66e13d7740bbc184936f0df3" });
+*/
+
+  interface PathProps {
+    id: string;
+    name: string;
+  }
+  const [paths, setPaths] = useState<PathProps[]>([
+    {
+      id: "",
+      name: "Home",
+    },
+  ]);
+
+  const [fetchWorkflowList, { data: workFolderLists, error, isLoading }] =
+    useLazyGetWorkflowListQuery();
+
+  useEffect(() => {
+    fetchWorkflowList({ id: currentPath })
+      .unwrap()
+      .then((result) => {
+        // console.log("Fetched result:", result);
+      })
+      .catch((err: unknown) => {
+        //console.error("Failed to fetch workflow list:", err);
+      });
+  }, [currentPath, fetchWorkflowList]); // Dependencies array includes currentPath and fetchWorkflowList
 
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const onRowClickSubmit = (_id: string, _name: string, type: string) => {
+    if (type !== "Workflow") {
+      setCurrentPath(_id);
+
+      setPaths((currentPaths) => {
+        const newPath = {
+          id: _id,
+          name: _name,
+        };
+        return [...currentPaths, newPath];
+      });
+    } else {
+      console.log("This is a workflow");
+    }
+  };
 
   const HandleOnEdit = (id: string) => {
     form.setValue("id", id);
@@ -68,7 +117,7 @@ export default function WorkflowList() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: "",
-      folder_name: "",
+      name: "",
     },
   });
 
@@ -76,24 +125,33 @@ export default function WorkflowList() {
 
   const onSubmitEdit = async () => {
     try {
-      const response = await editWorkFolder(form.getValues()).unwrap();
-      if (response.folder_name) {
-        toast({
-          title: "Folder renamed successfully",
-          variant: "success",
-        });
-        setIsEditOpen(!isEditOpen);
-      } else {
-        // Handle submission failure
-        toast({
-          title: "Folder rename failed",
-          variant: "destructive",
-        });
-      }
+      await editWorkFolder(form.getValues()).unwrap();
+
+      // If no errors are thrown, consider it successful
+      toast({
+        title: "Folder renamed successfully",
+        variant: "success",
+      });
+      setIsEditOpen(false);
     } catch (e: unknown) {
+      toast({
+        title: "Folder rename failed",
+        variant: "destructive",
+        description: "An unknown error occurred",
+      });
       getErrorMessage(e);
     }
   };
+
+  //const [currentList, setCurrentList] = useState<GetFolderResponse[]>([]);
+
+  /*
+  useEffect(() => {
+    if (workFolderLists) {
+      setCurrentList(workFolderLists);
+    }
+  }, [workFolderLists, currentPath]);
+*/
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -137,14 +195,41 @@ export default function WorkflowList() {
   }
 
   if (!workFolderLists) return null;
+  const handleClickPath = (index: number) => {
+    console.log(paths[index].name);
+    setCurrentPath(paths[index].id);
+
+    const pathsUpToIndex = paths.filter((_, i) => i <= index);
+    console.log("Paths below the index:", pathsUpToIndex);
+    setPaths(pathsUpToIndex);
+
+    // If you need to do something with pathsBelowIndex (e.g., update state)
+    // setSomeState(pathsBelowIndex);
+  };
 
   return (
     <div className="space-y-4 p-4">
       <div className="p-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            {paths.map((path, index) => (
+              <BreadcrumbLink
+                key={path.id}
+                className="cursor-pointer"
+                onClick={() => {
+                  handleClickPath(index);
+                }}
+              >
+                {path.name + " > "}
+              </BreadcrumbLink>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
         <WorkFoldersDataTable
           columns={workFolders(HandleOnEdit)}
           data={workFolderLists}
           noResultsComponent={NoResultsComponent}
+          handleRowOnClick={onRowClickSubmit}
         />
       </div>
 
@@ -154,7 +239,7 @@ export default function WorkflowList() {
             <form onSubmit={form.handleSubmit(onSubmitEdit)}>
               <FormField
                 control={form.control}
-                name="folder_name"
+                name="name"
                 render={({ field }) => {
                   return (
                     <FormItem className="flex flex-col">

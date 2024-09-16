@@ -18,13 +18,14 @@ import {
   DialogTrigger,
   Input,
   Separator,
+  Switch,
   toast,
 } from "@repo/ui/components/ui";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useCreateWorkflowMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
+import { useSaveWorkflowMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import StartNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/start-node.tsx";
 import ActionEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/action-edge.tsx";
 import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigation/sidebar-trigger-selection.tsx";
@@ -361,6 +362,8 @@ export default function Workflow() {
     }),
   });
 
+  /*  console.log("edges", edges);
+  console.log("nodes", nodes);*/
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -377,7 +380,7 @@ export default function Workflow() {
     },
   });
 
-  const [createWorkflow] = useCreateWorkflowMutation();
+  const [saveWorkflow] = useSaveWorkflowMutation();
   const SaveWorkflow = async () => {
     try {
       const existingActionNodes = nodes.filter(
@@ -417,9 +420,9 @@ export default function Workflow() {
       await createWorkflow(form.getValues()).unwrap();
 */
 
-      const response = await createWorkflow(form.getValues()).unwrap();
+      const response = await saveWorkflow(form.getValues()).unwrap();
 
-      if ((response as { work_flow_name: string }).work_flow_name) {
+      if ((response as { name: string }).name) {
         // Handle successful submission
         toast({
           title: "Workflow created Successfully",
@@ -447,12 +450,24 @@ export default function Workflow() {
   return (
     <div className="border-5 h-[725px] w-full border-gray-900">
       <div className="flex w-full items-center justify-center gap-2 rounded-md bg-white p-4">
-        <Button
-          className="absolute right-5 rounded px-4"
-          onClick={SaveWorkflow}
-        >
-          Publish
-        </Button>
+        <div className="absolute right-5 flex items-center space-x-4">
+          <Button className="rounded px-4" onClick={SaveWorkflow}>
+            Save
+          </Button>{" "}
+          {/*          <Button className="rounded px-4" onClick={SaveWorkflow}>
+            Publish
+          </Button>*/}
+          <div className="flex items-center space-x-2">
+            <p className="font-poppins text-[14px] font-semibold text-slate-600">
+              Publish
+            </p>
+            <Switch
+              className="bg-primary"
+              defaultChecked={false}
+              //onChange={handleToggleSwitch}
+            />
+          </div>
+        </div>
         <p className="font-semibold">New Workflow: {workflowName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>

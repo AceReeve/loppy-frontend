@@ -37,6 +37,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   noResultsComponent?: React.ReactNode;
   enablePagination?: boolean;
+  handleRowOnClick: (id: string, name: string, type: string) => void;
 }
 
 export function WorkFoldersDataTable<TData, TValue>({
@@ -44,10 +45,14 @@ export function WorkFoldersDataTable<TData, TValue>({
   data,
   noResultsComponent,
   enablePagination,
+  handleRowOnClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    _id: false,
+    type: false,
+  });
   const [rowSelection, setRowSelection] = useState({});
   /*  const [filterSheetOpen, setFilterSheetOpen] = useState(false);*/
 
@@ -89,6 +94,9 @@ export function WorkFoldersDataTable<TData, TValue>({
 
   /*  const [open, setOpen] = useState(false);*/
   const value = "name";
+
+  //INTEGRATION
+
   return (
     <div className="w-full  font-poppins">
       <div className="flex place-content-center items-center">
@@ -171,7 +179,11 @@ export function WorkFoldersDataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                   key={row.id}
                   onClick={() => {
-                    console.log("row CLicked");
+                    handleRowOnClick(
+                      row.original._id,
+                      row.original.name,
+                      row.original.type,
+                    );
                   }}
                   className="cursor-pointer"
                 >

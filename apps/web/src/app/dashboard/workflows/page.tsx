@@ -23,7 +23,10 @@ import {
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateWorkflowFolderMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
+import {
+  useCreateWorkflowFolderMutation,
+  useCreateWorkflowMutation,
+} from "@repo/redux-utils/src/endpoints/workflow.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
@@ -95,6 +98,22 @@ export default function Page() {
 
   const [isWorkList, setIsWorkList] = useState(true);
 
+  const [currentPath, setCurrentPath] = useState<string>(
+    "66e13d7740bbc184936f0df3",
+  );
+
+  const [createWorkflow] = useCreateWorkflowMutation();
+
+  const SaveWorkflow = async (template: string | undefined) => {
+    const response = await createWorkflow({
+      id: currentPath,
+      template_id: template,
+    }).unwrap();
+    if (response.name) {
+      setIsWorkList(!isWorkList);
+    }
+  };
+
   const handleViewState = () => {
     setIsWorkList(!isWorkList);
   };
@@ -105,7 +124,8 @@ export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      folder_name: "",
+      id: "",
+      name: "",
     },
   });
 
@@ -119,13 +139,13 @@ export default function Page() {
             </TabsTrigger>
           ))}
         </div>
-        <div className="space-x-4">
+        <div className="mb-2">
           <Button variant="outline" onClick={handleViewState}>
             Return Hub
           </Button>
-          <Button className="mr-2 rounded-md px-2 px-5 dark:text-slate-100">
+          {/*<Button className="mr-2 rounded-md px-2 px-5 dark:text-slate-100">
             Save
-          </Button>
+          </Button>*/}
         </div>
       </TabsList>
       <div className="mt-2 h-[800px] w-full ">
@@ -144,6 +164,7 @@ export default function Page() {
 
   const onSubmit = async () => {
     try {
+      form.setValue("id", currentPath);
       const response = await createFolder(form.getValues()).unwrap();
       if ((response as { created_at: string }).created_at) {
         // Handle successful submission
@@ -193,7 +214,7 @@ export default function Page() {
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                   <FormField
                     control={form.control}
-                    name="folder_name"
+                    name="name"
                     render={({ field }) => {
                       return (
                         <FormItem className="flex flex-col">
@@ -249,7 +270,7 @@ export default function Page() {
                     <WorkflowTemplate
                       title={template.title}
                       description={template.description}
-                      onButtonClick={handleViewState}
+                      onButtonClick={() => SaveWorkflow(template.id.toString())}
                       key={template.id}
                     />
                   ))}
