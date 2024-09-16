@@ -66,7 +66,7 @@ export default function Pagination({
   }, [current]);
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 sm:px-6">
+    <div className="flex items-center justify-between px-4 py-2">
       {pages > 1 ? (
         <div className="flex flex-1 items-center justify-between sm:hidden">
           <Button
