@@ -4,8 +4,8 @@ import { Input } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { type InboxesResponse } from "@repo/redux-utils/src/endpoints/types/inboxes";
-import { RoleDataTable } from "@/src/app/dashboard/settings/teams/_components/role-data.tsx";
 import { inboxesColumns } from "@/src/app/dashboard/settings/inboxes/_components/columns.tsx";
+import { DataTable } from "@/src/components/data-table";
 import BuyNumberModal from "../_components/modals/buy-number-modal.tsx";
 
 export default function AllInboxes() {
@@ -50,10 +50,11 @@ export default function AllInboxes() {
         </div>
         <BuyNumberModal />
       </div>
-      <RoleDataTable
+      <DataTable
         columns={inboxesColumns}
         data={inboxesList}
         noResultsComponent={NoResultsComponent}
+        className="mt-4"
       />
     </div>
   );
