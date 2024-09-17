@@ -19,23 +19,15 @@ import {
 } from "@repo/ui/components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useAddRoleByTeamIdMutation } from "@repo/redux-utils/src/endpoints/manage-team";
+import { AddRoleSchema } from "../schemas/teams-schemas";
 
 interface AddRoleProps {
   teamId: string;
   refetch: () => void;
 }
-
-const AddRoleSchema = z.object({
-  role: z.string().min(1, {
-    message: "Role is required",
-  }),
-  description: z.string().min(1, {
-    message: "Description is required",
-  }),
-});
 
 export default function AddRole(props: AddRoleProps) {
   const form = useForm<z.infer<typeof AddRoleSchema>>({
@@ -84,7 +76,7 @@ export default function AddRole(props: AddRoleProps) {
         <Separator />
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="role"

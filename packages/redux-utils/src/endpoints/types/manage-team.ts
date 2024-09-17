@@ -13,14 +13,31 @@ export interface CreateTeamPayload {
   description: string;
 }
 
+export interface UpdateTeamPayload {
+  teamId: string;
+  payload: {
+    team: string;
+    description: string;
+  };
+}
+
 export interface GetTeamMemberResponse {
   _id: string;
   team: string;
   description: string;
   role: string;
   team_members: TeamMembers[];
+  profile?: Profile;
   overview: Overview;
   roles: Roles[];
+}
+
+interface Profile {
+  image_1: ProfileImage;
+}
+
+interface ProfileImage {
+  path: string;
 }
 
 interface Overview {
@@ -71,4 +88,9 @@ interface TeamMembers {
   email: string;
   role_name: string;
   status: string;
+}
+
+export interface DeleteTeamMemberPayload {
+  teamId: string;
+  memberId: string;
 }

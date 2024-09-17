@@ -23,11 +23,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useInviteTeamMemberMutation } from "@repo/redux-utils/src/endpoints/manage-team";
+import {
+  useGetAllRolesByTeamIdQuery,
+  useInviteTeamMemberMutation,
+} from "@repo/redux-utils/src/endpoints/manage-team";
 
 interface AddMemberProps {
   teamId: string;
   refetch: () => void;
+}
+
+interface Role {
+  _id: string;
+  role: string;
+  description: string;
+  team: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const AddMemberSchema = z.object({
@@ -43,11 +55,16 @@ const AddMemberSchema = z.object({
 });
 
 export default function AddMember(props: AddMemberProps) {
+  // fetch the roles
+  const { data: roleList = [] as Role[] } = useGetAllRolesByTeamIdQuery(
+    props.teamId,
+  );
+
   const form = useForm<z.infer<typeof AddMemberSchema>>({
     resolver: zodResolver(AddMemberSchema),
     defaultValues: {
       email: "",
-      role: "Administrator",
+      role: "",
       team: props.teamId,
     },
   });
@@ -131,16 +148,17 @@ export default function AddMember(props: AddMemberProps) {
                             className="text-md h-[40px] text-slate-500"
                             variant="outline"
                           >
-                            <SelectValue placeholder="Filter" />
+                            <SelectValue placeholder="Select Role" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Administrator">
-                            Administrator
-                          </SelectItem>
-                          <SelectItem value="Manager">Manager</SelectItem>
-                          <SelectItem value="Member">Member</SelectItem>
-                          <SelectItem value="Observer">Observer</SelectItem>
+                          {roleList.map((role) => {
+                            return (
+                              <SelectItem key={role._id} value={role.role}>
+                                {role.role}
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                     </FormItem>

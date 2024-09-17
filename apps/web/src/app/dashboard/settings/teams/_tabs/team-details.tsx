@@ -2,12 +2,13 @@ import Image from "next/image";
 import { Separator } from "@repo/ui/components/ui";
 import { format } from "date-fns";
 import { useGetTeamMembersQuery } from "@repo/redux-utils/src/endpoints/manage-team";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import DetailsCard from "@/src/app/dashboard/settings/teams/_components/details-card.tsx";
 
 interface TeamDetailsProps {
   team: Team;
+  refetchTeamList: () => void;
 }
 
 interface Team {
@@ -28,6 +29,10 @@ interface TeamMembers {
 }
 
 export default function TeamDetails(props: TeamDetailsProps) {
+  const [profileSrc, setProfileSrc] = useState<string>(
+    "/assets/images/logo.png",
+  );
+
   const {
     data: team,
     isLoading,
@@ -38,19 +43,29 @@ export default function TeamDetails(props: TeamDetailsProps) {
     void refetch();
   }, [props.team]);
 
+  useEffect(() => {
+    if (team) {
+      setProfileSrc(team.profile?.image_1.path ?? "/assets/images/logo.png");
+    }
+  }, [team]);
+
   return (
     <div className="relative">
       {isLoading ? (
-        <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+        <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
           <LoadingSpinner />
+          <p>Loading, please wait...</p>
         </div>
       ) : (
         <>
           <div className="flex flex-wrap space-x-4 p-8 pb-0">
             <div className="my-4 flex min-h-[100px] min-w-[100px] flex-wrap content-center rounded-full bg-slate-200 shadow-lg">
               <Image
-                src="/assets/images/logo.png"
+                src={profileSrc}
                 alt=""
+                onError={() => {
+                  setProfileSrc("/assets/images/logo.png");
+                }}
                 width={138}
                 height={141}
                 className="m-auto size-[150px] w-[150px] object-contain transition-all duration-500"

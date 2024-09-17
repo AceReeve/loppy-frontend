@@ -3,10 +3,12 @@ import type {
   addRoleByTeamIdPayload,
   CreateTeamPayload,
   CreateTeamResponse,
+  DeleteTeamMemberPayload,
   GetTeamMemberResponse,
   GetTeamsResponse,
   InviteTeamMembersPayload,
   RolesByTeamIdResponse,
+  UpdateTeamPayload,
 } from "./types/manage-team.ts";
 
 const api = baseApi
@@ -32,6 +34,15 @@ const api = baseApi
           };
         },
       }),
+      updateTeam: builder.mutation<undefined, UpdateTeamPayload>({
+        query: ({ teamId, payload }) => {
+          return {
+            url: `/manage-team/team/${teamId}`,
+            method: "PUT",
+            body: payload,
+          };
+        },
+      }),
       // get team members
       getTeamMembers: builder.query<GetTeamMemberResponse, string>({
         query: (teamId: string) => {
@@ -47,6 +58,15 @@ const api = baseApi
             url: `/manage-team/invite-member`,
             method: "POST",
             body: payload,
+          };
+        },
+      }),
+      // delete team member
+      deleteTeamMember: builder.mutation<undefined, DeleteTeamMemberPayload>({
+        query: ({ teamId, memberId }) => {
+          return {
+            url: `/manage-team/team-member/${teamId}/${memberId}`,
+            method: "DELETE",
           };
         },
       }),
@@ -68,14 +88,39 @@ const api = baseApi
           };
         },
       }),
+      // delete role
+      deleteRoleById: builder.mutation<undefined, string>({
+        query: (roleId: string) => {
+          return {
+            url: `/manage-team/custom-role/${roleId}`,
+            method: "DELETE",
+          };
+        },
+      }),
+      uploadTeamProfile: builder.mutation<
+        undefined,
+        { teamId: string; payload: FormData }
+      >({
+        query: ({ teamId, payload }) => {
+          return {
+            url: `/manage-team/upload-profile?id=${teamId}`,
+            method: "POST",
+            body: payload,
+          };
+        },
+      }),
     }),
   });
 
 export const {
   useGetTeamsQuery,
   useCreateTeamMutation,
+  useUpdateTeamMutation,
   useGetTeamMembersQuery,
   useInviteTeamMemberMutation,
+  useDeleteTeamMemberMutation,
   useGetAllRolesByTeamIdQuery,
   useAddRoleByTeamIdMutation,
+  useDeleteRoleByIdMutation,
+  useUploadTeamProfileMutation,
 } = api;
