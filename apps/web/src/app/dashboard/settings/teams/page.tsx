@@ -15,7 +15,8 @@ import { useGetTeamsQuery } from "@repo/redux-utils/src/endpoints/manage-team";
 import TeamDetails from "@/src/app/dashboard/settings/teams/_tabs/team-details.tsx";
 import Members from "@/src/app/dashboard/settings/teams/_tabs/members.tsx";
 import Roles from "@/src/app/dashboard/settings/teams/_tabs/roles.tsx";
-import Permissions from "@/src/app/dashboard/settings/teams/_tabs/permissions.tsx";
+// hide permissions tab for now
+// import Permissions from "@/src/app/dashboard/settings/teams/_tabs/permissions.tsx";
 import TeamSettings from "@/src/app/dashboard/settings/teams/_tabs/team-settings.tsx";
 import CreateTeam from "./_components/create-team";
 
@@ -46,11 +47,12 @@ const tabs = [
     id: "roles",
     component: Roles,
   },
-  {
-    label: "Permissions",
-    id: "Permissions",
-    component: Permissions,
-  },
+  // hide permissions tab for now
+  // {
+  //   label: "Permissions",
+  //   id: "Permissions",
+  //   component: Permissions,
+  // },
   {
     label: "Settings",
     id: "Settings",
@@ -63,10 +65,10 @@ export default function Page() {
   const [teams, setTeams] = useState<Team[]>([]); // Manage teams state here
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const { data: fetchedTeams = null } = useGetTeamsQuery(undefined);
+  const { data: fetchedTeams = null, refetch } = useGetTeamsQuery(undefined);
 
   useEffect(() => {
-    if (fetchedTeams && fetchedTeams.length > 0 && teams.length === 0) {
+    if (fetchedTeams && fetchedTeams.length > 0) {
       setTeams(fetchedTeams);
     }
   }, [fetchedTeams, teams]);
@@ -142,7 +144,10 @@ export default function Page() {
                 const TabComponent = tab.component;
                 return (
                   <TabsContent key={tab.id} value={tab.id}>
-                    <TabComponent team={currentTeam} />
+                    <TabComponent
+                      team={currentTeam}
+                      refetchTeamList={refetch}
+                    />
                   </TabsContent>
                 );
               })}

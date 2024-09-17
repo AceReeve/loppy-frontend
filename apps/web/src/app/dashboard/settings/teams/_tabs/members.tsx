@@ -1,12 +1,14 @@
 "use client";
+
 import React, { useEffect } from "react";
 import { useGetTeamMembersQuery } from "@repo/redux-utils/src/endpoints/manage-team";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { memberColumns } from "@/src/app/dashboard/settings/teams/_components/member-columns2.tsx";
 import { MemberDataTable } from "../_components/member-data-table";
 
-export interface TeamDetailsProps {
+interface TeamDetailsProps {
   team: Team;
+  refetchTeamList: () => void;
 }
 
 interface Team {
@@ -41,41 +43,8 @@ export default function Members(props: TeamDetailsProps) {
     void refetch();
   }, [props.team]);
 
-  // const memberList = [
-  //   {
-  //     first_name: "Antonio",
-  //     last_name: "Bennet",
-  //     email: "hu@oru.net",
-  //     role: "Administrator",
-  //     members: 1,
-  //   },
-  //   {
-  //     first_name: "Antonio",
-  //     last_name: "Bennet",
-  //     email: "hu@oru.net",
-  //     role: "Manager",
-  //     members: 4,
-  //   },
-  //   {
-  //     first_name: "Antonio",
-  //     last_name: "Bennet",
-  //     email: "hu@oru.net",
-  //     role: "Member",
-  //     members: 2,
-  //   },
-  //   {
-  //     first_name: "Antonio",
-  //     last_name: "Bennet",
-  //     email: "hu@oru.net",
-  //     role: "Observer",
-  //     members: 1,
-  //   },
-  // ];
-
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
-      {/* TODO: remove this */}
-      <p className="hidden">{props.team.team}</p>
       <div className="text-center font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
         Time to get organized
       </div>
@@ -94,14 +63,10 @@ export default function Members(props: TeamDetailsProps) {
 
   return (
     <div className="p-4">
-      {/* <MemberDataTable
-        columns={memberColumns}
-        data={memberList}
-        noResultsComponent={NoResultsComponent}
-      /> */}
       {isLoading ? (
-        <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+        <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
           <LoadingSpinner />
+          <p>Loading, please wait...</p>
         </div>
       ) : (
         <MemberDataTable
