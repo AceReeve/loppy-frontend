@@ -30,12 +30,12 @@ import {
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useForm } from "react-hook-form";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { workFolders } from "@/src/app/dashboard/workflows/_view/_columns/worklist-folder.tsx";
 import { WorkFoldersDataTable } from "@/src/app/dashboard/workflows/_view/_data-table/worklist-folder-data-table.tsx";
 import { CreateWorkFolderSchema, EditWorkFolderSchema } from "@/src/schemas";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
 
 interface WorkflowProp {
@@ -94,7 +94,7 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
     }).unwrap();
     if (response.name) {
       switchToWorkflowView();
-      console.log(currentPath, template);
+      //  console.log(currentPath, template);
     }
   };
 
@@ -163,7 +163,7 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
     fetchWorkflowList({ id: currentPath })
       .unwrap()
 
-      .catch((err: unknown) => {
+      .catch(() => {
         //console.error("Failed to fetch workflow list:", err);
       });
   }, [currentPath, fetchWorkflowList]); // Dependencies array includes currentPath and fetchWorkflowList
@@ -183,7 +183,7 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
       });
     } else {
       switchToWorkflowView();
-      console.log("This is a workflow");
+      // console.log("This is a workflow");
     }
   };
 
@@ -386,7 +386,10 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
                     handleClickPath(index);
                   }}
                 >
-                  {path.name + " > "}
+                  <span>
+                    {path.name}
+                    {index < paths.length - 1 && " > "}
+                  </span>
                 </BreadcrumbLink>
               ))}
             </BreadcrumbList>
