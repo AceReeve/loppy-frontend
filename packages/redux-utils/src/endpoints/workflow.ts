@@ -22,9 +22,12 @@ const api = baseApi
         GetCreateWorkflowResponse,
         CreateWorkflowPayload
       >({
-        query: () => {
+        query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
           return {
-            url: `/react-flow/workflow`,
+            url: `/react-flow/workflow${queryParams}`,
             method: "POST",
           };
         },

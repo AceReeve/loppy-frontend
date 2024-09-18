@@ -31,8 +31,8 @@ export interface CustomNode extends Node {
 
 // If you want to combine them into a single interface:
 export interface CreateWorkflowPayload {
-  id?: string;
-  template_id?: string;
+  id: string;
+  template_id: string;
 }
 export interface SaveWorkflowPayload {
   trigger: Trigger;
