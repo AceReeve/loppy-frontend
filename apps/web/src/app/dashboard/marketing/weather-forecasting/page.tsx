@@ -35,6 +35,7 @@ function Page() {
     error: dayError,
     isLoading: dayIsLoading,
   } = useGetWeatherDayQuery({ city });
+
   String.prototype.toCapitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
   };
@@ -53,7 +54,7 @@ function Page() {
     }
   }, [weatherDaily]);*/
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: Event) => {
     event.preventDefault();
     if (inputRef.current) {
       setCity(inputRef.current.value);

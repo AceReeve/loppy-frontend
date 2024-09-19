@@ -5,6 +5,7 @@ import {
   GetFolderResponse,
   GetIDPayload,
   GetWorkflowListPayload,
+  PublishWorkflowPayload,
   SaveWorkflowPayload,
 } from "./types/workflow";
 import type {
@@ -39,10 +40,30 @@ const api = baseApi
         SaveWorkflowPayload
       >({
         query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
           return {
-            url: `/react-flow/workflow`,
+            url: `/react-flow/workflow${queryParams}`,
             method: "PUT",
             body: payload,
+          };
+        },
+        invalidatesTags: ["workflow"],
+      }),
+
+      publishWorkflow: builder.mutation<
+        GetCreateWorkflowResponse,
+        PublishWorkflowPayload
+      >({
+        query: (payload) => {
+          const queryParams = new URLSearchParams({
+            id: payload.id,
+            published: payload.published.toString(),
+          });
+          return {
+            url: `/react-flow/workflow-published?${queryParams}`,
+            method: "PUT",
           };
         },
         invalidatesTags: ["workflow"],
@@ -76,6 +97,21 @@ const api = baseApi
             : "";
           return {
             url: `/react-flow/folders${queryParams}`,
+          };
+        },
+        providesTags: ["workflow"],
+      }),
+
+      getWorkflow: builder.query<
+        GetCreateWorkflowResponse,
+        GetWorkflowListPayload
+      >({
+        query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
+          return {
+            url: `/react-flow/workflow/{id}${queryParams}`,
           };
         },
         providesTags: ["workflow"],
@@ -116,7 +152,8 @@ export const {
   useCreateWorkflowFolderMutation,
   useDeleteFolderMutation,
   useEditFolderMutation,
-  useGetWorkflowListQuery,
+  usePublishWorkflowMutation,
   useSaveWorkflowMutation,
   useLazyGetWorkflowListQuery,
+  useGetWorkflowQuery,
 } = api;

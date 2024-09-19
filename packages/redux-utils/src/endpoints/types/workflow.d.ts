@@ -35,8 +35,13 @@ export interface CreateWorkflowPayload {
   template_id: string;
 }
 export interface SaveWorkflowPayload {
+  id: string;
   trigger: Trigger;
   action: Action;
+}
+export interface PublishWorkflowPayload {
+  id: string;
+  published: boolean;
 }
 
 export interface GetCreateWorkflowResponse {

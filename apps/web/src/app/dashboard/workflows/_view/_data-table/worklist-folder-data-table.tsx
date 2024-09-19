@@ -92,6 +92,11 @@ export function WorkFoldersDataTable<TData, TValue>({
     },
   });
 
+  interface RowData {
+    _id: string;
+    name: string;
+    type: string;
+  }
   /*  const [open, setOpen] = useState(false);*/
   const value = "name";
 
@@ -179,11 +184,8 @@ export function WorkFoldersDataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                   key={row.id}
                   onClick={() => {
-                    handleRowOnClick(
-                      row.original._id,
-                      row.original.name,
-                      row.original.type,
-                    );
+                    const rowData = row.original as RowData;
+                    handleRowOnClick(rowData._id, rowData.name, rowData.type);
                   }}
                   className="cursor-pointer"
                 >

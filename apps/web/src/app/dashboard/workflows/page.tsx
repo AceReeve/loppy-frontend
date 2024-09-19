@@ -10,17 +10,19 @@ import {
 } from "@repo/ui/components/ui";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
 import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
-import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
-import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";
+/*import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
+import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";*/
 
 export default function Page() {
+  const [workflowID, setWorkflowID] = useState("");
+
   const tabs = [
     {
       label: "Workflow",
       id: "workflow",
-      component: <Workflow />,
+      component: <Workflow workflowID={workflowID} />,
     },
-    {
+    /*    {
       label: "Settings",
       id: "settings",
       component: <WorkflowSettings />,
@@ -29,13 +31,14 @@ export default function Page() {
       label: "Execution Logs",
       id: "execution-logs",
       component: <ExecutionLogs />,
-    },
+    },*/
   ];
 
   const [isWorkList, setIsWorkList] = useState(true);
 
-  const handleViewState = () => {
+  const handleViewState = (id: string) => {
     setIsWorkList(!isWorkList);
+    setWorkflowID(id);
   };
 
   //INTEGRATION
@@ -51,7 +54,12 @@ export default function Page() {
           ))}
         </div>
         <div className="mb-2">
-          <Button variant="outline" onClick={handleViewState}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsWorkList(!isWorkList);
+            }}
+          >
             Return Hub
           </Button>
           {/*<Button className="mr-2 rounded-md px-2 px-5 dark:text-slate-100">

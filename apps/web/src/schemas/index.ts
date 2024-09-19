@@ -229,6 +229,13 @@ export const CreateBirthReminderSchema = z.object({
     return !isNaN(date.getTime());
   }),
 });
+
+export const CreateDateReminder = z.object({
+  custom_date: z.date().refine((date) => {
+    // Ensure date is valid
+    return !isNaN(date.getTime());
+  }),
+});
 export const CreateEmailActionSchema = z.object({
   message: z.string().min(1, {
     message: "Message is Required",

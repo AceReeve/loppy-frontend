@@ -25,7 +25,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useSaveWorkflowMutation } from "@repo/redux-utils/src/endpoints/workflow.ts";
+import {
+  useGetWorkflowQuery,
+  usePublishWorkflowMutation,
+  useSaveWorkflowMutation,
+} from "@repo/redux-utils/src/endpoints/workflow.ts";
 import StartNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/start-node.tsx";
 import ActionEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/action-edge.tsx";
 import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigation/sidebar-trigger-selection.tsx";
@@ -34,7 +38,10 @@ import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 
-export default function Workflow() {
+interface WorkflowProp {
+  workflowID: string;
+}
+export default function Workflow({ workflowID }: WorkflowProp) {
   const nodeTypes = {
     startNode: StartNode,
     triggerNode: TriggerNode,
@@ -56,7 +63,7 @@ export default function Workflow() {
     setOpenSheet(true);
     setIsTriggers(isTrigger);
   };
-
+  z;
   const triggerNodes = calculatePositions([
     {
       id: "0",
@@ -149,17 +156,15 @@ export default function Workflow() {
     });
   }
 
-  /*
-  const nodeSample: Node = {
-    id: "",
-    type: "actionNode",
+  /*  const nodeSample: Node = {
+    id: "1",
+    type: "triggerNode",
     data: {
       title: "Trigger Title",
       onButtonClick: handleOpenSheet,
     },
     position: { x: 200, y: 0 },
-  };
-*/
+  };*/
 
   /*  useEffect(() => {}, [primaryActionID.current]);*/
 
@@ -350,6 +355,7 @@ export default function Workflow() {
   // INTEGRATION PART
 
   const formSchema = z.object({
+    id: z.string().min(4, "Invalid ID"),
     trigger: z.object({
       id: z.string().min(1, "Trigger ID is required"),
       trigger_name: z.string().min(1, "Trigger name is required"),
@@ -367,6 +373,7 @@ export default function Workflow() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: workflowID,
       trigger: {
         id: "",
         trigger_name: "",
@@ -425,22 +432,102 @@ export default function Workflow() {
       if ((response as { name: string }).name) {
         // Handle successful submission
         toast({
-          title: "Workflow created Successfully",
-          description: "New workflow has been created.",
+          title: "Workflow saved Successfully",
+          description: "New workflow has been saved.",
           variant: "success",
         });
         form.reset();
       } else {
         // Handle submission failure
         toast({
-          title: "Creation of Workflow Failed",
-          description: "Failed to create workflow",
+          title: "Saving of Workflow Failed",
+          description: "Failed to save workflow",
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
         title: "Create Workflow Error",
+        description: getErrorMessage(error),
+        variant: "destructive",
+      });
+    }
+  };
+
+  const hasInitialized = useRef(false);
+  const { data: workflow, isLoading } = useGetWorkflowQuery({ id: workflowID });
+
+  useEffect(() => {
+    if (!isLoading && workflow && !hasInitialized.current) {
+      initializeSampleData();
+      hasInitialized.current = true; // Mark as initialized
+    }
+  }, [workflow, isLoading]);
+
+  const initializeSampleData = () => {
+    if (workflow) {
+      // Handle triggers
+      workflow.trigger.map((trigger) => {
+        const triggerTemplate = {
+          id: trigger.id,
+          type: "triggerNode",
+          data: {
+            title: trigger.trigger_name,
+            onButtonClick: handleOpenSheet,
+            content: trigger.content,
+          },
+          position: { x: 200, y: 0 },
+        };
+        AddNode(triggerTemplate);
+        return triggerTemplate;
+      });
+
+      // Handle actions
+      workflow.action.map((action) => {
+        const actionTemplate = {
+          id: action.id,
+          type: "actionNode",
+          data: {
+            title: action.action_name,
+            onButtonClick: handleOpenSheet,
+            content: action.content,
+          },
+          position: { x: 400, y: 0 },
+        };
+        AddActionNode(actionTemplate);
+        return actionTemplate;
+      });
+    }
+  };
+
+  const [publishWorkflow] = usePublishWorkflowMutation();
+  const [isPublished, setIsPublished] = useState(false);
+  const handlePublish = async () => {
+    try {
+      const response = await publishWorkflow({
+        id: workflowID,
+        published: !isPublished,
+      }).unwrap();
+
+      if ((response as { name: string }).name) {
+        // Handle successful submission
+        toast({
+          title: "Published Successfully",
+          description: "workflow has been published.",
+          variant: "success",
+        });
+        form.reset();
+      } else {
+        // Handle submission failure
+        toast({
+          title: "Failed",
+          description: "Failed to publish workflow",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Publish Workflow Error",
         description: getErrorMessage(error),
         variant: "destructive",
       });
@@ -463,12 +550,15 @@ export default function Workflow() {
             </p>
             <Switch
               className="bg-primary"
-              defaultChecked={false}
-              //onChange={handleToggleSwitch}
+              defaultChecked={isPublished}
+              onCheckedChange={() => {
+                setIsPublished(!isPublished);
+              }}
+              onClick={handlePublish}
             />
           </div>
         </div>
-        <p className="font-semibold">New Workflow: {workflowName}</p>
+        <p className="font-semibold">New Workflow: {workflowID}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
             <Edit className="cursor-pointer" />

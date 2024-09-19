@@ -39,7 +39,7 @@ import { CreateWorkFolderSchema, EditWorkFolderSchema } from "@/src/schemas";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
 
 interface WorkflowProp {
-  switchToWorkflowView: () => void;
+  switchToWorkflowView: (id: string) => void;
 }
 export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
   const [currentPath, setCurrentPath] = useState("");
@@ -93,7 +93,7 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
       template_id: template,
     }).unwrap();
     if (response.name) {
-      switchToWorkflowView();
+      switchToWorkflowView(response._id);
       //  console.log(currentPath, template);
     }
   };
@@ -182,7 +182,7 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
         return [...currentPaths, newPath];
       });
     } else {
-      switchToWorkflowView();
+      switchToWorkflowView(_id);
       // console.log("This is a workflow");
     }
   };
