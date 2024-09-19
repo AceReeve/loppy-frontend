@@ -71,10 +71,24 @@ export default function Page() {
     if (fetchedTeams && fetchedTeams.length > 0) {
       setTeams(fetchedTeams);
     }
-  }, [fetchedTeams, teams]);
+
+    if (fetchedTeams && fetchedTeams.length === 0) {
+      setTeams([]);
+      setCurrentTeam(null);
+    }
+  }, [fetchedTeams]);
 
   useEffect(() => {
     if (teams.length > 0 && !currentTeam) {
+      setCurrentTeam(teams[0]);
+    }
+
+    // check if current team is still in the teams
+    if (
+      teams.length > 0 &&
+      currentTeam &&
+      !teams.some((team) => team._id === currentTeam._id)
+    ) {
       setCurrentTeam(teams[0]);
     }
   }, [teams, currentTeam]);

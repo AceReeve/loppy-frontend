@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  Separator,
   Textarea,
   toast,
 } from "@repo/ui/components/ui";
@@ -26,6 +27,7 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { UpdateTeamSchema } from "../schemas/teams-schemas";
 import UploadImage from "../_components/upload-image";
+import DeleteTeam from "../_components/delete-team";
 
 interface TeamDetailsProps {
   team: Team;
@@ -281,6 +283,17 @@ export default function TeamSettings(props: TeamDetailsProps) {
             Date created June 25, 2024
           </p>*/}
           </div>
+
+          <Separator />
+
+          <div className="mt-6 flex items-center justify-between">
+            <p className="text-lg font-bold">Danger Zone</p>
+            <DeleteTeam
+              teamId={props.team._id}
+              refetchTeamList={props.refetchTeamList}
+            />
+          </div>
+
           {/* hide team settings for now */}
           {/* <Separator />
         <div className="mt-10 flex justify-between font-poppins">

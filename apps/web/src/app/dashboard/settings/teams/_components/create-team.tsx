@@ -70,7 +70,8 @@ export default function CreateTeam({
         });
 
         onAddTeam(res);
-        setIsOpen(false); // Close dialog on success
+        setIsOpen(false);
+        form.reset();
       })
       .catch((e: unknown) => {
         toast({

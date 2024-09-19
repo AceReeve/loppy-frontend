@@ -43,6 +43,14 @@ const api = baseApi
           };
         },
       }),
+      deleteTeam: builder.mutation<undefined, string>({
+        query: (teamId: string) => {
+          return {
+            url: `/manage-team/team/${teamId}`,
+            method: "DELETE",
+          };
+        },
+      }),
       // get team members
       getTeamMembers: builder.query<GetTeamMemberResponse, string>({
         query: (teamId: string) => {
@@ -116,6 +124,7 @@ export const {
   useGetTeamsQuery,
   useCreateTeamMutation,
   useUpdateTeamMutation,
+  useDeleteTeamMutation,
   useGetTeamMembersQuery,
   useInviteTeamMemberMutation,
   useDeleteTeamMemberMutation,
