@@ -9,7 +9,8 @@ export default function DeleteActionCell(props: DeleteActionCellProps) {
   //const email = { props.email }; // Extract email from row data
   const [deleteFolder] = useDeleteFolderMutation();
 
-  const handleDeleteFolder = async () => {
+  const handleDeleteFolder = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       await deleteFolder(props)
         .unwrap()
@@ -20,9 +21,9 @@ export default function DeleteActionCell(props: DeleteActionCellProps) {
             variant: "success",
           });
         })
-        .catch((e: unknown) => {
+        .catch((error: unknown) => {
           toast({
-            description: getErrorMessage(e),
+            description: getErrorMessage(error),
             variant: "destructive",
           });
         });
@@ -32,14 +33,9 @@ export default function DeleteActionCell(props: DeleteActionCellProps) {
   };
 
   return (
-    <div className="inline flex h-8 flex-col items-end">
-      <DropdownMenuItem
-        onClick={handleDeleteFolder}
-        className="h-full w-full cursor-pointer"
-      >
-        <p>Delete</p>
-        {/* <p>Cancel</p> {isLoading ? <LoadingSpinner /> : null}*/}
-      </DropdownMenuItem>
-    </div>
+    <DropdownMenuItem onClick={handleDeleteFolder} className="cursor-pointer">
+      Delete
+      {/* <p>Cancel</p> {isLoading ? <LoadingSpinner /> : null}*/}
+    </DropdownMenuItem>
   );
 }

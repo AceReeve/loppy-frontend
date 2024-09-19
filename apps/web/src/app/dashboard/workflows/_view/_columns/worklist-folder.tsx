@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
 import moment from "moment";
-import { EllipsisVertical, Folder } from "lucide-react";
+import { EllipsisVertical, Folder, Workflow } from "lucide-react";
 import type { GetFolderResponse } from "@repo/redux-utils/src/endpoints/types/workflow.d.ts";
 import DeleteActionCell from "@/src/app/dashboard/workflows/_view/_columns/action-cells/delete-action.tsx";
 
@@ -42,6 +42,15 @@ export const workFolders = (
       enableSorting: false,
       enableHiding: false,
     },*/
+
+  {
+    accessorKey: "_id",
+    header: "ID",
+  },
+  {
+    accessorKey: "type",
+    header: "Type",
+  },
   {
     accessorKey: "name",
     header: "Name ",
@@ -50,8 +59,8 @@ export const workFolders = (
       // const email = row.original.email;
       return (
         <div className="flex items-center gap-3">
-          <Folder />
-          <div className="text-gray-700">{row.original.folder_name}</div>
+          {row.original.type === "Workflow" ? <Workflow /> : <Folder />}
+          <div className="text-gray-700">{row.original.name}</div>
         </div>
       );
     },
@@ -87,7 +96,8 @@ export const workFolders = (
   {
     id: "actions",
     cell: ({ row }) => {
-      const handleOnEdit = () => {
+      const handleOnEdit = (e: React.MouseEvent) => {
+        e.stopPropagation();
         onEdit(row.original._id);
       };
       return (
@@ -101,9 +111,7 @@ export const workFolders = (
             <DropdownMenuItem className="cursor-pointer" onClick={handleOnEdit}>
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
-              <DeleteActionCell id={row.original._id} />
-            </DropdownMenuItem>
+            <DeleteActionCell id={row.original._id} />
           </DropdownMenuContent>
         </DropdownMenu>
       );

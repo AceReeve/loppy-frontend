@@ -215,15 +215,23 @@ export const CreateContactsFormSchema = z.object({
 });
 
 export const CreateWorkFolderSchema = z.object({
-  folder_name: z.string().min(4, { message: "Minimum of 4 Characters" }),
+  id: z.string(),
+  name: z.string().min(4, { message: "Minimum of 4 Characters" }),
 });
 export const EditWorkFolderSchema = z.object({
   id: z.string().min(4),
-  folder_name: z.string().min(4, { message: "Minimum of 4 Characters" }),
+  name: z.string().min(4, { message: "Minimum of 4 Characters" }),
 });
 
 export const CreateBirthReminderSchema = z.object({
   birthDate: z.date().refine((date) => {
+    // Ensure date is valid
+    return !isNaN(date.getTime());
+  }),
+});
+
+export const CreateDateReminder = z.object({
+  custom_date: z.date().refine((date) => {
     // Ensure date is valid
     return !isNaN(date.getTime());
   }),
