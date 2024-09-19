@@ -68,7 +68,7 @@ export default function DashboardHeader() {
                         className={`${
                           active ? "bg-primary text-white" : "text-gray-900"
                         } group flex items-center justify-end rounded-full bg-card p-3 text-sm`}
-                        href="/dashboard/profile"
+                        href="/dashboard/settings/personal-settings"
                       >
                         Profile
                         <ProfileCircle
