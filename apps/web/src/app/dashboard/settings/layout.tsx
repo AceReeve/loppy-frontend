@@ -85,7 +85,7 @@ export default function Layout({
       url: "",
       children: [
         {
-          title: "Personal Settings",
+          title: "Profile",
           icon: <IconPersonalSettings />,
           url: "/personal-settings",
           id: 7,

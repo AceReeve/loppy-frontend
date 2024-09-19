@@ -22,8 +22,8 @@ import {
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { WeatherData } from "@repo/redux-utils/src/endpoints/types/weather";
-import TemperatureChart from "@/src/app/dashboard/marketing/weather-forecasting/weather-temperature";
-import WeatherItem from "@/src/app/dashboard/marketing/weather-forecasting/weather-item";
+import TemperatureChart from "@/src/app/dashboard/weather-forecasting/weather-temperature";
+import WeatherItem from "@/src/app/dashboard/weather-forecasting/weather-item";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 function Page() {

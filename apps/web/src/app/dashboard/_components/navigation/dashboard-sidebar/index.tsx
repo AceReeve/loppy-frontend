@@ -1,5 +1,6 @@
 "use client";
-import { Setting2, VideoOctagon } from "iconsax-react";
+import { Setting2 } from "iconsax-react";
+import { CloudDrizzle } from "lucide-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
@@ -42,12 +43,12 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/contacts",
       id: 2,
     },
-    {
-      title: "Marketing",
-      imageIcon: "/assets/icons/sidebar-icons/icon-marketing.svg",
-      url: "/marketing",
-      id: 3,
-    },
+    // {
+    //   title: "Marketing",
+    //   imageIcon: "/assets/icons/sidebar-icons/icon-marketing.svg",
+    //   url: "/marketing",
+    //   id: 3,
+    // },
     {
       title: "Pipelines",
       imageIcon: "/assets/icons/sidebar-icons/icon-pipelines.svg",
@@ -60,12 +61,7 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
     //   url: "/teams",
     //   id: 5,
     // },
-    // {
-    //   title: "Weather",
-    //   icon: <CloudDrizzle className="relative size-6" />,
-    //   url: "/marketing/weather-forecasting",
-    //   id: 6,
-    // },
+
     {
       title: "Workflows",
       imageIcon: "/assets/icons/sidebar-icons/icon-workflows.svg",
@@ -79,10 +75,16 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       url: "/reporting",
       id: 8,
     },
+    // {
+    //   title: "Branding",
+    //   icon: <VideoOctagon className="relative size-6" />,
+    //   url: "/branding",
+    //   id: 9,
+    // },
     {
-      title: "Branding",
-      icon: <VideoOctagon className="relative size-6" />,
-      url: "/branding",
+      title: "Weather",
+      icon: <CloudDrizzle className="relative size-6" />,
+      url: "/weather-forecasting",
       id: 9,
     },
   ];

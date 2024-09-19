@@ -30,7 +30,7 @@ export default function Page() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold text-slate-500">
-        Personal Settings
+        Profile Settings
       </h1>
       <div className=" w-full ">
         <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
