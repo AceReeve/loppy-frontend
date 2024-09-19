@@ -1,5 +1,4 @@
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useUploadProfileMutation } from "@repo/redux-utils/src/endpoints/user";
 import {
   Button,
   Dialog,
@@ -12,11 +11,12 @@ import {
 } from "@repo/ui/components/ui";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import React, { useState } from "react";
+import { useUploadTeamProfileMutation } from "@repo/redux-utils/src/endpoints/manage-team";
 import ImageCropper from "./image-cropper";
 
 interface UploadImageProps {
   handleSetProfileSrc: (src: string) => void;
-  userId: string;
+  teamId: string;
 }
 
 interface ProfileResponse {
@@ -33,7 +33,7 @@ export default function UploadImage(props: UploadImageProps) {
     props.handleSetProfileSrc(src);
   };
 
-  const [sendRequest, { isLoading }] = useUploadProfileMutation();
+  const [sendRequest, { isLoading }] = useUploadTeamProfileMutation();
 
   const [avatar, setAvatar] = useState<Blob | null>(null);
   const handleImageCropped = (croppedImage: Blob) => {
@@ -46,12 +46,12 @@ export default function UploadImage(props: UploadImageProps) {
     const formData = new FormData();
     formData.append("image_1", avatar, "avatar.jpg");
 
-    await sendRequest({ userId: props.userId, payload: formData })
+    await sendRequest({ teamId: props.teamId, payload: formData })
       .unwrap()
       .then((res: unknown) => {
         const response = res as ProfileResponse;
         toast({
-          description: "Profile picture updated successfully",
+          description: "Team profile updated successfully",
         });
         handleSetProfileSrc(response.profile.image_1.path);
       })
@@ -71,7 +71,7 @@ export default function UploadImage(props: UploadImageProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Upload your profile picture</DialogTitle>
+          <DialogTitle>Upload your team profile</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex items-center justify-center">

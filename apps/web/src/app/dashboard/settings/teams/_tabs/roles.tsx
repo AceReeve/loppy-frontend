@@ -4,8 +4,9 @@ import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { RoleDataTable } from "../_components/role-data-table";
 import { roleColumns } from "../_components/role-columns";
 
-export interface TeamDetailsProps {
+interface TeamDetailsProps {
   team: Team;
+  refetchTeamList: () => void;
 }
 
 interface Team {
@@ -51,8 +52,9 @@ export default function Roles(props: TeamDetailsProps) {
   return (
     <div className="p-4">
       {isLoading ? (
-        <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+        <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
           <LoadingSpinner />
+          <p>Loading, please wait...</p>
         </div>
       ) : (
         <RoleDataTable

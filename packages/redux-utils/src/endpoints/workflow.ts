@@ -4,6 +4,9 @@ import {
   GetCreateWorkflowResponse,
   GetFolderResponse,
   GetIDPayload,
+  GetWorkflowListPayload,
+  PublishWorkflowPayload,
+  SaveWorkflowPayload,
 } from "./types/workflow";
 import type {
   CreateFolderPayload,
@@ -21,10 +24,46 @@ const api = baseApi
         CreateWorkflowPayload
       >({
         query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
           return {
-            url: `/react-flow/workflow`,
+            url: `/react-flow/workflow${queryParams}`,
             method: "POST",
+          };
+        },
+        invalidatesTags: ["workflow"],
+      }),
+
+      saveWorkflow: builder.mutation<
+        GetCreateWorkflowResponse,
+        SaveWorkflowPayload
+      >({
+        query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
+          return {
+            url: `/react-flow/workflow${queryParams}`,
+            method: "PUT",
             body: payload,
+          };
+        },
+        invalidatesTags: ["workflow"],
+      }),
+
+      publishWorkflow: builder.mutation<
+        GetCreateWorkflowResponse,
+        PublishWorkflowPayload
+      >({
+        query: (payload) => {
+          const queryParams = new URLSearchParams({
+            id: payload.id,
+            published: payload.published.toString(),
+          });
+          return {
+            url: `/react-flow/workflow-published?${queryParams}`,
+            method: "PUT",
           };
         },
         invalidatesTags: ["workflow"],
@@ -36,7 +75,8 @@ const api = baseApi
       >({
         query: (payload) => {
           const queryParams = new URLSearchParams({
-            folder_name: payload.folder_name,
+            id: payload.id,
+            name: payload.name,
           }).toString();
           return {
             url: `/react-flow/folder?${queryParams}`,
@@ -47,10 +87,31 @@ const api = baseApi
         invalidatesTags: ["workflow"],
       }),
 
-      getWorkflowList: builder.query<GetFolderResponse[], undefined>({
-        query: () => {
+      getWorkflowList: builder.query<
+        GetFolderResponse[],
+        GetWorkflowListPayload
+      >({
+        query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
           return {
-            url: `/react-flow/folders`,
+            url: `/react-flow/folders${queryParams}`,
+          };
+        },
+        providesTags: ["workflow"],
+      }),
+
+      getWorkflow: builder.query<
+        GetCreateWorkflowResponse,
+        GetWorkflowListPayload
+      >({
+        query: (payload) => {
+          const queryParams = payload?.id
+            ? `?${new URLSearchParams({ id: payload.id })}`
+            : "";
+          return {
+            url: `/react-flow/workflow/{id}${queryParams}`,
           };
         },
         providesTags: ["workflow"],
@@ -70,16 +131,15 @@ const api = baseApi
         invalidatesTags: ["workflow"],
       }),
 
-      editFolder: builder.mutation<GetFolderResponse, GetEditFolderPayload>({
+      editFolder: builder.mutation<undefined, GetEditFolderPayload>({
         query: (payload) => {
           const queryParams = new URLSearchParams({
             id: payload.id,
-            folder_name: payload.folder_name,
+            name: payload.name,
           }).toString();
           return {
-            url: `/react-flow/folder/${payload.id}?${queryParams}`,
+            url: `/react-flow/folder/?${queryParams}`,
             method: "PUT",
-            body: payload,
           };
         },
         invalidatesTags: ["workflow"],
@@ -90,7 +150,10 @@ const api = baseApi
 export const {
   useCreateWorkflowMutation,
   useCreateWorkflowFolderMutation,
-  useGetWorkflowListQuery,
   useDeleteFolderMutation,
   useEditFolderMutation,
+  usePublishWorkflowMutation,
+  useSaveWorkflowMutation,
+  useLazyGetWorkflowListQuery,
+  useGetWorkflowQuery,
 } = api;

@@ -20,6 +20,7 @@ import ContactChange from "@/src/app/dashboard/workflows/_components/_selections
 import CreateContact from "@/src/app/dashboard/workflows/_components/_selections/_action/create-contact.tsx";
 import ContactTag from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contact-tag.tsx";
 import SendEmail from "@/src/app/dashboard/workflows/_components/_selections/_action/send-email.tsx";
+import CustomDateReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/custom-date-reminder.tsx";
 
 interface SheetProps {
   openSheet: boolean;
@@ -103,6 +104,13 @@ export default function SidebarSelection(props: SheetProps) {
         icon={<CakeIcon />}
       />
     ),
+    "Custom Date Reminder": (
+      <CustomDateReminder
+        onHandleClick={onHandleAddNode}
+        onNodeClick={showNodeData}
+        icon={<CalendarClockIcon />}
+      />
+    ),
   };
 
   const actionComponents: Record<string, React.ReactNode> = {
@@ -150,7 +158,7 @@ export default function SidebarSelection(props: SheetProps) {
       id: 6,
       name: "Custom Date Reminder",
       icon: <CalendarClockIcon />,
-      component: triggerComponents["Birthday Reminder"],
+      component: triggerComponents["Custom Date Reminder"],
     },
   ];
 

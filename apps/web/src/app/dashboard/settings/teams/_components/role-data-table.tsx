@@ -15,6 +15,11 @@ import {
 } from "@tanstack/react-table";
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
   Input,
   Table,
   TableBody,
@@ -22,8 +27,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  toast,
 } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MoreVertical } from "lucide-react";
+import { useDeleteRoleByIdMutation } from "@repo/redux-utils/src/endpoints/manage-team";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import AddRole from "./add-role";
 
 interface RoleDataTableProps<TData, TValue> {
@@ -34,13 +43,37 @@ interface RoleDataTableProps<TData, TValue> {
   noResultsComponent?: React.ReactNode;
 }
 
-export function RoleDataTable<TData, TValue>({
+interface Role {
+  _id: string;
+  email: string;
+  role_name: string;
+  status: string;
+}
+
+export function RoleDataTable<TData extends Role, TValue>({
   teamId,
   refetch,
   columns,
   data,
   noResultsComponent,
 }: RoleDataTableProps<TData, TValue>) {
+  const [sendRequest] = useDeleteRoleByIdMutation();
+  const handleRemove = (roleId: string) => {
+    sendRequest(roleId)
+      .unwrap()
+      .then(() => {
+        toast({
+          description: "Member removed successfully",
+        });
+        refetch();
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
+  };
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -85,51 +118,7 @@ export function RoleDataTable<TData, TValue>({
               className="pl-10"
             />
           </div>
-
-          {/* <div className="relative max-w-sm">
-            <Input
-              placeholder="Search role"
-              value={
-                (table.getColumn("role")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn("role")?.setFilterValue(event.target.value)
-              }
-              className="pl-10" // Adds padding to the left to prevent text overlap with the icon
-            />
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <MagnifyingGlassCircleIcon />
-            </div>
-          </div> */}
         </div>
-
-        {/* Column visibility */}
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
         <AddRole teamId={teamId} refetch={refetch} />
       </div>
 
@@ -151,6 +140,7 @@ export function RoleDataTable<TData, TValue>({
                     </TableHead>
                   );
                 })}
+                <TableHead />
               </TableRow>
             ))}
           </TableHeader>
@@ -169,6 +159,28 @@ export function RoleDataTable<TData, TValue>({
                       )}
                     </TableCell>
                   ))}
+                  <TableCell>
+                    <div className="flex justify-end">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              handleRemove(row.original._id);
+                            }}
+                          >
+                            Remove Role
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (

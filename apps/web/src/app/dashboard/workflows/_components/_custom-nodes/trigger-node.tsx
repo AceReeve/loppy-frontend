@@ -36,8 +36,12 @@ export default function TriggerNode({
           </div>
         )}
         <div className="flex flex-col text-left">
-          <p className=" font-poppins text-[12px] text-orange-500">Trigger</p>
-          <p className=" font-poppins text-[12px] text-slate-600">{title}</p>
+          <p className="font-poppins text-[clamp(10px,2vw+5px,12px)] text-orange-500">
+            Trigger
+          </p>
+          <p className="font-poppins text-[clamp(2px,1vw,11px)] text-slate-600">
+            {title}
+          </p>
         </div>
       </div>
       <Handle type="source" position={Position.Bottom} />

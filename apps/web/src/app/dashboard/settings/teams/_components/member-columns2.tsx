@@ -1,16 +1,7 @@
 "use client";
 
-import {
-  Button,
-  Checkbox,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/ui";
-import { type ColumnDef } from "@tanstack/react-table";
-import { MoreVertical } from "lucide-react";
+import { Checkbox } from "@repo/ui/components/ui";
+import type { ColumnDef } from "@tanstack/react-table";
 
 interface TeamMembers {
   _id: string;
@@ -95,33 +86,6 @@ export const memberColumns: ColumnDef<TeamMembers>[] = [
               fill="#808080"
             />
           </svg>
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const user = row.original;
-
-      return (
-        <div className="flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user._id)}
-              >
-                Copy user ID
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       );
     },
