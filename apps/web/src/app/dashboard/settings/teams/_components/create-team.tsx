@@ -22,10 +22,12 @@ import {
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { useCreateTeamMutation } from "@repo/redux-utils/src/endpoints/manage-team";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { type CreateTeamResponse } from "@repo/redux-utils/src/endpoints/types/manage-team";
+import { useState } from "react";
+import { CreateTeamSchema } from "../schemas/teams-schemas";
 
 interface Team {
   _id: string;
@@ -38,20 +40,12 @@ interface Team {
   updated_at: string;
 }
 
-const CreateTeamSchema = z.object({
-  team: z.string().min(1, {
-    message: "Team Name is required",
-  }),
-  description: z.string().min(1, {
-    message: "Description is required",
-  }),
-});
-
 export default function CreateTeam({
   onAddTeam,
 }: {
   onAddTeam: (team: Team) => void;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof CreateTeamSchema>>({
     resolver: zodResolver(CreateTeamSchema),
     defaultValues: {
@@ -65,7 +59,7 @@ export default function CreateTeam({
   function onSubmit(data: z.infer<typeof CreateTeamSchema>) {
     const newData = {
       ...data,
-      team_member: [],
+      team_members: [],
     };
 
     sendRequest(newData)
@@ -76,6 +70,8 @@ export default function CreateTeam({
         });
 
         onAddTeam(res);
+        setIsOpen(false);
+        form.reset();
       })
       .catch((e: unknown) => {
         toast({
@@ -85,9 +81,15 @@ export default function CreateTeam({
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Create Team</Button>
+        <Button
+          onClick={() => {
+            setIsOpen(true);
+          }}
+        >
+          Create Team
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[800px] font-poppins">
         <DialogHeader>
@@ -109,7 +111,7 @@ export default function CreateTeam({
                     className="m-auto size-[150px] w-[150px] object-contain transition-all duration-500"
                   />
                 </div>
-                <div>
+                {/* <div>
                   <Button
                     variant="outline"
                     type="button"
@@ -120,7 +122,7 @@ export default function CreateTeam({
                   <p className=" text-center text-[12px] italic text-slate-300">
                     We recommend an image of at least 512x512 resolution.
                   </p>
-                </div>
+                </div> */}
               </div>
 
               <div className="m-auto w-full space-y-4 font-poppins">

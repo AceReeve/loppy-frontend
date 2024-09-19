@@ -66,7 +66,7 @@ export interface GetUserProfileResponse {
   userDetails: {
     _id: string;
     email: string;
-    password: string;
+    password?: string;
     verified_email: boolean;
     status: string;
     login_by: string;
@@ -81,16 +81,16 @@ export interface GetUserProfileResponse {
     user_id: string;
     first_name: string;
     last_name: string;
-    address: string;
-    zipCode: number;
-    city: string;
-    state: string;
-    contact_no: number;
-    gender: "male" | "female";
-    company: string;
-    birthday: string;
-    role: string;
-    status: string;
+    address?: string;
+    zipCode?: number;
+    city?: string;
+    state?: string;
+    contact_no?: number;
+    gender?: "male" | "female";
+    company?: string;
+    birthday?: string;
+    role?: string;
+    status?: string;
     created_at: string;
     updated_at: string;
     profile?: Profile;
@@ -130,4 +130,8 @@ export interface UpdateUserInfoPayload {
 export interface ChangePasswordPayload {
   current_password: string;
   new_password: string;
+}
+
+export interface CreatePasswordPayload {
+  password: string;
 }

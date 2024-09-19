@@ -8,6 +8,7 @@ import type {
   InviteUserResponse,
   SaveUserInfoPayload,
   SaveUserInfoResponse,
+  CreatePasswordPayload,
 } from "./types/user";
 import type {
   GetInviteUserResponse,
@@ -107,6 +108,15 @@ const api = baseApi
           };
         },
       }),
+      createPassword: builder.mutation<undefined, CreatePasswordPayload>({
+        query: (payload) => {
+          return {
+            url: `/user/create-password`,
+            method: "POST",
+            body: payload,
+          };
+        },
+      }),
     }),
   });
 
@@ -120,4 +130,5 @@ export const {
   useUpdateUserInfoMutation,
   useUploadProfileMutation,
   useChangePasswordMutation,
+  useCreatePasswordMutation,
 } = api;

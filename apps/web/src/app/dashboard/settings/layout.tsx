@@ -17,7 +17,7 @@ import IconPersonalSettings from "@/src/app/dashboard/settings/icons/icon-person
 import IconReferrals from "@/src/app/dashboard/settings/icons/icon-referrals.tsx";
 import IconBillingOverview from "@/src/app/dashboard/settings/icons/icon-billing-overview.tsx";
 import IconCreditUsage from "@/src/app/dashboard/settings/icons/icon-credit-usage.tsx";
-import IconOAuthApplications from "@/src/app/dashboard/settings/icons/icon-oauth-applications.tsx";
+// import IconOAuthApplications from "@/src/app/dashboard/settings/icons/icon-oauth-applications.tsx";
 
 export default function Layout({
   children,
@@ -123,31 +123,32 @@ export default function Layout({
         },
       ],
     },
-    {
-      title: "Developer",
-      id: 3,
-      url: "",
-      children: [
-        {
-          title: "OAuth Applications",
-          icon: <IconOAuthApplications />,
-          url: "/oauth-applications",
-          id: 12,
-        },
-        {
-          title: "Public API Tokens",
-          icon: <IconOAuthApplications />,
-          url: "/public-api-tokens",
-          id: 13,
-        },
-        {
-          title: "Authorized Apps",
-          icon: <IconOAuthApplications />,
-          url: "/authorized-apps",
-          id: 14,
-        },
-      ],
-    },
+    // hide for now
+    // {
+    //   title: "Developer",
+    //   id: 3,
+    //   url: "",
+    //   children: [
+    //     {
+    //       title: "OAuth Applications",
+    //       icon: <IconOAuthApplications />,
+    //       url: "/oauth-applications",
+    //       id: 12,
+    //     },
+    //     {
+    //       title: "Public API Tokens",
+    //       icon: <IconOAuthApplications />,
+    //       url: "/public-api-tokens",
+    //       id: 13,
+    //     },
+    //     {
+    //       title: "Authorized Apps",
+    //       icon: <IconOAuthApplications />,
+    //       url: "/authorized-apps",
+    //       id: 14,
+    //     },
+    //   ],
+    // },
   ];
 
   const renderMenuIcon = (

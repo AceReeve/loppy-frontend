@@ -12,8 +12,9 @@ import { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import ToggleData from "@/src/app/dashboard/settings/teams/_components/toggle-data.tsx";
 
-export interface TeamDetailsProps {
+interface TeamDetailsProps {
   team: Team;
+  refetchTeamList: () => void;
 }
 
 interface Team {
