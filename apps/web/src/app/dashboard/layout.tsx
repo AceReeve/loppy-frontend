@@ -4,7 +4,6 @@ import React, { Suspense } from "react";
 import { type Session } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import type { GetPaymentStatusResponse } from "@repo/redux-utils/src/endpoints/types/payment";
-import type { GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
 import { SubscriptionStatus } from "@repo/redux-utils/src/endpoints/enums/paywall.enums.ts";
 import DashboardHeader from "@/src/app/dashboard/_components/navigation/dashboard-header";
 import DashboardSidebar from "@/src/app/dashboard/_components/navigation/dashboard-sidebar";
@@ -15,27 +14,7 @@ import Paywall from "@/src/app/dashboard/_components/paywall";
 import { auth } from "@/auth.ts";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup.tsx";
-
-async function getOrganizationsList(
-  session: Session,
-): Promise<GetOrganizationResponse[]> {
-  if (!process.env.NEXT_PUBLIC_API_URL)
-    throw new Error("NEXT_PUBLIC_API_URL is not detected");
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/organizations`,
-    {
-      headers: {
-        Authorization: `Bearer ${session.jwt}`,
-      },
-      next: {
-        tags: ["organization"],
-      },
-    },
-  );
-
-  return response.json() as Promise<GetOrganizationResponse[]>;
-}
+import { getOrganizationsList } from "@/src/actions/organization-actions.ts";
 
 async function getPaymentStatus(
   session: Session,
@@ -76,6 +55,7 @@ export default async function Layout({
 
   const paymentStatus = await getPaymentStatus(session);
   const organizationsList = await getOrganizationsList(session);
+  const currentOrg = organizationsList[0];
 
   /**
    * 1. Get if user has already purchased a plan
@@ -116,7 +96,7 @@ export default async function Layout({
 
   return (
     <Suspense>
-      <DashboardProvider session={session}>
+      <DashboardProvider session={session} currentOrg={currentOrg}>
         <div className="relative z-0 flex min-h-screen items-stretch bg-background">
           <DashboardSidebar className="relative z-40 h-screen flex-shrink-0 select-none" />
           <div className="relative flex h-screen w-full flex-1 flex-col overflow-hidden rounded-tl-[48px]">

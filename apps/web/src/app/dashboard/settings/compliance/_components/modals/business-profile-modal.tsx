@@ -91,6 +91,7 @@ function BusinessProfileModal() {
               <StepComponent
                 setFormData={setFormData}
                 setSaveEnabled={setSaveEnabled}
+                id={step.id}
               />
             </div>
           );

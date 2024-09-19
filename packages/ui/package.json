@@ -16,6 +16,7 @@
     "./card": "./src/card.tsx",
     "./loading-overlay.tsx": "./src/loading/loading-overlay.tsx",
     "./loading-spinner.tsx": "./src/loading/loading-spinner.tsx",
+    "./loading-table.tsx": "./src/loading/loading-table.tsx",
     "./providers/theme-provider.tsx": "./src/providers/theme-provider.tsx"
   },
   "license": "MIT",

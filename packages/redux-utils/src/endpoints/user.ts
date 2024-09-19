@@ -66,7 +66,7 @@ const api = baseApi
               body: payload,
             };
           },
-        }
+        },
       ),
 
       // personal settings

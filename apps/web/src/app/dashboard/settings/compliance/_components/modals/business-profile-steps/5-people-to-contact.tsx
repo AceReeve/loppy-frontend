@@ -12,18 +12,18 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { peopleToContactSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/business-profile-schemas.ts";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 
 export default function PeopleToContact({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof peopleToContactSchema>>({
     resolver: zodResolver(peopleToContactSchema),
     mode: "onBlur",
   });
   const onSubmit = (data: z.infer<typeof peopleToContactSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

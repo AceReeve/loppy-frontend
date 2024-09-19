@@ -35,4 +35,33 @@ export interface GetAvailableLocalNumbersPayload {
   type: string;
   limit: string;
   areaCode?: string;
+  [key: string]: string;
+}
+
+export interface BuyNumberResponse {
+  organization_id: string;
+  purchased_number: string;
+  status: string;
+  _id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BuyNumberPayload {
+  phoneNumber: string;
+  organization_id: string;
+  [key: string]: string;
+}
+
+export interface GetPurchasedNumbersPayload {
+  organization_id: string;
+}
+
+export interface GetPurchasedNumbersResponse {
+  _id: string;
+  organization_id: string;
+  purchased_number: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }

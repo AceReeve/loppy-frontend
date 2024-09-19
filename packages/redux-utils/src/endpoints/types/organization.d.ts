@@ -22,4 +22,5 @@ export interface GetOrganizationResponse {
   twilio_api_key_secret: string;
   twilio_auth_token: string;
   status: StatusEnum;
+  twilio_number?: string;
 }

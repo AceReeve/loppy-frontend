@@ -17,18 +17,18 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { businessInfoSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/business-profile-schemas.ts";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 
 export default function BusinessInfo({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof businessInfoSchema>>({
     resolver: zodResolver(businessInfoSchema),
     mode: "onBlur",
   });
   const onSubmit = (data: z.infer<typeof businessInfoSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
   useEffect(() => {
     setSaveEnabled(form.formState.isValid);

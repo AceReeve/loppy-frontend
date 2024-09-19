@@ -9,7 +9,7 @@ export type { Session } from "next-auth";
 
 export type SearchParamsType =
   | string[][]
-  | Record<string, string>
+  | Record<string, string | number>
   | string
   | URLSearchParams;
 

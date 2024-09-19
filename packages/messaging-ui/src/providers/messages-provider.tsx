@@ -13,16 +13,8 @@ import type {
   Message,
 } from "@twilio/conversations";
 import { Client } from "@twilio/conversations";
-import {
-  useGetTwilioAccessTokenQuery,
-  useGetTwilioCredentialsQuery,
-} from "@repo/redux-utils/src/endpoints/messaging.ts";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Button,
-} from "@repo/ui/components/ui";
+import { useGetTwilioAccessTokenQuery } from "@repo/redux-utils/src/endpoints/messaging.ts";
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,7 +40,7 @@ import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { type InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/user";
 import { useGetContactsListQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/user.ts";
-import { type TwilioCredentialsPayloadAndResponse } from "@repo/redux-utils/src/endpoints/types/messaging";
+import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
 import { handlePromiseRejection } from "../helpers/helpers.ts";
 import {
   type ShowEmojiPickerProps,
@@ -76,15 +68,16 @@ interface ContextType {
   invitedUsers: InviteUserResponse | undefined;
   messageFilter: MessagingFilters;
   setMessageFilter: (filter: MessagingFilters) => void;
-  twilioCredentials: TwilioCredentialsPayloadAndResponse | undefined;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
 
 export default function MessagesProvider({
+  organization,
   children,
   session,
 }: {
+  organization: GetOrganizationResponse;
   children: React.ReactNode;
   session: Session | null;
 }) {
@@ -92,10 +85,9 @@ export default function MessagesProvider({
     data: token,
     error,
     isLoading: isTokenLoading,
-  } = useGetTwilioAccessTokenQuery(undefined);
-  const { data: twilioCredentials, isLoading: isCredsLoading } =
-    useGetTwilioCredentialsQuery(undefined);
-  const isLoading = isTokenLoading || isCredsLoading;
+  } = useGetTwilioAccessTokenQuery(organization._id);
+
+  const isLoading = isTokenLoading;
 
   const dispatch = useDispatch();
 
@@ -258,35 +250,6 @@ export default function MessagesProvider({
     );
   }
 
-  if (!twilioCredentials) {
-    return (
-      <section>
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:px-12 lg:px-24 lg:py-24">
-          <div className="mb-12 flex w-full flex-col text-center">
-            <h1 className="max-w-5xl text-2xl font-bold leading-none text-gray-600">
-              Setup Twilio Credentials to Access Messaging
-            </h1>
-            <p className="mx-auto mt-8 max-w-xl text-center text-base leading-relaxed text-gray-500">
-              Input your{" "}
-              <a href="https://console.twilio.com/" className="text-primary">
-                twilio credentials
-              </a>{" "}
-              in order to access messaging.
-            </p>
-            <Button
-              onClick={() => {
-                location.replace("/dashboard/settings");
-              }}
-              className="mt-4"
-            >
-              Setup your twilio credentials
-            </Button>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   async function upsertMessage(message: Message) {
     //transform the message and add it to redux
     await handlePromiseRejection(async () => {
@@ -375,7 +338,6 @@ export default function MessagesProvider({
         invitedUsers,
         messageFilter,
         setMessageFilter,
-        twilioCredentials,
       }}
     >
       {newConvoLoading ? <LoadingOverlay /> : null}

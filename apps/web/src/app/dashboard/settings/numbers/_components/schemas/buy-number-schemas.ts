@@ -17,7 +17,7 @@ export const chooseNumberSchema = z.object({
 export const assignInboxSchema = z
   .object({
     inbox_assignment_type: z.string({
-      required_error: "Please select an inbox",
+      required_error: "Please select an assignment type",
     }),
     selected_inbox: z
       .string({
@@ -26,17 +26,17 @@ export const assignInboxSchema = z
       .optional(),
     inbox_name: z
       .string({
-        required_error: "Please select an inbox",
+        required_error: "Please type an inbox name",
       })
       .optional(),
     inbox_owner: z
       .string({
-        required_error: "Please select an inbox",
+        required_error: "Please select an inbox owner",
       })
       .optional(),
     inbox_members: z
       .string({
-        required_error: "Please select an inbox",
+        required_error: "Please select add inbox members",
       })
       .array()
       .optional(),

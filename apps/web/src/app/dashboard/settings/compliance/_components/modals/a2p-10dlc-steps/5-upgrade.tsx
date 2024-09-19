@@ -12,13 +12,13 @@ import {
   Slider,
 } from "@repo/ui/components/ui";
 import type { z } from "zod";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 import { upgradeSchema } from "../../schemas/a2p-10dlc-registration-schemas";
 
 export default function Upgrade({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof upgradeSchema>>({
     resolver: zodResolver(upgradeSchema),
     defaultValues: {
@@ -27,7 +27,7 @@ export default function Upgrade({
   });
 
   const onSubmit = (data: z.infer<typeof upgradeSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

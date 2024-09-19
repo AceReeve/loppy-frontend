@@ -67,7 +67,7 @@ export default function UnsoldTicketsTable() {
       columns={unsoldTicketsColumns}
       data={contacts.data} // Just use 'contacts' directly
       noResultsComponent={NoResultsComponent}
-      enablePagination={false}
+      disablePagination
     />
   );
 }
