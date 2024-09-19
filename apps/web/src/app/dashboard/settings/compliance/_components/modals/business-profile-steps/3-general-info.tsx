@@ -24,19 +24,19 @@ import React, { useEffect } from "react";
 import type { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 import { generalInfoSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/business-profile-schemas.ts";
 
 export default function GeneralInfo({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof generalInfoSchema>>({
     resolver: zodResolver(generalInfoSchema),
     mode: "onBlur",
   });
   const onSubmit = (data: z.infer<typeof generalInfoSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

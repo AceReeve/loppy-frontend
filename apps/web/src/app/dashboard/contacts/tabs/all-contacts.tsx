@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useGetContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
+import { LoadingTable } from "@repo/ui/loading-table.tsx";
 import { DataTable } from "@/src/components/data-table";
 import { columns } from "@/src/app/dashboard/contacts/columns";
 
@@ -37,7 +37,12 @@ function AllContacts() {
     sort_dir: "desc",
   });
 
-  const { data: contacts, error, isLoading } = useGetContactsQuery(filters);
+  const {
+    data: contacts,
+    error,
+    isLoading,
+    isFetching,
+  } = useGetContactsQuery(filters);
 
   const onPageChange = (page: number) => {
     setFilters((prev) => ({
@@ -45,19 +50,6 @@ function AllContacts() {
       skip: page * 10,
     }));
   };
-
-  if (isLoading) {
-    return (
-      <div className="m-auto h-[500px] w-full content-center">
-        <div className="m-auto h-[50px] w-[15px] content-center">
-          <LoadingSpinner />
-        </div>
-        <p className="text-center font-nunito text-lg">
-          Loading please wait...
-        </p>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -69,19 +61,20 @@ function AllContacts() {
     );
   }
 
-  if (!contacts) return null;
-
-  return (
+  return contacts ? (
     <>
       {/*<ContactFilters setFilters={setFilters} />*/}
       <DataTable
         columns={columns}
         data={contacts.data} // Just use 'contacts' directly
         apiPagination={contacts.meta}
-        noResultsComponent={NoResultsComponent}
         onPageChange={onPageChange}
+        noResultsComponent={NoResultsComponent}
+        isFetching={isFetching}
       />
     </>
+  ) : (
+    <LoadingTable loading={isLoading} />
   );
 }
 

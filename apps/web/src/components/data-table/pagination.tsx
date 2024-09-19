@@ -65,6 +65,8 @@ export default function Pagination({
     }
   }, [current]);
 
+  if (length === 0) return null;
+
   return (
     <div className="flex items-center justify-between px-4 py-2">
       {pages > 1 ? (

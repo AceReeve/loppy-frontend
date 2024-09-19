@@ -506,7 +506,7 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     try {
       const response = await publishWorkflow({
         id: workflowID,
-        published: !isPublished,
+        published: isPublished ? "false" : "true",
       }).unwrap();
 
       if ((response as { name: string }).name) {

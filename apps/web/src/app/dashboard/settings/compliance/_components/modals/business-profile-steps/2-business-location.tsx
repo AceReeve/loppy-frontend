@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { businessLocationSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/business-profile-schemas.ts";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 
 const countries = [
   { value: "us", label: "United States" },
@@ -27,7 +27,7 @@ const countries = [
 export default function BusinessLocation({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof businessLocationSchema>>({
     resolver: zodResolver(businessLocationSchema),
     defaultValues: {
@@ -37,7 +37,7 @@ export default function BusinessLocation({
   });
 
   const onSubmit = (data: z.infer<typeof businessLocationSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

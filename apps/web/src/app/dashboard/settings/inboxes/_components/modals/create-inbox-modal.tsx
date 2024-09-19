@@ -10,50 +10,44 @@ import {
   toast,
 } from "@repo/ui/components/ui";
 import type { z } from "zod";
+import { useCreateInboxMutation } from "@repo/redux-utils/src/endpoints/inboxes.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useBuyNumberMutation } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
-import { useCreateInboxMutation } from "@repo/redux-utils/src/endpoints/inboxes.ts";
-import { InboxAssignmentType } from "@repo/redux-utils/src/endpoints/enums/inbox.enums.ts";
-import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import {
-  type assignInboxSchema,
-  type chooseNumberSchema,
-} from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
-import AssignInbox from "@/src/app/dashboard/settings/numbers/_components/modals/buy-number-steps/2-assign-inbox.tsx";
 import { type StepItem } from "@/src/types/settings";
+import CreateNewInbox from "@/src/app/dashboard/settings/inboxes/_components/modals/create-inbox-steps/1-create-new-inbox.tsx";
+import { type createInboxSchema } from "@/src/app/dashboard/settings/inboxes/_components/schemas/create-inbox-schemas.ts";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
-import ChooseNumber from "./buy-number-steps/1-choose-number.tsx";
+import AssignNumber from "@/src/app/dashboard/settings/inboxes/_components/modals/create-inbox-steps/2-assign-a-number.tsx";
 
-function BuyNumberModal() {
+function CreateInboxModal() {
   const { currentOrg } = useDashboardState();
   const [currentStep, setCurrentStep] = useState(0);
+  const [createInboxFormData, setCreateInboxFormData] =
+    useState<z.infer<typeof createInboxSchema>>();
   const [saveEnabled, setSaveEnabled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [buyNumberFormData, setBuyNumberFormData] =
-    useState<z.infer<typeof chooseNumberSchema>>();
-  const [buyNumber, { isLoading: isBuyNumberLoading }] = useBuyNumberMutation();
   const [createInbox, { isLoading: isCreateInboxLoading }] =
     useCreateInboxMutation();
+  const [buyNumber, { isLoading: isBuyNumberLoading }] = useBuyNumberMutation();
 
   const isLoading = isCreateInboxLoading || isBuyNumberLoading;
 
   const steps: StepItem[] = [
     {
-      title: "Choose Number",
-      id: "choose-number",
-      component: ChooseNumber,
+      title: "Create New Inbox",
+      id: "create-new-inbox",
+      component: CreateNewInbox,
+      onSubmit: onCreateInboxSubmit as (data: unknown) => void,
+    },
+    {
+      title: "Assign a Number",
+      id: "assign-a-number",
+      component: AssignNumber,
       footerNote:
         "* Due to A2P 10DLC regulations, registration is required and additional fees will apply.",
       onSubmit: onSetNumberSubmit as (data: unknown) => void,
-    },
-    {
-      title: "Assign Inbox",
-      id: "assign-inbox",
-      component: AssignInbox,
-      footerNote:
-        "* Due to A2P 10DLC regulations, registration is required and additional fees will apply.",
-      onSubmit: onAssignInboxSubmit as (data: unknown) => void,
     },
   ];
 
@@ -63,18 +57,15 @@ function BuyNumberModal() {
 
   const onNextStep = () => {
     setCurrentStep(currentStep + 1);
-    setSaveEnabled(false);
   };
 
-  function onSetNumberSubmit(data: z.infer<typeof chooseNumberSchema>) {
-    setBuyNumberFormData(data);
+  function onCreateInboxSubmit(data: z.infer<typeof createInboxSchema>) {
+    setCreateInboxFormData(data);
     onNextStep();
   }
 
-  function onAssignInboxSubmit(data: z.infer<typeof assignInboxSchema>) {
-    if (!buyNumberFormData) return;
-
-    const type = data.inbox_assignment_type as InboxAssignmentType;
+  function onSetNumberSubmit() {
+    if (!createInboxFormData) return;
 
     buyNumber({
       phoneNumber: "+15005550006",
@@ -82,27 +73,23 @@ function BuyNumberModal() {
     })
       .unwrap()
       .then((res) => {
-        if (type === InboxAssignmentType.NEW) {
-          createInbox({
-            inbox_name: data.inbox_name ?? "",
-            description: data.inbox_name ?? "",
-            purchased_number: res.purchased_number,
-            organization_id: currentOrg._id,
+        createInbox({
+          inbox_name: createInboxFormData.inbox_name,
+          description: createInboxFormData.inbox_name,
+          purchased_number: res.purchased_number,
+          organization_id: currentOrg._id,
+        })
+          .unwrap()
+          .then(() => {
+            setIsOpen(false);
           })
-            .unwrap()
-            .then(() => {
-              setIsOpen(false);
-            })
-            .catch((error: unknown) => {
-              toast({
-                title: "Create Inbox Error",
-                description: getErrorMessage(error),
-                variant: "destructive",
-              });
+          .catch((error: unknown) => {
+            toast({
+              title: "Create Inbox Error",
+              description: getErrorMessage(error),
+              variant: "destructive",
             });
-        } else {
-          setIsOpen(false);
-        }
+          });
       })
       .catch((error: unknown) => {
         toast({
@@ -116,7 +103,7 @@ function BuyNumberModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Add Numbers</Button>
+        <Button>Create New Inbox</Button>
       </DialogTrigger>
       <DialogContent>
         {isLoading ? <LoadingOverlay /> : null}
@@ -156,7 +143,7 @@ function BuyNumberModal() {
             disabled={!saveEnabled}
             form={steps[currentStep].id}
           >
-            {currentStep < steps.length - 1 ? "Next" : "Purchase Number"}
+            {currentStep < steps.length - 1 ? "Next" : "Create Inbox"}
           </Button>
         </DialogFooter>
         {steps[currentStep].footerNote ? (
@@ -169,4 +156,4 @@ function BuyNumberModal() {
   );
 }
 
-export default BuyNumberModal;
+export default CreateInboxModal;

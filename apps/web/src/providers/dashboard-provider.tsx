@@ -2,11 +2,13 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { type Session } from "next-auth";
+import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
 
 interface ContextType {
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
   session: Session | null;
+  currentOrg: GetOrganizationResponse;
 }
 
 const DashboardContext = createContext<ContextType | null>(null);
@@ -14,9 +16,11 @@ const DashboardContext = createContext<ContextType | null>(null);
 export default function DashboardProvider({
   children,
   session,
+  currentOrg,
 }: {
   children: React.ReactNode;
   session: Session | null;
+  currentOrg: GetOrganizationResponse;
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
@@ -37,7 +41,7 @@ export default function DashboardProvider({
 
   return (
     <DashboardContext.Provider
-      value={{ sidebarCollapsed, toggleSidebar, session }}
+      value={{ sidebarCollapsed, toggleSidebar, session, currentOrg }}
     >
       {children}
     </DashboardContext.Provider>

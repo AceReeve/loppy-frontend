@@ -1,16 +1,14 @@
 import { baseApi } from "../api";
 import {
-  CreateWorkflowPayload,
-  GetCreateWorkflowResponse,
-  GetFolderResponse,
-  GetIDPayload,
-  GetWorkflowListPayload,
-  PublishWorkflowPayload,
-  SaveWorkflowPayload,
-} from "./types/workflow";
-import type {
-  CreateFolderPayload,
-  GetEditFolderPayload,
+  type CreateWorkflowPayload,
+  type GetCreateWorkflowResponse,
+  type GetFolderResponse,
+  type GetIDPayload,
+  type GetWorkflowListPayload,
+  type PublishWorkflowPayload,
+  type SaveWorkflowPayload,
+  type CreateFolderPayload,
+  type GetEditFolderPayload,
 } from "./types/workflow";
 
 const api = baseApi
@@ -21,12 +19,10 @@ const api = baseApi
     endpoints: (builder) => ({
       createWorkflow: builder.mutation<
         GetCreateWorkflowResponse,
-        CreateWorkflowPayload
+        CreateWorkflowPayload | undefined
       >({
         query: (payload) => {
-          const queryParams = payload?.id
-            ? `?${new URLSearchParams({ id: payload.id })}`
-            : "";
+          const queryParams = new URLSearchParams(payload).toString();
           return {
             url: `/react-flow/workflow${queryParams}`,
             method: "POST",
@@ -37,11 +33,11 @@ const api = baseApi
 
       saveWorkflow: builder.mutation<
         GetCreateWorkflowResponse,
-        SaveWorkflowPayload
+        SaveWorkflowPayload | undefined
       >({
         query: (payload) => {
-          const queryParams = payload?.id
-            ? `?${new URLSearchParams({ id: payload.id })}`
+          const queryParams = payload
+            ? new URLSearchParams({ id: payload.id }).toString()
             : "";
           return {
             url: `/react-flow/workflow${queryParams}`,
@@ -57,10 +53,7 @@ const api = baseApi
         PublishWorkflowPayload
       >({
         query: (payload) => {
-          const queryParams = new URLSearchParams({
-            id: payload.id,
-            published: payload.published.toString(),
-          });
+          const queryParams = new URLSearchParams(payload).toString();
           return {
             url: `/react-flow/workflow-published?${queryParams}`,
             method: "PUT",
@@ -81,7 +74,6 @@ const api = baseApi
           return {
             url: `/react-flow/folder?${queryParams}`,
             method: "POST",
-            body: payload,
           };
         },
         invalidatesTags: ["workflow"],
@@ -92,8 +84,8 @@ const api = baseApi
         GetWorkflowListPayload
       >({
         query: (payload) => {
-          const queryParams = payload?.id
-            ? `?${new URLSearchParams({ id: payload.id })}`
+          const queryParams = payload.id
+            ? new URLSearchParams(payload).toString()
             : "";
           return {
             url: `/react-flow/folders${queryParams}`,
@@ -107,11 +99,12 @@ const api = baseApi
         GetWorkflowListPayload
       >({
         query: (payload) => {
-          const queryParams = payload?.id
-            ? `?${new URLSearchParams({ id: payload.id })}`
+          const queryParams = payload.id
+            ? new URLSearchParams(payload).toString()
             : "";
+
           return {
-            url: `/react-flow/workflow/{id}${queryParams}`,
+            url: `/react-flow/workflow/{id}?${queryParams}`,
           };
         },
         providesTags: ["workflow"],

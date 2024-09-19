@@ -1,10 +1,15 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
   Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Select,
   SelectContent,
   SelectItem,
@@ -14,38 +19,36 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
 } from "@repo/ui/components/ui";
-import { AlertCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { type z } from "zod";
-import { useLazyGetAvailableLocalNumbersQuery } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { Refresh } from "iconsax-react";
 import { cn } from "@repo/ui/utils";
+import React, { useEffect, useState } from "react";
+import { useLazyGetAvailableLocalNumbersQuery } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
+import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import type { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneNumbersList from "@/src/app/dashboard/settings/compliance/_components/phone-numbers-list.tsx";
-import type { StepComponentProps } from "@/src/types/settings";
-import { countries, states } from "@/src/data/states/index.ts";
-import { chooseNumberSchema } from "../../schemas/buy-number-schemas.ts";
+import { countries, states } from "@/src/data/states";
+import { type FormComponentProps } from "@/src/types/settings";
+import { chooseNumberSchema } from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
 
-export default function CreateNewInbox({
-  setFormData,
+export default function ChooseNumberForm({
   setSaveEnabled,
-}: StepComponentProps) {
-  const [activeTab, setActiveTab] = useState("local-number");
-  const form = useForm<z.infer<typeof chooseNumberSchema>>({
-    resolver: zodResolver(chooseNumberSchema),
-  });
+  id,
+  onSubmit,
+}: FormComponentProps) {
   const [
     refreshAvailableNumbers,
     { data: availableNumbers, isLoading, isFetching, error },
   ] = useLazyGetAvailableLocalNumbersQuery();
+
+  const form = useForm<z.infer<typeof chooseNumberSchema>>({
+    resolver: zodResolver(chooseNumberSchema),
+  });
+
+  const [activeTab, setActiveTab] = useState("local-number");
 
   const countryCode = form.watch("country");
   const currentState = form.watch("state");
@@ -54,12 +57,8 @@ export default function CreateNewInbox({
         (item) => item.value === currentState,
       )?.area_codes ?? [])
     : [];
-  const areaCode = form.watch("areaCode");
+  const areaCode = form.watch("area_code");
   const selectedNumber = form.watch("selectedNumber");
-
-  const onSubmit = (data: z.infer<typeof chooseNumberSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
-  };
 
   useEffect(() => {
     refetch();
@@ -134,26 +133,10 @@ export default function CreateNewInbox({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit ? form.handleSubmit(onSubmit) : undefined}
         className="flex flex-col gap-4"
+        id={id}
       >
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle className="flex w-full justify-between text-sm font-semibold">
-            Get your business number
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="px-2 py-0 text-gray-500"
-            >
-              <a href="/">Learn more</a>
-            </Button>
-          </AlertTitle>
-          <AlertDescription>
-            Local numbers will require verification of your business
-          </AlertDescription>
-        </Alert>
         <Tabs
           defaultValue="local-number"
           onValueChange={setActiveTab}
@@ -250,7 +233,7 @@ export default function CreateNewInbox({
                 <div className="flex flex-col gap-2">
                   <FormField
                     control={form.control}
-                    name="areaCode"
+                    name="area_code"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Area Code</FormLabel>
@@ -285,6 +268,12 @@ export default function CreateNewInbox({
             {renderAvailableNumbers()}
           </TabsContent>
         </Tabs>
+        {availableNumbers?.length && !isFetching ? (
+          <span className="text-sm text-gray-600">
+            Today you will be charged $4.08 for the discounted pro-rated cost of
+            a new number.
+          </span>
+        ) : null}
       </form>
     </Form>
   );

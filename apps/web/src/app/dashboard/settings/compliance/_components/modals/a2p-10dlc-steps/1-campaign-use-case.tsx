@@ -17,18 +17,18 @@ import {
 } from "@repo/ui/components/ui";
 import type { z } from "zod";
 import { campaignUseCaseSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/a2p-10dlc-registration-schemas";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 
 export default function CampaignUseCase({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof campaignUseCaseSchema>>({
     resolver: zodResolver(campaignUseCaseSchema),
   });
 
   const onSubmit = (data: z.infer<typeof campaignUseCaseSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

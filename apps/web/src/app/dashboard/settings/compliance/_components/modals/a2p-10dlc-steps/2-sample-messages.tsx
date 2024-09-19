@@ -11,19 +11,19 @@ import {
   Input,
 } from "@repo/ui/components/ui";
 import type { z } from "zod";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 import { sampleMessagesSchema } from "../../schemas/a2p-10dlc-registration-schemas.ts";
 
 export default function SampleMessages({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof sampleMessagesSchema>>({
     resolver: zodResolver(sampleMessagesSchema),
   });
 
   const onSubmit = (data: z.infer<typeof sampleMessagesSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

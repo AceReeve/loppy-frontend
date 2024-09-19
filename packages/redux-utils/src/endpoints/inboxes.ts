@@ -3,6 +3,11 @@ import {
   type GetAvailableLocalNumbersPayload,
   type GetAvailableLocalNumbersResponse,
 } from "./types/phone-numbers";
+import {
+  type CreateInboxPayload,
+  type GetAllInboxesPayload,
+  type GetAllInboxesResponse,
+} from "./types/inboxes";
 
 const api = baseApi
   .enhanceEndpoints({
@@ -22,7 +27,34 @@ const api = baseApi
         },
         providesTags: ["inboxes"],
       }),
+
+      getAllInboxes: builder.query<
+        GetAllInboxesResponse[],
+        GetAllInboxesPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/twilio-messaging/inboxes/${payload.organization_id}`,
+          };
+        },
+        providesTags: ["inboxes"],
+      }),
+
+      createInbox: builder.mutation<GetAllInboxesResponse, CreateInboxPayload>({
+        query: (payload) => {
+          return {
+            url: `/twilio-messaging/inbox`,
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["inboxes"],
+      }),
     }),
   });
 
-export const { useGetAvailableInboxesQuery } = api;
+export const {
+  useGetAvailableInboxesQuery,
+  useGetAllInboxesQuery,
+  useCreateInboxMutation,
+} = api;

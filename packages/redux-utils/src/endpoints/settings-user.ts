@@ -50,12 +50,21 @@ const api = baseApi
         },
         invalidatesTags: ["settings-user"],
       }),
+      getMembers: builder.query<GetInviteUserResponse, undefined>({
+        query: () => {
+          return {
+            url: `/user/members`,
+          };
+        },
+        providesTags: ["settings-user"],
+      }),
     }),
   });
 
 export const {
   useGetRolesQuery,
   useGetInvitedUsersQuery,
+  useGetMembersQuery,
   useCancelInviteMutation,
   useSendInviteUserMutation,
 } = api;

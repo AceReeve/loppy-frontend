@@ -3,35 +3,19 @@
 import { Input } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import type { PhoneNumbersResponse } from "@repo/redux-utils/src/endpoints/types/phone-numbers";
-import { RoleDataTable } from "@/src/app/dashboard/settings/teams/_components/role-data.tsx";
-import { numbersColumns } from "@/src/app/dashboard/settings/numbers/_components/columns.tsx";
+import { useGetPurchasedNumbersQuery } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
+import { LoadingTable } from "@repo/ui/loading-table.tsx";
+import { numbersColumns } from "@/src/app/dashboard/settings/numbers/columns.tsx";
 import BuyNumberModal from "@/src/app/dashboard/settings/numbers/_components/modals/buy-number-modal.tsx";
+import { DataTable } from "@/src/components/data-table";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 
 export default function AssignedNumbers() {
-  const numbersList: PhoneNumbersResponse["data"][] = [
-    {
-      number: "(803) 123-456",
-      location: "Ogden, UT",
-      inbox_name: "Garrett Elmore",
-      status: "",
-      type: "local",
-    },
-    {
-      number: "(803) 123-456",
-      location: "Ogden, UT",
-      inbox_name: "Ace Reeve Santos",
-      status: "",
-      type: "local",
-    },
-    {
-      number: "(803) 123-456",
-      location: "Ogden, UT",
-      inbox_name: "Dave Duya",
-      status: "",
-      type: "local",
-    },
-  ];
+  const { currentOrg } = useDashboardState();
+
+  const { data: numbersList, isLoading } = useGetPurchasedNumbersQuery({
+    organization_id: currentOrg._id,
+  });
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -51,7 +35,7 @@ export default function AssignedNumbers() {
     </div>
   );
 
-  return (
+  return numbersList ? (
     <div className="p-4">
       <div className="flex flex-row items-center justify-between">
         <div className="relative flex w-[225px] flex-row justify-between gap-4">
@@ -64,11 +48,14 @@ export default function AssignedNumbers() {
         </div>
         <BuyNumberModal />
       </div>
-      <RoleDataTable
+      <DataTable
         columns={numbersColumns}
         data={numbersList}
         noResultsComponent={NoResultsComponent}
+        className="mt-4"
       />
     </div>
+  ) : (
+    <LoadingTable loading={isLoading} />
   );
 }

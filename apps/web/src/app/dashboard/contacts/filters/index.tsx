@@ -86,7 +86,7 @@ export default function ContactFilters({ setFilters }: ContactFiltersProps) {
     },
   ];
 
-  const addFilter = (label: string, newValue: string[]) => {
+  function addFilter(label: string, newValue: string[]) {
     const filterIndex = selectedFilters.findIndex(
       (filter) => filter.label === label,
     );
@@ -101,7 +101,7 @@ export default function ContactFilters({ setFilters }: ContactFiltersProps) {
     }
 
     setIsFilterMode((is) => !is);
-  };
+  }
 
   const deleteFilter = (index: number) => {
     setSelectedFilters(selectedFilters.filter((_, i) => i !== index));

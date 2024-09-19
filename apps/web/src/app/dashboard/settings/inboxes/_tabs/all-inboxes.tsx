@@ -3,21 +3,23 @@
 import { Input } from "@repo/ui/components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import { type InboxesResponse } from "@repo/redux-utils/src/endpoints/types/inboxes";
-import { inboxesColumns } from "@/src/app/dashboard/settings/inboxes/_components/columns.tsx";
+import { useGetAllInboxesQuery } from "@repo/redux-utils/src/endpoints/inboxes.ts";
+import { LoadingTable } from "@repo/ui/loading-table.tsx";
+import { inboxesColumns } from "@/src/app/dashboard/settings/inboxes/columns.tsx";
 import { DataTable } from "@/src/components/data-table";
-import BuyNumberModal from "../_components/modals/buy-number-modal.tsx";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import CreateInboxModal from "../_components/modals/create-inbox-modal.tsx";
 
 export default function AllInboxes() {
-  const inboxesList: InboxesResponse["data"][] = [
-    {
-      name: "Garrett Elmore",
-      phone_number: "(803) 123-456",
-      owner: "Garrett Elmore",
-      members: "1",
-      created_at: "1 Jul 2024 - 4:10 AM",
-    },
-  ];
+  const { currentOrg } = useDashboardState();
+
+  const {
+    data: inboxesList,
+    isLoading,
+    isFetching,
+  } = useGetAllInboxesQuery({
+    organization_id: currentOrg._id,
+  });
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -37,7 +39,7 @@ export default function AllInboxes() {
     </div>
   );
 
-  return (
+  return inboxesList ? (
     <div className="p-4">
       <div className="flex flex-row items-center justify-between">
         <div className="relative flex w-[225px] flex-row justify-between gap-4">
@@ -48,14 +50,17 @@ export default function AllInboxes() {
             type="search"
           />
         </div>
-        <BuyNumberModal />
+        <CreateInboxModal />
       </div>
       <DataTable
         columns={inboxesColumns}
         data={inboxesList}
+        isFetching={isFetching}
         noResultsComponent={NoResultsComponent}
         className="mt-4"
       />
     </div>
+  ) : (
+    <LoadingTable loading={isLoading} />
   );
 }

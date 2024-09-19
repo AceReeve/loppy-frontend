@@ -90,6 +90,7 @@ export default function A2p10dlcRegistrationModal() {
         <StepComponent
           setFormData={setFormData}
           setSaveEnabled={setSaveEnabled}
+          id={steps[currentStep].id}
         />
 
         <DialogFooter className="mt-4">

@@ -33,6 +33,7 @@ export interface CustomNode extends Node {
 export interface CreateWorkflowPayload {
   id: string;
   template_id: string;
+  [key: string]: string;
 }
 export interface SaveWorkflowPayload {
   id: string;
@@ -41,7 +42,8 @@ export interface SaveWorkflowPayload {
 }
 export interface PublishWorkflowPayload {
   id: string;
-  published: boolean;
+  published: string;
+  [key: string]: string;
 }
 
 export interface GetCreateWorkflowResponse {
@@ -91,4 +93,5 @@ export interface GetEditFolderPayload {
 
 export interface GetWorkflowListPayload {
   id?: string;
+  [key: string]: string;
 }

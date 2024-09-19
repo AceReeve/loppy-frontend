@@ -27,34 +27,36 @@ import { AlertCircle } from "lucide-react";
 import React, { useEffect } from "react";
 import { type z } from "zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useGetAvailableInboxesQuery } from "@repo/redux-utils/src/endpoints/inboxes.ts";
+import { useGetAllInboxesQuery } from "@repo/redux-utils/src/endpoints/inboxes.ts";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { InboxAssignmentType } from "@repo/redux-utils/src/endpoints/enums/inbox.enums.ts";
-import type { StepComponentProps } from "@/src/types/settings";
+import { useGetMembersQuery } from "@repo/redux-utils/src/endpoints/settings-user.ts";
+import type { FormComponentProps } from "@/src/types/settings";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import { assignInboxSchema } from "../../schemas/buy-number-schemas.ts";
 
 export default function AssignInbox({
-  setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+  id,
+  onSubmit,
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof assignInboxSchema>>({
     resolver: zodResolver(assignInboxSchema),
   });
   const {
-    data: availableInboxes,
-    isLoading,
+    data: members,
+    isLoading: isMembersLoading,
     error,
-  } = useGetAvailableInboxesQuery({
-    limit: "10",
-    type: "tollFree",
-    countryCode: "US",
-  });
+  } = useGetMembersQuery(undefined);
+
+  const { currentOrg } = useDashboardState();
+
+  const { data: inboxesList, isLoading: isInboxesLoading } =
+    useGetAllInboxesQuery({
+      organization_id: currentOrg._id,
+    });
 
   const inboxType = form.watch("inbox_assignment_type") as InboxAssignmentType;
-
-  const onSubmit = (data: z.infer<typeof assignInboxSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
-  };
 
   useEffect(() => {
     setSaveEnabled(form.formState.isValid);
@@ -63,8 +65,9 @@ export default function AssignInbox({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit ? form.handleSubmit(onSubmit) : undefined}
         className="flex flex-col gap-4"
+        id={id}
       >
         {error ? (
           <Alert variant="destructive">
@@ -116,13 +119,13 @@ export default function AssignInbox({
                         <SelectValue placeholder="Select an inbox" />
                       </SelectTrigger>
                       <SelectContent>
-                        {isLoading ? <LoadingSpinner /> : null}
-                        {availableInboxes?.map((inbox) => (
+                        {isInboxesLoading ? <LoadingSpinner /> : null}
+                        {inboxesList?.map((inbox) => (
                           <SelectItem
-                            key={inbox.phoneNumber}
-                            value={inbox.phoneNumber}
+                            key={inbox.inbox_name}
+                            value={inbox.purchased_number}
                           >
-                            {inbox.friendlyName}
+                            {inbox.inbox_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -167,16 +170,13 @@ export default function AssignInbox({
                         defaultValue={field.value}
                       >
                         <SelectTrigger variant="outline">
-                          <SelectValue placeholder="Select an inbox" />
+                          <SelectValue placeholder="Select inbox owner" />
                         </SelectTrigger>
                         <SelectContent>
-                          {isLoading ? <LoadingSpinner /> : null}
-                          {availableInboxes?.map((inbox) => (
-                            <SelectItem
-                              key={inbox.phoneNumber}
-                              value={inbox.phoneNumber}
-                            >
-                              {inbox.friendlyName}
+                          {isMembersLoading ? <LoadingSpinner /> : null}
+                          {members?.users.map((member) => (
+                            <SelectItem key={member._id} value={member.email}>
+                              {member.email}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -198,16 +198,17 @@ export default function AssignInbox({
                         onValuesChange={field.onChange}
                       >
                         <MultiSelectorTrigger>
-                          <MultiSelectorInput placeholder="Select your framework" />
+                          <MultiSelectorInput placeholder="Select inbox members" />
                         </MultiSelectorTrigger>
                         <MultiSelectorContent>
+                          {isMembersLoading ? <LoadingSpinner /> : null}
                           <MultiSelectorList>
-                            {availableInboxes?.map((option) => (
+                            {members?.users.map((option) => (
                               <MultiSelectorItem
-                                key={option.phoneNumber}
-                                value={option.phoneNumber}
+                                key={option._id}
+                                value={option.email}
                               >
-                                {option.friendlyName}
+                                {option.email}
                               </MultiSelectorItem>
                             ))}
                           </MultiSelectorList>

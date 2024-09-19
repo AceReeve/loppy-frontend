@@ -25,6 +25,7 @@ import {
 } from "@repo/ui/components/ui";
 import React, { useState } from "react";
 import { cn } from "@repo/ui/utils";
+import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import Pagination from "@/src/components/data-table/pagination.tsx";
 
 interface ApiPaginationDataProps {
@@ -43,6 +44,7 @@ interface DataTableProps<TData, TValue> {
   apiPagination?: ApiPaginationDataProps;
   onPageChange?: (page: number) => void;
   className?: string;
+  isFetching?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -54,6 +56,7 @@ export function DataTable<TData, TValue>({
   apiPagination,
   onPageChange,
   className,
+  isFetching,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -106,6 +109,7 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
+          {isFetching ? <LoadingOverlay className="bg-white/50" /> : null}
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow

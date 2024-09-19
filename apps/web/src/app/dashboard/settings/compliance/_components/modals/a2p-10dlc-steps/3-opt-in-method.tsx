@@ -11,7 +11,7 @@ import {
   Checkbox,
 } from "@repo/ui/components/ui";
 import type { z } from "zod";
-import type { StepComponentProps } from "@/src/types/settings";
+import type { FormComponentProps } from "@/src/types/settings";
 import { optInMethodSchema } from "../../schemas/a2p-10dlc-registration-schemas.ts";
 
 const optInMethods = [
@@ -23,7 +23,7 @@ const optInMethods = [
 export default function OptInMethod({
   setFormData,
   setSaveEnabled,
-}: StepComponentProps) {
+}: FormComponentProps) {
   const form = useForm<z.infer<typeof optInMethodSchema>>({
     resolver: zodResolver(optInMethodSchema),
     defaultValues: {
@@ -32,7 +32,7 @@ export default function OptInMethod({
   });
 
   const onSubmit = (data: z.infer<typeof optInMethodSchema>) => {
-    setFormData((prevState) => ({ ...prevState, ...data }));
+    setFormData?.((prevState) => ({ ...prevState, ...data }));
   };
 
   useEffect(() => {

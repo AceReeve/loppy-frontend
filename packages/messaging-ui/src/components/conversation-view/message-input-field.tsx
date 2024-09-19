@@ -30,7 +30,7 @@ interface SendMessageProps {
 }
 
 export default function MessageInputField(props: SendMessageProps) {
-  const { setNewConvoLoading, session, twilioCredentials } = useMessagesState();
+  const { setNewConvoLoading, session } = useMessagesState();
   const [message, setMessage] = useState("");
   const conversations = useSelector((state: AppState) => state.conversations);
   const participants = useSelector((state: AppState) => state.participants);
@@ -68,8 +68,6 @@ export default function MessageInputField(props: SendMessageProps) {
   };
 
   const handleNewConvoSend = async () => {
-    if (!twilioCredentials?.twilio_number) return;
-
     const { selectedContacts } = props;
     if (!selectedContacts || selectedContacts.length === 0) return;
 
@@ -141,7 +139,7 @@ export default function MessageInputField(props: SendMessageProps) {
         else if (isMobilePhone(address)) {
           return addNonChatParticipant(
             address.toString(),
-            twilioCredentials.twilio_number,
+            "+15005550000",
             convo,
           );
         }
