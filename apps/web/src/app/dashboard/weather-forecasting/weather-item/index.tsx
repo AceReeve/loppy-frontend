@@ -3,10 +3,10 @@
 import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import Wind from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-wind";
-import RainChance from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-rain-chance";
-import UVIndex from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-uv";
-import Pressure from "@/src/app/dashboard/marketing/weather-forecasting/weather-item/item-pressure";
+import Wind from "@/src/app/dashboard/weather-forecasting/weather-item/item-wind";
+import RainChance from "@/src/app/dashboard/weather-forecasting/weather-item/item-rain-chance";
+import UVIndex from "@/src/app/dashboard/weather-forecasting/weather-item/item-uv";
+import Pressure from "@/src/app/dashboard/weather-forecasting/weather-item/item-pressure";
 
 interface WeatherItemProps {
   header: string;
