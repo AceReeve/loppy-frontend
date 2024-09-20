@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetTeamsQuery } from "@repo/redux-utils/src/endpoints/manage-team";
 import TeamDetails from "@/src/app/dashboard/settings/teams/_tabs/team-details.tsx";
 import Members from "@/src/app/dashboard/settings/teams/_tabs/members.tsx";
-import Roles from "@/src/app/dashboard/settings/teams/_tabs/roles.tsx";
+// import Roles from "@/src/app/dashboard/settings/teams/_tabs/roles.tsx";
 // hide permissions tab for now
 // import Permissions from "@/src/app/dashboard/settings/teams/_tabs/permissions.tsx";
 import TeamSettings from "@/src/app/dashboard/settings/teams/_tabs/team-settings.tsx";
@@ -42,11 +42,11 @@ const tabs = [
     id: "members",
     component: Members,
   },
-  {
-    label: "Roles",
-    id: "roles",
-    component: Roles,
-  },
+  // {
+  //   label: "Roles",
+  //   id: "roles",
+  //   component: Roles,
+  // },
   // hide permissions tab for now
   // {
   //   label: "Permissions",
