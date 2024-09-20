@@ -73,9 +73,9 @@ export default function TeamDetails(props: TeamDetailsProps) {
             </div>
 
             <div className="m-auto block flex flex-col font-poppins">
-              <h1 className="font-nunito text-[16px] ">{props.team.team}</h1>
+              <h1 className="font-nunito text-[16px] ">{team?.team}</h1>
               <p className="mt-2 max-w-[600px] font-light leading-7 text-slate-400">
-                {props.team.description}
+                {team?.description}
               </p>
             </div>
           </div>
