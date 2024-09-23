@@ -88,7 +88,7 @@ const api = baseApi
             ? new URLSearchParams(payload).toString()
             : "";
           return {
-            url: `/react-flow/folders${queryParams}`,
+            url: `/react-flow/folders/?${queryParams}`,
           };
         },
         providesTags: ["workflow"],

@@ -14,14 +14,12 @@ import {
   Input,
   Separator,
 } from "@repo/ui/components/ui";
-import { useGetContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import {
   useGetWeatherDailyQuery,
   useGetWeatherDayQuery,
 } from "@repo/redux-utils/src/endpoints/weather.ts";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { WeatherData } from "@repo/redux-utils/src/endpoints/types/weather";
 import TemperatureChart from "@/src/app/dashboard/weather-forecasting/weather-temperature";
 import WeatherItem from "@/src/app/dashboard/weather-forecasting/weather-item";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
@@ -36,9 +34,11 @@ function Page() {
     isLoading: dayIsLoading,
   } = useGetWeatherDayQuery({ city });
 
+  /*
   String.prototype.toCapitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
   };
+*/
 
   const {
     data: weatherDaily,
@@ -54,10 +54,10 @@ function Page() {
     }
   }, [weatherDaily]);*/
 
-  const handleSubmit = (event: Event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
+    //event.preventDefault();
     if (inputRef.current) {
-      setCity(inputRef.current.value);
+      //setCity(inputRef.current.value);
     }
     setOpen(false);
   };
@@ -134,25 +134,25 @@ function Page() {
     {
       header: "Wind",
       description: "Today wind speed",
-      measurement: weather ? weather.wind.speed : 0,
+      measurement: weather?.wind?.speed ?? 0,
       suffix: "km/h",
     },
     {
       header: "Rain Chance",
       description: "Today rain chance",
-      measurement: weather ? weather.main.humidity : 0,
+      measurement: weather?.main?.humidity ?? 0,
       suffix: "%",
     },
     {
       header: "Pressure",
       description: "Today Pressure",
-      measurement: weather ? weather.main.pressure : 0,
+      measurement: weather?.main?.pressure ?? 0,
       suffix: "hpa",
     },
     {
       header: "UV Index",
       description: "Today UV Index",
-      measurement: "2",
+      measurement: 2,
       suffix: "",
     },
   ];
@@ -228,11 +228,12 @@ function Page() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <img
+                      alt="location"
                       className="h-[22.07px] w-[18.76px]"
                       src="/assets/icons/weather-forecast/icon-location.svg"
                     />
                     <div className="h-[30.89px] w-[87.17px] font-nunito text-lg font-semibold leading-7 text-white">
-                      {city.toCapitalize()}
+                      {city}
                     </div>
                   </div>
                   <div className="text-right font-montserrat text-sm font-normal leading-tight text-white">
@@ -242,42 +243,47 @@ function Page() {
                 <div className="relative flex h-[178.74px] flex-col">
                   <div className="flex justify-center">
                     <div className="text-center font-nunito text-[100px] font-normal leading-[140px] text-white">
-                      {convertToFahrenheit(weather.main.temp)}
+                      {weather && weather.main
+                        ? convertToFahrenheit(weather.main.temp)
+                        : "N/A"}
                     </div>
                     <div className="text-center font-nunito text-5xl font-normal leading-[67.20px] text-white">
                       °F
                     </div>
                   </div>
                   <div className="text-center font-nunito text-base font-medium leading-snug text-white">
-                    {weather.weather[0].description}
+                    {weather?.weather?.[0]?.description ?? "N/A"}
                   </div>
                 </div>
                 <div className="grid grid-cols-3">
                   <div className="flex items-center gap-2">
                     <img
+                      alt="pressure"
                       src="/assets/icons/weather-forecast/icon-pressure.svg"
                       className="relative h-5 w-5"
                     />
                     <div className="font-nunito text-sm font-semibold leading-tight text-white">
-                      {weather.main.pressure} hpa
+                      {weather?.main?.pressure ?? "N/A"} hpa
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <img
+                      alt="pressure"
                       src="/assets/icons/weather-forecast/icon-raindrop.svg"
                       className="relative h-5 w-5"
                     />
                     <div className="font-nunito text-sm font-semibold leading-tight text-white">
-                      {weather.main.humidity} %
+                      {weather?.main?.pressure ?? "N/A"} %
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <img
+                      alt="speed"
                       src="/assets/icons/weather-forecast/icon-weather-wind-breeze.svg"
                       className="relative h-5 w-5"
                     />
                     <div className="font-nunito text-sm font-semibold leading-tight text-white">
-                      {weather.wind.speed} km/h
+                      {weather?.wind?.speed ?? "N/A"} km/h
                     </div>
                   </div>
                 </div>
@@ -293,20 +299,21 @@ function Page() {
             </div>
           </div>
           <div className=" mt-7 w-full gap-8 sm:grid lg:grid-cols-2">
-            {items.map((item, index) => (
+            {items?.map((item, index) => (
               <WeatherItem
                 key={index}
-                header={item.header}
-                description={item.description}
-                measurement={item.measurement}
-                suffix={item.suffix}
+                header={item.header ?? "No Header"}
+                description={item.description ?? "No Description"}
+                measurement={item.measurement ?? "N/A"}
+                suffix={item.suffix ?? ""}
               />
-            ))}
+            )) || <p>No weather data available</p>}
           </div>
         </div>
         <div className="border-gray-[#E1E7EB] max-w-[412px] border-l-2  px-12 sm:m-auto  sm:mt-16 lg:mt-10  xl:ml-14">
           <div className="flex justify-between">
             <img
+              alt="arrow-right"
               className="h-4 w-[9px] rotate-180"
               src="/assets/icons/weather-forecast/icon-arrow-right.svg"
             />
@@ -416,7 +423,7 @@ function Page() {
                   </div>
                 );
               }
-            })}
+            }) || <p>No Weather Available</p>}
           </div>
         </div>
       </div>
