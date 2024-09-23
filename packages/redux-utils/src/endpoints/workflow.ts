@@ -24,7 +24,7 @@ const api = baseApi
         query: (payload) => {
           const queryParams = new URLSearchParams(payload).toString();
           return {
-            url: `/react-flow/workflow${queryParams}`,
+            url: `/react-flow/workflow?${queryParams}`,
             method: "POST",
           };
         },
@@ -40,7 +40,7 @@ const api = baseApi
             ? new URLSearchParams({ id: payload.id }).toString()
             : "";
           return {
-            url: `/react-flow/workflow${queryParams}`,
+            url: `/react-flow/workflow?${queryParams}`,
             method: "PUT",
             body: payload,
           };
@@ -88,7 +88,7 @@ const api = baseApi
             ? new URLSearchParams(payload).toString()
             : "";
           return {
-            url: `/react-flow/folders/?${queryParams}`,
+            url: `/react-flow/folders?${queryParams}`,
           };
         },
         providesTags: ["workflow"],
@@ -131,7 +131,7 @@ const api = baseApi
             name: payload.name,
           }).toString();
           return {
-            url: `/react-flow/folder/?${queryParams}`,
+            url: `/react-flow/{id}?${queryParams}`,
             method: "PUT",
           };
         },
