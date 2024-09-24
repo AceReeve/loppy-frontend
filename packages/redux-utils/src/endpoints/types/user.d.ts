@@ -76,7 +76,7 @@ export interface GetUserProfileResponse {
     updated_at: string;
     reset_password_token: string;
   };
-  userInfo: {
+  userInfo?: {
     _id: string;
     user_id: string;
     first_name: string;

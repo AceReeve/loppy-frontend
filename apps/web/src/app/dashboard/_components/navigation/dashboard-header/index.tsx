@@ -14,6 +14,7 @@ import { signOut } from "next-auth/react";
 import { SunIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { DefaultAvatar } from "@repo/ui/components/custom";
+import { useGetUserProfileQuery } from "@repo/redux-utils/src/endpoints/user";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 
 export default function DashboardHeader() {
@@ -30,6 +31,8 @@ export default function DashboardHeader() {
 
   // if (pathname === "/dashboard/messages") return null;
 
+  const { data: userProfile } = useGetUserProfileQuery(undefined);
+
   if (!session) return null;
 
   return (
@@ -44,17 +47,29 @@ export default function DashboardHeader() {
               <div className="pointer-events-none relative flex overflow-hidden rounded-full text-sm focus:ring-4 focus:ring-gray-300">
                 <div className="size-10">
                   <DefaultAvatar
-                    image={session.user.image ?? ""}
+                    // image={
+                    //   userProfile?.userInfo.profile?.image_1.path ??
+                    //   session.user.image ??
+                    //   ""
+                    // }
+                    image={
+                      userProfile?.userInfo?.profile?.image_1.path ??
+                      session.user.image ??
+                      ""
+                    }
                     name={session.user.name ?? ""}
                   />
                 </div>
               </div>
               <div className="pointer-events-none relative inline-flex flex-col items-start justify-center whitespace-nowrap">
                 <div className="font-open-sans text-sm font-bold text-black">
-                  Hello {session.user.email?.split("@")[0]}!
+                  {/* Hello {session.user.email?.split("@")[0]}! */}
+                  Hello {userProfile?.userInfo?.first_name ?? session.user.name}
+                  !
                 </div>
                 <div className="font-open-sans text-xs  font-normal text-gray-700">
-                  Admin
+                  {/* Admin{" "} */}
+                  {userProfile?.userDetails.role.role_name ?? "Role"}
                 </div>
               </div>
               <Menu as="div" className="relative">
