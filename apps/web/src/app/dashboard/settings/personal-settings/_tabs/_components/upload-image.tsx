@@ -51,7 +51,7 @@ export default function UploadImage(props: UploadImageProps) {
     const formData = new FormData();
     formData.append("image_1", avatar, "avatar.jpg");
 
-    if (!props.userId) {
+    if (props.userId === "") {
       toast({
         description: "Update your profile first",
       });
