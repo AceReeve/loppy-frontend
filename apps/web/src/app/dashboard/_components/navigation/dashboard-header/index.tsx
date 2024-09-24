@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ArrowCircleDown,
-  Logout,
-  Moon,
-  Notification,
-  ProfileCircle,
-} from "iconsax-react";
+import { ArrowCircleDown, Logout, Moon, ProfileCircle } from "iconsax-react";
 import { useTheme } from "@repo/ui/hooks";
 import React, { useEffect, useState } from "react";
 import { Menu } from "@headlessui/react";
@@ -15,7 +9,10 @@ import { SunIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { DefaultAvatar } from "@repo/ui/components/custom";
 import { useGetUserProfileQuery } from "@repo/redux-utils/src/endpoints/user";
+import { Button, buttonVariants } from "@repo/ui/components/ui";
+import { cn } from "@repo/ui/utils";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import NotificationsDrawer from "@/src/app/dashboard/_components/navigation/dashboard-header/notifications-drawer.tsx";
 
 export default function DashboardHeader() {
   const [mounted, setMounted] = useState(false);
@@ -23,7 +20,8 @@ export default function DashboardHeader() {
 
   // const pathname = usePathname();
 
-  const { session } = useDashboardState();
+  const { session, notificationsOpened, toggleNotifications } =
+    useDashboardState();
 
   useEffect(() => {
     setMounted(true);
@@ -41,7 +39,12 @@ export default function DashboardHeader() {
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
             {/* Profile */}
-            <div className="relative flex items-center gap-3 rounded-full bg-card p-3">
+            <div
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "relative flex items-center gap-3 rounded-full bg-card p-3 hover:bg-white",
+              )}
+            >
               <div className="absolute -inset-2 rounded-lg" />
               <span className="sr-only">Open user menu</span>
               <div className="pointer-events-none relative flex overflow-hidden rounded-full text-sm focus:ring-4 focus:ring-gray-300">
@@ -112,9 +115,9 @@ export default function DashboardHeader() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="outline"
               className="h-11 w-11 rounded-full bg-card p-3"
-              data-dropdown-toggle="notification-dropdown"
               onClick={() => {
                 setTheme(theme === "light" ? "dark" : "light");
               }}
@@ -129,32 +132,26 @@ export default function DashboardHeader() {
                   )}
                 </>
               ) : null}
-            </button>
+            </Button>
 
-            <div className="flex items-center gap-3 rounded-full bg-card p-3">
+            <Button
+              variant="outline"
+              className="flex items-center gap-3 rounded-full p-3"
+            >
               <div className="size-4 rounded-full bg-[#28C66F]" />
               <div className="flex flex-col items-center">
-                <div className="font-open-sans text-sm font-bold text-gray-800">
+                <div className="font-open-sans text-sm font-bold">
                   ServiceTitan API Connected
                 </div>
                 <div className="font-open-sans text-xs font-bold text-gray-300">
                   Last Data pulled 5:54pm
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3 rounded-full bg-card p-3">
-              <div className="relative flex size-10 items-center justify-center rounded-full bg-gray-100">
-                <Notification className="size-5" />
-              </div>
-              <div className="font-poppins text-sm font-normal text-gray-800">
-                Notification
-              </div>
-              <div className="flex size-6 flex-col items-center justify-center rounded-full bg-red-500">
-                <div className="font-poppins text-xs font-bold text-white">
-                  10
-                </div>
-              </div>
-            </div>
+            </Button>
+            <NotificationsDrawer
+              open={notificationsOpened}
+              setOpen={toggleNotifications}
+            />
           </div>
         </div>
       </div>
