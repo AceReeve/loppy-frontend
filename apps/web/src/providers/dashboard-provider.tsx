@@ -7,6 +7,8 @@ import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/ty
 interface ContextType {
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
+  notificationsOpened: boolean;
+  toggleNotifications: (isOpened?: boolean) => void;
   session: Session | null;
   currentOrg: GetOrganizationResponse;
 }
@@ -23,6 +25,7 @@ export default function DashboardProvider({
   currentOrg: GetOrganizationResponse;
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [notificationsOpened, setNotificationsOpened] = useState(false);
 
   // Toggle sidebar and preserve state to local storage
   const toggleSidebar = useCallback(() => {
@@ -30,6 +33,14 @@ export default function DashboardProvider({
       localStorage.setItem("sidebar-collapsed", (!prev).toString());
       return !prev;
     });
+  }, []);
+
+  const toggleNotifications = useCallback((isOpened?: boolean) => {
+    if (isOpened === undefined) {
+      setNotificationsOpened((prev) => !prev);
+    } else {
+      setNotificationsOpened(isOpened);
+    }
   }, []);
 
   // Set initial value of sidebar collapse with local storage
@@ -41,7 +52,14 @@ export default function DashboardProvider({
 
   return (
     <DashboardContext.Provider
-      value={{ sidebarCollapsed, toggleSidebar, session, currentOrg }}
+      value={{
+        currentOrg,
+        notificationsOpened,
+        session,
+        sidebarCollapsed,
+        toggleNotifications,
+        toggleSidebar,
+      }}
     >
       {children}
     </DashboardContext.Provider>
