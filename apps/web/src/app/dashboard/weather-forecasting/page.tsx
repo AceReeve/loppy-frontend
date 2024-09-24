@@ -1,7 +1,7 @@
 /* eslint-disable -- will do later since this is a lot */
 
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   AlertDescription,
@@ -11,8 +11,12 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  Input,
   Separator,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@repo/ui/components/ui";
 import {
   useGetWeatherDailyQuery,
@@ -23,11 +27,13 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import TemperatureChart from "@/src/app/dashboard/weather-forecasting/weather-temperature";
 import WeatherItem from "@/src/app/dashboard/weather-forecasting/weather-item";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { states } from "@/src/data/states";
 
 function Page() {
   const [city, setCity] = useState("London");
   const [open, setOpen] = useState(false);
-  const inputRef = useRef(null);
+  const [selectedCity, setSelectedCity] = useState("");
+  //const inputRef = useRef(null);
   const {
     data: weather,
     error: dayError,
@@ -46,6 +52,10 @@ function Page() {
     isLoading: dailyIsLoading,
   } = useGetWeatherDailyQuery({ city });
 
+  const handleChangeCity = (value: string) => {
+    setSelectedCity(value);
+  };
+
   //const [weather, setWeather] = useState<WeatherData | null>(null);
 
   /*  useEffect(() => {
@@ -56,9 +66,7 @@ function Page() {
 
   const handleSubmit = () => {
     //event.preventDefault();
-    if (inputRef.current) {
-      //setCity(inputRef.current.value);
-    }
+    setCity(selectedCity);
     setOpen(false);
   };
 
@@ -124,11 +132,9 @@ function Page() {
   const getTimeWithOffset = () => {
     //const offset = weatherDaily ? weatherDaily.city.timezone : 0;
     const offset = weather ? weather.timezone : 0;
-    const currentTime = new Date();
     const localTime =
       currentTime.getTime() + currentTime.getTimezoneOffset() * 60 * 1000;
-    const adjustedTime = new Date(localTime + offset * 1000);
-    return adjustedTime;
+    return new Date(localTime + offset * 1000);
   };
   const items = [
     {
@@ -203,15 +209,21 @@ function Page() {
                 onSubmit={handleSubmit}
                 className="flex h-full content-center gap-2"
               >
-                <label className="content-center" htmlFor="input">
+                <label className="flex items-center" htmlFor="input">
                   City:
                 </label>
-                <Input
-                  className="w-full"
-                  id="input"
-                  type="text"
-                  ref={inputRef}
-                />
+                <Select onValueChange={(value) => handleChangeCity(value)}>
+                  <SelectTrigger variant="outline">
+                    <SelectValue placeholder="Select a state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {states.US.map((state) => (
+                      <SelectItem key={state.value} value={state.label}>
+                        {state.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <div className="flex justify-end">
                   <Button type="submit">Submit</Button>
                 </div>
@@ -222,7 +234,7 @@ function Page() {
       </div>
       <div className="mt-14 xl:flex ">
         <div className="w-full">
-          <div className="relative min-h-[380px] w-full min-w-[464px] overflow-clip rounded-lg bg-gradient-to-b from-[#401A65] to-[#091728] p-9">
+          <div className="relative min-h-[380px] w-full min-w-[464px] overflow-clip rounded-lg bg-gradient-to-b from-primary/70 to-primary p-9">
             <div className="grid h-full w-full gap-4 2xl:grid-cols-2">
               <div className="flex h-full flex-col justify-between">
                 <div className="flex items-center justify-between">
