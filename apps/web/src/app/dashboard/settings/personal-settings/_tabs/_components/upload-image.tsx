@@ -1,5 +1,8 @@
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useUploadProfileMutation } from "@repo/redux-utils/src/endpoints/user";
+import {
+  useGetUserProfileQuery,
+  useUploadProfileMutation,
+} from "@repo/redux-utils/src/endpoints/user";
 import {
   Button,
   Dialog,
@@ -28,6 +31,8 @@ interface ProfileResponse {
 }
 
 export default function UploadImage(props: UploadImageProps) {
+  const { refetch: refetchUserProfile } = useGetUserProfileQuery(undefined);
+
   // set profile image
   const handleSetProfileSrc = (src: string) => {
     props.handleSetProfileSrc(src);
@@ -46,6 +51,13 @@ export default function UploadImage(props: UploadImageProps) {
     const formData = new FormData();
     formData.append("image_1", avatar, "avatar.jpg");
 
+    if (props.userId === "") {
+      toast({
+        description: "Update your profile first",
+      });
+      return;
+    }
+
     await sendRequest({ userId: props.userId, payload: formData })
       .unwrap()
       .then((res: unknown) => {
@@ -54,6 +66,7 @@ export default function UploadImage(props: UploadImageProps) {
           description: "Profile picture updated successfully",
         });
         handleSetProfileSrc(response.profile.image_1.path);
+        void refetchUserProfile();
       })
       .catch((err: unknown) => {
         toast({
