@@ -1,5 +1,11 @@
-import { Input } from "@repo/ui/components/ui";
-import { useState, useCallback, type ChangeEvent, useEffect } from "react";
+import { Button, Input } from "@repo/ui/components/ui";
+import {
+  useState,
+  useCallback,
+  type ChangeEvent,
+  useEffect,
+  useRef,
+} from "react";
 import Cropper, { type Area } from "react-easy-crop";
 
 interface ImageCropperProps {
@@ -11,6 +17,7 @@ export default function ImageCropper({ onImageCropped }: ImageCropperProps) {
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (croppedAreaPixels) {
@@ -94,9 +101,20 @@ export default function ImageCropper({ onImageCropped }: ImageCropperProps) {
     }
   };
 
+  const handleButtonClick = () => {
+    inputFileRef.current?.click();
+  };
+
   return (
-    <div className="h-full space-y-4">
-      <Input type="file" accept="image/jpeg" onChange={handleFileChange} />
+    <div className="h-full w-full space-y-4">
+      <Input
+        type="file"
+        className="hidden"
+        accept="image/jpeg"
+        ref={inputFileRef}
+        onChange={handleFileChange}
+      />
+
       {imageSrc ? (
         <>
           <div className="relative aspect-[1/1] w-full">
@@ -122,6 +140,12 @@ export default function ImageCropper({ onImageCropped }: ImageCropperProps) {
           />
         </>
       ) : null}
+
+      <div className="flex justify-center">
+        <Button type="button" variant="outline" onClick={handleButtonClick}>
+          Choose Image
+        </Button>
+      </div>
     </div>
   );
 }
