@@ -28,6 +28,7 @@ import TemperatureChart from "@/src/app/dashboard/weather-forecasting/weather-te
 import WeatherItem from "@/src/app/dashboard/weather-forecasting/weather-item";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { states } from "@/src/data/states";
+import WeatherIcon from "@/src/app/dashboard/weather-forecasting/_components/weather-icons.tsx";
 
 function Page() {
   const [city, setCity] = useState("London");
@@ -375,7 +376,11 @@ function Page() {
                       >
                         {formatHour(day.dt_txt)}
                       </div>
-                      <div className="absolute left-[23px] top-[37px] h-8 w-8 rounded-[100px] bg-yellow-400" />
+                      {/*<div className="absolute left-[23px] top-[37px] h-8 w-8 rounded-[100px] bg-yellow-400" />*/}
+                      <WeatherIcon
+                        weather={day.weather[0].main}
+                        className="absolute left-[23px] top-[37px] h-8 w-8 rounded-[100px]"
+                      />
                     </div>
                   );
                 }
@@ -431,7 +436,12 @@ function Page() {
                         {formatDate(day.dt_txt)}
                       </div>
                     </div>
-                    <div className="absolute left-[240px] top-[2px] h-12 w-12 rounded-[100px] bg-yellow-400" />
+                    {/*<div className="absolute left-[240px] top-[2px] h-12 w-12 rounded-[100px] bg-yellow-400" />*/}
+
+                    <WeatherIcon
+                      weather={day.weather[0].main}
+                      className="absolute left-[240px] top-[2px] h-12 w-12 rounded-[100px]"
+                    />
                   </div>
                 );
               }
