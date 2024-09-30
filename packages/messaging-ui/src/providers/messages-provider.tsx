@@ -41,6 +41,7 @@ import { type InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/u
 import { useGetContactsListQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/user.ts";
 import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
+import { GetAllInboxesResponse } from "@repo/redux-utils/src/endpoints/types/inboxes";
 import { handlePromiseRejection } from "../helpers/helpers.ts";
 import {
   type ShowEmojiPickerProps,
@@ -68,15 +69,18 @@ interface ContextType {
   invitedUsers: InviteUserResponse | undefined;
   messageFilter: MessagingFilters;
   setMessageFilter: (filter: MessagingFilters) => void;
+  inbox: GetAllInboxesResponse;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
 
 export default function MessagesProvider({
+  inbox,
   organization,
   children,
   session,
 }: {
+  inbox: GetAllInboxesResponse;
   organization: GetOrganizationResponse;
   children: React.ReactNode;
   session: Session | null;
@@ -139,6 +143,7 @@ export default function MessagesProvider({
     if (!token) return;
 
     const newClient = new Client(token);
+
     setClient(newClient);
 
     newClient.on("initialized", () => {
@@ -240,6 +245,19 @@ export default function MessagesProvider({
     });
   }, [token]);
 
+  if (connectionState === "denied") {
+    return (
+      <Alert className="max-w-96" variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Failed loading messages</AlertTitle>
+        <AlertDescription>
+          Something went wrong while loading your conversations. Please try
+          again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   if (isLoading) {
     return (
       <Alert className="max-w-96">
@@ -338,6 +356,7 @@ export default function MessagesProvider({
         invitedUsers,
         messageFilter,
         setMessageFilter,
+        inbox,
       }}
     >
       {newConvoLoading ? <LoadingOverlay /> : null}
@@ -362,7 +381,7 @@ export default function MessagesProvider({
       <ManualPopover
         clickEvent={emojiPickerState?.event ?? null}
         hideType="hidden" // or "remove"
-        position="top"
+        position="top-right"
       >
         <EmojiPicker
           emojiStyle={EmojiStyle.FACEBOOK}
