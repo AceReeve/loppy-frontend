@@ -29,6 +29,7 @@ import { useMessagesState } from "../../providers/messages-provider.tsx";
 import { MAX_FILE_SIZE, MAX_MESSAGE_LINE_WIDTH } from "../../constants.ts";
 import { getBlobFile, getFirstMessagePerDate } from "../../utils.ts";
 import MessageMedia from "./message-media.tsx";
+import ImagePreviewModal from "../modals/image-preview-modal.tsx";
 
 interface MessageListProps {
   messages: ReduxMessage[];
@@ -105,6 +106,8 @@ export default function MessagesList(props: MessageListProps) {
 
   // Updates the user list based on message authors to be able to get friendly names
   useEffect(() => {
+    setFirstMessagePerDay(getFirstMessagePerDate(messages));
+
     messages.forEach((message) => {
       const participant = message.participantSid
         ? participantsBySid.get(message.participantSid)
@@ -117,7 +120,6 @@ export default function MessagesList(props: MessageListProps) {
           });
         }
       }
-      setFirstMessagePerDay(getFirstMessagePerDate(messages));
     });
   }, [messages]);
 
@@ -268,7 +270,8 @@ export default function MessagesList(props: MessageListProps) {
         // show avatar if outbound and avoid repeatedly showing the avatar if the message is sent by the same author
         const isShowAvatar =
           isOutbound &&
-          (!index || messages[index - 1].author !== message.author);
+          (messages[index + 1]?.author !== message.author ||
+            firstMessagePerDay.includes(message.sid));
 
         return (
           <div
@@ -289,7 +292,7 @@ export default function MessagesList(props: MessageListProps) {
             >
               <div className="messages grid grid-flow-row gap-2 text-sm text-gray-800">
                 <div
-                  className={`relative flex ${isOutbound ? "flex-row" : "flex-row-reverse"} items-start`}
+                  className={`relative flex ${isOutbound ? "flex-row" : "flex-row-reverse"} items-end`}
                   ref={(el) => (refs.current[message.sid] = el)}
                 >
                   {isShowAvatar && (
@@ -371,6 +374,27 @@ export default function MessagesList(props: MessageListProps) {
           </div>
         );
       })}
+      {imagePreview
+        ? (function () {
+            const dateString = imagePreview?.message.dateCreated;
+            const date = dateString ? new Date(dateString) : "";
+            return (
+              <ImagePreviewModal
+                image={imagePreview.file}
+                isOpen={!!imagePreview}
+                onOpenChange={() => setImagePreview(null)}
+                onDownload={() => {
+                  saveAs(
+                    imagePreview.file,
+                    imagePreview.message.attachedMedia?.find(
+                      ({ sid }) => sid === imagePreview.sid,
+                    )?.filename ?? "",
+                  );
+                }}
+              />
+            );
+          })()
+        : null}
     </div>
   );
 }
