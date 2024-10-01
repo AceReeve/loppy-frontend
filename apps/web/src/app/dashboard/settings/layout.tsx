@@ -166,7 +166,7 @@ export default function Layout({
               key={menu.id}
               className="flex w-full flex-col border-b border-gray-200 py-2 last-of-type:border-b-0"
             >
-              <div className="mx-6 w-full py-3 font-poppins text-xs font-normal uppercase tracking-tight text-gray-400 dark:text-primary">
+              <div className="mx-6 hidden w-full py-3 font-poppins text-xs font-normal uppercase tracking-tight text-gray-400 dark:text-primary xl:block">
                 {menu.title}
               </div>
               {menu.children?.map((menuItem) => (
@@ -174,13 +174,14 @@ export default function Layout({
                   href={rootSlug + menuItem.url}
                   active={rootSlug + menuItem.url === pathName}
                   key={menuItem.id}
+                  title={menuItem.title}
                 >
                   {renderMenuIcon(
                     menuItem.icon,
                     menuItem.imageIcon,
                     rootSlug + menuItem.url === pathName,
                   )}
-                  {menuItem.title}
+                  <span className="hidden xl:block">{menuItem.title}</span>
                 </VerticalMenuLink>
               ))}
             </div>
