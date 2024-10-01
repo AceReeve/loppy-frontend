@@ -30,7 +30,7 @@ interface SendMessageProps {
 }
 
 export default function MessageInputField(props: SendMessageProps) {
-  const { setNewConvoLoading, session } = useMessagesState();
+  const { setNewConvoLoading, session, inbox } = useMessagesState();
   const [message, setMessage] = useState("");
   const conversations = useSelector((state: AppState) => state.conversations);
   const participants = useSelector((state: AppState) => state.participants);
@@ -139,7 +139,8 @@ export default function MessageInputField(props: SendMessageProps) {
         else if (isMobilePhone(address)) {
           return addNonChatParticipant(
             address.toString(),
-            "+15005550000",
+            process.env.NEXT_PUBLIC_TEST_CONVO_TWILIO_PROXY_NUMBER ??
+              inbox.purchased_number,
             convo,
           );
         }

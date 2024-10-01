@@ -6,7 +6,8 @@ import dynamic from "next/dynamic";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export default function TemperatureChart(data) {
+//parameter inside is data
+export default function TemperatureChart() {
   const series: ApexOptions["series"] = [
     {
       name: "Temperature",
@@ -94,8 +95,8 @@ export default function TemperatureChart(data) {
       },
       markers: {
         radius: 50,
-        width: 8,
-        height: 8,
+        // width: 8,
+        // height: 8,
         offsetX: -5,
       },
     },
@@ -144,7 +145,7 @@ export default function TemperatureChart(data) {
         {series[0].data.map((temp: any, index) => (
           <p
             key={index}
-            className="font-roboto px-2 text-center font-light text-white"
+            className="px-2 text-center font-roboto font-light text-white"
           >
             {temp}°
           </p>

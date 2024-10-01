@@ -212,7 +212,7 @@ export const handleOAuthSignin = async (provider: "google" | "facebook") => {
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      // console.log("HEYYYYYYYYYY");
+      //   console.log(error);
     }
 
     throw error;

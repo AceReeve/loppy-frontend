@@ -1,7 +1,7 @@
 /* eslint-disable -- will do later since this is a lot */
 
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   AlertDescription,
@@ -11,40 +11,51 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  Input,
   Separator,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@repo/ui/components/ui";
-import { useGetContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import {
   useGetWeatherDailyQuery,
   useGetWeatherDayQuery,
 } from "@repo/redux-utils/src/endpoints/weather.ts";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { WeatherData } from "@repo/redux-utils/src/endpoints/types/weather";
 import TemperatureChart from "@/src/app/dashboard/weather-forecasting/weather-temperature";
 import WeatherItem from "@/src/app/dashboard/weather-forecasting/weather-item";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { states } from "@/src/data/states";
+import WeatherIcon from "@/src/app/dashboard/weather-forecasting/_components/weather-icons.tsx";
 
 function Page() {
   const [city, setCity] = useState("London");
   const [open, setOpen] = useState(false);
-  const inputRef = useRef(null);
+  const [selectedCity, setSelectedCity] = useState("");
+  //const inputRef = useRef(null);
   const {
     data: weather,
     error: dayError,
     isLoading: dayIsLoading,
   } = useGetWeatherDayQuery({ city });
 
+  /*
   String.prototype.toCapitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
   };
+*/
 
   const {
     data: weatherDaily,
     error: dailyError,
     isLoading: dailyIsLoading,
   } = useGetWeatherDailyQuery({ city });
+
+  const handleChangeCity = (value: string) => {
+    setSelectedCity(value);
+  };
 
   //const [weather, setWeather] = useState<WeatherData | null>(null);
 
@@ -54,11 +65,9 @@ function Page() {
     }
   }, [weatherDaily]);*/
 
-  const handleSubmit = (event: Event) => {
-    event.preventDefault();
-    if (inputRef.current) {
-      setCity(inputRef.current.value);
-    }
+  const handleSubmit = () => {
+    //event.preventDefault();
+    setCity(selectedCity);
     setOpen(false);
   };
 
@@ -124,35 +133,33 @@ function Page() {
   const getTimeWithOffset = () => {
     //const offset = weatherDaily ? weatherDaily.city.timezone : 0;
     const offset = weather ? weather.timezone : 0;
-    const currentTime = new Date();
     const localTime =
       currentTime.getTime() + currentTime.getTimezoneOffset() * 60 * 1000;
-    const adjustedTime = new Date(localTime + offset * 1000);
-    return adjustedTime;
+    return new Date(localTime + offset * 1000);
   };
   const items = [
     {
       header: "Wind",
       description: "Today wind speed",
-      measurement: weather ? weather.wind.speed : 0,
+      measurement: weather?.wind?.speed ?? 0,
       suffix: "km/h",
     },
     {
       header: "Rain Chance",
       description: "Today rain chance",
-      measurement: weather ? weather.main.humidity : 0,
+      measurement: weather?.main?.humidity ?? 0,
       suffix: "%",
     },
     {
       header: "Pressure",
       description: "Today Pressure",
-      measurement: weather ? weather.main.pressure : 0,
+      measurement: weather?.main?.pressure ?? 0,
       suffix: "hpa",
     },
     {
       header: "UV Index",
       description: "Today UV Index",
-      measurement: "2",
+      measurement: 2,
       suffix: "",
     },
   ];
@@ -203,15 +210,21 @@ function Page() {
                 onSubmit={handleSubmit}
                 className="flex h-full content-center gap-2"
               >
-                <label className="content-center" htmlFor="input">
+                <label className="flex items-center" htmlFor="input">
                   City:
                 </label>
-                <Input
-                  className="w-full"
-                  id="input"
-                  type="text"
-                  ref={inputRef}
-                />
+                <Select onValueChange={(value) => handleChangeCity(value)}>
+                  <SelectTrigger variant="outline">
+                    <SelectValue placeholder="Select a state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {states.US.map((state) => (
+                      <SelectItem key={state.value} value={state.label}>
+                        {state.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <div className="flex justify-end">
                   <Button type="submit">Submit</Button>
                 </div>
@@ -222,17 +235,18 @@ function Page() {
       </div>
       <div className="mt-14 xl:flex ">
         <div className="w-full">
-          <div className="relative min-h-[380px] w-full min-w-[464px] overflow-clip rounded-lg bg-gradient-to-b from-[#401A65] to-[#091728] p-9">
+          <div className="relative min-h-[380px] w-full min-w-[464px] overflow-clip rounded-lg bg-gradient-to-b from-primary/70 to-primary p-9">
             <div className="grid h-full w-full gap-4 2xl:grid-cols-2">
               <div className="flex h-full flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <img
+                      alt="location"
                       className="h-[22.07px] w-[18.76px]"
                       src="/assets/icons/weather-forecast/icon-location.svg"
                     />
                     <div className="h-[30.89px] w-[87.17px] font-nunito text-lg font-semibold leading-7 text-white">
-                      {city.toCapitalize()}
+                      {city}
                     </div>
                   </div>
                   <div className="text-right font-montserrat text-sm font-normal leading-tight text-white">
@@ -242,42 +256,47 @@ function Page() {
                 <div className="relative flex h-[178.74px] flex-col">
                   <div className="flex justify-center">
                     <div className="text-center font-nunito text-[100px] font-normal leading-[140px] text-white">
-                      {convertToFahrenheit(weather.main.temp)}
+                      {weather && weather.main
+                        ? convertToFahrenheit(weather.main.temp)
+                        : "N/A"}
                     </div>
                     <div className="text-center font-nunito text-5xl font-normal leading-[67.20px] text-white">
                       °F
                     </div>
                   </div>
                   <div className="text-center font-nunito text-base font-medium leading-snug text-white">
-                    {weather.weather[0].description}
+                    {weather?.weather?.[0]?.description ?? "N/A"}
                   </div>
                 </div>
                 <div className="grid grid-cols-3">
                   <div className="flex items-center gap-2">
                     <img
+                      alt="pressure"
                       src="/assets/icons/weather-forecast/icon-pressure.svg"
                       className="relative h-5 w-5"
                     />
                     <div className="font-nunito text-sm font-semibold leading-tight text-white">
-                      {weather.main.pressure} hpa
+                      {weather?.main?.pressure ?? "N/A"} hpa
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <img
+                      alt="pressure"
                       src="/assets/icons/weather-forecast/icon-raindrop.svg"
                       className="relative h-5 w-5"
                     />
                     <div className="font-nunito text-sm font-semibold leading-tight text-white">
-                      {weather.main.humidity} %
+                      {weather?.main?.pressure ?? "N/A"} %
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <img
+                      alt="speed"
                       src="/assets/icons/weather-forecast/icon-weather-wind-breeze.svg"
                       className="relative h-5 w-5"
                     />
                     <div className="font-nunito text-sm font-semibold leading-tight text-white">
-                      {weather.wind.speed} km/h
+                      {weather?.wind?.speed ?? "N/A"} km/h
                     </div>
                   </div>
                 </div>
@@ -293,20 +312,21 @@ function Page() {
             </div>
           </div>
           <div className=" mt-7 w-full gap-8 sm:grid lg:grid-cols-2">
-            {items.map((item, index) => (
+            {items?.map((item, index) => (
               <WeatherItem
                 key={index}
-                header={item.header}
-                description={item.description}
-                measurement={item.measurement}
-                suffix={item.suffix}
+                header={item.header ?? "No Header"}
+                description={item.description ?? "No Description"}
+                measurement={item.measurement ?? "N/A"}
+                suffix={item.suffix ?? ""}
               />
-            ))}
+            )) || <p>No weather data available</p>}
           </div>
         </div>
         <div className="border-gray-[#E1E7EB] max-w-[412px] border-l-2  px-12 sm:m-auto  sm:mt-16 lg:mt-10  xl:ml-14">
           <div className="flex justify-between">
             <img
+              alt="arrow-right"
               className="h-4 w-[9px] rotate-180"
               src="/assets/icons/weather-forecast/icon-arrow-right.svg"
             />
@@ -356,7 +376,11 @@ function Page() {
                       >
                         {formatHour(day.dt_txt)}
                       </div>
-                      <div className="absolute left-[23px] top-[37px] h-8 w-8 rounded-[100px] bg-yellow-400" />
+                      {/*<div className="absolute left-[23px] top-[37px] h-8 w-8 rounded-[100px] bg-yellow-400" />*/}
+                      <WeatherIcon
+                        weather={day.weather[0].main}
+                        className="absolute left-[23px] top-[37px] h-8 w-8 rounded-[100px]"
+                      />
                     </div>
                   );
                 }
@@ -412,11 +436,16 @@ function Page() {
                         {formatDate(day.dt_txt)}
                       </div>
                     </div>
-                    <div className="absolute left-[240px] top-[2px] h-12 w-12 rounded-[100px] bg-yellow-400" />
+                    {/*<div className="absolute left-[240px] top-[2px] h-12 w-12 rounded-[100px] bg-yellow-400" />*/}
+
+                    <WeatherIcon
+                      weather={day.weather[0].main}
+                      className="absolute left-[240px] top-[2px] h-12 w-12 rounded-[100px]"
+                    />
                   </div>
                 );
               }
-            })}
+            }) || <p>No Weather Available</p>}
           </div>
         </div>
       </div>

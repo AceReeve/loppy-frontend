@@ -12,7 +12,9 @@
         "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
         "JWT_EXPIRATION",
         "COOKIE_SECURE",
-        "COOKIE_DOMAIN"
+        "COOKIE_DOMAIN",
+        "NEXT_PUBLIC_TEST_TWILIO_BUY_NUMBER",
+        "NEXT_PUBLIC_TEST_CONVO_TWILIO_PROXY_NUMBER"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",

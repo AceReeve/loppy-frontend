@@ -45,6 +45,7 @@
     "react-easy-crop": "^5.0.8",
     "react-hook-form": "^7.51.4",
     "uuid": "^10.0.0",
+    "react-simple-image-viewer": "^1.2.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {

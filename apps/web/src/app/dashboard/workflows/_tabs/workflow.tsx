@@ -63,7 +63,6 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     setOpenSheet(true);
     setIsTriggers(isTrigger);
   };
-  z;
   const triggerNodes = calculatePositions([
     {
       id: "0",
