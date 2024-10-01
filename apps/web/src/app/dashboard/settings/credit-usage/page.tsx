@@ -125,7 +125,7 @@ export default function CreditUsage() {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between">
-        <h1 className="text-[36px]">Credit Usage</h1>
+        <h1 className="text-2xl font-semibold text-slate-500">Credit Usage</h1>
       </div>
 
       <Separator className="my-2" />
