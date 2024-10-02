@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DndContext,
   type DragEndEvent,
@@ -37,8 +37,20 @@ import {
   FormItem,
   FormLabel,
   Input,
+  toast,
 } from "@repo/ui/components/ui";
 import dynamic from "next/dynamic";
+import {
+  useCreateOpportunityMutation,
+  useGetAllOpportunitiesQuery,
+  useUpdateOpportunitiesMutation,
+} from "@repo/redux-utils/src/endpoints/pipelines";
+import {
+  type CreateOpportunityPayload,
+  type UpdateOpportunitiesPayload,
+} from "@repo/redux-utils/src/endpoints/types/pipelines";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 
 const PipelineOpportunity = dynamic(
   () => import("./_components/pipeline-opportunity"),
@@ -52,18 +64,28 @@ const PipelineLead = dynamic(() => import("./_components/pipeline-lead"), {
 });
 
 export interface Opportunity {
+  _id?: string;
   id: UniqueIdentifier;
   title: string;
   itemOrder: number;
   leads: Lead[];
 }
 
+export interface OpportunityWithoutId {
+  _id?: string;
+  title: string;
+  itemOrder: number;
+  leads: Lead[];
+}
+
 export interface Lead {
+  _id?: string;
   id: UniqueIdentifier;
   description: string;
   category: string;
   itemOrder: number;
   amount: number;
+  created_at?: string;
 }
 
 // schemas
@@ -72,19 +94,36 @@ const FormSchema = z.object({
 });
 
 export default function Home() {
-  const makeid = (length: number) => {
-    let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
+  const {
+    data: oppList,
+    isLoading: oppListIsLoading,
+    // refetch: oppListRefetch,
+  } = useGetAllOpportunitiesQuery(undefined);
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [preservedOpportunities, setPreservedOpportunities] = useState<
+    Opportunity[]
+  >([]);
+
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+
+  useEffect(() => {
+    if (oppList) {
+      const mutableData = oppList.map((item) => ({
+        ...item,
+        leads: item.leads.map((lead) => ({ ...lead })),
+      }));
+
+      setOpportunities(mutableData);
     }
-    return result;
+  }, [oppList]);
+
+  const onAddOpportunity = (data: Opportunity) => {
+    setOpportunities([...opportunities, data]);
   };
 
+  // create opportunity
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -92,98 +131,56 @@ export default function Home() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  const [createOpportunityRequest] = useCreateOpportunityMutation();
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
-      id: `opportunity-${makeid(5)}`,
       itemOrder: opportunities.length + 1,
-      leads: [],
-    };
+    } as CreateOpportunityPayload;
 
-    onAddOpportunity(newData);
+    await createOpportunityRequest(newData)
+      .unwrap()
+      .then((res: unknown) => {
+        const response = structuredClone(res) as Opportunity;
 
-    form.reset();
-  }
+        response.id = `opportunity-${response._id ?? "opportunity-unknown"}`;
 
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [opportunities, setOpportunities] = useState<Opportunity[]>([
-    {
-      id: `opportunity-${makeid(5)}`,
-      title: "Survery Filled Out",
-      itemOrder: 1,
-      leads: [
-        {
-          id: `item-${makeid(5)}`,
-          description: "HVAC Pricing Servey",
-          category: "Facebook Lead",
-          itemOrder: 1,
-          amount: 1800,
-        },
-        {
-          id: `item-${makeid(5)}`,
-          description: "HVAC Pricing Servey",
-          category: "Facebook Lead",
-          itemOrder: 2,
-          amount: 500,
-        },
-      ],
-    },
-    {
-      id: `opportunity-${makeid(5)}`,
-      title: "Customer Responded",
-      itemOrder: 2,
-      leads: [
-        {
-          id: `item-${makeid(5)}`,
-          description: "HVAC Pricing Servey",
-          category: "Facebook Lead",
-          itemOrder: 1,
-          amount: 1000,
-        },
-        {
-          id: `item-${makeid(5)}`,
-          description: "HVAC Pricing Servey",
-          category: "Facebook Lead",
-          itemOrder: 2,
-          amount: 500,
-        },
-      ],
-    },
-    {
-      id: `opportunity-${makeid(5)}`,
-      title: "Follow Up",
-      itemOrder: 3,
-      leads: [],
-    },
-    {
-      id: `opportunity-${makeid(5)}`,
-      title: "Booked Lead",
-      itemOrder: 4,
-      leads: [],
-    },
-    {
-      id: `opportunity-${makeid(5)}`,
-      title: "Sold Lead",
-      itemOrder: 5,
-      leads: [],
-    },
-  ]);
-  const [preservedOpportunities, setPreservedOpportunities] = useState<
-    Opportunity[]
-  >([]);
+        onAddOpportunity(response);
 
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+        toast({
+          description: "Opportunity added successfully",
+        });
+        form.reset();
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
+  };
 
-  const onAddOpportunity = (data: Opportunity) => {
-    setOpportunities([...opportunities, data]);
+  // update opportunities
+  const [updateOpportunutiesRequest] = useUpdateOpportunitiesMutation();
+  const updateOpps = async (data: UpdateOpportunitiesPayload[]) => {
+    await updateOpportunutiesRequest(data)
+      .unwrap()
+      .then(() => {
+        toast({
+          description: "Pipeline updated successfully",
+        });
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
   };
 
   const onAddLead = (opportunityId: UniqueIdentifier, data: Lead) => {
-    // const leadName = "Lead 1";
-    // const id = `item-${makeid(5)}`;
     const opportunity = opportunities.find((item) => item.id === opportunityId);
     if (!opportunity) return;
     opportunity.leads.push(data);
+
     setOpportunities([...opportunities]);
   };
 
@@ -450,11 +447,12 @@ export default function Home() {
     const output = getUpdatedOpportunities(
       preservedOpportunities,
       currentOpportunities ?? opportunities,
-    );
+    ) as UpdateOpportunitiesPayload[];
 
     if (output.length > 0) {
       // eslint-disable-next-line no-console -- TODO: Remove no-console
       console.log(output);
+      void updateOpps(output);
     }
   }
 
@@ -468,11 +466,13 @@ export default function Home() {
       // Check if the ID of opportunities has changed
       if (opp.id !== prev[index].id) {
         if (!updatedOpps.some((existingOpp) => existingOpp.id === opp.id)) {
+          opp.itemOrder = index + 1;
           updatedOpps.push(opp);
         }
       } else if (opp.leads.length !== prev[index].leads.length) {
         // Check if the length of leads has changed
         if (!updatedOpps.some((existingOpp) => existingOpp.id === opp.id)) {
+          opp.itemOrder = index + 1;
           updatedOpps.push(opp);
         }
       } else {
@@ -480,6 +480,7 @@ export default function Home() {
         opp.leads.forEach((lead, leadIndex) => {
           if (lead.id !== prev[index].leads[leadIndex].id) {
             if (!updatedOpps.some((existingOpp) => existingOpp.id === opp.id)) {
+              opp.itemOrder = index + 1;
               updatedOpps.push(opp);
             }
           }
@@ -487,7 +488,15 @@ export default function Home() {
       }
     });
 
-    return updatedOpps;
+    // get only the ids of leads
+    const updatedData = updatedOpps.map((opportunity) => {
+      return {
+        ...opportunity,
+        leads: opportunity.leads.map((lead) => lead._id),
+      };
+    });
+
+    return updatedData;
   };
 
   // const updateItemOrder = (op: Opportunity[]) => {
@@ -503,6 +512,36 @@ export default function Home() {
 
   //   return op;
   // };
+
+  const NoResultsComponent = (
+    <div className="flex w-full flex-col items-center justify-center px-4 py-28">
+      <div className="text-center font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
+        Supercharge Your Sales with a Winning Pipeline!
+      </div>
+      <div className="mt-4 max-w-[641px] text-center font-nunito text-sm font-normal leading-normal text-gray-700">
+        A well-structured sales pipeline is your roadmap to success! By creating
+        a pipeline, you gain clear visibility into your sales process, allowing
+        you to manage leads more effectively and identify opportunities for
+        improvement. It helps you prioritize tasks, forecast sales accurately,
+        and ultimately close deals faster. Don’t leave your success to
+        chance—build a sales pipeline and watch your revenue soar!
+      </div>
+      <img
+        className="h-[149px] w-[126px]"
+        src="/assets/icons/icon-no-data-contacts.svg"
+        alt="No Data"
+      />
+    </div>
+  );
+
+  if (oppListIsLoading) {
+    return (
+      <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
+        <LoadingSpinner />
+        <p>Loading, please wait...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="m-10 rounded-xl bg-card p-10">
@@ -535,7 +574,7 @@ export default function Home() {
                       Create a new opportunity to your pipeline
                     </DialogDescription>
                   </DialogHeader>
-                  <div>
+                  <div className="grid gap-4 py-4">
                     <FormField
                       control={form.control}
                       name="title"
@@ -560,67 +599,71 @@ export default function Home() {
       </div>
 
       <div className="mx-auto w-full py-10">
-        <div className="grid w-full grid-cols-5 gap-6">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragMove={handleDragMove}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={opportunities.map((i) => i.id)}>
-              {opportunities.map((opportunity) => (
-                <PipelineOpportunity
-                  id={opportunity.id}
-                  opportunity={opportunity}
-                  key={opportunity.id}
-                  onAddLead={onAddLead}
-                >
-                  <SortableContext items={opportunity.leads.map((i) => i.id)}>
-                    <div className="flex flex-col items-start gap-y-4">
-                      {opportunity.leads
-                        .filter((i) => {
-                          if (
-                            i.description
-                              .toLowerCase()
-                              .includes(searchQuery.toLowerCase())
-                          ) {
-                            return true;
-                          }
-                          return false;
-                        })
-                        .map((i) => (
-                          <PipelineLead lead={i} id={i.id} key={i.id} />
+        {opportunities.length > 0 ? (
+          <div className="grid w-full grid-cols-5 gap-6">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragMove={handleDragMove}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={opportunities.map((i) => i.id)}>
+                {opportunities.map((opportunity) => (
+                  <PipelineOpportunity
+                    id={opportunity.id}
+                    opportunity={opportunity}
+                    key={opportunity.id}
+                    onAddLead={onAddLead}
+                  >
+                    <SortableContext items={opportunity.leads.map((i) => i.id)}>
+                      <div className="flex flex-col items-start gap-y-4">
+                        {opportunity.leads
+                          .filter((i) => {
+                            if (
+                              i.description
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase())
+                            ) {
+                              return true;
+                            }
+                            return false;
+                          })
+                          .map((i) => (
+                            <PipelineLead lead={i} id={i.id} key={i.id} />
+                          ))}
+                      </div>
+                    </SortableContext>
+                  </PipelineOpportunity>
+                ))}
+              </SortableContext>
+              <DragOverlay adjustScale={false}>
+                {/* Drag Overlay For item Item */}
+                {activeId
+                  ? activeId.toString().includes("item") && (
+                      <PipelineLead id={activeId} lead={findLead(activeId)} />
+                    )
+                  : null}
+                {/* Drag Overlay For Opportunity */}
+                {activeId
+                  ? activeId.toString().includes("opportunity") && (
+                      <PipelineOpportunity
+                        id={activeId}
+                        opportunity={findOpportunity(activeId)}
+                        onAddLead={onAddLead}
+                      >
+                        {findOpportunityLeads(activeId).map((i) => (
+                          <PipelineLead key={i.id} lead={i} id={i.id} />
                         ))}
-                    </div>
-                  </SortableContext>
-                </PipelineOpportunity>
-              ))}
-            </SortableContext>
-            <DragOverlay adjustScale={false}>
-              {/* Drag Overlay For item Item */}
-              {activeId
-                ? activeId.toString().includes("item") && (
-                    <PipelineLead id={activeId} lead={findLead(activeId)} />
-                  )
-                : null}
-              {/* Drag Overlay For Opportunity */}
-              {activeId
-                ? activeId.toString().includes("opportunity") && (
-                    <PipelineOpportunity
-                      id={activeId}
-                      opportunity={findOpportunity(activeId)}
-                      onAddLead={onAddLead}
-                    >
-                      {findOpportunityLeads(activeId).map((i) => (
-                        <PipelineLead key={i.id} lead={i} id={i.id} />
-                      ))}
-                    </PipelineOpportunity>
-                  )
-                : null}
-            </DragOverlay>
-          </DndContext>
-        </div>
+                      </PipelineOpportunity>
+                    )
+                  : null}
+              </DragOverlay>
+            </DndContext>
+          </div>
+        ) : (
+          NoResultsComponent
+        )}
       </div>
     </div>
   );
