@@ -21,8 +21,11 @@ import {
   FormItem,
   FormLabel,
   Input,
+  toast,
 } from "@repo/ui/components/ui";
 import { GripVerticalIcon } from "lucide-react";
+import { useCreateLeadMutation } from "@repo/redux-utils/src/endpoints/pipelines";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { type Lead, type Opportunity } from "../page";
 
 export interface PipelineOpportunityProps {
@@ -48,19 +51,6 @@ export default function PipelineOpportunity({
   opportunity,
   onAddLead,
 }: PipelineOpportunityProps) {
-  const makeid = (length: number) => {
-    let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
-  };
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -70,15 +60,38 @@ export default function PipelineOpportunity({
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  const [sendRequest] = useCreateLeadMutation();
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
+      opportunity_id: opportunity?._id ?? "",
       amount: Number(data.amount),
-      id: `item-${makeid(5)}`,
       itemOrder: opportunity ? opportunity.leads.length + 1 : 1,
     };
-    onAddLead(id, newData);
-  }
+
+    await sendRequest(newData)
+      .unwrap()
+      .then((res: unknown) => {
+        const response = structuredClone(res) as Lead;
+
+        if (response.amount) {
+          response.amount = Number(response.amount);
+        }
+        response.id = `item-${response._id ?? "unknown"}`;
+
+        onAddLead(id, response);
+
+        toast({
+          description: "Lead added successfully",
+        });
+        form.reset();
+      })
+      .catch((e: unknown) => {
+        toast({
+          description: getErrorMessage(e),
+        });
+      });
+  };
 
   const {
     attributes,
