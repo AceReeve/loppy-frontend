@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { clsx } from "clsx";
@@ -15,34 +15,56 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
   Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   toast,
 } from "@repo/ui/components/ui";
-import { GripVerticalIcon } from "lucide-react";
+import { EllipsisVertical, GripVerticalIcon } from "lucide-react";
 import { useCreateLeadMutation } from "@repo/redux-utils/src/endpoints/pipelines";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { type Lead, type Opportunity } from "../page";
+import DeleteOpportunity from "./delete-opportunity";
+import UpdateOpportunity from "./update-opportunity";
 
 export interface PipelineOpportunityProps {
   id: UniqueIdentifier;
   children: React.ReactNode;
   opportunity: Opportunity | null;
   onAddLead: (containerId: UniqueIdentifier, data: Lead) => void;
+  onDeleteOpportunity: (containerId: UniqueIdentifier) => void;
+  onUpdateOpportunity: (
+    containerId: UniqueIdentifier,
+    data: Opportunity,
+  ) => void;
 }
 
 // schemas
 const FormSchema = z.object({
+  master: z.string().min(1, { message: "Required" }),
   description: z.string().min(1, { message: "Required" }),
   category: z.string().min(1, { message: "Required" }),
   amount: z
     .string()
     .min(1, { message: "Required" })
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" }),
+  status: z.string().min(1, { message: "Required" }),
 });
 
 export default function PipelineOpportunity({
@@ -50,23 +72,27 @@ export default function PipelineOpportunity({
   children,
   opportunity,
   onAddLead,
+  onDeleteOpportunity,
+  onUpdateOpportunity,
 }: PipelineOpportunityProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      master: "",
       description: "",
       category: "",
       amount: "",
+      status: "",
     },
   });
 
-  const [sendRequest] = useCreateLeadMutation();
+  const [isCreateLeadOpen, setIsCreateLeadOpen] = useState(false);
+  const [sendRequest, { isLoading }] = useCreateLeadMutation();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
       opportunity_id: opportunity?._id ?? "",
       amount: Number(data.amount),
-      itemOrder: opportunity ? opportunity.leads.length + 1 : 1,
     };
 
     await sendRequest(newData)
@@ -85,6 +111,7 @@ export default function PipelineOpportunity({
           description: "Lead added successfully",
         });
         form.reset();
+        setIsCreateLeadOpen(false);
       })
       .catch((e: unknown) => {
         toast({
@@ -106,6 +133,10 @@ export default function PipelineOpportunity({
       type: "container",
     },
   });
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+
   return (
     <div
       {...attributes}
@@ -121,12 +152,41 @@ export default function PipelineOpportunity({
     >
       <div className="flex items-center justify-between">
         <div className="mb-auto mt-2 min-h-[70px] w-full content-center rounded-2xl border-4 border-t-blue-600 bg-white px-5  py-2 shadow-xl drop-shadow-lg ">
-          <h1 className="flex content-center items-center font-roboto text-[14px] font-medium">
-            <span className="cursor-move" {...listeners}>
-              <GripVerticalIcon size={16} />
-            </span>
-            {opportunity?.title}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="flex content-center items-center font-roboto text-[14px] font-medium">
+              <span className="cursor-move" {...listeners}>
+                <GripVerticalIcon size={16} />
+              </span>
+              {opportunity?.title}
+            </h1>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="p-0 px-2" variant="ghost" size="sm">
+                  <EllipsisVertical size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsEditDialogOpen(true);
+                    }}
+                  >
+                    Update
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsDeleteDialogOpen(true);
+                    }}
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="my-1 border-b-2" />
           <h1 className=" font-roboto text-[14px] font-medium">
             {" "}
@@ -140,7 +200,12 @@ export default function PipelineOpportunity({
 
       {children}
 
-      <Dialog>
+      <Dialog
+        open={isCreateLeadOpen}
+        onOpenChange={() => {
+          setIsCreateLeadOpen(!isCreateLeadOpen);
+        }}
+      >
         <DialogTrigger asChild>
           <button
             className="w-full border-2 border-dashed border-fuchsia-950 py-5 text-fuchsia-950 hover:border-solid hover:bg-gray-200"
@@ -162,6 +227,20 @@ export default function PipelineOpportunity({
               <div className="grid gap-4 py-4">
                 <FormField
                   control={form.control}
+                  name="master"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Master</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
@@ -169,6 +248,7 @@ export default function PipelineOpportunity({
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -182,6 +262,35 @@ export default function PipelineOpportunity({
                       <FormControl>
                         <Input placeholder="Facebook Lead" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger variant="outline">
+                            <SelectValue placeholder="Select a status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="In Progress">
+                            In Progress
+                          </SelectItem>
+                          <SelectItem value="Good">Good</SelectItem>
+                          <SelectItem value="Stalled">Stalled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -195,17 +304,37 @@ export default function PipelineOpportunity({
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
               <DialogFooter>
-                <Button type="submit">Save changes</Button>
+                <Button type="submit" disabled={isLoading}>
+                  Save
+                </Button>
               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
+
+      <UpdateOpportunity
+        opportunity={opportunity}
+        onUpdateOpportunity={onUpdateOpportunity}
+        isOpen={isEditDialogOpen}
+        onClose={() => {
+          setIsEditDialogOpen(false);
+        }}
+      />
+      <DeleteOpportunity
+        opportunity={opportunity}
+        onDeleteOpportunity={onDeleteOpportunity}
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+        }}
+      />
     </div>
   );
 }

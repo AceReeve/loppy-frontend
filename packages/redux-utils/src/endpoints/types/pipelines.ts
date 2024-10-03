@@ -11,9 +11,10 @@ export interface GetAllOpportunitiesResponse {
 export interface Lead {
   id: UniqueIdentifier;
   _id: string;
+  master: string;
   description: string;
   category: string;
-  itemOrder: number;
+  status: string;
   amount: number;
   created_at?: string;
 }
@@ -34,10 +35,21 @@ export interface UpdateOpportunitiesPayload {
   updated_at: string;
 }
 
+export interface UpdateOpportunityPayload {
+  _id: string;
+  title: string;
+}
+
 export interface CreateLeadPayload {
+  master: string;
   description: string;
   category: string;
-  itemOrder: number;
+  status: string;
   amount: number;
-  opportunity_id: string;
+  opportunity_id?: string;
+}
+
+export interface UpdateLeadPayload {
+  leadId: string;
+  payload: CreateLeadPayload;
 }
