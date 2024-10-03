@@ -81,9 +81,10 @@ export interface OpportunityWithoutId {
 export interface Lead {
   _id?: string;
   id: UniqueIdentifier;
+  master: string;
   description: string;
   category: string;
-  itemOrder: number;
+  status: string;
   amount: number;
   created_at?: string;
 }
@@ -94,11 +95,12 @@ const FormSchema = z.object({
 });
 
 export default function Home() {
-  const {
-    data: oppList,
-    isLoading: oppListIsLoading,
-    // refetch: oppListRefetch,
-  } = useGetAllOpportunitiesQuery(undefined);
+  const { data: oppList, isFetching: oppListIsLoading } =
+    useGetAllOpportunitiesQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+      skip: false,
+    });
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
@@ -131,7 +133,10 @@ export default function Home() {
     },
   });
 
-  const [createOpportunityRequest] = useCreateOpportunityMutation();
+  const [isCreateOpportunityOpen, setIsCreateOpportunityOpen] = useState(false);
+
+  const [createOpportunityRequest, { isLoading: isLoadingCreateOpportunity }] =
+    useCreateOpportunityMutation();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
@@ -151,6 +156,7 @@ export default function Home() {
           description: "Opportunity added successfully",
         });
         form.reset();
+        setIsCreateOpportunityOpen(false);
       })
       .catch((e: unknown) => {
         toast({
@@ -176,11 +182,48 @@ export default function Home() {
       });
   };
 
+  const onUpdateOpportunity = (id: UniqueIdentifier, data: Opportunity) => {
+    const opportunity = opportunities.find((item) => item.id === id);
+    if (!opportunity) return;
+    opportunity.title = data.title;
+    opportunity.itemOrder = data.itemOrder;
+    setOpportunities([...opportunities]);
+  };
+
+  const onDeleteOpportunity = (id: UniqueIdentifier) => {
+    const opportunity = opportunities.find((item) => item.id === id);
+    if (!opportunity) return;
+    setOpportunities(opportunities.filter((item) => item.id !== id));
+  };
+
   const onAddLead = (opportunityId: UniqueIdentifier, data: Lead) => {
     const opportunity = opportunities.find((item) => item.id === opportunityId);
     if (!opportunity) return;
     opportunity.leads.push(data);
 
+    setOpportunities([...opportunities]);
+  };
+
+  const onDeleteLead = (leadId: UniqueIdentifier) => {
+    const opportunity = opportunities.find((item) =>
+      item.leads.find((i) => i.id === leadId),
+    );
+    if (!opportunity) return;
+    opportunity.leads = opportunity.leads.filter((item) => item.id !== leadId);
+    setOpportunities([...opportunities]);
+  };
+
+  const onUpdateLead = (leadId: UniqueIdentifier, data: Lead) => {
+    const opportunity = opportunities.find((item) =>
+      item.leads.find((i) => i.id === leadId),
+    );
+    if (!opportunity) return;
+    opportunity.leads = opportunity.leads.map((item) => {
+      if (item.id === leadId) {
+        return data;
+      }
+      return item;
+    });
     setOpportunities([...opportunities]);
   };
 
@@ -450,8 +493,6 @@ export default function Home() {
     ) as UpdateOpportunitiesPayload[];
 
     if (output.length > 0) {
-      // eslint-disable-next-line no-console -- TODO: Remove no-console
-      console.log(output);
       void updateOpps(output);
     }
   }
@@ -561,7 +602,12 @@ export default function Home() {
             }}
             value={searchQuery}
           />
-          <Dialog>
+          <Dialog
+            open={isCreateOpportunityOpen}
+            onOpenChange={() => {
+              setIsCreateOpportunityOpen(!isCreateOpportunityOpen);
+            }}
+          >
             <DialogTrigger asChild>
               <Button variant="default">+ Opportunity</Button>
             </DialogTrigger>
@@ -589,7 +635,9 @@ export default function Home() {
                     />
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Save</Button>
+                    <Button type="submit" disabled={isLoadingCreateOpportunity}>
+                      Save
+                    </Button>
                   </DialogFooter>
                 </form>
               </Form>
@@ -615,6 +663,8 @@ export default function Home() {
                     opportunity={opportunity}
                     key={opportunity.id}
                     onAddLead={onAddLead}
+                    onDeleteOpportunity={onDeleteOpportunity}
+                    onUpdateOpportunity={onUpdateOpportunity}
                   >
                     <SortableContext items={opportunity.leads.map((i) => i.id)}>
                       <div className="flex flex-col items-start gap-y-4">
@@ -630,7 +680,13 @@ export default function Home() {
                             return false;
                           })
                           .map((i) => (
-                            <PipelineLead lead={i} id={i.id} key={i.id} />
+                            <PipelineLead
+                              lead={i}
+                              id={i.id}
+                              key={i.id}
+                              onDeleteLead={onDeleteLead}
+                              onUpdateLead={onUpdateLead}
+                            />
                           ))}
                       </div>
                     </SortableContext>
@@ -641,7 +697,12 @@ export default function Home() {
                 {/* Drag Overlay For item Item */}
                 {activeId
                   ? activeId.toString().includes("item") && (
-                      <PipelineLead id={activeId} lead={findLead(activeId)} />
+                      <PipelineLead
+                        id={activeId}
+                        lead={findLead(activeId)}
+                        onDeleteLead={onDeleteLead}
+                        onUpdateLead={onUpdateLead}
+                      />
                     )
                   : null}
                 {/* Drag Overlay For Opportunity */}
@@ -651,9 +712,17 @@ export default function Home() {
                         id={activeId}
                         opportunity={findOpportunity(activeId)}
                         onAddLead={onAddLead}
+                        onDeleteOpportunity={onDeleteOpportunity}
+                        onUpdateOpportunity={onUpdateOpportunity}
                       >
                         {findOpportunityLeads(activeId).map((i) => (
-                          <PipelineLead key={i.id} lead={i} id={i.id} />
+                          <PipelineLead
+                            key={i.id}
+                            lead={i}
+                            id={i.id}
+                            onDeleteLead={onDeleteLead}
+                            onUpdateLead={onUpdateLead}
+                          />
                         ))}
                       </PipelineOpportunity>
                     )
