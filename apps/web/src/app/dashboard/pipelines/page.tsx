@@ -667,28 +667,26 @@ export default function Home() {
                     onUpdateOpportunity={onUpdateOpportunity}
                   >
                     <SortableContext items={opportunity.leads.map((i) => i.id)}>
-                      <div className="flex flex-col items-start gap-y-4">
-                        {opportunity.leads
-                          .filter((i) => {
-                            if (
-                              i.description
-                                .toLowerCase()
-                                .includes(searchQuery.toLowerCase())
-                            ) {
-                              return true;
-                            }
-                            return false;
-                          })
-                          .map((i) => (
-                            <PipelineLead
-                              lead={i}
-                              id={i.id}
-                              key={i.id}
-                              onDeleteLead={onDeleteLead}
-                              onUpdateLead={onUpdateLead}
-                            />
-                          ))}
-                      </div>
+                      {opportunity.leads
+                        .filter((i) => {
+                          if (
+                            i.description
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase())
+                          ) {
+                            return true;
+                          }
+                          return false;
+                        })
+                        .map((i) => (
+                          <PipelineLead
+                            lead={i}
+                            id={i.id}
+                            key={i.id}
+                            onDeleteLead={onDeleteLead}
+                            onUpdateLead={onUpdateLead}
+                          />
+                        ))}
                     </SortableContext>
                   </PipelineOpportunity>
                 ))}
