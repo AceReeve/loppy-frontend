@@ -64,12 +64,11 @@ export default function PipelineLead({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className="w-full"
+      className={isDragging ? "opacity-50" : ""}
     >
       <div
         className={clsx(
           "h-[90px] min-h-[70px] w-full min-w-[280px] cursor-default rounded-2xl px-3 py-2 shadow-xl drop-shadow-md",
-          isDragging && "opacity-50",
           backgroundColorClass,
         )}
       >
