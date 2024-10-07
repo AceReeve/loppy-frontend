@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@repo/ui/components/ui";
 import { Add } from "iconsax-react";
 import { Handle, Position } from "@xyflow/react";
-import {
+import type {
   IActionNode,
   ITriggerNode,
 } from "@repo/redux-utils/src/endpoints/types/nodes";

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export interface ITriggerNode extends Node {
   id: string;
@@ -14,7 +14,7 @@ export interface ITriggerNode extends Node {
       opportunity_name: string;
       opportunity_source: string;
       status?: string;
-      filters?: Array<{ filter: string; value: string }>;
+      filters?: { filter: string; value: string }[];
     };
     icon?: ReactNode; // Correct usage of ReactNode
     onButtonClick?: OnButtonClickFunction;
@@ -36,7 +36,7 @@ export interface IActionNode extends Node {
       opportunity_name: string;
       opportunity_source: string;
       status?: string;
-      filters?: Array<{ filter: string; value: string }>;
+      filters?: { filter: string; value: string }[];
     };
     icon?: ReactNode; // Correct usage of ReactNode
     onButtonClick?: OnButtonClickFunction;

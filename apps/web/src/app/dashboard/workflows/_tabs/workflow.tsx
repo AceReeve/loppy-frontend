@@ -25,6 +25,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import type {
+  IActionNode,
+  ITriggerNode,
+} from "@repo/redux-utils/src/endpoints/types/nodes";
 import {
   useGetWorkflowQuery,
   usePublishWorkflowMutation,
@@ -37,10 +41,6 @@ import TriggerNode from "@/src/app/dashboard/workflows/_components/_custom-nodes
 import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end-node.tsx";
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
-import type {
-  IActionNode,
-  ITriggerNode,
-} from "@repo/redux-utils/src/endpoints/types/nodes";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
 
 interface WorkflowProp {

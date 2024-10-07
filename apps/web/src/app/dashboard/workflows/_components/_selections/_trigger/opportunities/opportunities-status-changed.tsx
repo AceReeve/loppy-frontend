@@ -21,7 +21,7 @@ import { TrashIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
 import { TriggerContentSchema } from "@/src/schemas";
-import { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
+import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 
 export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
   const filterSelections = [
