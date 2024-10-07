@@ -134,7 +134,7 @@ export default function ProfileTab() {
 
       <div className={`font-poppins ${userProfileIsLoading ? "hidden" : ""}`}>
         <div className="space-x-10 p-8">
-          <div className="flex w-[200px] w-full items-center justify-between border-2 border-gray-300 px-10 py-6">
+          <div className="flex w-[200px] w-full flex-col items-center justify-between border-2 border-gray-300 px-10 py-6 xl:flex-row">
             <div className="flex items-center space-x-10">
               <div className="my-4 flex h-[120px] w-[120px] flex-col content-center overflow-hidden rounded-full bg-slate-200 shadow-lg">
                 <Image
@@ -184,8 +184,8 @@ export default function ProfileTab() {
               <div className="space-y-2">
                 <h1 className="text-xl text-slate-600">Personal Information</h1>
                 <Separator />
-                <div className="grid grid-cols-9 gap-10 p-4">
-                  <div className="col-span-4 space-y-2">
+                <div className="grid grid-cols-12 gap-10 p-4">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="first_name"
@@ -204,7 +204,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-4 space-y-2">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="last_name"
@@ -223,7 +223,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-4 space-y-2">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="birthday"
@@ -284,7 +284,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-4 space-y-2">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="gender"
@@ -322,8 +322,8 @@ export default function ProfileTab() {
               <div className="space-y-2">
                 <h1 className="text-xl text-slate-600">Contact Information</h1>
                 <Separator />
-                <div className="grid grid-cols-9 gap-10 p-4">
-                  <div className="col-span-4 space-y-2">
+                <div className="grid grid-cols-12 gap-10 p-4">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="contact_no"
@@ -342,7 +342,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-4 space-y-2">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="city"
@@ -357,7 +357,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-4 space-y-2">
+                  <div className="col-span-12 space-y-2 lg:col-span-6">
                     <FormField
                       control={profileForm.control}
                       name="state"
@@ -372,7 +372,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-2 space-y-2">
+                  <div className="col-span-12 space-y-2 lg:col-span-3">
                     <FormField
                       control={profileForm.control}
                       name="zipCode"
@@ -391,7 +391,7 @@ export default function ProfileTab() {
                       )}
                     />
                   </div>
-                  <div className="col-span-8 space-y-2">
+                  <div className="col-span-12 space-y-2">
                     <FormField
                       control={profileForm.control}
                       name="address"

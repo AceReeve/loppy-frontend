@@ -31,7 +31,8 @@ export default function Layout({
             </main>
           </section>*/
 
-    <section className="size-full bg-[url('/assets/images/login-cover-new.svg')] bg-contain bg-fixed bg-no-repeat">
+    // <section className="size-full bg-[url('/assets/images/login-cover-new.svg')] bg-contain bg-fixed bg-no-repeat">
+    <section className="h-screen w-screen bg-[url('/assets/images/login-cover-new.svg')] bg-cover bg-fixed bg-center bg-no-repeat">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         {/* Hero Section */}
         {/* <LoginHeroSection />*/}

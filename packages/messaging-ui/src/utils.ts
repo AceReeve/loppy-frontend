@@ -44,12 +44,11 @@ export async function addConversation(
   }
 
   try {
-    const conversation = await client
-      .createConversation
-      // {
-      //   uniqueName: name,
-      // }
-      ();
+    const conversation = await client.createConversation();
+    // {
+    //   uniqueName: name,
+    // }
+
     await conversation.join();
 
     const participants = await conversation.getParticipants();
@@ -294,7 +293,7 @@ export const getConvoParticipantsFormatted = (
     convoParticipants
       .map((p) =>
         p.address
-          ? contactsMap?.[p.address] ?? p.address
+          ? (contactsMap?.[p.address] ?? p.address)
           : p.identity?.split("@")[0],
       )
       .join(", ")

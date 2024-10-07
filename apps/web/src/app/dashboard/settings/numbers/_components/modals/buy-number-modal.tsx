@@ -77,7 +77,9 @@ function BuyNumberModal() {
     const type = data.inbox_assignment_type as InboxAssignmentType;
 
     buyNumber({
-      phoneNumber: "+15005550006",
+      phoneNumber:
+        process.env.NEXT_PUBLIC_TEST_TWILIO_BUY_NUMBER ??
+        buyNumberFormData.selectedNumber,
       organization_id: currentOrg._id,
     })
       .unwrap()

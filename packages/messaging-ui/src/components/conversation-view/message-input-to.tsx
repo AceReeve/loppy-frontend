@@ -37,25 +37,26 @@ export default function MessageInputTo({
     search_key: query,
   });
 
-  const contactsList = data?.data.map((contact) => ({
-    label: `${contact.first_name} ${contact.last_name} (+${contact.phone_number.toString()})`,
-    value: `+${contact.phone_number.toString()}`,
-    disabled: false,
-  }));
+  const contactsList =
+    data?.data.map((contact) => ({
+      label: `${contact.first_name} ${contact.last_name} (+${contact.phone_number.toString()})`,
+      value: `+${contact.phone_number.toString()}`,
+      disabled: false,
+    })) ?? [];
 
   const contactsListFiltered = useMemo(() => {
-    if (invitedUsers && contactsList) {
-      const invitedUsersList = invitedUsers.emails
-        .filter((user) => user.email.includes(query))
-        .map((user) => ({
-          label: `${user.email} (${user.status === "Pending" ? "Pending Registration" : "ServiHero User"})`,
-          value: user.email,
-          disabled: user.status === "Pending",
-        }));
-
-      return [...contactsList, ...invitedUsersList];
+    let invitedUsersList: typeof contactsList = [];
+    if (invitedUsers) {
+      invitedUsersList =
+        invitedUsers.emails
+          ?.filter((user) => user.email.includes(query))
+          .map((user) => ({
+            label: `${user.email} (${user.status === "Pending" ? "Pending Registration" : "ServiHero User"})`,
+            value: user.email,
+            disabled: user.status === "Pending",
+          })) ?? [];
     }
-    return [];
+    return [...invitedUsersList, ...contactsList];
   }, [contactsList, invitedUsers, query]);
 
   return (
