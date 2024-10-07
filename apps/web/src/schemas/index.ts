@@ -223,13 +223,25 @@ export const EditWorkFolderSchema = z.object({
   name: z.string().min(4, { message: "Minimum of 4 Characters" }),
 });
 
-export const CreateBirthReminderSchema = z.object({
-  birthDate: z.date().refine((date) => {
-    // Ensure date is valid
-    return !isNaN(date.getTime());
-  }),
+export const BaseNodeSchema = z.object({
+  title: z.string().min(4, { message: "Invalid Node Name" }),
 });
 
+const filterSchema = z.object({
+  filter: z.string().min(1, { message: "Filter is required" }),
+  value: z.string().min(1, { message: "Value is required" }),
+});
+export const CreateBirthReminderSchema = BaseNodeSchema.extend({
+  filters: z
+    .array(filterSchema)
+    .min(1, { message: "At least one filter is required" }),
+});
+
+export const TriggerContentSchema = BaseNodeSchema.extend({
+  filters: z
+    .array(filterSchema)
+    .min(1, { message: "At least one filter is required" }),
+});
 export const CreateDateReminder = z.object({
   custom_date: z.date().refine((date) => {
     // Ensure date is valid
@@ -237,8 +249,23 @@ export const CreateDateReminder = z.object({
   }),
 });
 export const CreateEmailActionSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  subject: z.string().min(1, { message: "Subject is required" }),
   message: z.string().min(1, {
     message: "Message is Required",
+  }),
+});
+export const CreateUpdateOpportunitySchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  pipeline: z.string().min(1, { message: "Pipline is required" }),
+  opportunity_name: z
+    .string()
+    .min(1, { message: "Opportunity name is required" }),
+  opportunity_source: z
+    .string()
+    .min(1, { message: "Opportunity source is required" }),
+  status: z.string().min(1, {
+    message: "Status is Required",
   }),
 });
 

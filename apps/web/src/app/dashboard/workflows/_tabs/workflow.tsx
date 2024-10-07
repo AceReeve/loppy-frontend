@@ -1,13 +1,13 @@
 "use client";
+import type { Edge, Node } from "@xyflow/react";
 import {
   Background,
+  Controls,
+  MiniMap,
   ReactFlow,
   useEdgesState,
   useNodesState,
-  Controls,
-  MiniMap,
 } from "@xyflow/react";
-import type { Node, Edge } from "@xyflow/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import "@xyflow/react/dist/style.css";
 import { Edit } from "iconsax-react";
@@ -25,6 +25,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import type {
+  IActionNode,
+  ITriggerNode,
+} from "@repo/redux-utils/src/endpoints/types/nodes";
 import {
   useGetWorkflowQuery,
   usePublishWorkflowMutation,
@@ -37,9 +41,13 @@ import TriggerNode from "@/src/app/dashboard/workflows/_components/_custom-nodes
 import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end-node.tsx";
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
+import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
 
 interface WorkflowProp {
   workflowID: string;
+}
+export interface SidebarRefProp {
+  showNodeData: (node: IActionNode | ITriggerNode) => void;
 }
 export default function Workflow({ workflowID }: WorkflowProp) {
   const nodeTypes = {
@@ -63,6 +71,14 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     setOpenSheet(true);
     setIsTriggers(isTrigger);
   };
+
+  const sidebarRef = useRef<HTMLDivElement & SidebarRefProp>(null);
+  const showNodeData = (node: IActionNode | ITriggerNode) => {
+    if (sidebarRef.current) {
+      sidebarRef.current.showNodeData(node);
+    }
+  };
+
   const triggerNodes = calculatePositions([
     {
       id: "0",
@@ -197,7 +213,15 @@ export default function Workflow({ workflowID }: WorkflowProp) {
           ...node,
           id: newNodeId,
           type: "triggerNode",
+          data: {
+            ...node.data,
+            onButtonClick: () => {
+              showNodeData(newNode as ITriggerNode);
+            },
+          },
         };
+        (newNode as ITriggerNode).data.icon =
+          nodeIcons[(node as ITriggerNode).data.node_name];
 
         const updatedTriggerNodes = [
           ...currentNodes.filter((n) => n.type === "triggerNode"),
@@ -248,6 +272,50 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     }
   }, [duplicateNode]);
 
+  const updateNode = (node: IActionNode | ITriggerNode) => {
+    setNodes((prevNodes) =>
+      prevNodes.map((n) => {
+        if (n.id === node.id) {
+          return {
+            ...n,
+            ...node,
+            data: {
+              ...n.data,
+              ...node.data,
+              onButtonClick: () => {
+                showNodeData(node);
+              },
+            },
+          };
+        }
+        return n;
+      }),
+    );
+  };
+
+  const deleteNode = useCallback((node: IActionNode | ITriggerNode) => {
+    const nodeIdToDelete = node.id;
+
+    setNodes((currentNodes: Node[]) => {
+      const updatedTriggerNodes = currentNodes.filter(
+        (n) => n.type === node.type,
+      );
+      const updatedNodes = updatedTriggerNodes.filter(
+        (n) => n.id !== nodeIdToDelete,
+      );
+
+      const positionedNodes =
+        node.type === "triggerNode"
+          ? calculatePositions(updatedNodes)
+          : calculateActionPositions(updatedNodes);
+
+      return [
+        ...currentNodes.filter((n) => n.type !== node.type),
+        ...positionedNodes,
+      ];
+    });
+  }, []);
+
   const AddActionNode = useCallback(
     (node: Node) => {
       let newNodeId = "";
@@ -274,12 +342,26 @@ export default function Workflow({ workflowID }: WorkflowProp) {
             : 0;
         newNodeId = `a${(lastNodeId + 1).toString()}`;
 
-        const newNode: Node = {
+        /*        const newNode: Node = {
           ...node,
           id: newNodeId,
           type: "actionNode",
           position: { x: 0, y: 0 },
+        };*/
+
+        const newNode: Node = {
+          ...node,
+          id: newNodeId,
+          type: "actionNode",
+          data: {
+            ...node.data,
+            onButtonClick: () => {
+              showNodeData(newNode as IActionNode);
+            },
+          },
         };
+        (newNode as IActionNode).data.icon =
+          nodeIcons[(node as IActionNode).data.node_name];
 
         existingActionNodes.unshift(newNode);
         /*setPrimaryActionID(existingActionNodes[0].id);*/
@@ -342,29 +424,57 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     defaultEdge: DefaultEdge,
   };
 
-  const handleAddNodeClick = (node: Node) => {
-    AddNode(node);
+  const handleAddNodeClick = (node: Node, isEdit?: boolean) => {
+    if (isEdit) {
+      updateNode(node as IActionNode | ITriggerNode);
+    } else {
+      AddNode(node);
+    }
     setOpenSheet(false);
   };
-  const handleAddActionNodeClick = (node: Node) => {
-    AddActionNode(node);
+  const handleAddActionNodeClick = (node: Node, isEdit?: boolean) => {
+    if (isEdit) {
+      updateNode(node as IActionNode | ITriggerNode);
+    } else {
+      AddActionNode(node);
+    }
     setOpenSheet(false);
   };
 
   // INTEGRATION PART
+  const filterSchema = z.object({
+    filter: z.string().min(1, { message: "filter is required" }),
+    value: z.string().min(1, { message: "value is required" }),
+  });
+
+  const contentSchema = z.object({
+    filters: z.array(filterSchema).optional(),
+  });
+  const actionFilterSchema = z.object({
+    subject: z.string().min(1, { message: "Subject is required" }).optional(),
+    message: z.string().min(1, { message: "Message is required" }).optional(),
+  });
+
+  const triggerSchema = z.object({
+    id: z.string().min(1, "Trigger ID is required"),
+    title: z.string().min(1, "Trigger name is required"),
+    node_name: z.string().min(1, "Node name is required"),
+    node_type_id: z.string().min(1, "Node Type ID is required"),
+    content: contentSchema,
+  });
+
+  const actionSchema = z.object({
+    id: z.string().min(1, "Trigger ID is required"),
+    title: z.string().min(1, "Trigger name is required"),
+    node_name: z.string().min(1, "Node name is required"),
+    node_type_id: z.string().min(1, "Node Type ID is required"),
+    content: actionFilterSchema,
+  });
 
   const formSchema = z.object({
     id: z.string().min(4, "Invalid ID"),
-    trigger: z.object({
-      id: z.string().min(1, "Trigger ID is required"),
-      trigger_name: z.string().min(1, "Trigger name is required"),
-      content: z.array(z.string().min(1, "Trigger Content cannot be empty")),
-    }),
-    action: z.object({
-      id: z.string().min(1, "Action ID is required"),
-      action_name: z.string().min(1, "Action name is required"),
-      content: z.string().min(1, "Action Content is required"),
-    }),
+    trigger: triggerSchema,
+    action: actionSchema,
   });
 
   /*  console.log("edges", edges);
@@ -375,13 +485,27 @@ export default function Workflow({ workflowID }: WorkflowProp) {
       id: workflowID,
       trigger: {
         id: "",
-        trigger_name: "",
-        content: [],
+        title: "",
+        node_name: "",
+        node_type_id: "",
+        content: {
+          filters: [
+            {
+              filter: "",
+              value: "",
+            },
+          ],
+        },
       },
       action: {
         id: "",
-        action_name: "",
-        content: "",
+        title: "",
+        node_name: "",
+        node_type_id: "",
+        content: {
+          subject: "",
+          message: "",
+        },
       },
     },
   });
@@ -400,28 +524,33 @@ export default function Workflow({ workflowID }: WorkflowProp) {
       if (existingTriggerNodes.length > 0) {
         const firstTriggerNode = existingTriggerNodes[0];
 
-        form.setValue("trigger.id", firstTriggerNode.id);
         form.setValue(
-          "trigger.trigger_name",
-          firstTriggerNode.data.title as string,
+          "trigger",
+          firstTriggerNode.data as z.infer<typeof triggerSchema>,
         );
-        form.setValue("trigger.content", [
-          firstTriggerNode.data.content as string,
-        ]);
+        // form.setValue("trigger.id", firstTriggerNode.id);
+        /* form.setValue("trigger.title", firstTriggerNode.data.title as string);
+        form.setValue(
+          "trigger.content",
+          firstTriggerNode.data.content as z.infer<typeof contentSchema>,
+        );*/
       }
 
       if (existingActionNodes.length > 0) {
         const firstActionNode = existingActionNodes[0];
-
-        form.setValue("action.id", firstActionNode.id);
         form.setValue(
-          "action.action_name",
-          firstActionNode.data.title as string,
+          "action",
+          firstActionNode.data as z.infer<typeof actionSchema>,
         );
-        form.setValue("action.content", firstActionNode.data.content as string);
+        /* form.setValue("action.id", firstActionNode.id);
+
+        form.setValue("action.title", firstActionNode.data.title as string);
+        form.setValue(
+          "action.content",
+          firstActionNode.data.content as z.infer<typeof actionFilterSchema>,
+        );*/
       }
 
-      // Perform workflow creation
       /*
       await createWorkflow(form.getValues()).unwrap();
 */
@@ -467,12 +596,16 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     if (workflow) {
       // Handle triggers
       workflow.trigger.map((trigger) => {
-        const triggerTemplate = {
+        const triggerTemplate: Node = {
           id: trigger.id,
           type: "triggerNode",
           data: {
-            title: trigger.trigger_name,
-            onButtonClick: handleOpenSheet,
+            title: trigger.title,
+            node_name: trigger.node_name,
+            node_type_id: trigger.node_type_id,
+            onButtonClick: () => {
+              showNodeData(triggerTemplate as ITriggerNode);
+            },
             content: trigger.content,
           },
           position: { x: 200, y: 0 },
@@ -487,8 +620,12 @@ export default function Workflow({ workflowID }: WorkflowProp) {
           id: action.id,
           type: "actionNode",
           data: {
-            title: action.action_name,
-            onButtonClick: handleOpenSheet,
+            title: action.title,
+            node_name: action.node_name,
+            node_type_id: action.node_type_id,
+            onButtonClick: () => {
+              showNodeData(actionTemplate as IActionNode);
+            },
             content: action.content,
           },
           position: { x: 400, y: 0 },
@@ -582,11 +719,13 @@ export default function Workflow({ workflowID }: WorkflowProp) {
         fitView
       >
         <SidebarSelection
+          ref={sidebarRef}
           openSheet={openSheet}
           isTriggers={isTriggers}
           setOpenSheet={setOpenSheet}
           addActionNode={handleAddActionNodeClick}
           addTriggerNode={handleAddNodeClick}
+          deleteNode={deleteNode}
         />
         <Background className="rounded-xl !bg-slate-200" />
         <Controls />

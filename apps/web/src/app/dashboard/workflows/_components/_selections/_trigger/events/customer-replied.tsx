@@ -20,25 +20,53 @@ import type { z } from "zod";
 import { TrashIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
+import { TriggerContentSchema } from "@/src/schemas";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
-import { CreateBirthReminderSchema } from "@/src/schemas";
 
-export default function BirthdayReminder(prop: CustomTriggerProps) {
-  //const [selectedDate, setSelectedDate] = useState<Date>();
-
-  /*
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
-    setCalendarOpen(false); // Close the calendar after selecting a date
-  };
-*/
+export default function CustomerReplied(prop: CustomTriggerProps) {
+  const filterSelections = [
+    {
+      id: 0,
+      filter: "Replied to Workflow",
+      value: "Replied to Workflow",
+      selections: [
+        {
+          id: 0,
+          title: "12inf12923basx",
+          value: "12inf12923basx",
+        },
+        {
+          id: 1,
+          title: "910254nasjgf1",
+          value: "910254nasjgf1",
+        },
+      ],
+    },
+    {
+      id: 1,
+      filter: "Has a Tag",
+      value: "Has a Tag",
+      selections: [
+        {
+          id: 2,
+          title: "ChatGPT",
+          value: "ChatGPT",
+        },
+        {
+          id: 3,
+          title: "Facebook",
+          value: "Facebook",
+        },
+      ],
+    },
+  ];
 
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
-    prop.onHandleClick(birthdayNode as ITriggerNode, isEditMode);
+    prop.onHandleClick(customerRepliedNode as ITriggerNode, isEditMode);
   };
 
-  const formSchema = CreateBirthReminderSchema;
+  const formSchema = TriggerContentSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,7 +94,6 @@ export default function BirthdayReminder(prop: CustomTriggerProps) {
     control: form.control,
     name: "filters",
   });
-  const filterWatch = form.watch("filters");
 
   useEffect(() => {
     // This effect will trigger whenever filters are updated in the form
@@ -74,26 +101,25 @@ export default function BirthdayReminder(prop: CustomTriggerProps) {
     // You can perform other actions here to update your UI with the new form values
   }, [watchedFilters]);
 
-  const birthdayNode = {
+  const customerRepliedNode = {
     id: prop.node ? prop.node.id : "1",
     type: "triggerNode",
     data: {
       title: form.getValues("title"),
-      node_name: "Birthday Reminder",
-      node_type_id: "Birthday Reminder",
+      node_name: "Customer Replied",
+      node_type_id: "Customer Replied",
       content: {
         filters: form.getValues("filters"),
       },
     },
   };
 
-  const today = new Date(Date.now());
-  today.setHours(0, 0, 0, 0);
+  const filterWatch = form.watch("filters");
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col justify-start">
-        <p>Birthday Reminder Trigger</p>
+        <p>Customer Replied Trigger</p>
         <p className="content-center font-nunito text-sm text-gray-500">
           Sets a Workflow that adds the contact upon execution.
         </p>
@@ -120,17 +146,15 @@ export default function BirthdayReminder(prop: CustomTriggerProps) {
           <div className="space-y-2">
             <div className="mt-2 flex items-center justify-between ">
               <p className="font-semibold">Filters</p>
-              {filterWatch.length < 4 ? (
-                <Button
-                  type="button"
-                  onClick={() => {
-                    append({ filter: "", value: "" });
-                  }}
-                  variant="outline"
-                >
-                  Add Filter
-                </Button>
-              ) : null}
+              <Button
+                type="button"
+                onClick={() => {
+                  append({ filter: "", value: "" });
+                }}
+                variant="outline"
+              >
+                Add Filter
+              </Button>
             </div>
             <Separator />
             {fields.map((filterField, index) => (
@@ -158,14 +182,14 @@ export default function BirthdayReminder(prop: CustomTriggerProps) {
                         </p>
                       ) : null}*/}
                           <SelectContent>
-                            <SelectItem value="After">
-                              After no. of days
-                            </SelectItem>
-                            <SelectItem value="Before">
-                              Before no. of days
-                            </SelectItem>
-                            <SelectItem value="Day">Day is</SelectItem>
-                            <SelectItem value="Month">Month is</SelectItem>
+                            {filterSelections.map((filter) => (
+                              <SelectItem
+                                key={filter.id}
+                                value={filter.id.toString()}
+                              >
+                                {filter.value}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         {errors.filters?.[index]?.filter ? (
@@ -185,10 +209,34 @@ export default function BirthdayReminder(prop: CustomTriggerProps) {
                   render={({ field }) => {
                     return (
                       <div className="w-full">
-                        <Input placeholder="Value" {...field} />
-                        {errors.filters?.[index]?.value ? (
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger
+                            className="h-[40px] text-slate-500"
+                            variant="outline"
+                          >
+                            <SelectValue placeholder="Select Value" />
+                          </SelectTrigger>
+                          {/* {errors.filters.filter?.[index]?.value ? (
+                        <p className="mt-2 text-[0.8rem] font-medium text-error">
+                          {errors.users[index].role.message}
+                        </p>
+                      ) : null}*/}
+                          <SelectContent>
+                            {filterSelections[
+                              Number(filterWatch[index].filter)
+                            ]?.selections.map((filter) => (
+                              <SelectItem key={filter.id} value={filter.value}>
+                                {filter.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.filters?.[index]?.filter ? (
                           <p className="mt-2 text-[0.8rem] font-medium text-error">
-                            {errors.filters[index].value.message}
+                            {errors.filters[index].filter.message}
                           </p>
                         ) : null}
                       </div>

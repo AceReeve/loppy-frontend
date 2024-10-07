@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+/*import type { ReactNode } from "react";*/
 
 /*export interface GetWorkFolders {
   name: string;
@@ -7,17 +7,27 @@ import type { ReactNode } from "react";
 }*/
 export interface Trigger {
   id: string;
-  trigger_name: string;
-  content: string[];
+  title: string;
+  node_name: string;
+  node_type_id: string;
+  content: {
+    filters?: { filter: string; value: string }[];
+  };
 }
 
 export interface Action {
   id: string;
-  action_name: string;
-  content: string;
+  title: string;
+  node_name: string;
+  node_type_id: string;
+  content: {
+    subject?: string;
+    message?: string;
+    filters?: { filter: string; value: string }[];
+  };
 }
 
-export interface CustomNode extends Node {
+/*export interface CustomNode extends Node {
   id: string;
   type?: string;
   data: {
@@ -27,7 +37,7 @@ export interface CustomNode extends Node {
     onButtonClick?: OnButtonClickFunction;
   };
   position: { x: number; y: number };
-}
+}*/
 
 // If you want to combine them into a single interface:
 export interface CreateWorkflowPayload {
