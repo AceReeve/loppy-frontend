@@ -7,14 +7,24 @@ import type { ReactNode } from "react";
 }*/
 export interface Trigger {
   id: string;
-  trigger_name: string;
-  content: string[];
+  title: string;
+  node_name: string;
+  node_type_id: string;
+  content: {
+    filters?: Array<{ filter: string; value: string }>;
+  };
 }
 
 export interface Action {
   id: string;
-  action_name: string;
-  content: string;
+  title: string;
+  node_name: string;
+  node_type_id: string;
+  content: {
+    subject?: string;
+    message?: string;
+    filters?: Array<{ filter: string; value: string }>;
+  };
 }
 
 export interface CustomNode extends Node {

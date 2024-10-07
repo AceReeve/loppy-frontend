@@ -41,7 +41,7 @@ export const getErrorMessage = (
           acc.push(error);
         } else if (typeof error === "object") {
           // Handle object errors, extracting nested messages
-          Object.values(error).forEach((val) => {
+          Object.selections(error).forEach((val) => {
             if (Array.isArray(val)) acc.push(...val);
           });
         }

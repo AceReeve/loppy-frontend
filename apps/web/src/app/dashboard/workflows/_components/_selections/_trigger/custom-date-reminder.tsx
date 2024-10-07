@@ -16,12 +16,12 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { CustomNode } from "@repo/redux-utils/src/endpoints/types/workflow";
+import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
 import { CreateDateReminder } from "@/src/schemas";
 
 interface CustomDateReminderProps {
-  onHandleClick: (node: CustomNode) => void;
-  onNodeClick: (node: CustomNode) => void;
+  onHandleClick: (node: ITriggerNode) => void;
+  onNodeClick: (node: ITriggerNode) => void;
   icon: React.ReactNode;
 }
 
@@ -37,7 +37,7 @@ export default function CustomDateReminder(prop: CustomDateReminderProps) {
   */
 
   const onSubmit = () => {
-    prop.onHandleClick(customDateNode as CustomNode);
+    prop.onHandleClick(customDateNode as ITriggerNode);
   };
 
   const formSchema = CreateDateReminder;
@@ -66,7 +66,7 @@ export default function CustomDateReminder(prop: CustomDateReminderProps) {
     },
   };
   const onNodeClick = () => {
-    prop.onNodeClick(customDateNode as CustomNode);
+    prop.onNodeClick(customDateNode as ITriggerNode);
   };
   const today = new Date(Date.now());
   today.setHours(0, 0, 0, 0);

@@ -251,7 +251,7 @@ export default function MessagesList(props: MessageListProps) {
           | undefined;
 
         const reactionsCount = reactions
-          ? Object.values(reactions).reduce(
+          ? Object.selections(reactions).reduce(
               (acc, current) => acc + (current ?? []).length,
               0,
             )

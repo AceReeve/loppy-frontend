@@ -91,7 +91,7 @@ export default function AssignInbox({
                       <SelectValue placeholder="Select an inbox" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.values(InboxAssignmentType).map((inbox) => (
+                      {Object.selections(InboxAssignmentType).map((inbox) => (
                         <SelectItem key={inbox} value={inbox}>
                           {inbox}
                         </SelectItem>

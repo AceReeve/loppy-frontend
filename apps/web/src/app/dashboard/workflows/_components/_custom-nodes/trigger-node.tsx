@@ -2,6 +2,10 @@ import React from "react";
 import { Button } from "@repo/ui/components/ui";
 import { Add } from "iconsax-react";
 import { Handle, Position } from "@xyflow/react";
+import {
+  IActionNode,
+  ITriggerNode,
+} from "@repo/redux-utils/src/endpoints/types/nodes";
 
 interface TriggerNodeProps {
   id: string;
@@ -11,6 +15,13 @@ interface TriggerNodeProps {
     icon?: React.ReactNode;
   };
 }
+
+export interface CustomTriggerProps {
+  onHandleClick: (node: ITriggerNode | IActionNode, isEdit?: boolean) => void;
+  onHandleDelete?: (node: ITriggerNode | IActionNode, isEdit?: boolean) => void;
+  node?: ITriggerNode | IActionNode;
+}
+
 export default function TriggerNode({
   id,
   data: { icon, title, onButtonClick },
@@ -27,7 +38,7 @@ export default function TriggerNode({
       className=" w-[200px] justify-start  rounded px-2.5 dark:bg-slate-100"
       onClick={handleClick}
     >
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 ">
         {!icon ? (
           <Add className="h-8 w-8 rounded bg-slate-200 p-2 dark:text-gray-400" />
         ) : (
