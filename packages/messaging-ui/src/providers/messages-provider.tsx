@@ -70,6 +70,7 @@ interface ContextType {
   messageFilter: MessagingFilters;
   setMessageFilter: (filter: MessagingFilters) => void;
   inbox: GetAllInboxesResponse;
+  organization: GetOrganizationResponse;
 }
 
 const MessagesProviderContext = createContext<ContextType | null>(null);
@@ -357,6 +358,7 @@ export default function MessagesProvider({
         messageFilter,
         setMessageFilter,
         inbox,
+        organization,
       }}
     >
       {newConvoLoading ? <LoadingOverlay /> : null}

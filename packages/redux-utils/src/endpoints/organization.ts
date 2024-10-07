@@ -11,7 +11,7 @@ const api = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getOrganizations: builder.query<GetOrganizationResponse[], undefined>({
+      getAllOrganizations: builder.query<GetOrganizationResponse[], undefined>({
         query: () => {
           return {
             url: `/twilio-messaging/organizations`,
@@ -35,4 +35,5 @@ const api = baseApi
     }),
   });
 
-export const { useGetOrganizationsQuery, useCreateOrganizationMutation } = api;
+export const { useGetAllOrganizationsQuery, useCreateOrganizationMutation } =
+  api;

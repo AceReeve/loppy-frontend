@@ -1,6 +1,6 @@
 "use client";
 
-import { DirectboxReceive, MessageAdd } from "iconsax-react";
+import { MessageAdd } from "iconsax-react";
 import type { AppState } from "@repo/redux-utils/src/store.ts";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useMemo } from "react";
@@ -16,6 +16,14 @@ import { updateUnreadMessages } from "@repo/redux-utils/src/slices/messaging/unr
 import { setLastReadIndex } from "@repo/redux-utils/src/slices/messaging/last-read-index-slice.ts";
 import { getTranslation } from "@repo/redux-utils/src/utils/messaging/local-utils.ts";
 import { PhoneIcon } from "@heroicons/react/20/solid";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/components/ui";
+import { useGetAllInboxesQuery } from "@repo/redux-utils/src/endpoints/inboxes.ts";
 import { getTypingMessage } from "../utils.ts";
 import { useMessagesState } from "../providers/messages-provider.tsx";
 import { MessagingFilters } from "../messaging.enum.ts";
@@ -55,6 +63,11 @@ export default function ConversationsList() {
   const convoLoading = getTranslation("en-US", "convoLoading");
 
   const dispatch = useDispatch();
+
+  const { organization } = useMessagesState();
+  const { data: inboxesList } = useGetAllInboxesQuery({
+    organization_id: organization._id,
+  });
 
   const messageFilters = [
     { key: MessagingFilters.ALL, label: "All" },
@@ -207,7 +220,7 @@ export default function ConversationsList() {
   }
 
   return (
-    <section className="custom-scrollbar-neutral bg-card group flex w-24 flex-none flex-col overflow-auto transition-all duration-300 ease-in-out md:w-2/5 lg:max-w-sm">
+    <section className="custom-scrollbar-neutral bg-card group flex w-24 flex-none flex-col overflow-auto transition-all duration-300 ease-in-out md:w-2/5 lg:max-w-sm rounded-tl-3xl">
       <div className="header flex flex-none flex-row items-center justify-between p-4">
         <p className="text-md hidden font-bold group-hover:block md:block">
           Messages
@@ -246,30 +259,22 @@ export default function ConversationsList() {
           </button>
         </div>
       </div>
-      <div className="inline-flex h-[76px] w-full items-center justify-between px-6 py-3">
-        <div className="flex h-[52px] items-center justify-start gap-2.5">
-          <DirectboxReceive className="relative h-[30px] w-[30px]" />
-          <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
-            <div className="font-nunito text-lg font-medium leading-relaxed text-neutral-600">
-              Message Archived
-            </div>
-            <div className="font-nunito self-stretch text-sm font-normal leading-snug text-neutral-400">
-              There are 10 Contacts
-            </div>
-          </div>
-        </div>
-        <button
-          className="hidden h-10 w-10 items-center justify-center rounded-full bg-white hover:bg-gray-200 group-hover:flex md:flex"
-          type="button"
-        >
-          <img
-            alt=""
-            className="relative h-5 w-5"
-            src="/assets/icons/messaging/tabler_dots.svg"
-          />
-        </button>
+      <div className="px-4 block gap-2 items-center">
+        <p className="text-sm font-bold mb-1">Inbox</p>
+        <Select defaultValue={inboxesList?.[0]._id}>
+          <SelectTrigger variant="outline">
+            <SelectValue placeholder="Select" />
+          </SelectTrigger>
+          <SelectContent>
+            {inboxesList?.map((item) => (
+              <SelectItem value={item._id} key={item._id}>
+                {item.inbox_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      <div className="flex border-b border-gray-200 text-sm text-gray-500">
+      <div className="flex border-b border-gray-200 text-sm text-gray-500 mt-2">
         {messageFilters.map((item) => (
           <button
             type="button"
