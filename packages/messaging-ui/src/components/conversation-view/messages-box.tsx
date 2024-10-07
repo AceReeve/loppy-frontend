@@ -106,7 +106,7 @@ export default function MessagesBox(props: MessageProps) {
 
   return (
     <div
-      className="custom-scrollbar-neutral chat-body flex-1 overflow-y-scroll bg-gray-100 p-4"
+      className="custom-scrollbar-neutral chat-body flex-1 overflow-y-scroll bg-gray-100"
       id="scrollable"
       key={convo.sid}
       style={{
@@ -130,6 +130,7 @@ export default function MessagesBox(props: MessageProps) {
           display: "flex",
           overflow: "hidden",
           flexDirection: "column-reverse",
+          paddingBottom: 20,
           minHeight: "600px",
         }}
       >

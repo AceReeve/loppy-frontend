@@ -111,6 +111,7 @@ export default function Login() {
                   type="button"
                   className="absolute inset-y-0 right-0 mt-1 flex max-h-[38px] items-center px-2"
                   onClick={togglePasswordVisibility}
+                  tabIndex={-1}
                 >
                   {showPassword ? <EyeIcon /> : <EyeOffIcon />}
                 </button>
