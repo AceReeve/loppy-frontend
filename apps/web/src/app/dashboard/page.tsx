@@ -29,8 +29,6 @@ export default function Page() {
   const { session } = useDashboardState();
   const { data } = useGetActiveInboxQuery(undefined);
 
-  console.log("active inbox", data);
-
   const customerLeads = [
     {
       key: "social_media",
