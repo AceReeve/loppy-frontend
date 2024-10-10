@@ -48,7 +48,7 @@ const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
       },
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment -- disregard error,
-    { values: flattenColorPalette(theme("colors")) },
+    { selections: flattenColorPalette(theme("colors")) },
   );
 
   addComponents({

@@ -7,53 +7,58 @@ import {
   FormLabel,
   Input,
   Separator,
-  Textarea,
 } from "@repo/ui/components/ui";
 import React from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { IActionNode } from "@repo/redux-utils/src/endpoints/types/nodes";
-import { CreateEmailActionSchema } from "@/src/schemas";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
+import { CreateUpdateOpportunitySchema } from "@/src/schemas";
 
-export default function SendEmail(prop: CustomTriggerProps) {
-  const formSchema = CreateEmailActionSchema;
+export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
+  const formSchema = CreateUpdateOpportunitySchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: prop.node
       ? {
           title: prop.node.data.title,
-          subject: prop.node.data.content.subject,
-          message: prop.node.data.content.message,
+          pipeline: prop.node.data.content.pipeline,
+          opportunity_name: prop.node.data.content.opportunity_name,
+          opportunity_source: prop.node.data.content.opportunity_source,
+          status: prop.node.data.content.status,
         }
       : {
           title: "",
-          subject: "",
-          message: "",
+          pipeline: "",
+          opportunity_name: "",
+          opportunity_source: "",
+          status: "",
         },
   });
   const {
     formState: { errors },
   } = form;
 
-  const emailNode = {
+  const createUpdateOpportunityNode = {
     id: prop.node ? prop.node.id : "1",
     type: "actionNode",
     data: {
       title: form.getValues("title"),
-      node_name: "Send Email",
-      node_type_id: "Send Email",
+      node_name: "Create Update Opportunity",
+      node_type_id: "Create Update Opportunity",
       content: {
-        message: form.getValues("message"),
-        subject: form.getValues("subject"),
+        pipeline: form.getValues("pipeline"),
+        opportunity_name: form.getValues("opportunity_name"),
+        opportunity_source: form.getValues("opportunity_source"),
+        status: form.getValues("status"),
       },
     },
   };
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
-    prop.onHandleClick(emailNode as IActionNode, isEditMode);
+    prop.onHandleClick(createUpdateOpportunityNode as IActionNode, isEditMode);
   };
 
   return (
@@ -81,9 +86,9 @@ export default function SendEmail(prop: CustomTriggerProps) {
                       {...field}
                     />
                   </FormControl>
-                  {errors.message ? (
+                  {errors.title ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.message.message}
+                      {errors.title.message}
                     </p>
                   ) : null}
                 </FormItem>
@@ -92,21 +97,21 @@ export default function SendEmail(prop: CustomTriggerProps) {
           />
           <FormField
             control={form.control}
-            name="subject"
+            name="pipeline"
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Subject</FormLabel>
+                  <FormLabel>In Pipeline</FormLabel>
                   <FormControl>
                     <Input
                       className="resize-none bg-slate-100/50 font-light leading-7"
-                      placeholder="Subject"
+                      placeholder="ServiHero"
                       {...field}
                     />
                   </FormControl>
-                  {errors.message ? (
+                  {errors.pipeline ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.message.message}
+                      {errors.pipeline.message}
                     </p>
                   ) : null}
                 </FormItem>
@@ -115,21 +120,67 @@ export default function SendEmail(prop: CustomTriggerProps) {
           />{" "}
           <FormField
             control={form.control}
-            name="message"
+            name="opportunity_name"
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Email Content</FormLabel>
+                  <FormLabel>Opportunity Name</FormLabel>
                   <FormControl>
-                    <Textarea
-                      className="mt-2 h-[140px] resize-none bg-slate-100/50 font-light leading-7"
-                      placeholder="Write your message here..."
+                    <Input
+                      className="resize-none bg-slate-100/50 font-light leading-7"
+                      placeholder="Name"
                       {...field}
                     />
                   </FormControl>
-                  {errors.message ? (
+                  {errors.opportunity_name ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.message.message}
+                      {errors.opportunity_name.message}
+                    </p>
+                  ) : null}
+                </FormItem>
+              );
+            }}
+          />{" "}
+          <FormField
+            control={form.control}
+            name="opportunity_source"
+            render={({ field }) => {
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Opportunity Source</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="resize-none bg-slate-100/50 font-light leading-7"
+                      placeholder="Source"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.opportunity_source ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.opportunity_source.message}
+                    </p>
+                  ) : null}
+                </FormItem>
+              );
+            }}
+          />{" "}
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => {
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Status</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="resize-none bg-slate-100/50 font-light leading-7"
+                      placeholder="Status"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.status ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.status.message}
                     </p>
                   ) : null}
                 </FormItem>
