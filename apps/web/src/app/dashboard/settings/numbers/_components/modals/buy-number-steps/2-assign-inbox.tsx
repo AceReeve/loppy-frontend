@@ -32,7 +32,6 @@ import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { InboxAssignmentType } from "@repo/redux-utils/src/endpoints/enums/inbox.enums.ts";
 import { useGetMembersQuery } from "@repo/redux-utils/src/endpoints/settings-user.ts";
 import type { FormComponentProps } from "@/src/types/settings";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import { assignInboxSchema } from "../../schemas/buy-number-schemas.ts";
 
 export default function AssignInbox({
@@ -40,27 +39,39 @@ export default function AssignInbox({
   id,
   onSubmit,
 }: FormComponentProps) {
-  const form = useForm<z.infer<typeof assignInboxSchema>>({
-    resolver: zodResolver(assignInboxSchema),
-  });
   const {
     data: members,
     isLoading: isMembersLoading,
     error,
   } = useGetMembersQuery(undefined);
 
-  const { currentOrg } = useDashboardState();
-
   const { data: inboxesList, isLoading: isInboxesLoading } =
-    useGetAllInboxesQuery({
-      organization_id: currentOrg._id,
-    });
+    useGetAllInboxesQuery(undefined);
+
+  const form = useForm<z.infer<typeof assignInboxSchema>>({
+    resolver: zodResolver(assignInboxSchema),
+    defaultValues: {
+      inbox_name: "",
+      inbox_owner: members ? members.users[0].email : "",
+    },
+  });
 
   const inboxType = form.watch("inbox_assignment_type") as InboxAssignmentType;
+  const inboxOwner = form.watch("inbox_owner");
 
   useEffect(() => {
     setSaveEnabled(form.formState.isValid);
   }, [form.formState.isValid]);
+
+  useEffect(() => {
+    if (members) {
+      form.setValue("inbox_owner", members.users[0].email);
+    }
+  }, [members]);
+
+  useEffect(() => {
+    form.setValue("inbox_members", []);
+  }, [inboxOwner]);
 
   return (
     <Form {...form}>
@@ -121,10 +132,7 @@ export default function AssignInbox({
                       <SelectContent>
                         {isInboxesLoading ? <LoadingSpinner /> : null}
                         {inboxesList?.map((inbox) => (
-                          <SelectItem
-                            key={inbox.inbox_name}
-                            value={inbox.purchased_number}
-                          >
+                          <SelectItem key={inbox.inbox_name} value={inbox._id}>
                             {inbox.inbox_name}
                           </SelectItem>
                         ))}
@@ -167,7 +175,7 @@ export default function AssignInbox({
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <SelectTrigger variant="outline">
                           <SelectValue placeholder="Select inbox owner" />
@@ -191,26 +199,28 @@ export default function AssignInbox({
                 name="inbox_members"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Inbox Members</FormLabel>
+                    <FormLabel>Additional Inbox Members</FormLabel>
                     <FormControl>
                       <MultiSelector
                         values={field.value ?? []}
                         onValuesChange={field.onChange}
                       >
                         <MultiSelectorTrigger>
-                          <MultiSelectorInput placeholder="Select inbox members" />
+                          <MultiSelectorInput placeholder="Select additional inbox members" />
                         </MultiSelectorTrigger>
                         <MultiSelectorContent>
                           {isMembersLoading ? <LoadingSpinner /> : null}
                           <MultiSelectorList>
-                            {members?.users.map((option) => (
-                              <MultiSelectorItem
-                                key={option._id}
-                                value={option.email}
-                              >
-                                {option.email}
-                              </MultiSelectorItem>
-                            ))}
+                            {members?.users
+                              .filter((user) => user.email !== inboxOwner)
+                              .map((option) => (
+                                <MultiSelectorItem
+                                  key={option._id}
+                                  value={option.email}
+                                >
+                                  {option.email}
+                                </MultiSelectorItem>
+                              ))}
                           </MultiSelectorList>
                         </MultiSelectorContent>
                       </MultiSelector>

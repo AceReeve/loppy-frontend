@@ -4,6 +4,7 @@ import MessagesProvider from "@repo/messaging-ui/messages-provider";
 import React from "react";
 import { auth } from "@/auth.ts";
 import {
+  getActiveInbox,
   getInboxes,
   getOrganizationsList,
 } from "@/src/actions/organization-actions.ts";
@@ -16,24 +17,34 @@ export default async function Layout({
   const session = await auth();
   if (!session) return;
 
-  const organizationsList = await getOrganizationsList(session);
-  const activeOrganization = organizationsList.length
-    ? organizationsList[0]
+  const organizationsPromise = getOrganizationsList(session);
+
+  const inboxesListPromise = getInboxes(session);
+  const activeInboxPromise = getActiveInbox(session);
+
+  const [organizationsListData, inboxesListData, activeInboxData] =
+    await Promise.all([
+      organizationsPromise,
+      inboxesListPromise,
+      activeInboxPromise,
+    ]);
+
+  const activeOrganization = organizationsListData.length
+    ? organizationsListData[0]
     : null;
 
-  if (!activeOrganization) return;
+  const activeInbox =
+    activeInboxData ?? (inboxesListData.length ? inboxesListData[0] : null);
 
-  const inboxesList = await getInboxes(activeOrganization._id, session);
-  const activeInbox = inboxesList.length ? inboxesList[0] : null;
-
-  if (!activeInbox) return;
+  if (!activeInbox || !activeOrganization) return;
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center pr-4">
       <MessagesProvider
         session={session}
         organization={activeOrganization}
         inbox={activeInbox}
+        inboxesList={inboxesListData}
       >
         {children}
       </MessagesProvider>

@@ -16,11 +16,19 @@ export interface GetOrganizationResponse {
   organization_name: string;
   description: string;
   created_by: string;
-  twilio_account_sid: string;
-  twilio_chat_service_sid: string;
-  twilio_api_key_sid: string;
-  twilio_api_key_secret: string;
-  twilio_auth_token: string;
-  status: StatusEnum;
+  status: string;
   twilio_number?: string;
+}
+
+export interface SetActiveOrganizationResponse {
+  organization_id: string;
+  activated_by: string;
+  status: string;
+  _id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SetActiveOrganizationPayload {
+  id: string;
 }

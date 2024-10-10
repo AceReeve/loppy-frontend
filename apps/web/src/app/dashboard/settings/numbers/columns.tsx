@@ -1,6 +1,6 @@
 "use client";
 import { type ColumnDef } from "@tanstack/react-table";
-import { type GetPurchasedNumbersResponse } from "@repo/redux-utils/src/endpoints/types/phone-numbers";
+import { type GetPurchasedNumbersResponse } from "@repo/redux-utils/src/endpoints/types/numbers";
 
 export const numbersColumns: ColumnDef<GetPurchasedNumbersResponse>[] = [
   {

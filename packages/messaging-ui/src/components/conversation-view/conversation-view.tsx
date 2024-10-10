@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import type { AppState } from "@repo/redux-utils/src/store.ts";
 import React, { useMemo, useState } from "react";
 import { DefaultAvatar } from "@repo/ui/components/custom";
+import { cn } from "@repo/ui/utils";
 import { useMessagesState } from "../../providers/messages-provider.tsx";
 import ConversationPhoto from "../conversation-photo.tsx";
 import ConversationLabel from "../conversation-label.tsx";
@@ -35,8 +36,13 @@ export default function ConversationView() {
   if (!openedConversation) return <NewConversationView />;
 
   return (
-    <section className="flex flex-auto flex-col bg-card">
-      <div className="chat-header flex flex-none flex-row items-center justify-between px-6 py-4 shadow">
+    <section
+      className={cn(
+        "flex flex-auto flex-col bg-card",
+        !sidebarOpen && "rounded-tr-3xl",
+      )}
+    >
+      <div className="chat-header flex flex-none flex-row items-center justify-between px-6 py-4">
         <div className="flex">
           <div className="relative mr-4 flex size-12 flex-shrink-0">
             <ConversationPhoto participants={participants} />
@@ -57,8 +63,8 @@ export default function ConversationView() {
                   image=""
                   name={
                     participant.type === "chat"
-                      ? participant.identity ?? ""
-                      : participant.address ?? ""
+                      ? (participant.identity ?? "")
+                      : (participant.address ?? "")
                   }
                 />
               </div>

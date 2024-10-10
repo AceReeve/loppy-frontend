@@ -1,12 +1,4 @@
-import {
-  Check,
-  CreditCard,
-  LogOut,
-  Plus,
-  Settings,
-  User,
-  Users,
-} from "lucide-react";
+import { Check, CreditCard, LogOut, Settings, User, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,10 +76,10 @@ export function ProfileMenuDropdown({
               title: organization.organization_name,
               icon: <Check className="mr-2 h-4 w-4" />,
             })),
-            {
-              title: "Add New Workspace",
-              icon: <Plus className="mr-2 h-4 w-4" />,
-            },
+            // {
+            //   title: "Add New Workspace",
+            //   icon: <Plus className="mr-2 h-4 w-4" />,
+            // },
           ]
         : undefined,
       icon: <Check className="mr-2 h-4 w-4" />,

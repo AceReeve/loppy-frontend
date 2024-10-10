@@ -2,11 +2,12 @@ import { baseApi } from "../api";
 import {
   type GetAvailableLocalNumbersPayload,
   type GetAvailableLocalNumbersResponse,
-} from "./types/phone-numbers";
+} from "./types/numbers";
 import {
   type CreateInboxPayload,
-  type GetAllInboxesPayload,
   type GetAllInboxesResponse,
+  type SetActiveInboxPayload,
+  type SetActiveInboxResponse,
 } from "./types/inboxes";
 
 const api = baseApi
@@ -28,13 +29,10 @@ const api = baseApi
         providesTags: ["inboxes"],
       }),
 
-      getAllInboxes: builder.query<
-        GetAllInboxesResponse[],
-        GetAllInboxesPayload
-      >({
-        query: (payload) => {
+      getAllInboxes: builder.query<GetAllInboxesResponse[], undefined>({
+        query: () => {
           return {
-            url: `/twilio-messaging/inboxes/${payload.organization_id}`,
+            url: `/twilio-messaging/inboxes`,
           };
         },
         providesTags: ["inboxes"],
@@ -50,11 +48,36 @@ const api = baseApi
         },
         invalidatesTags: ["inboxes"],
       }),
+
+      getActiveInbox: builder.query<GetAllInboxesResponse, undefined>({
+        query: () => {
+          return {
+            url: `/twilio-messaging/get-activated-inbox`,
+          };
+        },
+        providesTags: ["inboxes"],
+      }),
+
+      setActiveInbox: builder.mutation<
+        SetActiveInboxResponse,
+        SetActiveInboxPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/twilio-messaging/activate-inbox?id=${payload.id}`,
+            method: "PUT",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["inboxes"],
+      }),
     }),
   });
 
 export const {
+  useGetActiveInboxQuery,
   useGetAvailableInboxesQuery,
   useGetAllInboxesQuery,
   useCreateInboxMutation,
+  useSetActiveInboxMutation,
 } = api;

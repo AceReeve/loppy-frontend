@@ -6,11 +6,16 @@ const api = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getTwilioAccessToken: builder.query<string, string>({
-        query: (organizationId: string) => {
+      getTwilioAccessToken: builder.query<string, undefined>({
+        query: () => {
           return {
-            url: `/twilio-messaging/get-twilio-access-token/${organizationId}`,
-            responseHandler: (response: Response) => response.text(),
+            url: `/twilio-messaging/get-twilio-access-token`,
+            responseHandler: (response: Response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              return response.json();
+            },
           };
         },
         providesTags: ["messaging"],

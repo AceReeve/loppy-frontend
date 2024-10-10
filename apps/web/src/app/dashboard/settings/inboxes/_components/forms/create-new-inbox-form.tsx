@@ -44,12 +44,25 @@ export default function CreateNewInboxForm({
     resolver: zodResolver(schema),
     defaultValues: {
       inbox_name: "",
+      inbox_owner: members ? members.users[0].email : "",
     },
   });
+
+  const inboxOwner = form.watch("inbox_owner");
 
   useEffect(() => {
     setSaveEnabled(form.formState.isValid);
   }, [form.formState.isValid, onSubmit]);
+
+  useEffect(() => {
+    if (members) {
+      form.setValue("inbox_owner", members.users[0].email);
+    }
+  }, [members]);
+
+  useEffect(() => {
+    form.setValue("inbox_members", []);
+  }, [inboxOwner]);
 
   return (
     <Form {...form}>
@@ -91,10 +104,7 @@ export default function CreateNewInboxForm({
             <FormItem>
               <FormLabel>Inbox Owner</FormLabel>
               <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger variant="outline">
                     <SelectValue placeholder="Select inbox owner" />
                   </SelectTrigger>
@@ -117,25 +127,27 @@ export default function CreateNewInboxForm({
           name="inbox_members"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Inbox Members</FormLabel>
+              <FormLabel>Additional Inbox Members</FormLabel>
               <FormControl>
                 <MultiSelector
                   values={field.value ?? []}
                   onValuesChange={field.onChange}
                 >
                   <MultiSelectorTrigger>
-                    <MultiSelectorInput placeholder="Select inbox members" />
+                    <MultiSelectorInput placeholder="Select additional inbox members" />
                   </MultiSelectorTrigger>
                   <MultiSelectorContent>
                     <MultiSelectorList>
-                      {members?.users.map((option) => (
-                        <MultiSelectorItem
-                          key={option._id}
-                          value={option.email}
-                        >
-                          {option.email}
-                        </MultiSelectorItem>
-                      ))}
+                      {members?.users
+                        .filter((user) => user.email !== inboxOwner)
+                        .map((option) => (
+                          <MultiSelectorItem
+                            key={option._id}
+                            value={option.email}
+                          >
+                            {option.email}
+                          </MultiSelectorItem>
+                        ))}
                     </MultiSelectorList>
                   </MultiSelectorContent>
                 </MultiSelector>

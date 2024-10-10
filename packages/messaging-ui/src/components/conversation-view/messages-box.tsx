@@ -106,17 +106,9 @@ export default function MessagesBox(props: MessageProps) {
 
   return (
     <div
-      className="custom-scrollbar-neutral chat-body flex-1 overflow-y-scroll bg-gray-100"
+      className="size-full flex flex-col-reverse custom-scrollbar-neutral chat-body flex-1 overflow-y-auto bg-gray-100 px-4"
       id="scrollable"
       key={convo.sid}
-      style={{
-        display: "flex",
-        flexDirection: "column-reverse",
-        width: "100%",
-        overflowY: "auto",
-        paddingLeft: 16,
-        height: "100%",
-      }}
     >
       <InfiniteScroll
         dataLength={messages.length}

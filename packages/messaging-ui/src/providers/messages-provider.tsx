@@ -41,7 +41,7 @@ import { type InviteUserResponse } from "@repo/redux-utils/src/endpoints/types/u
 import { useGetContactsListQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
 import { useGetInvitedUsersQuery } from "@repo/redux-utils/src/endpoints/user.ts";
 import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
-import { GetAllInboxesResponse } from "@repo/redux-utils/src/endpoints/types/inboxes";
+import { type GetAllInboxesResponse } from "@repo/redux-utils/src/endpoints/types/inboxes";
 import { handlePromiseRejection } from "../helpers/helpers.ts";
 import {
   type ShowEmojiPickerProps,
@@ -70,6 +70,7 @@ interface ContextType {
   messageFilter: MessagingFilters;
   setMessageFilter: (filter: MessagingFilters) => void;
   inbox: GetAllInboxesResponse;
+  inboxesList: GetAllInboxesResponse[];
   organization: GetOrganizationResponse;
 }
 
@@ -77,11 +78,13 @@ const MessagesProviderContext = createContext<ContextType | null>(null);
 
 export default function MessagesProvider({
   inbox,
+  inboxesList,
   organization,
   children,
   session,
 }: {
   inbox: GetAllInboxesResponse;
+  inboxesList: GetAllInboxesResponse[];
   organization: GetOrganizationResponse;
   children: React.ReactNode;
   session: Session | null;
@@ -90,7 +93,7 @@ export default function MessagesProvider({
     data: token,
     error,
     isLoading: isTokenLoading,
-  } = useGetTwilioAccessTokenQuery(organization._id);
+  } = useGetTwilioAccessTokenQuery(undefined);
 
   const isLoading = isTokenLoading;
 
@@ -358,6 +361,7 @@ export default function MessagesProvider({
         messageFilter,
         setMessageFilter,
         inbox,
+        inboxesList,
         organization,
       }}
     >

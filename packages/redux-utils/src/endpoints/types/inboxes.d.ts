@@ -8,10 +8,6 @@ export interface InboxesResponse {
   };
 }
 
-export interface GetAllInboxesPayload {
-  organization_id: string;
-}
-
 export interface GetAllInboxesResponse {
   _id: string;
   inbox_name: string;
@@ -28,6 +24,18 @@ export interface GetAllInboxesResponse {
 export interface CreateInboxPayload {
   inbox_name: string;
   description: string;
-  organization_id: string;
   purchased_number: string;
+}
+
+export interface SetActiveInboxResponse {
+  inbox_id: string;
+  activated_by: string;
+  status: string;
+  _id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SetActiveInboxPayload {
+  id: string;
 }
