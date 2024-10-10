@@ -22,12 +22,10 @@ import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import FunnelChart from "@/src/components/charts/funnel-chart";
 import UnsoldTicketsTable from "@/src/components/table/unsold-tickets-table";
 import StatCards from "@/src/app/dashboard/_components/dashboard/stat-cards.tsx";
-import { useGetActiveInboxQuery } from "@repo/redux-utils/src/endpoints/inboxes.ts";
 
 export default function Page() {
   const [leadSubmissionsValue, setLeadSubmissionsValue] = useState("1D");
   const { session } = useDashboardState();
-  const { data } = useGetActiveInboxQuery(undefined);
 
   const customerLeads = [
     {

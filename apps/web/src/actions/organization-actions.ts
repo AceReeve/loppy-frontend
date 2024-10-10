@@ -3,7 +3,6 @@
 import type { Session } from "next-auth";
 import type { GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/types/organization";
 import { type GetAllInboxesResponse } from "@repo/redux-utils/src/endpoints/types/inboxes";
-import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 export async function getOrganizationsList(
   session: Session,
