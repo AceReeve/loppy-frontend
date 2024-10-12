@@ -37,12 +37,24 @@ import {
   FormItem,
   FormLabel,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
   toast,
 } from "@repo/ui/components/ui";
 import dynamic from "next/dynamic";
+import { CirclePicker, type ColorResult } from "react-color";
 import {
   useCreateOpportunityMutation,
-  useGetAllOpportunitiesQuery,
+  useGetAllPipelinesQuery,
+  useGetPipelineQuery,
   useUpdateOpportunitiesMutation,
 } from "@repo/redux-utils/src/endpoints/pipelines";
 import {
@@ -51,6 +63,11 @@ import {
 } from "@repo/redux-utils/src/endpoints/types/pipelines";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { Pipette } from "lucide-react";
+import CreatePipeline from "./_components/create-pipeline";
+import ExportPipelines from "./_components/export-pipelines";
+import ImportPipelines from "./_components/import-pipelines";
+import DeletePipeline from "./_components/delete-pipeline";
 
 const PipelineOpportunity = dynamic(
   () => import("./_components/pipeline-opportunity"),
@@ -67,6 +84,8 @@ export interface Opportunity {
   _id?: string;
   id: UniqueIdentifier;
   title: string;
+  color: string;
+  lead_value: number;
   itemOrder: number;
   leads: Lead[];
 }
@@ -92,15 +111,35 @@ export interface Lead {
 // schemas
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Required" }),
+  color: z.string().min(1, { message: "Required" }),
+  lead_value: z.string().min(1, { message: "Required" }),
 });
 
 export default function Home() {
-  const { data: oppList, isFetching: oppListIsLoading } =
-    useGetAllOpportunitiesQuery(undefined, {
-      refetchOnMountOrArgChange: true,
-      refetchOnReconnect: true,
-      skip: false,
-    });
+  const {
+    data: pipelines = [],
+    isFetching: pipelinesIsLoading,
+    refetch: refetchPipelines,
+  } = useGetAllPipelinesQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+    skip: false,
+  });
+
+  // State to hold the selected pipeline ID
+  const [selectedPipelineId, setSelectedPipelineId] = useState("");
+
+  // Fetch pipeline data based on the selected pipeline ID
+  const {
+    data: pipeline,
+    refetch: refetchPipeline,
+    isFetching: pipelineIsLoading,
+  } = useGetPipelineQuery(
+    { pipelineId: selectedPipelineId },
+    {
+      skip: !selectedPipelineId, // Skip query until a pipeline is selected
+    },
+  );
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
@@ -110,16 +149,41 @@ export default function Home() {
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
+  // Handle the select change event
+  const handlePipelineChange = (value: string) => {
+    setSelectedPipelineId(value);
+  };
+
   useEffect(() => {
-    if (oppList) {
-      const mutableData = oppList.map((item) => ({
+    if (!selectedPipelineId) {
+      if (pipelines.length > 0) {
+        setSelectedPipelineId(pipelines[0]._id);
+      }
+    } else if (pipelines.length > 0) {
+      if (selectedPipelineId !== pipelines[0]._id) {
+        setSelectedPipelineId(pipelines[0]._id);
+      }
+    } else {
+      setSelectedPipelineId("");
+    }
+  }, [pipelines]);
+
+  useEffect(() => {
+    if (selectedPipelineId) {
+      void refetchPipeline();
+    }
+  }, [selectedPipelineId, refetchPipeline]);
+
+  useEffect(() => {
+    if (pipeline) {
+      const mutableData = pipeline.opportunities.map((item) => ({
         ...item,
         leads: item.leads.map((lead) => ({ ...lead })),
       }));
 
       setOpportunities(mutableData);
     }
-  }, [oppList]);
+  }, [pipeline]);
 
   const onAddOpportunity = (data: Opportunity) => {
     setOpportunities([...opportunities, data]);
@@ -130,6 +194,8 @@ export default function Home() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: "",
+      color: "#03a9f4",
+      lead_value: "",
     },
   });
 
@@ -141,6 +207,8 @@ export default function Home() {
     const newData = {
       ...data,
       itemOrder: opportunities.length + 1,
+      pipeline_id: selectedPipelineId,
+      lead_value: Number(data.lead_value),
     } as CreateOpportunityPayload;
 
     await createOpportunityRequest(newData)
@@ -167,7 +235,7 @@ export default function Home() {
 
   // update opportunities
   const [updateOpportunutiesRequest] = useUpdateOpportunitiesMutation();
-  const updateOpps = async (data: UpdateOpportunitiesPayload[]) => {
+  const updateOpps = async (data: UpdateOpportunitiesPayload) => {
     await updateOpportunutiesRequest(data)
       .unwrap()
       .then(() => {
@@ -186,6 +254,8 @@ export default function Home() {
     const opportunity = opportunities.find((item) => item.id === id);
     if (!opportunity) return;
     opportunity.title = data.title;
+    opportunity.color = data.color;
+    opportunity.lead_value = data.lead_value;
     opportunity.itemOrder = data.itemOrder;
     setOpportunities([...opportunities]);
   };
@@ -490,9 +560,9 @@ export default function Home() {
     const output = getUpdatedOpportunities(
       preservedOpportunities,
       currentOpportunities ?? opportunities,
-    ) as UpdateOpportunitiesPayload[];
+    ) as UpdateOpportunitiesPayload;
 
-    if (output.length > 0) {
+    if (output.updated_items.length > 0) {
       void updateOpps(output);
     }
   }
@@ -502,6 +572,8 @@ export default function Home() {
     current: Opportunity[],
   ) => {
     const updatedOpps: Opportunity[] = [];
+
+    const pipelineOpps = current.map((item) => item._id);
 
     current.forEach((opp, index) => {
       // Check if the ID of opportunities has changed
@@ -537,7 +609,11 @@ export default function Home() {
       };
     });
 
-    return updatedData;
+    return {
+      pipeline_id: selectedPipelineId,
+      pipeline_opportunities: pipelineOpps,
+      updated_items: updatedData,
+    };
   };
 
   // const updateItemOrder = (op: Opportunity[]) => {
@@ -575,9 +651,31 @@ export default function Home() {
     </div>
   );
 
-  if (oppListIsLoading) {
+  const NoOpportunitiesComponent = (
+    <div className="col-span-5 flex w-full flex-col items-center justify-center px-4 py-28">
+      <div className="text-center font-montserrat text-2xl font-medium leading-[48px] text-gray-800">
+        Unlock Your Next Big Opportunity
+      </div>
+      <div className="text-center font-montserrat text-4xl font-medium leading-[48px] text-gray-800">
+        Start Building Your Sales Pipeline Today!
+      </div>
+      <div className="mt-4 max-w-[641px] text-center font-nunito text-sm font-normal leading-normal text-gray-700">
+        Don&apos;t miss out on potential leads. Take the first step in growing
+        your business by creating an opportunity and filling your sales pipeline
+        with valuable prospects.
+      </div>
+      <img
+        className="h-[149px] w-[126px]"
+        src="/assets/icons/icon-no-data-contacts.svg"
+        alt="No Data"
+      />
+    </div>
+  );
+
+  // if (oppListIsLoading) {
+  if (pipelinesIsLoading) {
     return (
-      <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
+      <div className="m-auto flex h-full flex-col items-center justify-center space-y-6 p-6">
         <LoadingSpinner />
         <p>Loading, please wait...</p>
       </div>
@@ -591,6 +689,31 @@ export default function Home() {
           <div className="font-poppins text-4xl font-medium text-gray-800">
             Pipelines
           </div>
+          <Select
+            value={selectedPipelineId}
+            onValueChange={handlePipelineChange}
+          >
+            <SelectTrigger variant="outline" className="w-[180px]">
+              <SelectValue placeholder="Select a pipeline" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Pipelines</SelectLabel>
+                {pipelines.map((pip) => (
+                  <SelectItem key={pip._id} value={pip._id}>
+                    {pip.title}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <ImportPipelines />
+          <ExportPipelines />
+          <DeletePipeline
+            pipelineId={selectedPipelineId}
+            refetch={refetchPipelines}
+          />
+          <CreatePipeline />
         </div>
 
         <div className="flex items-center gap-4">
@@ -633,6 +756,59 @@ export default function Home() {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="color"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Color</FormLabel>
+                          <FormControl>
+                            <div className="flex gap-2">
+                              <Input
+                                style={{
+                                  backgroundColor: field.value,
+                                }}
+                                readOnly
+                                {...field}
+                              />
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    className={`bg-${field.value}`}
+                                    variant="outline"
+                                    size="icon"
+                                  >
+                                    <Pipette />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                  <CirclePicker
+                                    onChangeComplete={(color: ColorResult) => {
+                                      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- disable errors
+                                      field.onChange(color.hex);
+                                    }}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="lead_value"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Lead Value</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   <DialogFooter>
                     <Button type="submit" disabled={isLoadingCreateOpportunity}>
@@ -646,87 +822,102 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mx-auto w-full py-10">
-        {opportunities.length > 0 ? (
+      {/* loading pipeline */}
+      {pipelineIsLoading ? (
+        <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
+          <LoadingSpinner />
+          <p>Loading, please wait...</p>
+        </div>
+      ) : null}
+
+      {/* pipeline loaded */}
+      <div className="mx-auto w-full py-10" hidden={pipelineIsLoading}>
+        {pipelines.length > 0 ? (
           <div className="grid w-full grid-cols-5 gap-6">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCorners}
-              onDragStart={handleDragStart}
-              onDragMove={handleDragMove}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext items={opportunities.map((i) => i.id)}>
-                {opportunities.map((opportunity) => (
-                  <PipelineOpportunity
-                    id={opportunity.id}
-                    opportunity={opportunity}
-                    key={opportunity.id}
-                    onAddLead={onAddLead}
-                    onDeleteOpportunity={onDeleteOpportunity}
-                    onUpdateOpportunity={onUpdateOpportunity}
-                  >
-                    <SortableContext items={opportunity.leads.map((i) => i.id)}>
-                      {opportunity.leads
-                        .filter((i) => {
-                          if (
-                            i.description
-                              .toLowerCase()
-                              .includes(searchQuery.toLowerCase())
-                          ) {
-                            return true;
-                          }
-                          return false;
-                        })
-                        .map((i) => (
-                          <PipelineLead
-                            lead={i}
-                            id={i.id}
-                            key={i.id}
-                            onDeleteLead={onDeleteLead}
-                            onUpdateLead={onUpdateLead}
-                          />
-                        ))}
-                    </SortableContext>
-                  </PipelineOpportunity>
-                ))}
-              </SortableContext>
-              <DragOverlay adjustScale={false}>
-                {/* Drag Overlay For item Item */}
-                {activeId
-                  ? activeId.toString().includes("item") && (
-                      <PipelineLead
-                        id={activeId}
-                        lead={findLead(activeId)}
-                        onDeleteLead={onDeleteLead}
-                        onUpdateLead={onUpdateLead}
-                      />
-                    )
-                  : null}
-                {/* Drag Overlay For Opportunity */}
-                {activeId
-                  ? activeId.toString().includes("opportunity") && (
-                      <PipelineOpportunity
-                        id={activeId}
-                        opportunity={findOpportunity(activeId)}
-                        onAddLead={onAddLead}
-                        onDeleteOpportunity={onDeleteOpportunity}
-                        onUpdateOpportunity={onUpdateOpportunity}
+            {opportunities.length > 0 ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCorners}
+                onDragStart={handleDragStart}
+                onDragMove={handleDragMove}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext items={opportunities.map((i) => i.id)}>
+                  {opportunities.map((opportunity) => (
+                    <PipelineOpportunity
+                      id={opportunity.id}
+                      opportunity={opportunity}
+                      key={opportunity.id}
+                      onAddLead={onAddLead}
+                      onDeleteOpportunity={onDeleteOpportunity}
+                      onUpdateOpportunity={onUpdateOpportunity}
+                    >
+                      <SortableContext
+                        items={opportunity.leads.map((i) => i.id)}
                       >
-                        {findOpportunityLeads(activeId).map((i) => (
-                          <PipelineLead
-                            key={i.id}
-                            lead={i}
-                            id={i.id}
-                            onDeleteLead={onDeleteLead}
-                            onUpdateLead={onUpdateLead}
-                          />
-                        ))}
-                      </PipelineOpportunity>
-                    )
-                  : null}
-              </DragOverlay>
-            </DndContext>
+                        {opportunity.leads
+                          .filter((i) => {
+                            if (
+                              i.description
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase())
+                            ) {
+                              return true;
+                            }
+                            return false;
+                          })
+                          .map((i) => (
+                            <PipelineLead
+                              lead={i}
+                              id={i.id}
+                              key={i.id}
+                              onDeleteLead={onDeleteLead}
+                              onUpdateLead={onUpdateLead}
+                            />
+                          ))}
+                      </SortableContext>
+                    </PipelineOpportunity>
+                  ))}
+                </SortableContext>
+                <DragOverlay adjustScale={false}>
+                  {/* Drag Overlay For item Item */}
+                  {activeId
+                    ? activeId.toString().includes("item") && (
+                        <PipelineLead
+                          id={activeId}
+                          lead={findLead(activeId)}
+                          onDeleteLead={onDeleteLead}
+                          onUpdateLead={onUpdateLead}
+                        />
+                      )
+                    : null}
+                  {/* Drag Overlay For Opportunity */}
+                  {activeId
+                    ? activeId.toString().includes("opportunity") && (
+                        <PipelineOpportunity
+                          id={activeId}
+                          opportunity={findOpportunity(activeId)}
+                          onAddLead={onAddLead}
+                          onDeleteOpportunity={onDeleteOpportunity}
+                          onUpdateOpportunity={onUpdateOpportunity}
+                        >
+                          {findOpportunityLeads(activeId).map((i) => (
+                            <PipelineLead
+                              key={i.id}
+                              lead={i}
+                              id={i.id}
+                              onDeleteLead={onDeleteLead}
+                              onUpdateLead={onUpdateLead}
+                            />
+                          ))}
+                        </PipelineOpportunity>
+                      )
+                    : null}
+                </DragOverlay>
+              </DndContext>
+            ) : (
+              NoOpportunitiesComponent
+            )}
           </div>
         ) : (
           NoResultsComponent
