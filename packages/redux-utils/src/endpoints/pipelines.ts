@@ -1,4 +1,5 @@
 import { baseApi } from "../api";
+import { type SearchParamsType } from "../index.tsx";
 import {
   type UpdateOpportunitiesPayload,
   type GetAllOpportunitiesResponse,
@@ -6,6 +7,9 @@ import {
   type CreateLeadPayload,
   type UpdateLeadPayload,
   type UpdateOpportunityPayload,
+  type GetAllPipelinesResponse,
+  type CreatePipelinePayload,
+  type ImportPipelinesResponse,
 } from "./types/pipelines";
 
 const api = baseApi
@@ -14,6 +18,81 @@ const api = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
+      // PIPELINES
+      getAllPipelines: builder.query<GetAllPipelinesResponse[], undefined>({
+        query: () => {
+          return {
+            url: `/pipeline`,
+          };
+        },
+        providesTags: ["pipelines"],
+      }),
+
+      createPipeline: builder.mutation<undefined, CreatePipelinePayload>({
+        query: (payload) => {
+          return {
+            url: `/pipeline`,
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["pipelines"],
+      }),
+
+      getPipeline: builder.query<
+        GetAllPipelinesResponse,
+        { pipelineId: string }
+      >({
+        query: ({ pipelineId }) => {
+          return {
+            url: `/pipeline/${pipelineId}`,
+          };
+        },
+        transformResponse: (response: GetAllPipelinesResponse) => {
+          return {
+            ...response,
+            opportunities: response.opportunities.map((opportunity) => ({
+              ...opportunity,
+              id: `opportunity-${opportunity._id}`,
+              leads: opportunity.leads.map((lead) => ({
+                ...lead,
+                id: `item-${lead._id}`,
+              })),
+            })),
+          };
+        },
+        providesTags: ["pipelines"],
+      }),
+
+      exportPipelines: builder.query<Blob, SearchParamsType>({
+        query: (data: string) => {
+          const params = new URLSearchParams(data).toString();
+          return {
+            url: `/pipeline/export?${params}`,
+            method: "GET",
+            responseType: "blob",
+          };
+        },
+      }),
+      importPipelines: builder.mutation<ImportPipelinesResponse, FormData>({
+        query: (payload) => {
+          return {
+            url: `/pipeline/import`,
+            method: "POST",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["pipelines"],
+      }),
+      deletePipeline: builder.mutation<undefined, string>({
+        query: (pipelineId: string) => {
+          return {
+            url: `/pipeline/${pipelineId}`,
+            method: "DELETE",
+          };
+        },
+      }),
+
       // OPPORTUNITIES
       getAllOpportunities: builder.query<
         GetAllOpportunitiesResponse[],
@@ -47,7 +126,7 @@ const api = baseApi
       }),
       updateOpportunities: builder.mutation<
         undefined,
-        UpdateOpportunitiesPayload[]
+        UpdateOpportunitiesPayload
       >({
         query: (payload) => {
           return {
@@ -106,6 +185,12 @@ const api = baseApi
   });
 
 export const {
+  useGetAllPipelinesQuery,
+  useCreatePipelineMutation,
+  useGetPipelineQuery,
+  useLazyExportPipelinesQuery,
+  useImportPipelinesMutation,
+  useDeletePipelineMutation,
   useGetAllOpportunitiesQuery,
   useCreateOpportunityMutation,
   useUpdateOpportunitiesMutation,
