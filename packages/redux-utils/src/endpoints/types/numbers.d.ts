@@ -49,12 +49,7 @@ export interface BuyNumberResponse {
 
 export interface BuyNumberPayload {
   phoneNumber: string;
-  organization_id: string;
   [key: string]: string;
-}
-
-export interface GetPurchasedNumbersPayload {
-  organization_id: string;
 }
 
 export interface GetPurchasedNumbersResponse {

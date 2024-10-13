@@ -1,22 +1,21 @@
 "use client";
 
-import { ArrowCircleDown, Logout, Moon, ProfileCircle } from "iconsax-react";
+import { ArrowCircleDown, Moon } from "iconsax-react";
 import { useTheme } from "@repo/ui/hooks";
 import React, { useEffect, useState } from "react";
-import { Menu } from "@headlessui/react";
-import { signOut } from "next-auth/react";
 import { SunIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { DefaultAvatar } from "@repo/ui/components/custom";
 import { useGetUserProfileQuery } from "@repo/redux-utils/src/endpoints/user";
 import { Button, buttonVariants } from "@repo/ui/components/ui";
 import { cn } from "@repo/ui/utils";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import NotificationsDrawer from "@/src/app/dashboard/_components/navigation/dashboard-header/notifications-drawer.tsx";
+import { ProfileMenuDropdown } from "@/src/app/dashboard/_components/navigation/dashboard-header/profile-menu-dropdown.tsx";
 
 export default function DashboardHeader() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   // const pathname = usePathname();
 
@@ -75,43 +74,24 @@ export default function DashboardHeader() {
                   {userProfile?.userDetails.role.role_name ?? "Role"}
                 </div>
               </div>
-              <Menu as="div" className="relative">
-                <Menu.Button className="relative flex size-10 items-center justify-center rounded-full bg-gray-100">
-                  <ArrowCircleDown className="relative size-5" />
-                </Menu.Button>
-                <Menu.Items className="absolute right-0 mt-4 flex origin-top-right gap-1 focus:outline-none">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        className={`${
-                          active ? "bg-primary text-white" : "text-gray-900"
-                        } group flex items-center justify-end rounded-full bg-card p-3 text-sm`}
-                        href="/dashboard/settings/personal-settings"
-                      >
-                        Profile
-                        <ProfileCircle
-                          aria-hidden="true"
-                          className="ml-2 size-5"
-                        />
-                      </Link>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        className={`${
-                          active ? "bg-primary text-white" : "text-gray-900"
-                        } group flex items-center justify-end rounded-full bg-card p-3 text-sm`}
-                        onClick={() => void signOut({ callbackUrl: "/" })}
-                        type="button"
-                      >
-                        Logout
-                        <Logout aria-hidden="true" className="ml-2 h-5 w-5" />
-                      </button>
-                    )}
-                  </Menu.Item>
-                </Menu.Items>
-              </Menu>
+              <ProfileMenuDropdown
+                open={profileDropdownOpen}
+                onOpenChange={setProfileDropdownOpen}
+              >
+                <Button
+                  asChild
+                  onClick={() => {
+                    setProfileDropdownOpen(!profileDropdownOpen);
+                  }}
+                >
+                  <button
+                    className="relative flex size-10 items-center justify-center rounded-full bg-gray-100"
+                    type="button"
+                  >
+                    <ArrowCircleDown className="relative size-5" />
+                  </button>
+                </Button>
+              </ProfileMenuDropdown>
             </div>
           </div>
           <div className="flex items-center gap-3">
