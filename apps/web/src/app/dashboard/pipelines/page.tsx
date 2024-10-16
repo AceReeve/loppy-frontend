@@ -204,6 +204,14 @@ export default function Home() {
   const [createOpportunityRequest, { isLoading: isLoadingCreateOpportunity }] =
     useCreateOpportunityMutation();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    if (!selectedPipelineId) {
+      toast({
+        description:
+          "Please create a pipeline first before creating an opportunity",
+      });
+      return;
+    }
+
     const newData = {
       ...data,
       itemOrder: opportunities.length + 1,
@@ -785,7 +793,6 @@ export default function Home() {
                                 <PopoverContent>
                                   <CirclePicker
                                     onChangeComplete={(color: ColorResult) => {
-                                      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- disable errors
                                       field.onChange(color.hex);
                                     }}
                                   />

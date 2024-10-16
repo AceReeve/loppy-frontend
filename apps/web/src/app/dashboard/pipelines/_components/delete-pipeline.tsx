@@ -26,6 +26,13 @@ export default function DeletePipeline({
 
   const [sendRequest, { isLoading }] = useDeletePipelineMutation();
   const onSubmit = async () => {
+    if (pipelineId === "") {
+      toast({
+        description: "No pipeline selected",
+      });
+      return;
+    }
+
     await sendRequest(pipelineId)
       .unwrap()
       .then(() => {
