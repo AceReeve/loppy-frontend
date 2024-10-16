@@ -55,9 +55,9 @@ export default function ActionEdge({
   const BaseActionEdge = (
     <foreignObject
       // width={buttonWidth}
-      width={100}
+      width={buttonWidth}
       height={buttonHeight}
-      x={labelX - buttonWidth}
+      x={labelX - buttonWidth / 2}
       y={labelY - buttonHeight / 2}
     >
       <div className="flex h-full w-full items-center justify-center ">
@@ -68,7 +68,7 @@ export default function ActionEdge({
         >
           {buttonContent}
         </Button>
-        {id}
+        {/*        {id}*/}
       </div>
     </foreignObject>
   );

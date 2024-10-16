@@ -50,7 +50,7 @@ export default function TriggerNode({
           <p className="font-poppins text-[clamp(10px,2vw+5px,12px)] text-orange-500">
             Trigger
           </p>
-          <p className="font-poppins text-[clamp(2px,1vw,11px)] text-slate-600">
+          <p className=" max-w-32 overflow-hidden overflow-ellipsis whitespace-nowrap font-poppins text-[clamp(2px,1vw,11px)] text-slate-600">
             {title}
           </p>
         </div>
