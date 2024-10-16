@@ -28,7 +28,7 @@ export default function ConversationDetails() {
       leaveTo="translate-x-full"
       show={sidebarOpen}
     >
-      <section className="inline-flex w-full max-w-[329px] flex-col items-start justify-start bg-white px-5 pt-6 custom-scrollbar overflow-y-auto">
+      <section className="inline-flex w-full max-w-[329px] flex-col items-start justify-start bg-white px-5 pt-6 custom-scrollbar overflow-y-auto rounded-tr-3xl">
         <div className="inline-flex w-full items-start justify-between">
           <button
             className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white hover:bg-gray-200 group-hover:flex md:flex"

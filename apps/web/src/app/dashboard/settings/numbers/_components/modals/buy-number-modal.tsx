@@ -10,7 +10,7 @@ import {
   toast,
 } from "@repo/ui/components/ui";
 import type { z } from "zod";
-import { useBuyNumberMutation } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
+import { useBuyNumberMutation } from "@repo/redux-utils/src/endpoints/numbers.ts";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { useCreateInboxMutation } from "@repo/redux-utils/src/endpoints/inboxes.ts";
 import { InboxAssignmentType } from "@repo/redux-utils/src/endpoints/enums/inbox.enums.ts";
@@ -21,11 +21,9 @@ import {
 } from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
 import AssignInbox from "@/src/app/dashboard/settings/numbers/_components/modals/buy-number-steps/2-assign-inbox.tsx";
 import { type StepItem } from "@/src/types/settings";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import ChooseNumber from "./buy-number-steps/1-choose-number.tsx";
 
 function BuyNumberModal() {
-  const { currentOrg } = useDashboardState();
   const [currentStep, setCurrentStep] = useState(0);
   const [saveEnabled, setSaveEnabled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -80,16 +78,14 @@ function BuyNumberModal() {
       phoneNumber:
         process.env.NEXT_PUBLIC_TEST_TWILIO_BUY_NUMBER ??
         buyNumberFormData.selectedNumber,
-      organization_id: currentOrg._id,
     })
       .unwrap()
-      .then((res) => {
+      .then(() => {
         if (type === InboxAssignmentType.NEW) {
           createInbox({
             inbox_name: data.inbox_name ?? "",
             description: data.inbox_name ?? "",
-            purchased_number: res.purchased_number,
-            organization_id: currentOrg._id,
+            purchased_number: buyNumberFormData.selectedNumber,
           })
             .unwrap()
             .then(() => {

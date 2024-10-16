@@ -12,16 +12,15 @@ import {
 import type { z } from "zod";
 import { useCreateInboxMutation } from "@repo/redux-utils/src/endpoints/inboxes.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useBuyNumberMutation } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
+import { useBuyNumberMutation } from "@repo/redux-utils/src/endpoints/numbers.ts";
 import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { type StepItem } from "@/src/types/settings";
 import CreateNewInbox from "@/src/app/dashboard/settings/inboxes/_components/modals/create-inbox-steps/1-create-new-inbox.tsx";
 import { type createInboxSchema } from "@/src/app/dashboard/settings/inboxes/_components/schemas/create-inbox-schemas.ts";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import AssignNumber from "@/src/app/dashboard/settings/inboxes/_components/modals/create-inbox-steps/2-assign-a-number.tsx";
+import { type chooseNumberSchema } from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
 
 function CreateInboxModal() {
-  const { currentOrg } = useDashboardState();
   const [currentStep, setCurrentStep] = useState(0);
   const [createInboxFormData, setCreateInboxFormData] =
     useState<z.infer<typeof createInboxSchema>>();
@@ -64,20 +63,19 @@ function CreateInboxModal() {
     onNextStep();
   }
 
-  function onSetNumberSubmit() {
+  function onSetNumberSubmit(data: z.infer<typeof chooseNumberSchema>) {
     if (!createInboxFormData) return;
 
     buyNumber({
-      phoneNumber: "+15005550006",
-      organization_id: currentOrg._id,
+      phoneNumber:
+        process.env.NEXT_PUBLIC_TEST_TWILIO_BUY_NUMBER ?? data.selectedNumber,
     })
       .unwrap()
-      .then((res) => {
+      .then(() => {
         createInbox({
           inbox_name: createInboxFormData.inbox_name,
           description: createInboxFormData.inbox_name,
-          purchased_number: res.purchased_number,
-          organization_id: currentOrg._id,
+          purchased_number: data.selectedNumber,
         })
           .unwrap()
           .then(() => {

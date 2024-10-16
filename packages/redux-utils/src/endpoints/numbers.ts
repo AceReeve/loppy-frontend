@@ -4,13 +4,12 @@ import {
   type BuyNumberResponse,
   type GetAvailableLocalNumbersPayload,
   type GetAvailableLocalNumbersResponse,
-  type GetPurchasedNumbersPayload,
   type GetPurchasedNumbersResponse,
-} from "./types/phone-numbers";
+} from "./types/numbers";
 
 const api = baseApi
   .enhanceEndpoints({
-    addTagTypes: ["phone_numbers"],
+    addTagTypes: ["numbers"],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -24,18 +23,18 @@ const api = baseApi
             url: `/messages/available-numbers?${params}`,
           };
         },
-        providesTags: ["phone_numbers"],
+        providesTags: ["numbers"],
       }),
       getPurchasedNumbers: builder.query<
         GetPurchasedNumbersResponse[],
-        GetPurchasedNumbersPayload
+        undefined
       >({
-        query: (payload) => {
+        query: () => {
           return {
-            url: `/twilio-messaging/get-purchased-numbers/${payload.organization_id}`,
+            url: `/twilio-messaging/get-purchased-numbers`,
           };
         },
-        providesTags: ["phone_numbers"],
+        providesTags: ["numbers"],
       }),
       buyNumber: builder.mutation<BuyNumberResponse, BuyNumberPayload>({
         query: (payload) => {
@@ -46,7 +45,7 @@ const api = baseApi
             method: "POST",
           };
         },
-        invalidatesTags: ["phone_numbers"],
+        invalidatesTags: ["numbers"],
       }),
     }),
   });

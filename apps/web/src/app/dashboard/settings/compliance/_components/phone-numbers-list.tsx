@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/ui";
 import { cn } from "@repo/ui/utils";
-import { type GetAvailableLocalNumbersResponse } from "@repo/redux-utils/src/endpoints/types/phone-numbers";
+import { type GetAvailableLocalNumbersResponse } from "@repo/redux-utils/src/endpoints/types/numbers";
 
 interface PhoneNumbersType {
   dataSet: GetAvailableLocalNumbersResponse[];

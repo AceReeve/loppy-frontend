@@ -8,7 +8,8 @@
     "./query-utils": "./src/query-utils.ts",
     "./string-utils": "./src/string-utils.ts",
     "./helpers": "./src/helpers.ts",
-    "./hooks/use-theme-variables": "./src/hooks/use-theme-variables.ts"
+    "./hooks/use-theme-variables": "./src/hooks/use-theme-variables.ts",
+    "./hooks/use-is-visible": "./src/hooks/use-is-visible.ts"
   },
   "scripts": {
     "lint": "eslint src/"

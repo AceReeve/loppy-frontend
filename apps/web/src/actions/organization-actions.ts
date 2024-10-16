@@ -26,23 +26,43 @@ export async function getOrganizationsList(
 }
 
 export async function getInboxes(
-  organizationId: string,
   session: Session,
 ): Promise<GetAllInboxesResponse[]> {
   if (!process.env.NEXT_PUBLIC_API_URL)
     throw new Error("NEXT_PUBLIC_API_URL is not detected");
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/inboxes/${organizationId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/inboxes`,
     {
       headers: {
         Authorization: `Bearer ${session.jwt}`,
       },
       next: {
-        tags: ["organization"],
+        tags: ["inbox"],
       },
     },
   );
 
   return response.json() as Promise<GetAllInboxesResponse[]>;
+}
+
+export async function getActiveInbox(
+  session: Session,
+): Promise<GetAllInboxesResponse | undefined> {
+  if (!process.env.NEXT_PUBLIC_API_URL)
+    throw new Error("NEXT_PUBLIC_API_URL is not detected");
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/twilio-messaging/get-activated-inbox`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.jwt}`,
+      },
+      next: {
+        tags: ["inbox"],
+      },
+    },
+  );
+
+  return response.json() as Promise<GetAllInboxesResponse | undefined>;
 }

@@ -7,19 +7,14 @@ import { useGetAllInboxesQuery } from "@repo/redux-utils/src/endpoints/inboxes.t
 import { LoadingTable } from "@repo/ui/loading-table.tsx";
 import { inboxesColumns } from "@/src/app/dashboard/settings/inboxes/columns.tsx";
 import { DataTable } from "@/src/components/data-table";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import CreateInboxModal from "../_components/modals/create-inbox-modal.tsx";
 
 export default function AllInboxes() {
-  const { currentOrg } = useDashboardState();
-
   const {
     data: inboxesList,
     isLoading,
     isFetching,
-  } = useGetAllInboxesQuery({
-    organization_id: currentOrg._id,
-  });
+  } = useGetAllInboxesQuery(undefined);
 
   const NoResultsComponent = (
     <div className="flex w-full flex-col items-center justify-center px-4 py-28">

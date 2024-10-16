@@ -16,11 +16,16 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   toast,
 } from "@repo/ui/components/ui";
 import { useUpdateOpportunityMutation } from "@repo/redux-utils/src/endpoints/pipelines";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { type UniqueIdentifier } from "@dnd-kit/core";
+import { Pipette } from "lucide-react";
+import { CirclePicker, type ColorResult } from "react-color";
 import { type Opportunity } from "../page";
 
 interface UpdateOpportunityType {
@@ -36,6 +41,8 @@ interface UpdateOpportunityType {
 // schemas
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Required" }),
+  lead_value: z.string().min(1, { message: "Required" }),
+  color: z.string().min(1, { message: "Required" }),
 });
 
 export default function UpdateOpportunity({
@@ -48,6 +55,8 @@ export default function UpdateOpportunity({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: opportunity?.title ?? "",
+      lead_value: opportunity?.lead_value.toString() ?? "",
+      color: opportunity?.color ?? "",
     },
   });
 
@@ -55,6 +64,7 @@ export default function UpdateOpportunity({
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
+      lead_value: Number(data.lead_value),
       _id: opportunity?._id ?? "",
     };
 
@@ -96,6 +106,58 @@ export default function UpdateOpportunity({
                       <Input {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Color</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-2">
+                        <Input
+                          style={{
+                            backgroundColor: field.value,
+                          }}
+                          readOnly
+                          {...field}
+                        />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              className={`bg-${field.value}`}
+                              variant="outline"
+                              size="icon"
+                            >
+                              <Pipette />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <CirclePicker
+                              onChangeComplete={(color: ColorResult) => {
+                                field.onChange(color.hex);
+                              }}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lead_value"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lead Value</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
                   </FormItem>
                 )}
               />

@@ -3,6 +3,8 @@ import {
   type CreateOrganizationPayload,
   type CreateOrganizationResponse,
   type GetOrganizationResponse,
+  type SetActiveOrganizationPayload,
+  type SetActiveOrganizationResponse,
 } from "./types/organization";
 
 const api = baseApi
@@ -11,7 +13,7 @@ const api = baseApi
   })
   .injectEndpoints({
     endpoints: (builder) => ({
-      getOrganizations: builder.query<GetOrganizationResponse[], undefined>({
+      getAllOrganizations: builder.query<GetOrganizationResponse[], undefined>({
         query: () => {
           return {
             url: `/twilio-messaging/organizations`,
@@ -19,6 +21,7 @@ const api = baseApi
         },
         providesTags: ["organization"],
       }),
+
       createOrganization: builder.mutation<
         CreateOrganizationResponse,
         CreateOrganizationPayload
@@ -32,7 +35,31 @@ const api = baseApi
         },
         invalidatesTags: ["organization"],
       }),
+
+      getActiveOrganization: builder.query<GetOrganizationResponse, undefined>({
+        query: () => {
+          return {
+            url: `/twilio-messaging/get-activated-organization`,
+          };
+        },
+        providesTags: ["organization"],
+      }),
+
+      setActiveOrganization: builder.mutation<
+        SetActiveOrganizationResponse,
+        SetActiveOrganizationPayload
+      >({
+        query: (payload) => {
+          return {
+            url: `/twilio-messaging/activate-organization?id=${payload.id}`,
+            method: "PUT",
+            body: payload,
+          };
+        },
+        invalidatesTags: ["organization"],
+      }),
     }),
   });
 
-export const { useGetOrganizationsQuery, useCreateOrganizationMutation } = api;
+export const { useGetAllOrganizationsQuery, useCreateOrganizationMutation } =
+  api;

@@ -22,13 +22,15 @@ import {
 } from "@repo/ui/components/ui";
 import { Refresh } from "iconsax-react";
 import { cn } from "@repo/ui/utils";
-import React, { useEffect, useState } from "react";
-import { useLazyGetAvailableLocalNumbersQuery } from "@repo/redux-utils/src/endpoints/phone-numbers.ts";
+import React, { useEffect, useRef, useState } from "react";
+import { useLazyGetAvailableLocalNumbersQuery } from "@repo/redux-utils/src/endpoints/numbers.ts";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import type { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { NumberType } from "@repo/redux-utils/src/endpoints/enums/numbers.enums.ts";
+import { useIsVisible } from "@repo/hooks-and-utils/hooks/use-is-visible";
 import PhoneNumbersList from "@/src/app/dashboard/settings/compliance/_components/phone-numbers-list.tsx";
 import { countries, states } from "@/src/data/states";
 import { type FormComponentProps } from "@/src/types/settings";
@@ -44,11 +46,14 @@ export default function ChooseNumberForm({
     { data: availableNumbers, isLoading, isFetching, error },
   ] = useLazyGetAvailableLocalNumbersQuery();
 
+  const ref = useRef<HTMLFormElement | null>(null);
+  const isVisible = useIsVisible(ref);
+
   const form = useForm<z.infer<typeof chooseNumberSchema>>({
     resolver: zodResolver(chooseNumberSchema),
   });
 
-  const [activeTab, setActiveTab] = useState("local-number");
+  const [activeTab, setActiveTab] = useState<NumberType>(NumberType.LOCAL);
 
   const countryCode = form.watch("country");
   const currentState = form.watch("state");
@@ -65,22 +70,25 @@ export default function ChooseNumberForm({
   }, [areaCode, currentState, countryCode, activeTab]);
 
   useEffect(() => {
-    if (activeTab === "local-number") {
+    if (!isVisible) return;
+    form.setValue("type", activeTab as string, { shouldValidate: true });
+
+    if (activeTab === NumberType.LOCAL) {
       setSaveEnabled(form.formState.isValid);
     } else {
       setSaveEnabled(selectedNumber !== "");
     }
-  }, [form.formState.isValid, activeTab, selectedNumber]);
+  }, [form.formState.isValid, activeTab, selectedNumber, isVisible]);
 
   function refetch() {
-    if (activeTab === "local-number" && areaCode && countryCode) {
+    if (activeTab === NumberType.LOCAL && areaCode && countryCode) {
       void refreshAvailableNumbers({
         type: "local",
         countryCode,
         areaCode,
         limit: "5",
       });
-    } else if (activeTab === "toll-free-number") {
+    } else {
       void refreshAvailableNumbers({
         type: "tollFree",
         countryCode: "US",
@@ -94,7 +102,7 @@ export default function ChooseNumberForm({
   function renderAvailableNumbers() {
     if (isLoading) return <LoadingSpinner />;
     if (!availableNumbers) return null;
-    if (activeTab === "local-number" && (!countryCode || !areaCode))
+    if (activeTab === NumberType.LOCAL && (!countryCode || !areaCode))
       return null;
 
     return (
@@ -136,10 +144,12 @@ export default function ChooseNumberForm({
         onSubmit={onSubmit ? form.handleSubmit(onSubmit) : undefined}
         className="flex flex-col gap-4"
         id={id}
+        ref={ref}
       >
         <Tabs
-          defaultValue="local-number"
-          onValueChange={setActiveTab}
+          onValueChange={(tab) => {
+            setActiveTab(tab as NumberType);
+          }}
           value={activeTab}
         >
           <TabsList>
