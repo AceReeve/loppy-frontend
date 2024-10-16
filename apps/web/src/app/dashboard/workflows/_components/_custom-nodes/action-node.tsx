@@ -36,7 +36,9 @@ export default function ActionNode({
             {icon}
           </div>
         )}
-        <p className="font-poppins text-[12px] text-slate-600">{title}</p>
+        <p className=" max-w-32 overflow-hidden overflow-ellipsis whitespace-nowrap font-poppins text-[clamp(5px,5vw,11px)] text-slate-600">
+          {title}
+        </p>
       </div>
       <Handle type="source" position={Position.Bottom} />
       <Handle type="target" position={Position.Top} />

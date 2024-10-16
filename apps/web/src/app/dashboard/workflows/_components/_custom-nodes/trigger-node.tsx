@@ -77,5 +77,5 @@ export default function TriggerNode({
     </Button>
   );
 
-  return id !== "0" ? triggerNode : startNode;
+  return id !== "n0" ? triggerNode : startNode;
 }

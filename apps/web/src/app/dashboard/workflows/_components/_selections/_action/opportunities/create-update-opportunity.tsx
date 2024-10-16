@@ -64,7 +64,7 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
   return (
     <div className="space-y-4 rounded ">
       <div className="flex flex-col justify-start">
-        <p>Send Email Action</p>
+        <p>Create or Update Opportunity Action</p>
         <p className="content-center font-nunito text-sm text-gray-500">
           Sets a Workflow that adds the contact upon execution.
         </p>

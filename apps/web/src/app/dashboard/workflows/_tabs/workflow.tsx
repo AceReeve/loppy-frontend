@@ -15,6 +15,8 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogTitle,
   DialogTrigger,
   Input,
   Separator,
@@ -43,13 +45,14 @@ import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
 
-interface WorkflowProp {
+export interface WorkflowProp {
   workflowID: string;
+  workflowName: string;
 }
 export interface SidebarRefProp {
   showNodeData: (node: IActionNode | ITriggerNode) => void;
 }
-export default function Workflow({ workflowID }: WorkflowProp) {
+export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
   const nodeTypes = {
     startNode: StartNode,
     triggerNode: TriggerNode,
@@ -60,17 +63,28 @@ export default function Workflow({ workflowID }: WorkflowProp) {
   const [openSheet, setOpenSheet] = useState(false);
   const [openWorkName, setOpenWorkName] = useState(false);
   const [isTriggers, setIsTriggers] = useState(false);
+  const selectedEdge = useRef<string>("");
   /*  const [primaryActionID, setPrimaryActionID] = useState("a0");*/
 
   const primaryActionID = useRef("a0");
+  const deletedCount = useRef(0);
+  const deletedTrigger = useRef(0);
+
   const updatePrimaryActionID = (newID: string) => {
     primaryActionID.current = newID;
   };
 
-  const handleOpenSheet = (isTrigger: boolean) => {
+  const handleOpenSheet = (isTrigger: boolean, edge?: string) => {
     setOpenSheet(true);
     setIsTriggers(isTrigger);
+    if (edge) {
+      selectedEdge.current = edge;
+    }
   };
+
+  /*  useEffect(() => {
+    console.log("Selected edge updated:", selectedEdge);
+  }, [selectedEdge]);*/
 
   const sidebarRef = useRef<HTMLDivElement & SidebarRefProp>(null);
   const showNodeData = (node: IActionNode | ITriggerNode) => {
@@ -81,7 +95,7 @@ export default function Workflow({ workflowID }: WorkflowProp) {
 
   const triggerNodes = calculatePositions([
     {
-      id: "0",
+      id: "n0",
       type: "triggerNode",
       data: {
         title: "Add New Trigger",
@@ -103,16 +117,46 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     ...actionNodes,
     ...triggerNodes,
   ]);
+
+  /*  const initialEdge = {
+    id: `n0-${primaryActionID.current}`,
+    source: "n0",
+    target: primaryActionID.current,
+    type: "actionEdge",
+    animated: false,
+    data: {
+      onButtonClick: handleOpenSheet,
+    },
+  };*/
+
+  const initialEdge = {
+    id: `n0-a0`,
+    source: "n0",
+    target: "a0",
+    type: "actionEdge",
+    animated: false,
+    data: {
+      onButtonClick: handleOpenSheet,
+    },
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments -- (description)
   const [edges, setEdges] = useEdgesState<Edge>([]);
 
+  /*
   useEffect(() => {
-    /*    setNodes([...actionNodes, ...triggerNodes]);*/
+    initialEdge.id = `n0-${primaryActionID.current}`;
+  }, [primaryActionID.current]);
+*/
+
+  /*
+  useEffect(() => {
+    /!*    setNodes([...actionNodes, ...triggerNodes]);*!/
 
     // Define the new edge
     const newEdge = {
-      id: "n0-a0",
-      source: "0",
+      id: `n0-${primaryActionID.current}`,
+      source: "n0",
       target: primaryActionID.current,
       type: "actionEdge",
       animated: false,
@@ -136,6 +180,7 @@ export default function Workflow({ workflowID }: WorkflowProp) {
       return [...currentEdges, newEdge];
     });
   }, [primaryActionID.current, nodes]);
+*/
 
   function calculatePositions(tNodes: Node[]): Node[] {
     const baseOffset = 250;
@@ -193,25 +238,25 @@ export default function Workflow({ workflowID }: WorkflowProp) {
           (n) => n.type === "triggerNode",
         );
 
-        const isDuplicate = existingNodes.some(
+        /*        const isDuplicate = existingNodes.some(
           (n: Node) => n.data.title === node.data.title,
         );
 
         if (isDuplicate) {
           setDuplicateNode(true);
           return currentNodes;
-        }
+        }*/
 
         lastNodeId =
           currentNodes.length > 0
             ? extractNumericId(existingNodes[existingNodes.length - 1].id)
             : 0;
 
-        newNodeId = (lastNodeId + 1).toString();
+        newNodeId = (lastNodeId + 1 + deletedTrigger.current).toString();
 
         const newNode: Node = {
           ...node,
-          id: newNodeId,
+          id: `n${newNodeId}`,
           type: "triggerNode",
           data: {
             ...node.data,
@@ -239,7 +284,7 @@ export default function Workflow({ workflowID }: WorkflowProp) {
       setEdges((currentEdges: Edge[]) => {
         const newEdge: Edge = {
           id: `n${newNodeId}-${primaryActionID.current}`,
-          source: newNodeId,
+          source: `n${newNodeId}`,
           /*          target: "a1",*/
           target: primaryActionID.current,
           type: "defaultEdge",
@@ -250,7 +295,7 @@ export default function Workflow({ workflowID }: WorkflowProp) {
         return [...currentEdges, newEdge];
       });
     },
-    [handleOpenSheet, primaryActionID.current],
+    [handleOpenSheet],
   );
 
   function extractNumericId(id: string): number {
@@ -293,48 +338,289 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     );
   };
 
-  const deleteNode = useCallback((node: IActionNode | ITriggerNode) => {
-    const nodeIdToDelete = node.id;
+  /*  console.log(edges);*/
+  const [nodeIdToDelete, setNodeIdToDelete] = useState<string | null>(null);
+  useEffect(() => {
+    if (nodeIdToDelete) {
+      const updateEdges = (currentEdges: Edge[]) => {
+        // Get the edges connected to the current node
+        const prevEdges = currentEdges.filter(
+          (edge) => edge.target === nodeIdToDelete,
+        );
+        const nextEdges = currentEdges.filter(
+          (edge) => edge.source === nodeIdToDelete,
+        );
+        /*        console.log("nextEdges", nextEdges);
+        console.log("prevEdges", prevEdges);*/
+
+        /*        console.log("nextEdges", nextEdges);
+        console.log("prevEdges", prevEdges);*/
+        // Check if there are any next edges to update the target
+        if (prevEdges.length > 0 && nextEdges.length > 0) {
+          const splitIds = nextEdges[0].id.split("-");
+
+          if (prevEdges[0].target === primaryActionID.current) {
+            updatePrimaryActionID(nextEdges[0].source);
+          }
+
+          // Create new edges with updated properties using the spread operator
+          const updatedPrevEdges = prevEdges.map((edge, index) => {
+            if (index === 0) {
+              return {
+                ...edge,
+                target: splitIds[1], // Update target based on the first next edge
+                id: `${prevEdges[0].source}-${splitIds[1]}`, // Update edge IDz
+              };
+            }
+            return edge; // Return unchanged edges
+          });
+
+          const updatedEdges = currentEdges.filter(
+            (e) =>
+              /*!nextEdges.some((nEdge) => nEdge.id === e.id) &&*/
+              !prevEdges.some((pEdge) => pEdge.id === e.id),
+          );
+
+          // Combine updated edges with the modified first prevEdge (if it was updated)
+          return updatedEdges.concat(
+            updatedPrevEdges.filter((edge, index) => index === 0),
+          );
+        }
+
+        // Return current edges if no modifications are made
+        return currentEdges;
+      };
+
+      setEdges((currentEdges) => updateEdges(currentEdges));
+
+      // Reset the state after processing
+      setNodeIdToDelete("");
+      if (nodeIdToDelete.startsWith("n")) {
+        deletedTrigger.current++;
+      } else {
+        deletedCount.current++;
+      }
+    }
+  }, [nodeIdToDelete]);
+
+  const deleteNode = (node: IActionNode | ITriggerNode) => {
+    setNodeIdToDelete(node.id);
 
     setNodes((currentNodes: Node[]) => {
       const updatedTriggerNodes = currentNodes.filter(
         (n) => n.type === node.type,
       );
-      const updatedNodes = updatedTriggerNodes.filter(
-        (n) => n.id !== nodeIdToDelete,
-      );
+
+      const updatedNodes = updatedTriggerNodes.filter((n) => n.id !== node.id);
+
+      /*      if (node.type === "actionNode" && node.id === primaryActionID.current) {
+        //updatePrimaryActionID();
+      }*/
 
       const positionedNodes =
         node.type === "triggerNode"
           ? calculatePositions(updatedNodes)
           : calculateActionPositions(updatedNodes);
 
+      if (node.id === primaryActionID.current) {
+        updatePrimaryActionID(positionedNodes[0].id);
+      }
+
       return [
         ...currentNodes.filter((n) => n.type !== node.type),
         ...positionedNodes,
       ];
     });
-  }, []);
+
+    // DELETE EDGE
+  };
+
+  useEffect(() => {
+    const filteredEdges = edges.filter(
+      (edge) =>
+        edge.id.startsWith("n") && edge.target !== primaryActionID.current,
+    );
+
+    const getEdges = () => {
+      const updatedEdges = filteredEdges.map((edge) => ({
+        ...edge,
+        id: `${edge.source}-${primaryActionID.current}`, // Update the edge ID
+        target: primaryActionID.current, // Update the target to the primaryActionID
+      }));
+
+      return [
+        ...updatedEdges,
+        ...edges.filter(
+          (edge) =>
+            !edge.id.startsWith("n") || edge.target === primaryActionID.current,
+        ),
+      ];
+    };
+
+    // Assuming you have a setEdges function to update edges
+    setEdges(getEdges); // Update edges instead of nodes
+  }, [primaryActionID.current]); // Include edges in the dependency array
+
+  /*
+  useEffect(() => {
+    const existingActionNodes = nodes.filter((n) => n.type === "actionNode");
+    console.log("exists", existingActionNodes[0]);
+    updatePrimaryActionID(existingActionNodes[0].id);
+  }, [initialEdge.id, nodes]);
+*/
 
   const AddActionNode = useCallback(
     (node: Node) => {
       let newNodeId = "";
-      let lastNodeId = 1;
+      //let lastNodeId = 1;
+      let nextNodeId = "a0";
+      let prevNodeId = "n0";
       let existingActionNodes: Node[] = [];
+
+      const isDuplicate = existingActionNodes.some(
+        (n: Node) => n.data.title === node.data.title,
+      );
+
+      if (isDuplicate) {
+        setDuplicateNode(true);
+        return;
+      }
 
       setNodes((currentNodes: Node[]) => {
         existingActionNodes = currentNodes.filter(
           (n) => n.type === "actionNode",
         );
 
-        const isDuplicate = existingActionNodes.some(
+        /*        lastNodeId =
+            existingActionNodes.length > 0
+              ? extractNumericId(existingActionNodes[0].id)
+              : 0;*/
+        //newNodeId = `a${(lastNodeId + 1).toString()}`;
+        newNodeId = `a${(Number(existingActionNodes.length) + deletedCount.current).toString()}`;
+
+        const newNode: Node = {
+          ...node,
+          id: newNodeId,
+          type: "actionNode",
+          data: {
+            ...node.data,
+            onButtonClick: () => {
+              showNodeData(newNode as IActionNode);
+            },
+          },
+        };
+        (newNode as IActionNode).data.icon =
+          nodeIcons[(node as IActionNode).data.node_name];
+        //existingActionNodes.length <= 1
+
+        /*        existingActionNodes.unshift(newNode);
+         */
+
+        const sideNodes = selectedEdge.current.split("-");
+
+        const belowNode = existingActionNodes.find(
+          (sideNode) => sideNode.id === sideNodes[1],
+        );
+
+        if (belowNode) {
+          const belowIndex = existingActionNodes.indexOf(belowNode);
+          existingActionNodes.splice(belowIndex, 0, newNode);
+          if (belowIndex === 0) {
+            updatePrimaryActionID(existingActionNodes[0].id);
+          }
+        }
+
+        const currentIndex = existingActionNodes.indexOf(newNode);
+        const nextNode = existingActionNodes[Number(currentIndex + 1)];
+        nextNodeId = nextNode.id;
+
+        if (currentIndex !== 0) {
+          const prevNode = existingActionNodes[Number(currentIndex - 1)];
+          prevNodeId = prevNode.id;
+        }
+
+        const positionedNodes = calculateActionPositions(existingActionNodes);
+
+        return [
+          ...currentNodes.filter((n) => n.type !== "actionNode"),
+          ...positionedNodes,
+        ];
+      });
+
+      const updateEdges = (currentEdges: Edge[]) => {
+        // This set of code changes all the triggerNodes connection to main point of action.
+        const filteredEdges = currentEdges.filter(
+          (edge) =>
+            edge.id.startsWith("n") && edge.target !== primaryActionID.current,
+        );
+
+        const updatedEdges = filteredEdges.map((edge) => ({
+          ...edge,
+          id: `${edge.source}-${primaryActionID.current}`,
+          target: primaryActionID.current,
+        }));
+        // up until here.
+
+        const newEdge: Edge = {
+          id: `${newNodeId}-${nextNodeId}`,
+          source: newNodeId,
+          target: nextNodeId,
+          type: "actionEdge",
+          animated: false,
+          data: { onButtonClick: handleOpenSheet },
+        };
+
+        const updatePrevNode = currentEdges.map((edge) => {
+          if (edge.source === prevNodeId) {
+            return {
+              ...edge,
+              id: `${edge.source}-${newNodeId}`, // Update ID
+              target: newNodeId, // Modify this if needed
+            };
+          }
+          return edge;
+        });
+
+        const combinedEdges = [
+          ...updatedEdges,
+          ...updatePrevNode.filter(
+            (edge) =>
+              !edge.id.startsWith("n") ||
+              edge.target === primaryActionID.current,
+          ),
+          newEdge,
+        ];
+
+        // Remove duplicates based on edge.id
+        return combinedEdges.filter(
+          (edge, index, self) =>
+            index === self.findIndex((e) => e.id === edge.id),
+        );
+      };
+
+      setEdges(updateEdges);
+    },
+    [handleOpenSheet],
+  );
+
+  const InitializeActionNode = useCallback(
+    (node: Node) => {
+      let newNodeId = "";
+      let lastNodeId = 1;
+      let existingActionNodes: Node[] = [];
+      setNodes((currentNodes: Node[]) => {
+        existingActionNodes = currentNodes.filter(
+          (n) => n.type === "actionNode",
+        );
+
+        /*        const isDuplicate = existingActionNodes.some(
           (n: Node) => n.data.title === node.data.title,
         );
 
         if (isDuplicate) {
           setDuplicateNode(true);
           return currentNodes;
-        }
+        }*/
 
         lastNodeId =
           existingActionNodes.length > 0
@@ -343,11 +629,11 @@ export default function Workflow({ workflowID }: WorkflowProp) {
         newNodeId = `a${(lastNodeId + 1).toString()}`;
 
         /*        const newNode: Node = {
-          ...node,
-          id: newNodeId,
-          type: "actionNode",
-          position: { x: 0, y: 0 },
-        };*/
+              ...node,
+              id: newNodeId,
+              type: "actionNode",
+              position: { x: 0, y: 0 },
+            };*/
 
         const newNode: Node = {
           ...node,
@@ -386,8 +672,22 @@ export default function Workflow({ workflowID }: WorkflowProp) {
           target: primaryActionID.current,
         }));
 
+        /*        const startEdge = {
+            id: `n0-${primaryActionID.current}`,
+            source: "n0",
+            target: primaryActionID.current,
+            type: "actionEdge",
+            animated: false,
+            data: {
+              onButtonClick: handleOpenSheet,
+            },
+          };*/
+
+        initialEdge.id = `n0-${primaryActionID.current}`;
+        initialEdge.target = primaryActionID.current;
+
         const newEdge: Edge = {
-          id: `a${newNodeId}-${existingActionNodes[1].id.toString()}`,
+          id: `${newNodeId}-${existingActionNodes[1].id.toString()}`,
           source: newNodeId,
           target: existingActionNodes[1].id.toString(),
           type: "actionEdge",
@@ -395,22 +695,31 @@ export default function Workflow({ workflowID }: WorkflowProp) {
           data: { onButtonClick: handleOpenSheet },
         };
 
-        return [
-          ...updatedEdges,
-          ...currentEdges.filter(
-            (edge) =>
-              !edge.id.startsWith("n") ||
-              edge.target === primaryActionID.current,
-          ),
-          newEdge,
-        ];
+        const combinedEdges = () => {
+          return [
+            ...updatedEdges,
+            ...currentEdges.filter(
+              (edge) =>
+                !edge.id.startsWith("n") ||
+                edge.target === primaryActionID.current,
+            ),
+            initialEdge,
+            newEdge,
+          ].filter(
+            (edge, index, self) =>
+              index === self.findIndex((e) => e.id === edge.id),
+          );
+        };
+
+        // Usage
+        return combinedEdges();
       });
     },
     [handleOpenSheet],
   );
 
-  const [workflowName, setWorkflowName] = useState("12598271215");
-  const [inputValue, setInputValue] = useState(workflowName);
+  const [workName, setWorkflowName] = useState(workflowName);
+  const [inputValue, setInputValue] = useState(workName);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
@@ -473,8 +782,8 @@ export default function Workflow({ workflowID }: WorkflowProp) {
 
   const formSchema = z.object({
     id: z.string().min(4, "Invalid ID"),
-    trigger: triggerSchema,
-    action: actionSchema,
+    trigger: z.array(triggerSchema),
+    action: z.array(actionSchema),
   });
 
   /*  console.log("edges", edges);
@@ -483,30 +792,34 @@ export default function Workflow({ workflowID }: WorkflowProp) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: workflowID,
-      trigger: {
-        id: "",
-        title: "",
-        node_name: "",
-        node_type_id: "",
-        content: {
-          filters: [
-            {
-              filter: "",
-              value: "",
-            },
-          ],
+      trigger: [
+        {
+          id: "",
+          title: "",
+          node_name: "",
+          node_type_id: "",
+          content: {
+            filters: [
+              {
+                filter: "",
+                value: "",
+              },
+            ],
+          },
         },
-      },
-      action: {
-        id: "",
-        title: "",
-        node_name: "",
-        node_type_id: "",
-        content: {
-          subject: "",
-          message: "",
+      ],
+      action: [
+        {
+          id: "",
+          title: "",
+          node_name: "",
+          node_type_id: "",
+          content: {
+            subject: "",
+            message: "",
+          },
         },
-      },
+      ],
     },
   });
 
@@ -518,37 +831,22 @@ export default function Workflow({ workflowID }: WorkflowProp) {
       );
 
       const existingTriggerNodes = nodes.filter(
-        (n) => n.type === "triggerNode" && n.id !== "0",
+        (n) => n.type === "triggerNode" && n.id !== "n0",
       );
 
       if (existingTriggerNodes.length > 0) {
-        const firstTriggerNode = existingTriggerNodes[0];
-
-        form.setValue(
-          "trigger",
-          firstTriggerNode.data as z.infer<typeof triggerSchema>,
+        const triggers = existingTriggerNodes.map(
+          (node) => node.data as z.infer<typeof triggerSchema>,
         );
-        // form.setValue("trigger.id", firstTriggerNode.id);
-        /* form.setValue("trigger.title", firstTriggerNode.data.title as string);
-        form.setValue(
-          "trigger.content",
-          firstTriggerNode.data.content as z.infer<typeof contentSchema>,
-        );*/
+        form.setValue("trigger", triggers); // Assuming trigger can accept an array
       }
 
+      // Set values for all action nodes
       if (existingActionNodes.length > 0) {
-        const firstActionNode = existingActionNodes[0];
-        form.setValue(
-          "action",
-          firstActionNode.data as z.infer<typeof actionSchema>,
+        const actions = existingActionNodes.map(
+          (node) => node.data as z.infer<typeof actionSchema>,
         );
-        /* form.setValue("action.id", firstActionNode.id);
-
-        form.setValue("action.title", firstActionNode.data.title as string);
-        form.setValue(
-          "action.content",
-          firstActionNode.data.content as z.infer<typeof actionFilterSchema>,
-        );*/
+        form.setValue("action", actions); // Assuming action can accept an array
       }
 
       /*
@@ -584,13 +882,20 @@ export default function Workflow({ workflowID }: WorkflowProp) {
 
   const hasInitialized = useRef(false);
   const { data: workflow, isLoading } = useGetWorkflowQuery({ id: workflowID });
+  console.log(hasInitialized.current);
 
   useEffect(() => {
+    // && !hasInitialized.current add this to condition --default
     if (!isLoading && workflow && !hasInitialized.current) {
       initializeSampleData();
       hasInitialized.current = true; // Mark as initialized
     }
   }, [workflow, isLoading]);
+
+  /*  const clearWorkflow = () => {
+    setEdges([]); // Clear edges
+    setNodes([]); // Clear nodes
+  };*/
 
   const initializeSampleData = () => {
     if (workflow) {
@@ -630,9 +935,13 @@ export default function Workflow({ workflowID }: WorkflowProp) {
           },
           position: { x: 400, y: 0 },
         };
-        AddActionNode(actionTemplate);
+        InitializeActionNode(actionTemplate);
         return actionTemplate;
       });
+
+      if (workflow.action.length === 0) {
+        setEdges((prevState) => [...prevState, initialEdge]);
+      }
     }
   };
 
@@ -669,6 +978,70 @@ export default function Workflow({ workflowID }: WorkflowProp) {
       });
     }
   };
+  /* const onNodesDelete = useCallback(
+    (dNode: Node) => {
+      const deleted = [dNode];
+      setEdges((prevEdges) => {
+        return deleted.reduce((acc, node) => {
+          const incomers = getIncomers(node, nodes, edges);
+          const outgoers = getOutgoers(node, nodes, edges);
+          const connectedEdges = getConnectedEdges([node], edges);
+
+          console.log(deleted, incomers, outgoers, connectedEdges);
+
+          // Filter out connected edges from the accumulator
+          const remainingEdges = acc.filter(
+            (edge) => !connectedEdges.includes(edge),
+          );
+
+          // Create new edges from incomers and outgoers
+          const createdEdges = incomers.flatMap(({ id: source }) =>
+            outgoers.map(({ id: target }) => ({
+              id: `${source}->${target}`,
+              source,
+              target,
+            })),
+          );
+
+          return [...remainingEdges, ...createdEdges];
+        }, prevEdges);
+      });
+    },
+    [nodes, edges],
+  );*/
+
+  /*const onNodesDelete = useCallback(
+    (deleted: Node[]) => {
+      setEdges((prevEdges) => {
+        console.log("OnNodeDelete called");
+        return deleted.reduce((acc, node) => {
+          const incomers = getIncomers(node, nodes, prevEdges);
+          const outgoers = getOutgoers(node, nodes, prevEdges);
+          const connectedEdges = getConnectedEdges([node], prevEdges);
+
+          const remainingEdges = acc.filter(
+            (edge) => !connectedEdges.includes(edge),
+          );
+
+          const createdEdges = incomers.flatMap(({ id: source }) =>
+            outgoers.map(({ id: target }) => ({
+              id: `${source}->${target}`,
+              source,
+              target,
+            })),
+          );
+
+          return [...remainingEdges, ...createdEdges];
+        }, prevEdges);
+      });
+
+      // Update nodes state to remove deleted nodes
+      setNodes((prevNodes) =>
+        prevNodes.filter((node) => !deleted.some((d) => d.id === node.id)),
+      );
+    },
+    [nodes],
+  );*/
 
   return (
     <div className="border-5 h-[725px] w-full border-gray-900">
@@ -676,7 +1049,7 @@ export default function Workflow({ workflowID }: WorkflowProp) {
         <div className="absolute right-5 flex items-center space-x-4">
           <Button className="rounded px-4" onClick={SaveWorkflow}>
             Save
-          </Button>{" "}
+          </Button>
           {/*          <Button className="rounded px-4" onClick={SaveWorkflow}>
             Publish
           </Button>*/}
@@ -694,13 +1067,15 @@ export default function Workflow({ workflowID }: WorkflowProp) {
             />
           </div>
         </div>
-        <p className="font-semibold">New Workflow: {workflowID}</p>
+        <p className="font-semibold">New Workflow: {workflowName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
             <Edit className="cursor-pointer" />
           </DialogTrigger>
           <DialogContent>
-            <p className="text-slate-600">Change Workflow Name</p>
+            <DialogTitle>Change Workflow Name</DialogTitle>
+
+            <DialogDescription className="hidden" />
             <Separator />
             <Input placeholder={workflowName} onChange={handleInputChange} />
             <Button onClick={handleSave}>Save</Button>
@@ -712,8 +1087,9 @@ export default function Workflow({ workflowID }: WorkflowProp) {
         nodes={nodes}
         edges={edges}
         /*        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}*/
+            onEdgesChange={onEdgesChange}*/
         /*        onConnect={onConnect}*/
+        //onNodesDelete={onNodesDelete}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         fitView

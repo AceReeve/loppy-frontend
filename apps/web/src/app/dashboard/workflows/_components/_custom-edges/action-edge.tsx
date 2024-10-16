@@ -5,7 +5,7 @@ import { Button } from "@repo/ui/components/ui";
 
 interface ActionEdgeProps extends EdgeProps {
   data: {
-    onButtonClick?: (isTriggers: boolean) => void;
+    onButtonClick?: (isTriggers: boolean, edge?: string) => void;
   };
 }
 
@@ -17,6 +17,7 @@ export default function ActionEdge({
   targetY,
   markerEnd,
   data,
+  source,
 }: ActionEdgeProps) {
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -32,13 +33,13 @@ export default function ActionEdge({
 
   const handleClick = () => {
     if (data.onButtonClick) {
-      data.onButtonClick(false);
+      data.onButtonClick(false, id);
     }
   };
 
   const StartEdge = (
     <EdgeLabelRenderer>
-      <div className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 translate-x-[85px] translate-y-[140px] ">
+      <div className="pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 translate-x-[85px] translate-y-[140px] ">
         <Button
           variant="outline"
           className={`text-md cursor-pointer rounded rounded-full border border-slate-500 bg-white p-1 text-slate-600 dark:bg-slate-100 w-[${buttonWidth.toString()}px] h-[${buttonHeight.toString()}px] flex items-center justify-center`}
@@ -46,15 +47,17 @@ export default function ActionEdge({
         >
           +
         </Button>
+        {id}
       </div>
     </EdgeLabelRenderer>
   );
 
   const BaseActionEdge = (
     <foreignObject
-      width={buttonWidth}
+      // width={buttonWidth}
+      width={100}
       height={buttonHeight}
-      x={labelX - buttonWidth / 2}
+      x={labelX - buttonWidth}
       y={labelY - buttonHeight / 2}
     >
       <div className="flex h-full w-full items-center justify-center ">
@@ -65,6 +68,7 @@ export default function ActionEdge({
         >
           {buttonContent}
         </Button>
+        {id}
       </div>
     </foreignObject>
   );
@@ -77,7 +81,7 @@ export default function ActionEdge({
         d={edgePath}
         markerEnd={markerEnd}
       />
-      {id === "n0-a0" ? StartEdge : BaseActionEdge}
+      {source === "n0" ? StartEdge : BaseActionEdge}
     </>
   );
 }

@@ -47,8 +47,8 @@ export interface CreateWorkflowPayload {
 }
 export interface SaveWorkflowPayload {
   id: string;
-  trigger: Trigger;
-  action: Action;
+  trigger: Trigger[];
+  action: Action[];
 }
 export interface PublishWorkflowPayload {
   id: string;
