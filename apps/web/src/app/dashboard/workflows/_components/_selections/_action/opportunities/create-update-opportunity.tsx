@@ -64,7 +64,7 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
   return (
     <div className="space-y-4 rounded ">
       <div className="flex flex-col justify-start">
-        <p>Send Email Action</p>
+        <p>Create or Update Opportunity Action</p>
         <p className="content-center font-nunito text-sm text-gray-500">
           Sets a Workflow that adds the contact upon execution.
         </p>
@@ -191,17 +191,26 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
           <div
             className={`mt-5 flex ${!prop.node ? "justify-end" : "justify-between"} `}
           >
-            <Button
-              onClick={() => {
-                if (prop.node && prop.onHandleDelete) {
-                  prop.onHandleDelete(prop.node);
-                }
-              }}
-              variant="destructive"
-              className={` rounded px-4 ${prop.node ? "" : "hidden"}`}
-            >
-              Delete
-            </Button>
+            <div className={`flex space-x-2 ${prop.node ? "" : "hidden"}`}>
+              <Button
+                onClick={() => {
+                  if (prop.node && prop.onHandleDelete) {
+                    prop.onHandleDelete(prop.node);
+                  }
+                }}
+                variant="destructive"
+                className={` rounded px-4 ${prop.node ? "" : "hidden"}`}
+              >
+                Delete
+              </Button>
+
+              <Button
+                variant="outline"
+                className={` rounded px-4 ${prop.node ? "" : "hidden"}`}
+              >
+                Cancel
+              </Button>
+            </div>
             <Button type="submit" className="rounded px-4">
               {prop.node ? "Update Trigger" : "Add Trigger"}
             </Button>

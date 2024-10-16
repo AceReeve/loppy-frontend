@@ -9,18 +9,23 @@ import {
   TabsTrigger,
 } from "@repo/ui/components/ui";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
-import Workflow from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
+import Workflow, {
+  type WorkflowProp,
+} from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
 /*import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
 import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";*/
 
 export default function Page() {
   const [workflowID, setWorkflowID] = useState("");
+  const [workflowName, setWorkflowName] = useState("");
 
   const tabs = [
     {
       label: "Workflow",
       id: "workflow",
-      component: <Workflow workflowID={workflowID} />,
+      component: (
+        <Workflow workflowID={workflowID} workflowName={workflowName} />
+      ),
     },
     /*    {
       label: "Settings",
@@ -36,9 +41,10 @@ export default function Page() {
 
   const [isWorkList, setIsWorkList] = useState(true);
 
-  const handleViewState = (id: string) => {
+  const handleViewState = (workflowData: WorkflowProp) => {
     setIsWorkList(!isWorkList);
-    setWorkflowID(id);
+    setWorkflowID(workflowData.workflowID);
+    setWorkflowName(workflowData.workflowName);
   };
 
   //INTEGRATION
@@ -57,8 +63,11 @@ export default function Page() {
           <Button
             variant="outline"
             onClick={() => {
-              setIsWorkList(!isWorkList);
+              window.location.reload();
             }}
+            /*            onClick={() => {
+              setIsWorkList(!isWorkList); 
+            }}*/
           >
             Return Hub
           </Button>

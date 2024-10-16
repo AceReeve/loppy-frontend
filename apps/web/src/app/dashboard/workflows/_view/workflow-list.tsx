@@ -37,11 +37,14 @@ import { workFolders } from "@/src/app/dashboard/workflows/_view/_columns/workli
 import { WorkFoldersDataTable } from "@/src/app/dashboard/workflows/_view/_data-table/worklist-folder-data-table.tsx";
 import { CreateWorkFolderSchema, EditWorkFolderSchema } from "@/src/schemas";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
+import type { WorkflowProp } from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
 
-interface WorkflowProp {
-  switchToWorkflowView: (id: string) => void;
+interface WorkflowListProp {
+  switchToWorkflowView: (workflowData: WorkflowProp) => void;
 }
-export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
+export default function WorkflowList({
+  switchToWorkflowView,
+}: WorkflowListProp) {
   const [currentPath, setCurrentPath] = useState("");
 
   interface PathProps {
@@ -93,7 +96,8 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
       template_id: template,
     }).unwrap();
     if (response.name) {
-      switchToWorkflowView(response._id);
+      const workflowData = data(response._id, response.name);
+      switchToWorkflowView(workflowData);
       //  console.log(currentPath, template);
     }
   };
@@ -159,6 +163,13 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
   const [fetchWorkflowList, { data: workFolderLists, error, isLoading }] =
     useLazyGetWorkflowListQuery();
 
+  const data = (_id: string, _name: string): WorkflowProp => {
+    return {
+      workflowID: _id,
+      workflowName: _name,
+    };
+  };
+
   useEffect(() => {
     fetchWorkflowList({ id: currentPath })
       .unwrap()
@@ -182,7 +193,8 @@ export default function WorkflowList({ switchToWorkflowView }: WorkflowProp) {
         return [...currentPaths, newPath];
       });
     } else {
-      switchToWorkflowView(_id);
+      const workflowData = data(_id, _name);
+      switchToWorkflowView(workflowData);
       // console.log("This is a workflow");
     }
   };

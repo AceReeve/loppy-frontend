@@ -16,16 +16,19 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
+//import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
+//import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateDateReminder } from "@/src/schemas";
 
+/*
 interface CustomDateReminderProps {
   onHandleClick: (node: ITriggerNode) => void;
   onNodeClick: (node: ITriggerNode) => void;
   icon: React.ReactNode;
 }
-
-export default function CustomDateReminder(prop: CustomDateReminderProps) {
+*/
+//prop: CustomTriggerProps
+export default function CustomDateReminder() {
   const [calendarOpen, setCalendarOpen] = useState(false);
   //const [selectedDate, setSelectedDate] = useState<Date>();
 
@@ -37,7 +40,8 @@ export default function CustomDateReminder(prop: CustomDateReminderProps) {
   */
 
   const onSubmit = () => {
-    prop.onHandleClick(customDateNode as ITriggerNode);
+    //const isEditMode = Boolean(prop.node);
+    // prop.onHandleClick(customDateNode as ITriggerNode, isEditMode);
   };
 
   const formSchema = CreateDateReminder;
@@ -53,21 +57,21 @@ export default function CustomDateReminder(prop: CustomDateReminderProps) {
     formState: { errors },
   } = form;
 
-  const customDateNode = {
+  /*  const customDateNode = {
     id: "1",
     type: "triggerNode",
     data: {
       title: "Custom Date Reminder",
       content: moment(form.getValues("custom_date")).format("L"),
-      icon: prop.icon,
-      onButtonClick: () => {
+      /!*      onButtonClick: () => {
         onNodeClick();
-      },
+      },*!/
     },
-  };
-  const onNodeClick = () => {
+  };*/
+
+  /*  const onNodeClick = () => {
     prop.onNodeClick(customDateNode as ITriggerNode);
-  };
+  };*/
   const today = new Date(Date.now());
   today.setHours(0, 0, 0, 0);
 

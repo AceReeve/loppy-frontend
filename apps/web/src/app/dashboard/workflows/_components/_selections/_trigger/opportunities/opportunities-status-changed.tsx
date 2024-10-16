@@ -332,17 +332,26 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
           <div
             className={`mt-5 flex ${!prop.node ? "justify-end" : "justify-between"} `}
           >
-            <Button
-              onClick={() => {
-                if (prop.node && prop.onHandleDelete) {
-                  prop.onHandleDelete(prop.node);
-                }
-              }}
-              variant="destructive"
-              className={` rounded px-4 ${prop.node ? "" : "hidden"}`}
-            >
-              Delete
-            </Button>
+            <div className={`flex space-x-2 ${prop.node ? "" : "hidden"}`}>
+              <Button
+                onClick={() => {
+                  if (prop.node && prop.onHandleDelete) {
+                    prop.onHandleDelete(prop.node);
+                  }
+                }}
+                variant="destructive"
+                className={` rounded px-4 ${prop.node ? "" : "hidden"}`}
+              >
+                Delete
+              </Button>
+
+              <Button
+                variant="outline"
+                className={` rounded px-4 ${prop.node ? "" : "hidden"}`}
+              >
+                Cancel
+              </Button>
+            </div>
             <Button type="submit" className="rounded px-4">
               {prop.node ? "Update Trigger" : "Add Trigger"}
             </Button>

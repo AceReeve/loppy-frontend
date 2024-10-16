@@ -12,11 +12,15 @@ import {
   DialogContent,
   DialogHeader,
   Separator,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
+  DropdownMenuSubTrigger,
+  DialogTitle,
 } from "@repo/ui/components/ui";
 import {
   useGetWeatherDailyQuery,
@@ -27,7 +31,7 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import TemperatureChart from "@/src/app/dashboard/weather-forecasting/weather-temperature";
 import WeatherItem from "@/src/app/dashboard/weather-forecasting/weather-item";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import { states } from "@/src/data/states";
+import { cities, states } from "@/src/data/states";
 import WeatherIcon from "@/src/app/dashboard/weather-forecasting/_components/weather-icons.tsx";
 
 function Page() {
@@ -53,9 +57,9 @@ function Page() {
     isLoading: dailyIsLoading,
   } = useGetWeatherDailyQuery({ city });
 
-  const handleChangeCity = (value: string) => {
+  /*  const handleChangeCity = (value: string) => {
     setSelectedCity(value);
-  };
+  };*/
 
   //const [weather, setWeather] = useState<WeatherData | null>(null);
 
@@ -164,6 +168,10 @@ function Page() {
     },
   ];
 
+  const handleCitySelect = (city: string) => {
+    setSelectedCity(city);
+  };
+
   //let celsius = weather.main.temp.toFixed(1);
   let convertToFahrenheit = (celsius: number) => {
     let scale = celsius * 1.8;
@@ -199,10 +207,11 @@ function Page() {
     <div className="rounded-xl bg-white p-10 lg:overflow-x-hidden">
       <div className="flex w-full justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button className="rounded-xl font-bold ">Change Location</Button>
           </DialogTrigger>
           <DialogContent>
+            <DialogTitle className="hidden"></DialogTitle>
             <DialogHeader>Change Location</DialogHeader>
             <Separator />
             <div className="h-auto">
@@ -213,7 +222,7 @@ function Page() {
                 <label className="flex items-center" htmlFor="input">
                   City:
                 </label>
-                <Select onValueChange={(value) => handleChangeCity(value)}>
+                {/*  <Select onValueChange={(value) => handleChangeCity(value)}>
                   <SelectTrigger variant="outline">
                     <SelectValue placeholder="Select a state" />
                   </SelectTrigger>
@@ -224,7 +233,43 @@ function Page() {
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select>*/}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className="flex w-full justify-start text-left"
+                    >
+                      {selectedCity || "Select a city"}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="custom-scrollbar h-[300px] w-[350px] overflow-y-scroll">
+                    {states.US.map((state) => (
+                      <DropdownMenuSub key={state.value}>
+                        <DropdownMenuSubTrigger>
+                          <span>{state.label}</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent className="max-h-100 w-[300px] overflow-y-auto">
+                            {cities.US[
+                              state.value as keyof typeof cities.US
+                            ].map((city: string) => (
+                              <DropdownMenuItem
+                                key={city}
+                                onClick={() => handleCitySelect(city)}
+                                className="cursor-pointer p-2 hover:bg-gray-200 "
+                              >
+                                {city}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <div className="flex justify-end">
                   <Button type="submit">Submit</Button>
                 </div>
