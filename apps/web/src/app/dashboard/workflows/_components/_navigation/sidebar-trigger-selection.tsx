@@ -26,8 +26,8 @@ import type { SidebarRefProp } from "@/src/app/dashboard/workflows/_tabs/workflo
 import TriggerSelection from "@/src/app/dashboard/workflows/_components/_selections/trigger-selection.tsx";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import ContactChange from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contact-change.tsx";
-import CreateContact from "@/src/app/dashboard/workflows/_components/_selections/_action/create-contact.tsx";
-import ContactTag from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contact-tag.tsx";
+//import CreateContact from "@/src/app/dashboard/workflows/_components/_selections/_action/create-contact.tsx";
+//import ContactTag from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contact-tag.tsx";
 import SendEmail from "@/src/app/dashboard/workflows/_components/_selections/_action/send-email.tsx";
 import CustomerReplied from "@/src/app/dashboard/workflows/_components/_selections/_trigger/events/customer-replied.tsx";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
@@ -135,6 +135,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       "Birthday Reminder": BirthdayReminder,
       "Customer Replied": CustomerReplied,
       "Opportunity Status Changed": OpportunitiesStatusChanged,
+      "Contact Changed": ContactChange,
       /*      "Custom Date Reminder": (
         <CustomDateReminder
           onHandleClick={onHandleAddNode}
@@ -189,25 +190,25 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             id: 3,
             name: "Contact Created",
             icon: <UserPlus />,
-            component: triggerComponents["Birthday Reminder"],
+            component: <ContactChange />,
           },
           {
             id: 4,
             name: "Contact DND",
             icon: <UserRoundX />,
-            component: triggerComponents["Birthday Reminder"],
+            component: <ContactChange />,
           },
           {
             id: 5,
             name: "Contact Tag",
             icon: <UserRoundCog />,
-            component: <ContactTag />,
+            component: <ContactChange />,
           },
           {
             id: 6,
             name: "Custom Date Reminder",
             icon: <CalendarClockIcon />,
-            component: triggerComponents["Custom Date Reminder"],
+            component: <ContactChange />,
           },
         ],
       },
@@ -241,25 +242,25 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             id: 9,
             name: "Opportunity Created",
             icon: <Message />,
-            component: <CustomerReplied onHandleClick={onHandleAddNode} />,
+            component: <ContactChange />,
           },
           {
             id: 10,
             name: "Opportunity Changed",
             icon: <Message />,
-            component: <CustomerReplied onHandleClick={onHandleAddNode} />,
+            component: <ContactChange />,
           },
           {
             id: 11,
             name: "Pipeline Stage Changed",
             icon: <Message />,
-            component: <CustomerReplied onHandleClick={onHandleAddNode} />,
+            component: <ContactChange />,
           },
           {
             id: 7,
             name: "Stale Opportunities",
             icon: <Message />,
-            component: <CustomerReplied onHandleClick={onHandleAddNode} />,
+            component: <ContactChange />,
           },
         ],
       },
@@ -275,7 +276,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             id: 0,
             name: "Create Contact",
             icon: <UserRoundPlus />,
-            component: <CreateContact />,
+            component: <ContactChange />,
           },
           {
             id: 1,
@@ -294,25 +295,25 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             id: 2,
             name: "Update Contact Field",
             icon: <UserEdit />,
-            component: actionComponents["Send Email"],
+            component: <ContactChange />,
           },
           {
             id: 3,
             name: "Add Contact Tag",
             icon: <UserRoundPlus />,
-            component: actionComponents["Send Email"],
+            component: <ContactChange />,
           },
           {
             id: 4,
             name: "Assign to User",
             icon: <UserRoundCog />,
-            component: actionComponents["Send Email"],
+            component: <ContactChange />,
           },
           {
             id: 5,
             name: "Remove Assigned User",
             icon: <UserRoundX />,
-            component: actionComponents["Send Email"],
+            component: <ContactChange />,
           },
         ],
       },

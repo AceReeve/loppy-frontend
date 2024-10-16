@@ -10,7 +10,7 @@ import {
 } from "@repo/ui/components/ui";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
 import Workflow, {
-  WorkflowProp,
+  type WorkflowProp,
 } from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
 /*import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
 import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";*/
@@ -62,7 +62,9 @@ export default function Page() {
         <div className="mb-2">
           <Button
             variant="outline"
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              window.location.reload();
+            }}
             /*            onClick={() => {
               setIsWorkList(!isWorkList); 
             }}*/

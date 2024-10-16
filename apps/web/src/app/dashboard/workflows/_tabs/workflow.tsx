@@ -87,6 +87,8 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
   }, [selectedEdge]);*/
 
   const sidebarRef = useRef<HTMLDivElement & SidebarRefProp>(null);
+  const [workName, setWorkName] = useState(workflowName);
+  const [inputValue, setInputValue] = useState(workName);
   const showNodeData = (node: IActionNode | ITriggerNode) => {
     if (sidebarRef.current) {
       sidebarRef.current.showNodeData(node);
@@ -718,13 +720,11 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
     [handleOpenSheet],
   );
 
-  const [workName, setWorkflowName] = useState(workflowName);
-  const [inputValue, setInputValue] = useState(workName);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
   const handleSave = () => {
-    setWorkflowName(inputValue);
+    setWorkName(inputValue);
     setOpenWorkName(!openWorkName);
   };
 
@@ -882,7 +882,6 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
 
   const hasInitialized = useRef(false);
   const { data: workflow, isLoading } = useGetWorkflowQuery({ id: workflowID });
-  console.log(hasInitialized.current);
 
   useEffect(() => {
     // && !hasInitialized.current add this to condition --default
