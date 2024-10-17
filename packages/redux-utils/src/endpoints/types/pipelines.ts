@@ -91,7 +91,7 @@ export interface CreateLeadPayload {
   category: string;
   status: string;
   amount: number;
-  opportunity_id?: string;
+  stage_id?: string;
 }
 
 export interface UpdateLeadPayload {

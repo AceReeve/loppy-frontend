@@ -13,7 +13,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   Form,
   FormControl,
   FormDescription,
@@ -39,7 +38,15 @@ const FormSchema = z.object({
   dateTo: z.string().min(1, { message: "Required" }),
 });
 
-export default function ExportPipelines() {
+interface ExportPipelinesProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function ExportPipelines({
+  isOpen,
+  onClose,
+}: ExportPipelinesProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -84,10 +91,7 @@ export default function ExportPipelines() {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Export</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

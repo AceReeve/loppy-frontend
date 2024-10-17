@@ -48,9 +48,9 @@ export default function DeleteLead({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Lead</DialogTitle>
+          <DialogTitle>Delete Opportunity</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this lead?
+            Are you sure you want to delete this opportunity?
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

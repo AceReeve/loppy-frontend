@@ -77,7 +77,7 @@ export default function UpdateLead({
         const response = structuredClone(res) as Lead;
         response.id = `item-${response._id ?? "unknown"}`;
         toast({
-          description: "Lead updated successfully",
+          description: "Opportunity updated successfully",
         });
         onUpdateLead(lead?.id ?? "", response);
         onClose();
@@ -95,7 +95,7 @@ export default function UpdateLead({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Update Lead</DialogTitle>
+              <DialogTitle>Update Opportunity</DialogTitle>
               <DialogDescription className="hidden" />
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -104,7 +104,7 @@ export default function UpdateLead({
                 name="master"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Master</FormLabel>
+                    <FormLabel>User</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

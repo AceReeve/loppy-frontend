@@ -24,7 +24,7 @@ const api = baseApi
       getAllPipelines: builder.query<GetAllPipelinesResponse[], undefined>({
         query: () => {
           return {
-            url: `/pipeline`,
+            url: `/pipelines`,
           };
         },
         providesTags: ["pipelines"],
@@ -33,7 +33,7 @@ const api = baseApi
       createPipeline: builder.mutation<undefined, CreatePipelinePayload>({
         query: (payload) => {
           return {
-            url: `/pipeline`,
+            url: `/pipelines`,
             method: "POST",
             body: payload,
           };
@@ -47,7 +47,7 @@ const api = baseApi
       >({
         query: ({ pipelineId }) => {
           return {
-            url: `/pipeline/${pipelineId}`,
+            url: `/pipelines/${pipelineId}`,
           };
         },
         transformResponse: (response: GetAllPipelinesResponse) => {
@@ -70,7 +70,7 @@ const api = baseApi
         query: (data: string) => {
           const params = new URLSearchParams(data).toString();
           return {
-            url: `/pipeline/export?${params}`,
+            url: `/pipelines/export?${params}`,
             method: "GET",
             responseType: "blob",
           };
@@ -79,7 +79,7 @@ const api = baseApi
       importPipelines: builder.mutation<ImportPipelinesResponse, FormData>({
         query: (payload) => {
           return {
-            url: `/pipeline/import`,
+            url: `/pipelines/import`,
             method: "POST",
             body: payload,
           };
@@ -89,7 +89,7 @@ const api = baseApi
       deletePipeline: builder.mutation<undefined, string>({
         query: (pipelineId: string) => {
           return {
-            url: `/pipeline/${pipelineId}`,
+            url: `/pipelines/${pipelineId}`,
             method: "DELETE",
           };
         },
@@ -102,7 +102,7 @@ const api = baseApi
       >({
         query: () => {
           return {
-            url: `/opportunity`,
+            url: `/stages`,
           };
         },
         transformResponse: (response: GetAllOpportunitiesResponse[]) => {
@@ -120,7 +120,7 @@ const api = baseApi
       createOpportunity: builder.mutation<undefined, CreateOpportunityPayload>({
         query: (payload) => {
           return {
-            url: `/opportunity`,
+            url: `/stages`,
             method: "POST",
             body: payload,
           };
@@ -132,7 +132,7 @@ const api = baseApi
       >({
         query: (payload) => {
           return {
-            url: `/opportunity`,
+            url: `/stages`,
             method: "PUT",
             body: payload,
           };
@@ -141,7 +141,7 @@ const api = baseApi
       updateOpportunity: builder.mutation<undefined, UpdateOpportunityPayload>({
         query: (payload) => {
           return {
-            url: `/opportunity/${payload._id}`,
+            url: `/stages/${payload._id}`,
             method: "PUT",
             body: payload,
           };
@@ -150,7 +150,7 @@ const api = baseApi
       deleteOpportunity: builder.mutation<undefined, string>({
         query: (opportunityId: string) => {
           return {
-            url: `/opportunity/${opportunityId}`,
+            url: `/stages/${opportunityId}`,
             method: "DELETE",
           };
         },
@@ -161,7 +161,7 @@ const api = baseApi
       >({
         query: ({ page, limit, search }) => {
           return {
-            url: `/opportunity/paginated?page=${page.toString()}&limit=${limit.toString()}&search=${search}`,
+            url: `/stages/paginated?page=${page.toString()}&limit=${limit.toString()}&search=${search}`,
           };
         },
         providesTags: ["pipelines"],
@@ -171,7 +171,7 @@ const api = baseApi
       createLead: builder.mutation<undefined, CreateLeadPayload>({
         query: (payload) => {
           return {
-            url: `/lead`,
+            url: `/opportunities`,
             method: "POST",
             body: payload,
           };
@@ -180,7 +180,7 @@ const api = baseApi
       updateLead: builder.mutation<undefined, UpdateLeadPayload>({
         query: ({ leadId, payload }) => {
           return {
-            url: `/lead/${leadId}`,
+            url: `/opportunities/${leadId}`,
             method: "PUT",
             body: payload,
           };
@@ -189,7 +189,7 @@ const api = baseApi
       deleteLead: builder.mutation<undefined, string>({
         query: (leadId: string) => {
           return {
-            url: `/lead/${leadId}`,
+            url: `/opportunities/${leadId}`,
             method: "DELETE",
           };
         },
