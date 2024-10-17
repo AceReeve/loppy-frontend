@@ -41,7 +41,6 @@ interface UpdateOpportunityType {
 // schemas
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Required" }),
-  lead_value: z.string().min(1, { message: "Required" }),
   color: z.string().min(1, { message: "Required" }),
 });
 
@@ -55,7 +54,6 @@ export default function UpdateOpportunity({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: opportunity?.title ?? "",
-      lead_value: opportunity?.lead_value.toString() ?? "",
       color: opportunity?.color ?? "",
     },
   });
@@ -64,7 +62,7 @@ export default function UpdateOpportunity({
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
-      lead_value: Number(data.lead_value),
+      lead_value: 0,
       _id: opportunity?._id ?? "",
     };
 
@@ -74,7 +72,7 @@ export default function UpdateOpportunity({
         const response = structuredClone(res) as Opportunity;
         response.id = `item-${response._id ?? "unknown"}`;
         toast({
-          description: "Opportunity updated successfully",
+          description: "Stage updated successfully",
         });
         onUpdateOpportunity(opportunity?.id ?? "", response);
         onClose();
@@ -92,7 +90,7 @@ export default function UpdateOpportunity({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Update Opportunity</DialogTitle>
+              <DialogTitle>Update Stage</DialogTitle>
               <DialogDescription className="hidden" />
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -101,7 +99,7 @@ export default function UpdateOpportunity({
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>Stage Name</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -115,7 +113,7 @@ export default function UpdateOpportunity({
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Color</FormLabel>
+                    <FormLabel>Stage Color</FormLabel>
                     <FormControl>
                       <div className="flex gap-2">
                         <Input
@@ -144,19 +142,6 @@ export default function UpdateOpportunity({
                           </PopoverContent>
                         </Popover>
                       </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="lead_value"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Lead Value</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
                     </FormControl>
                   </FormItem>
                 )}

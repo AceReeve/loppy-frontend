@@ -6,24 +6,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   toast,
 } from "@repo/ui/components/ui";
 import { useDeletePipelineMutation } from "@repo/redux-utils/src/endpoints/pipelines";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
-import { useState } from "react";
 
 interface DeletePipelineType {
+  isOpen: boolean;
+  onClose: () => void;
   pipelineId: string;
   refetch: () => void;
 }
 
 export default function DeletePipeline({
+  isOpen,
+
+  onClose,
   pipelineId,
   refetch,
 }: DeletePipelineType) {
-  const [isOpen, setIsOpen] = useState(false);
-
   const [sendRequest, { isLoading }] = useDeletePipelineMutation();
   const onSubmit = async () => {
     if (pipelineId === "") {
@@ -40,7 +41,7 @@ export default function DeletePipeline({
           description: "Pipeline deleted successfully",
         });
         refetch();
-        setIsOpen(false);
+        onClose();
       })
       .catch((e: unknown) => {
         toast({
@@ -50,17 +51,7 @@ export default function DeletePipeline({
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={() => {
-        setIsOpen(!isOpen);
-      }}
-    >
-      <DialogTrigger asChild>
-        <Button variant="destructive" type="button">
-          Delete
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete Pipeline</DialogTitle>

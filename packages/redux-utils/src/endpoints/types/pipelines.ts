@@ -71,13 +71,27 @@ export interface UpdateOpportunityPayload {
   lead_value: number;
 }
 
+export interface GetAllOpportunitiesPaginatedPayload {
+  page: number;
+  limit: number;
+  search: string;
+}
+
+export interface GetAllOpportunitiesPaginatedResponse {
+  records: UpdateOpportunities[];
+  info: {
+    totalRecords: number;
+    totalPages: number;
+  };
+}
+
 export interface CreateLeadPayload {
   master: string;
   description: string;
   category: string;
   status: string;
   amount: number;
-  opportunity_id?: string;
+  stage_id?: string;
 }
 
 export interface UpdateLeadPayload {

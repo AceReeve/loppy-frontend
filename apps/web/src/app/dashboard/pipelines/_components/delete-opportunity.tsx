@@ -32,7 +32,7 @@ export default function DeleteOpportunity({
       .unwrap()
       .then(() => {
         toast({
-          description: "Opportunity deleted successfully",
+          description: "Stage deleted successfully",
         });
         onDeleteOpportunity(opportunity?.id ?? "");
         onClose();
@@ -48,9 +48,9 @@ export default function DeleteOpportunity({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Opportunity</DialogTitle>
+          <DialogTitle>Delete Stage</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this opportunity?
+            Are you sure you want to delete this stage?
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

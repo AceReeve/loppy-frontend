@@ -31,6 +31,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Form,
   FormControl,
   FormField,
@@ -64,6 +68,7 @@ import {
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { Pipette } from "lucide-react";
+import { ArrowDown2 } from "iconsax-react";
 import CreatePipeline from "./_components/create-pipeline";
 import ExportPipelines from "./_components/export-pipelines";
 import ImportPipelines from "./_components/import-pipelines";
@@ -112,10 +117,13 @@ export interface Lead {
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Required" }),
   color: z.string().min(1, { message: "Required" }),
-  lead_value: z.string().min(1, { message: "Required" }),
 });
 
 export default function Home() {
+  const [isPipelineImportOpen, setIsPipelineImportOpen] = useState(false);
+  const [isPipelineExportOpen, setIsPipelineExportOpen] = useState(false);
+  const [isPipelineDeleteOpen, setIsPipelineDeleteOpen] = useState(false);
+
   const {
     data: pipelines = [],
     isFetching: pipelinesIsLoading,
@@ -195,7 +203,6 @@ export default function Home() {
     defaultValues: {
       title: "",
       color: "#03a9f4",
-      lead_value: "",
     },
   });
 
@@ -206,8 +213,7 @@ export default function Home() {
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     if (!selectedPipelineId) {
       toast({
-        description:
-          "Please create a pipeline first before creating an opportunity",
+        description: "Please create a pipeline first before creating a stage",
       });
       return;
     }
@@ -216,7 +222,7 @@ export default function Home() {
       ...data,
       itemOrder: opportunities.length + 1,
       pipeline_id: selectedPipelineId,
-      lead_value: Number(data.lead_value),
+      lead_value: 0,
     } as CreateOpportunityPayload;
 
     await createOpportunityRequest(newData)
@@ -229,7 +235,7 @@ export default function Home() {
         onAddOpportunity(response);
 
         toast({
-          description: "Opportunity added successfully",
+          description: "Stage added successfully",
         });
         form.reset();
         setIsCreateOpportunityOpen(false);
@@ -715,9 +721,60 @@ export default function Home() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <ImportPipelines />
-          <ExportPipelines />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="gap-2 rounded-xl"
+                variant="outline"
+                disabled={!selectedPipelineId}
+              >
+                Actions
+                <ArrowDown2 size={12} variant="Bold" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsPipelineImportOpen(true);
+                }}
+              >
+                Import
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsPipelineExportOpen(true);
+                }}
+              >
+                Export
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsPipelineDeleteOpen(true);
+                }}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <ImportPipelines
+            isOpen={isPipelineImportOpen}
+            onClose={() => {
+              setIsPipelineImportOpen(false);
+            }}
+          />
+          <ExportPipelines
+            isOpen={isPipelineExportOpen}
+            onClose={() => {
+              setIsPipelineExportOpen(false);
+            }}
+          />
           <DeletePipeline
+            isOpen={isPipelineDeleteOpen}
+            onClose={() => {
+              setIsPipelineDeleteOpen(false);
+            }}
             pipelineId={selectedPipelineId}
             refetch={refetchPipelines}
           />
@@ -727,7 +784,7 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <Input
             type="text"
-            placeholder="Search Leads"
+            placeholder="Search Opportunities"
             onInput={(e) => {
               setSearchQuery(e.currentTarget.value);
             }}
@@ -740,15 +797,17 @@ export default function Home() {
             }}
           >
             <DialogTrigger asChild>
-              <Button variant="default">+ Opportunity</Button>
+              <Button variant="default" disabled={!selectedPipelineId}>
+                + Stage
+              </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                   <DialogHeader>
-                    <DialogTitle>Create Opportunity</DialogTitle>
+                    <DialogTitle>Create Stage</DialogTitle>
                     <DialogDescription>
-                      Create a new opportunity to your pipeline
+                      Create a new stage to your pipeline
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -757,7 +816,7 @@ export default function Home() {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Title</FormLabel>
+                          <FormLabel>Stage Name</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -770,7 +829,7 @@ export default function Home() {
                       name="color"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Color</FormLabel>
+                          <FormLabel>Stage Color</FormLabel>
                           <FormControl>
                             <div className="flex gap-2">
                               <Input
@@ -799,19 +858,6 @@ export default function Home() {
                                 </PopoverContent>
                               </Popover>
                             </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="lead_value"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Lead Value</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -866,6 +912,12 @@ export default function Home() {
                           .filter((i) => {
                             if (
                               i.description
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase()) ||
+                              i.master
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase()) ||
+                              i.status
                                 .toLowerCase()
                                 .includes(searchQuery.toLowerCase())
                             ) {

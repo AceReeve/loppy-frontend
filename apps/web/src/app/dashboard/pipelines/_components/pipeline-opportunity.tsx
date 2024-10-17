@@ -91,7 +91,7 @@ export default function PipelineOpportunity({
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const newData = {
       ...data,
-      opportunity_id: opportunity?._id ?? "",
+      stage_id: opportunity?._id ?? "",
       amount: Number(data.amount),
     };
 
@@ -108,7 +108,7 @@ export default function PipelineOpportunity({
         onAddLead(id, response);
 
         toast({
-          description: "Lead added successfully",
+          description: "Opportunity added successfully",
         });
         form.reset();
         setIsCreateLeadOpen(false);
@@ -216,7 +216,7 @@ export default function PipelineOpportunity({
             className="w-full border-2 border-dashed border-fuchsia-950 py-5 text-fuchsia-950 hover:border-solid hover:bg-gray-200"
             type="button"
           >
-            + Add New Lead
+            + Add New Opportunity
           </button>
         </DialogTrigger>
 
@@ -226,7 +226,7 @@ export default function PipelineOpportunity({
               <DialogHeader>
                 <DialogTitle>{opportunity?.title}</DialogTitle>
                 <DialogDescription>
-                  Add a new lead to this opportunity
+                  Add a new opportunity to this stage
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -235,7 +235,7 @@ export default function PipelineOpportunity({
                   name="master"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Master</FormLabel>
+                      <FormLabel>User</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -307,7 +307,7 @@ export default function PipelineOpportunity({
                     <FormItem>
                       <FormLabel>Amount</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

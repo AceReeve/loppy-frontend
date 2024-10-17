@@ -55,7 +55,7 @@ export default function CreatePipeline() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>+ Pipeline</Button>
+        <Button variant="outline">+ Pipeline</Button>
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
@@ -73,7 +73,7 @@ export default function CreatePipeline() {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="ServiHero" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

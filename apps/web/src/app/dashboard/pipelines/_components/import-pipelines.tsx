@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   type DropzoneOptions,
   FileInput,
   FileUploader,
@@ -23,7 +22,15 @@ import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { useImportPipelinesMutation } from "@repo/redux-utils/src/endpoints/pipelines";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
-export default function ImportPipelines() {
+interface ImportPipelinesProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function ImportPipelines({
+  isOpen,
+  onClose,
+}: ImportPipelinesProps) {
   const [files, setFiles] = useState<File[] | null>([]);
   const [importPipelines, { isLoading }] = useImportPipelinesMutation();
 
@@ -43,6 +50,7 @@ export default function ImportPipelines() {
           description: "Imported Pipelines Successfully!",
         });
         setFiles([]);
+        onClose();
       })
       .catch((e: unknown) => {
         toast({
@@ -52,10 +60,7 @@ export default function ImportPipelines() {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Import</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Pipelines</DialogTitle>

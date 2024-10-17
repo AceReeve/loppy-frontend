@@ -13,9 +13,13 @@ declare module "next-auth" {
     user: ExtendedUser;
     jwt: string;
     profile: Profile;
+    role: string;
   }
 
   interface User {
     access_token: string;
+    role: {
+      role_name: string;
+    };
   }
 }

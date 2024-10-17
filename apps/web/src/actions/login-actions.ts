@@ -1,5 +1,5 @@
 "use server";
-
+// import { getSession } from "next-auth/react";
 import type { z } from "zod";
 import { AuthError } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
@@ -185,6 +185,27 @@ export const handleCredentialsSignIn = async (
       password,
       redirectTo: callbackUrl ?? DEFAULT_LOGIN_REDIRECT,
     });
+
+    // const result = (await signIn("credentials", {
+    //   email,
+    //   password,
+    //   redirect: false,
+    // })) as { error?: string };
+
+    // if (result.error) {
+    //   return { error: result.error ?? "Something went wrong!" };
+    // }
+
+    // // Fetch user session to get role after login
+    // const session = await getSession();
+    // const role = session?.role;
+
+    // // Redirect based on role
+    // if (role === "Owner") {
+    //   window.location.href = "/super-admin";
+    // } else {
+    //   window.location.href = callbackUrl ?? DEFAULT_LOGIN_REDIRECT;
+    // }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
