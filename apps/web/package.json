@@ -45,6 +45,7 @@
     "react-dom": "^18.3.1",
     "react-easy-crop": "^5.0.8",
     "react-hook-form": "^7.51.4",
+    "react-paginate": "^8.2.0",
     "react-simple-image-viewer": "^1.2.2",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"

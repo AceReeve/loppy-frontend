@@ -56,12 +56,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return {
             ...token,
             jwt: res.access_token,
+            role: res.userData.role.role_name,
             profile,
           };
         } else if (account.provider === "credentials") {
           return {
             ...token,
             jwt: user.access_token,
+            role: user.role.role_name,
             profile: {
               given_name: user.email?.split("@")[0] ?? "",
             },
@@ -74,6 +76,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.jwt = token.jwt as string;
       session.profile = token.profile as Profile;
       session.user.name = token.email?.split("@")[0] ?? "";
+      session.role = token.role as string;
 
       return session;
     },
@@ -111,6 +114,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 interface ResponseType {
   access_token: string;
+  userData: {
+    role: {
+      role_name: string;
+    };
+  };
 }
 
 async function saveGoogleInfo(payload: {
@@ -135,7 +143,9 @@ async function saveGoogleInfo(payload: {
   );
 
   if (response.ok) {
-    return (await response.json()) as Promise<ResponseType>;
+    const r = (await response.json()) as Promise<ResponseType>;
+    console.log("Return!!", r);
+    return r;
   }
 
   // Throw proper error response from backend server

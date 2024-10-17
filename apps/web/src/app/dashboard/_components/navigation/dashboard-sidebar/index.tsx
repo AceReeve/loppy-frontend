@@ -4,11 +4,16 @@ import { CloudDrizzle } from "lucide-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
+import { useDashboardState } from "@/src/providers/dashboard-provider";
 
 interface DashboardSidebarProps {
   className?: string | null;
 }
 export default function DashboardSidebar(props: DashboardSidebarProps) {
+  const { session } = useDashboardState();
+
+  if (!session) return null;
+
   const bottomItems: MenuLinkItem[] = [
     {
       title: "Settings",
@@ -88,6 +93,15 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
       id: 9,
     },
   ];
+
+  if (session.role === "SuperAdmin") {
+    dashboardItems.unshift({
+      title: "Admin",
+      imageIcon: "/assets/icons/sidebar-icons/icon-admin.svg",
+      url: "/super-admin",
+      id: 10,
+    });
+  }
 
   const menuItems: MenuItem = {
     title: "Dashboard Menu Items",

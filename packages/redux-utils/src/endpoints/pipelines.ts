@@ -10,6 +10,8 @@ import {
   type GetAllPipelinesResponse,
   type CreatePipelinePayload,
   type ImportPipelinesResponse,
+  type GetAllOpportunitiesPaginatedPayload,
+  type GetAllOpportunitiesPaginatedResponse,
 } from "./types/pipelines";
 
 const api = baseApi
@@ -153,6 +155,17 @@ const api = baseApi
           };
         },
       }),
+      getAllOpportunitiesPaginated: builder.query<
+        GetAllOpportunitiesPaginatedResponse,
+        GetAllOpportunitiesPaginatedPayload
+      >({
+        query: ({ page, limit, search }) => {
+          return {
+            url: `/opportunity/paginated?page=${page.toString()}&limit=${limit.toString()}&search=${search}`,
+          };
+        },
+        providesTags: ["pipelines"],
+      }),
 
       // LEADS
       createLead: builder.mutation<undefined, CreateLeadPayload>({
@@ -196,6 +209,7 @@ export const {
   useUpdateOpportunitiesMutation,
   useUpdateOpportunityMutation,
   useDeleteOpportunityMutation,
+  useGetAllOpportunitiesPaginatedQuery,
   useCreateLeadMutation,
   useUpdateLeadMutation,
   useDeleteLeadMutation,
