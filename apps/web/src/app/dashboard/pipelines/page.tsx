@@ -105,12 +105,26 @@ export interface OpportunityWithoutId {
 export interface Lead {
   _id?: string;
   id: UniqueIdentifier;
-  master: string;
-  description: string;
-  category: string;
+  owner_id?: Owner;
+  stage_id?: string;
+  pipeline_id?: string;
+  primary_contact_name_id?: string;
+  opportunity_name: string;
+  opportunity_source: string;
   status: string;
-  amount: number;
+  opportunity_value: number;
+  primary_email?: string;
+  primary_phone?: string;
+  additional_contacts?: string;
+  followers?: string;
+  business_name?: string;
+  tags?: string[];
   created_at?: string;
+}
+
+interface Owner {
+  _id: string;
+  email: string;
 }
 
 // schemas
@@ -886,7 +900,7 @@ export default function Home() {
       {/* pipeline loaded */}
       <div className="mx-auto w-full py-10" hidden={pipelineIsLoading}>
         {pipelines.length > 0 ? (
-          <div className="grid w-full grid-cols-5 gap-6">
+          <div className="grid w-full grid-cols-[repeat(auto-fill,_minmax(300px,300px))] gap-6">
             {opportunities.length > 0 ? (
               <DndContext
                 sensors={sensors}
@@ -899,6 +913,7 @@ export default function Home() {
                   {opportunities.map((opportunity) => (
                     <PipelineOpportunity
                       id={opportunity.id}
+                      pipelineId={selectedPipelineId}
                       opportunity={opportunity}
                       key={opportunity.id}
                       onAddLead={onAddLead}
@@ -911,15 +926,13 @@ export default function Home() {
                         {opportunity.leads
                           .filter((i) => {
                             if (
-                              i.description
+                              i.opportunity_name
                                 .toLowerCase()
                                 .includes(searchQuery.toLowerCase()) ||
-                              i.master
+                              i.opportunity_source
                                 .toLowerCase()
                                 .includes(searchQuery.toLowerCase()) ||
-                              i.status
-                                .toLowerCase()
-                                .includes(searchQuery.toLowerCase())
+                              i.tags?.includes(searchQuery)
                             ) {
                               return true;
                             }
@@ -955,6 +968,7 @@ export default function Home() {
                     ? activeId.toString().includes("opportunity") && (
                         <PipelineOpportunity
                           id={activeId}
+                          pipelineId={selectedPipelineId}
                           opportunity={findOpportunity(activeId)}
                           onAddLead={onAddLead}
                           onDeleteOpportunity={onDeleteOpportunity}

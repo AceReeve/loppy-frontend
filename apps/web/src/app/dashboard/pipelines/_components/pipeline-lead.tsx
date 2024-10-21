@@ -3,7 +3,12 @@ import { useSortable } from "@dnd-kit/sortable";
 import React, { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { clsx } from "clsx";
-import { EllipsisVertical, GripVerticalIcon } from "lucide-react";
+import {
+  ClockIcon,
+  Contact,
+  EllipsisVertical,
+  GripVerticalIcon,
+} from "lucide-react";
 import moment from "moment";
 import {
   Button,
@@ -15,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
+import Link from "next/link";
 import { type Lead } from "../page";
 import DeleteLead from "./delete-lead";
 import UpdateLead from "./update-lead";
@@ -68,70 +74,76 @@ export default function PipelineLead({
     >
       <div
         className={clsx(
-          "h-[90px] min-h-[70px] w-full min-w-[280px] cursor-default rounded-2xl px-3 py-2 shadow-xl drop-shadow-md",
+          "min-h-[80px] w-full cursor-default overflow-hidden rounded-2xl px-3 py-2 shadow-xl drop-shadow-md",
           backgroundColorClass,
         )}
       >
-        <div className="flex h-auto justify-between">
+        <div className="mb-2 flex h-auto flex-wrap items-center justify-between gap-2">
           <div className="flex content-center items-center font-roboto font-medium">
             <span className="cursor-move" {...listeners}>
               <GripVerticalIcon size={16} />
             </span>
             {/* {item?.created_by} */}
-            {lead?.master}
+            {lead?.owner_id?.email}
           </div>
-          <div className="flex">
-            <div className="rounded-md bg-blue-500 px-2 py-1 font-roboto text-[10px] font-medium text-white">
-              {/* {lead.category} */}
-              {lead?.category}
-            </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="p-0 px-2" variant="ghost" size="sm">
-                  <EllipsisVertical size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setIsEditDialogOpen(true);
-                    }}
-                  >
-                    Update
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setIsDeleteDialogOpen(true);
-                    }}
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="p-0 px-1" variant="ghost" size="sm">
+                <EllipsisVertical size={16} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsEditDialogOpen(true);
+                  }}
+                >
+                  Update
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsDeleteDialogOpen(true);
+                  }}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="flex justify-between">
+          <h1 className="content-center font-roboto text-[12px] font-medium text-gray-500 ">
+            {/* {lead.description} */}
+            {lead?.opportunity_name}
+          </h1>
+          <div className="rounded-md bg-blue-500 px-2 py-1 font-roboto text-[10px] font-medium text-white">
+            {/* {lead.category} */}
+            {lead?.opportunity_source}
           </div>
         </div>
-        <h1 className="content-center font-roboto text-[12px] font-medium text-gray-500 ">
-          {/* {lead.description} */}
-          {lead?.description}
-        </h1>
         <div className="my-1 border-b-2" />
 
         <div className="flex h-auto justify-between py-1">
           <div className="flex gap-1">
             <div className="h-5 w-5 rounded-full bg-gray-950" />
             <div className="content-center font-roboto text-[14px] font-medium">
-              {/* ${lead.amount} */}${lead?.amount}
+              {/* ${lead.amount} */}${lead?.opportunity_value}
             </div>
           </div>
-          <div className="font-robotorounded-md text-[12px] font-medium text-orange-600">
+          <div className="font-robotorounded-md flex items-center gap-1 text-[12px] font-medium text-orange-600">
             {/* Submitted {lead.timeframe} Days Ago */}
-            Submitted {moment(lead?.created_at).fromNow()}
+            <ClockIcon size={16} /> {moment(lead?.created_at).fromNow()}
           </div>
+        </div>
+
+        <div className="flex justify-start">
+          <Link href="/dashboard/contacts" title="View Contact">
+            <Contact size={16} />
+          </Link>
         </div>
 
         <UpdateLead
