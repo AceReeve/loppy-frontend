@@ -2,6 +2,7 @@ import {
   ArrowLeftRight,
   BadgeDollarSign,
   CakeIcon,
+  CloudRainIcon,
   MailIcon,
 } from "lucide-react";
 import { Message } from "iconsax-react";
@@ -13,5 +14,6 @@ const nodeIcons: Record<string, React.ReactNode> = {
   "Customer Replied": <Message />,
   "Opportunity Status Changed": <ArrowLeftRight />,
   "Create Update Opportunity": <BadgeDollarSign />,
+  "Weather Reminder": <CloudRainIcon />,
 };
 export { nodeIcons };

@@ -8,12 +8,18 @@ export interface ITriggerNode extends Node {
     node_type_id: string;
     title: string;
     content: {
+      //Send an Email
       subject?: string;
       message?: string;
-      pipeline?: string;
-      opportunity_name: string;
-      opportunity_source: string;
+      //CreateUpdateOpportunitySchema
+      pipeline_id?: string;
+      user?: string;
+      stage_id?: string;
+      opportunity_source?: string;
+      opportunity_name?: string;
       status?: string;
+      lead_value: string;
+      // Trigger
       filters?: { filter: string; value: string }[];
     };
     icon?: ReactNode; // Correct usage of ReactNode
@@ -30,12 +36,18 @@ export interface IActionNode extends Node {
     node_type_id: string;
     title: string;
     content: {
+      //Send an Email
       subject?: string;
       message?: string;
-      pipeline?: string;
-      opportunity_name: string;
-      opportunity_source: string;
+      //CreateUpdateOpportunitySchema
+      pipeline_id?: string;
+      user?: string;
+      stage_id?: string;
+      opportunity_source?: string;
+      opportunity_name?: string;
       status?: string;
+      lead_value: string;
+      // Trigger
       filters?: { filter: string; value: string }[];
     };
     icon?: ReactNode; // Correct usage of ReactNode

@@ -32,6 +32,7 @@ import type {
   ITriggerNode,
 } from "@repo/redux-utils/src/endpoints/types/nodes";
 import {
+  useEditFolderMutation,
   useGetWorkflowQuery,
   usePublishWorkflowMutation,
   useSaveWorkflowMutation,
@@ -44,6 +45,7 @@ import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
+import type { GetEditFolderPayload } from "@repo/redux-utils/src/endpoints/types/workflow";
 
 export interface WorkflowProp {
   workflowID: string;
@@ -723,9 +725,32 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
-  const handleSave = () => {
-    setWorkName(inputValue);
-    setOpenWorkName(!openWorkName);
+
+  const [editWorkFolder] = useEditFolderMutation(undefined);
+
+  const handleSave = async () => {
+    try {
+      const workflowData: GetEditFolderPayload = {
+        id: workflowID,
+        name: inputValue,
+      };
+      await editWorkFolder(workflowData).unwrap();
+      setWorkName(inputValue);
+      setOpenWorkName(!openWorkName);
+
+      // If no errors are thrown, consider it successful
+      toast({
+        title: "Workflow renamed successfully",
+        variant: "success",
+      });
+    } catch (e: unknown) {
+      toast({
+        title: "Workflow rename failed",
+        variant: "destructive",
+        description: "An unknown error occurred",
+      });
+      getErrorMessage(e);
+    }
   };
 
   const edgeTypes = {
@@ -1066,7 +1091,7 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
             />
           </div>
         </div>
-        <p className="font-semibold">New Workflow: {workflowName}</p>
+        <p className="font-semibold">New Workflow: {workName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
             <Edit className="cursor-pointer" />
@@ -1076,7 +1101,7 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
 
             <DialogDescription className="hidden" />
             <Separator />
-            <Input placeholder={workflowName} onChange={handleInputChange} />
+            <Input placeholder={workName} onChange={handleInputChange} />
             <Button onClick={handleSave}>Save</Button>
           </DialogContent>
         </Dialog>

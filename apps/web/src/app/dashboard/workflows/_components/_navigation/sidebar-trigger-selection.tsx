@@ -10,6 +10,7 @@ import React, {
 import {
   ArrowLeft,
   CalendarClockIcon,
+  CloudRainIcon,
   ContactRound,
   MailIcon,
   UserPlus,
@@ -34,6 +35,8 @@ import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nod
 import BirthdayReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/birthday-reminder.tsx";
 import OpportunitiesStatusChanged from "@/src/app/dashboard/workflows/_components/_selections/_trigger/opportunities/opportunities-status-changed.tsx";
 import CreateUpdateOpportunity from "@/src/app/dashboard/workflows/_components/_selections/_action/opportunities/create-update-opportunity.tsx";
+import WorkflowProvider from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
+import WeatherReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/weather/weather-trigger.tsx";
 
 interface SheetProps {
   openSheet: boolean;
@@ -136,6 +139,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       "Customer Replied": CustomerReplied,
       "Opportunity Status Changed": OpportunitiesStatusChanged,
       "Contact Changed": ContactChange,
+      "Weather Reminder": WeatherReminder,
       /*      "Custom Date Reminder": (
         <CustomDateReminder
           onHandleClick={onHandleAddNode}
@@ -225,6 +229,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           },
         ],
       },
+
       {
         title: "Pipelines",
         id: 3,
@@ -257,10 +262,23 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             component: <ContactChange />,
           },
           {
-            id: 7,
+            id: 12,
             name: "Stale Opportunities",
             icon: <Message />,
             component: <ContactChange />,
+          },
+        ],
+      },
+      {
+        title: "Weather",
+        id: 4,
+        color: "bg-green-500/30 text-green-500",
+        children: [
+          {
+            id: 13,
+            name: "Weather Reminder",
+            icon: <CloudRainIcon />,
+            component: <WeatherReminder onHandleClick={onHandleAddNode} />,
           },
         ],
       },
@@ -406,72 +424,74 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
 
     return (
       props.openSheet && (
-        <div className="custom-scrollbar absolute right-0 top-0 z-10 h-full w-[500px] overflow-y-scroll bg-white p-10">
-          <div className="block space-y-4">
-            <button
-              type="button"
-              className="flex gap-2 text-orange-500"
-              onClick={handleClose}
-            >
-              <ArrowLeft />
-              <p>Back</p>
-            </button>
-            {/* <div className="flex flex-col justify-start">
+        <WorkflowProvider>
+          <div className="custom-scrollbar absolute right-0 top-0 z-10 h-full w-[500px] overflow-y-scroll bg-white p-10">
+            <div className="block space-y-4">
+              <button
+                type="button"
+                className="flex gap-2 text-orange-500"
+                onClick={handleClose}
+              >
+                <ArrowLeft />
+                <p>Back</p>
+              </button>
+              {/* <div className="flex flex-col justify-start">
               <p>Workflow {workflowCategory}</p>
               <p className="content-center font-nunito text-sm text-gray-500">
                 Sets a Workflow {workflowCategory} that adds the contact upon
                 execution.
               </p>
             </div>*/}
-          </div>
-          <Separator className="my-5" />
-          <div className="flex flex-col gap-5">
-            <div className="space-y-2">
-              <div className="flex flex-col space-y-2  p-1">
-                {isTriggerDetailsView ? (
-                  <div>{currentTriggerView}</div>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold text-slate-600">
-                      Selection
-                    </p>
-                    <div className="relative flex w-full flex-row justify-between gap-4">
-                      <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-500 " />
-                      <Input
-                        className="h-[35px] pl-10 "
-                        placeholder={`Search Work ${workflowCategory}`}
-                        type="search"
-                        value={searchTerm}
-                        onChange={(e) => {
-                          setSearchTerm(e.target.value);
-                        }}
-                      />
-                    </div>
+            </div>
+            <Separator className="my-5" />
+            <div className="flex flex-col gap-5">
+              <div className="space-y-2">
+                <div className="flex flex-col space-y-2  p-1">
+                  {isTriggerDetailsView ? (
+                    <div> {currentTriggerView}</div>
+                  ) : (
+                    <>
+                      <p className="text-sm font-semibold text-slate-600">
+                        Selection
+                      </p>
+                      <div className="relative flex w-full flex-row justify-between gap-4">
+                        <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-500 " />
+                        <Input
+                          className="h-[35px] pl-10 "
+                          placeholder={`Search Work ${workflowCategory}`}
+                          type="search"
+                          value={searchTerm}
+                          onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                          }}
+                        />
+                      </div>
 
-                    <div className=" w-full space-y-2  p-1">
-                      {filteredTriggers.map((trigger) => (
-                        <div className="space-y-2" key={trigger.id}>
-                          <p className=" font-semibold">{trigger.title}</p>
-                          {/* Assuming trigger has a name for the category */}
-                          {trigger.children.map((child) => (
-                            <TriggerSelection
-                              color={trigger.color}
-                              key={child.id}
-                              id={child.id}
-                              name={child.name}
-                              icon={child.icon}
-                              onButtonClick={handleTriggerClick}
-                            />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
+                      <div className=" w-full space-y-2  p-1">
+                        {filteredTriggers.map((trigger) => (
+                          <div className="space-y-2" key={trigger.id}>
+                            <p className=" font-semibold">{trigger.title}</p>
+                            {/* Assuming trigger has a name for the category */}
+                            {trigger.children.map((child) => (
+                              <TriggerSelection
+                                color={trigger.color}
+                                key={child.id}
+                                id={child.id}
+                                name={child.name}
+                                icon={child.icon}
+                                onButtonClick={handleTriggerClick}
+                              />
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </WorkflowProvider>
       )
     );
   },

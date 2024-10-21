@@ -468,6 +468,7 @@ function Page() {
 
             {weatherDaily?.list.map((day, index) => {
               if (index % 8 === 0) {
+                console.log(day.main.temp, day.dt_txt);
                 return (
                   <div className="relative h-[52px] w-72" key={index}>
                     <div className="font-['Plus Jakarta Sans'] absolute left-[144px] top-[12px] text-xl font-semibold leading-7 text-gray-800">
