@@ -27,14 +27,28 @@ export interface GetAllOpportunitiesResponse {
 }
 
 export interface Lead {
-  id: UniqueIdentifier;
   _id: string;
-  master: string;
-  description: string;
-  category: string;
+  id: UniqueIdentifier;
+  owner_id?: Owner;
+  stage_id?: string;
+  pipeline_id?: string;
+  primary_contact_name_id?: string;
+  opportunity_name: string;
+  opportunity_source: string;
   status: string;
-  amount: number;
+  opportunity_value: number;
+  primary_email?: string;
+  primary_phone?: string;
+  additional_contacts?: string;
+  followers?: string;
+  business_name?: string;
+  tags?: string[];
   created_at?: string;
+}
+
+interface Owner {
+  _id: string;
+  email: string;
 }
 
 export interface CreateOpportunityPayload {
@@ -86,12 +100,20 @@ export interface GetAllOpportunitiesPaginatedResponse {
 }
 
 export interface CreateLeadPayload {
-  master: string;
-  description: string;
-  category: string;
-  status: string;
-  amount: number;
+  owner_id: string;
   stage_id?: string;
+  pipeline_id?: string;
+  primary_contact_name_id: string;
+  opportunity_name: string;
+  opportunity_source: string;
+  status: string;
+  opportunity_value: number;
+  primary_email: string;
+  primary_phone: string;
+  additional_contacts: string;
+  followers: string;
+  business_name: string;
+  tags: string[];
 }
 
 export interface UpdateLeadPayload {

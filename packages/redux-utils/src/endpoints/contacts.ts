@@ -1,6 +1,7 @@
 import { baseApi } from "../api";
 import { type SearchParamsType } from "../index.tsx";
 import type {
+  ContactSelect,
   CreateContactPayload,
   GetContactsListResponse,
   GetContactsResponse,
@@ -20,6 +21,20 @@ const api = baseApi
           return {
             url: `/Contacts/get-all?${queryParams}`,
           };
+        },
+        providesTags: ["contacts"],
+      }),
+      getAllContact: builder.query<ContactSelect[], undefined>({
+        query: () => {
+          return {
+            url: `/Contacts/get-all-contacts`,
+          };
+        },
+        transformResponse: (response: GetCreateContactResponse[]) => {
+          return response.map((u) => ({
+            value: u._id,
+            label: `${u.first_name} ${u.last_name}`,
+          }));
         },
         providesTags: ["contacts"],
       }),
@@ -71,6 +86,7 @@ const api = baseApi
 
 export const {
   useGetContactsQuery,
+  useGetAllContactQuery,
   useGetContactsListQuery,
   useCreateContactMutation,
   useImportContactsMutation,

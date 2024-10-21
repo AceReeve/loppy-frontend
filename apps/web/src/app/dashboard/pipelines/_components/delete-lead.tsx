@@ -55,7 +55,7 @@ export default function DeleteLead({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <h2 className="text-center text-2xl text-slate-500">
-            &quot;{lead?.description}&quot;
+            &quot;{lead?.opportunity_name}&quot;
           </h2>
         </div>
         <DialogFooter>

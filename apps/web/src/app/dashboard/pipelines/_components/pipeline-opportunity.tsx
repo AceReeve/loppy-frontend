@@ -6,6 +6,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { clsx } from "clsx";
 import { type UniqueIdentifier } from "@dnd-kit/core";
+import ReactSelectCreate from "react-select/creatable";
+import ReactSelect from "react-select";
 import {
   Button,
   Dialog,
@@ -34,11 +36,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Separator,
   toast,
 } from "@repo/ui/components/ui";
 import { EllipsisVertical, GripVerticalIcon } from "lucide-react";
 import { useCreateLeadMutation } from "@repo/redux-utils/src/endpoints/pipelines";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { useGetAllUsersQuery } from "@repo/redux-utils/src/endpoints/user";
+import { useGetAllContactQuery } from "@repo/redux-utils/src/endpoints/contacts";
 import { type Lead, type Opportunity } from "../page";
 import DeleteOpportunity from "./delete-opportunity";
 import UpdateOpportunity from "./update-opportunity";
@@ -46,6 +51,7 @@ import UpdateOpportunity from "./update-opportunity";
 export interface PipelineOpportunityProps {
   id: UniqueIdentifier;
   children: React.ReactNode;
+  pipelineId: string;
   opportunity: Opportunity | null;
   onAddLead: (containerId: UniqueIdentifier, data: Lead) => void;
   onDeleteOpportunity: (containerId: UniqueIdentifier) => void;
@@ -57,19 +63,27 @@ export interface PipelineOpportunityProps {
 
 // schemas
 const FormSchema = z.object({
-  master: z.string().min(1, { message: "Required" }),
-  description: z.string().min(1, { message: "Required" }),
-  category: z.string().min(1, { message: "Required" }),
-  amount: z
+  owner_id: z.string().min(1, { message: "Required" }),
+  primary_contact_name_id: z.string().min(1, { message: "Required" }),
+  opportunity_name: z.string().min(1, { message: "Required" }),
+  opportunity_source: z.string().min(1, { message: "Required" }),
+  status: z.string().min(1, { message: "Required" }),
+  opportunity_value: z
     .string()
     .min(1, { message: "Required" })
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" }),
-  status: z.string().min(1, { message: "Required" }),
+  primary_email: z.string(),
+  primary_phone: z.string(),
+  additional_contacts: z.string(),
+  followers: z.string(),
+  business_name: z.string(),
+  tags: z.array(z.string()),
 });
 
 export default function PipelineOpportunity({
   id,
   children,
+  pipelineId,
   opportunity,
   onAddLead,
   onDeleteOpportunity,
@@ -78,11 +92,18 @@ export default function PipelineOpportunity({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      master: "",
-      description: "",
-      category: "",
-      amount: "",
+      owner_id: "",
+      primary_contact_name_id: "",
+      opportunity_name: "",
+      opportunity_source: "",
       status: "",
+      opportunity_value: "",
+      primary_email: "",
+      primary_phone: "",
+      additional_contacts: "",
+      followers: "",
+      business_name: "",
+      tags: [],
     },
   });
 
@@ -92,7 +113,8 @@ export default function PipelineOpportunity({
     const newData = {
       ...data,
       stage_id: opportunity?._id ?? "",
-      amount: Number(data.amount),
+      pipeline_id: pipelineId,
+      opportunity_value: Number(data.opportunity_value),
     };
 
     await sendRequest(newData)
@@ -100,8 +122,8 @@ export default function PipelineOpportunity({
       .then((res: unknown) => {
         const response = structuredClone(res) as Lead;
 
-        if (response.amount) {
-          response.amount = Number(response.amount);
+        if (response.opportunity_value) {
+          response.opportunity_value = Number(response.opportunity_value);
         }
         response.id = `item-${response._id ?? "unknown"}`;
 
@@ -137,6 +159,9 @@ export default function PipelineOpportunity({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
 
+  const { data: users } = useGetAllUsersQuery(undefined);
+  const { data: contacts } = useGetAllContactQuery(undefined);
+
   return (
     <div
       {...attributes}
@@ -146,7 +171,7 @@ export default function PipelineOpportunity({
         transform: CSS.Translate.toString(transform),
       }}
       className={clsx(
-        "col-span-1 flex h-full w-full cursor-default flex-col gap-y-4 rounded-xl",
+        "flex h-full w-full cursor-default flex-col gap-y-4 rounded-xl",
         isDragging && "opacity-50",
       )}
     >
@@ -166,7 +191,7 @@ export default function PipelineOpportunity({
             </h1>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="p-0 px-2" variant="ghost" size="sm">
+                <Button className="p-0 px-1" variant="ghost" size="sm">
                   <EllipsisVertical size={16} />
                 </Button>
               </DropdownMenuTrigger>
@@ -193,12 +218,18 @@ export default function PipelineOpportunity({
             </DropdownMenu>
           </div>
           <div className="my-1 border-b-2" />
-          <h1 className=" font-roboto text-[14px] font-medium">
+          <h1 className=" flex justify-between font-roboto text-[14px] font-medium">
             {" "}
             <span className="text-[14px] text-gray-400">
               {opportunity?.leads.length} Leads{" "}
             </span>{" "}
-            ${opportunity?.leads.reduce((sum, item) => sum + item.amount, 0)}
+            <span>
+              $
+              {opportunity?.leads.reduce(
+                (sum, item) => sum + item.opportunity_value,
+                0,
+              )}
+            </span>
           </h1>
         </div>
       </div>
@@ -220,7 +251,7 @@ export default function PipelineOpportunity({
           </button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[800px]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <DialogHeader>
@@ -232,87 +263,254 @@ export default function PipelineOpportunity({
               <div className="grid gap-4 py-4">
                 <FormField
                   control={form.control}
-                  name="master"
+                  name="opportunity_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>User</FormLabel>
+                      <FormLabel>Opportunity Name *</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} placeholder="HVAC Pricing Survey" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status *</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger variant="outline">
+                              <SelectValue placeholder="Select a status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="In Progress">
+                              In Progress
+                            </SelectItem>
+                            <SelectItem value="Good">Good</SelectItem>
+                            <SelectItem value="Stalled">Stalled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Facebook Lead" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                  <FormField
+                    control={form.control}
+                    name="opportunity_value"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Opportunity Value *</FormLabel>
                         <FormControl>
-                          <SelectTrigger variant="outline">
-                            <SelectValue placeholder="Select a status" />
-                          </SelectTrigger>
+                          <Input type="number" placeholder="1800" {...field} />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="In Progress">
-                            In Progress
-                          </SelectItem>
-                          <SelectItem value="Good">Good</SelectItem>
-                          <SelectItem value="Stalled">Stalled</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Amount</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="owner_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Owner *</FormLabel>
+                        <FormControl>
+                          <ReactSelect
+                            options={users}
+                            styles={{
+                              control: (provided) => ({
+                                ...provided,
+                                borderRadius: "12px",
+                                borderColor: "#ddd",
+                                boxShadow: "none",
+                                "&:active": {
+                                  borderColor: "#aaa",
+                                },
+                              }),
+                            }}
+                            value={users?.find(
+                              (option) => option.value === field.value,
+                            )}
+                            onChange={(selectedOption) => {
+                              field.onChange(selectedOption?.value);
+                            }}
+                            onBlur={field.onBlur}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="opportunity_source"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Opportunity Source *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Facebook Lead" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="business_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Business Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="ServiHero" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="followers"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Followers</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags</FormLabel>
+                        <FormControl>
+                          <ReactSelectCreate
+                            styles={{
+                              control: (provided) => ({
+                                ...provided,
+                                borderRadius: "12px",
+                                borderColor: "#ddd",
+                                boxShadow: "none",
+                                "&:active": {
+                                  borderColor: "#aaa",
+                                },
+                              }),
+                            }}
+                            isMulti
+                            value={field.value.map((tag) => ({
+                              value: tag,
+                              label: tag,
+                            }))}
+                            onChange={(selectedOptions) => {
+                              const values = selectedOptions.map(
+                                (option) => option.value,
+                              );
+                              field.onChange(values);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <h4 className="col-span-2 font-bold">Contact Details</h4>
+                  <Separator className="col-span-2" />
+                  <FormField
+                    control={form.control}
+                    name="primary_contact_name_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Contact Name *</FormLabel>
+                        <FormControl>
+                          <ReactSelect
+                            options={contacts}
+                            styles={{
+                              control: (provided) => ({
+                                ...provided,
+                                borderRadius: "12px",
+                                borderColor: "#ddd",
+                                boxShadow: "none",
+                                "&:active": {
+                                  borderColor: "#aaa",
+                                },
+                              }),
+                            }}
+                            value={contacts?.find(
+                              (option) => option.value === field.value,
+                            )}
+                            onChange={(selectedOption) => {
+                              field.onChange(selectedOption?.value);
+                            }}
+                            onBlur={field.onBlur}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="primary_email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="primary_phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Phone</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="additional_contacts"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Additional Contacts</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
               <DialogFooter>
                 <Button type="submit" disabled={isLoading}>

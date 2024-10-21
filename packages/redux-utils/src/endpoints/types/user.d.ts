@@ -114,6 +114,22 @@ interface ProfileImage {
   path: string;
 }
 
+export interface User {
+  _id: string;
+  email: string;
+  password: string;
+  verified_email: boolean;
+  status: string;
+  login_by: string;
+  login_count: number;
+  role: Role;
+}
+
+export interface UserSelect {
+  value: string;
+  label: string;
+}
+
 export interface UpdateUserInfoPayload {
   first_name: string;
   last_name: string;
