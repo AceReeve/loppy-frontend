@@ -55,7 +55,9 @@ export default async function Layout({
 
   const paymentStatus = await getPaymentStatus(session);
   const organizationsList = await getOrganizationsList(session);
-  const currentOrg = organizationsList[0];
+  const currentOrg = organizationsList.length
+    ? organizationsList[0]
+    : undefined;
 
   /**
    * 1. Get if user has already purchased a plan

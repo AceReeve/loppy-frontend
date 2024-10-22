@@ -22,6 +22,7 @@ const api = baseApi
     addTagTypes: ["user"],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       inviteUser: builder.mutation<InviteUserResponse, InviteUserPayload>({
         query: (payload) => {
@@ -68,7 +69,7 @@ const api = baseApi
               body: payload,
             };
           },
-        }
+        },
       ),
 
       // personal settings

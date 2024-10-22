@@ -19,7 +19,7 @@ const api = baseApi
       }),
 
       getInvitedUsers: builder.query<GetInviteUserResponse, undefined>({
-        query: () => "user/get-invited-user",
+        query: () => "/user/get-invited-user",
         providesTags: ["settings-user"],
       }),
 

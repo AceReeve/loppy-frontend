@@ -8,12 +8,14 @@ import {
 import { AlertCircle } from "lucide-react";
 import type { FormComponentProps } from "@/src/types/settings";
 import ChooseNumberForm from "@/src/app/dashboard/settings/numbers/_components/forms/choose-number-form.tsx";
+import { type chooseNumberSchema } from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
 
 export default function ChooseNumberBusinessProfile({
-  setSaveEnabled,
-  onSubmit,
   id,
-}: FormComponentProps) {
+  isActive,
+  form,
+  onNextStep,
+}: FormComponentProps<typeof chooseNumberSchema>) {
   return (
     <>
       <Alert>
@@ -34,9 +36,10 @@ export default function ChooseNumberBusinessProfile({
         </AlertDescription>
       </Alert>
       <ChooseNumberForm
-        setSaveEnabled={setSaveEnabled}
-        onSubmit={onSubmit}
         id={id}
+        isActive={isActive}
+        form={form}
+        onNextStep={onNextStep}
       />
     </>
   );

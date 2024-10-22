@@ -28,6 +28,7 @@ export const generalInfoSchema = z.object({
   ein: z.string().min(1, "EIN is required"),
   businessName: z.string().min(1, "Business name is required"),
   streetAddress1: z.string().min(1, "Street Address 1 is required"),
+  streetAddress2: z.string().optional(),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   zipCode: z.string().min(1, "ZIP code is required"),
@@ -37,6 +38,10 @@ export const businessInfoSchema = z.object({
   businessType: z.string().min(1, "Business Type is required"),
   businessIndustry: z.string().min(1, "Business Industry is required"),
   websiteUrl: z.string().url("Invalid URL"),
+  socialMediaProfile: z.string().url("Invalid URL").optional(),
+  businessRegionsOfOperations: z
+    .string()
+    .min(1, "Business of Operations is required"),
 });
 
 export const peopleToContactSchema = z.object({
@@ -46,4 +51,10 @@ export const peopleToContactSchema = z.object({
   jobPosition: z.string().min(1, "Job Position is required"),
   businessEmail: z.string().email("Invalid email"),
   mobilePhoneNumber: z.string().min(1, "Mobile Phone Number is required"),
+});
+
+export const termsOfServiceSchema = z.object({
+  agreedToTOS: z
+    .boolean({})
+    .refine((value) => value, "You must agree with the terms of service"),
 });
