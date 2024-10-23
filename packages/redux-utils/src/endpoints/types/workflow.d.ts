@@ -52,8 +52,9 @@ export interface SaveWorkflowPayload {
 }
 export interface PublishWorkflowPayload {
   id: string;
-  published: string;
-  [key: string]: string;
+  published: boolean;
+  //[key: string]: string;
+  //[key: boolean]: boolean;
 }
 
 export interface GetCreateWorkflowResponse {
@@ -65,6 +66,7 @@ export interface GetCreateWorkflowResponse {
   _id: string;
   created_at: string;
   updated_at: string;
+  isPublished: boolean;
 }
 /*
 export interface GetCreateWorkflowResponse {
@@ -104,4 +106,19 @@ export interface GetEditFolderPayload {
 export interface GetWorkflowListPayload {
   id?: string;
   [key: string]: string;
+}
+
+interface Workflow {
+  name: string;
+  id: string;
+}
+
+interface Tag {
+  name: string;
+  id: number;
+}
+
+interface GetWorkflowDropDownResponse {
+  workflows: Workflow[];
+  tags: Tag[];
 }

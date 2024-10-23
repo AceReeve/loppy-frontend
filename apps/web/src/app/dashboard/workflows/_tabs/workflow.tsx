@@ -32,10 +32,12 @@ import type {
   ITriggerNode,
 } from "@repo/redux-utils/src/endpoints/types/nodes";
 import {
+  useEditFolderMutation,
   useGetWorkflowQuery,
   usePublishWorkflowMutation,
   useSaveWorkflowMutation,
 } from "@repo/redux-utils/src/endpoints/workflow.ts";
+import type { GetEditFolderPayload } from "@repo/redux-utils/src/endpoints/types/workflow";
 import StartNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/start-node.tsx";
 import ActionEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/action-edge.tsx";
 import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigation/sidebar-trigger-selection.tsx";
@@ -723,9 +725,32 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
-  const handleSave = () => {
-    setWorkName(inputValue);
-    setOpenWorkName(!openWorkName);
+
+  const [editWorkFolder] = useEditFolderMutation(undefined);
+
+  const handleSave = async () => {
+    try {
+      const workflowData: GetEditFolderPayload = {
+        id: workflowID,
+        name: inputValue,
+      };
+      await editWorkFolder(workflowData).unwrap();
+      setWorkName(inputValue);
+      setOpenWorkName(!openWorkName);
+
+      // If no errors are thrown, consider it successful
+      toast({
+        title: "Workflow renamed successfully",
+        variant: "success",
+      });
+    } catch (e: unknown) {
+      toast({
+        title: "Workflow rename failed",
+        variant: "destructive",
+        description: "An unknown error occurred",
+      });
+      getErrorMessage(e);
+    }
   };
 
   const edgeTypes = {
@@ -943,21 +968,29 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
       }
     }
   };
+  useEffect(() => {
+    setIsPublished(workflow?.isPublished);
+  }, [workflow]);
 
   const [publishWorkflow] = usePublishWorkflowMutation();
-  const [isPublished, setIsPublished] = useState(false);
+  const [isPublished, setIsPublished] = useState(workflow?.isPublished);
+
   const handlePublish = async () => {
     try {
       const response = await publishWorkflow({
         id: workflowID,
-        published: isPublished ? "false" : "true",
+        //published: isPublished ? "false" : "true",
+        published: !workflow?.isPublished,
       }).unwrap();
 
+      const result: string = !isPublished ? "Published" : "Unpublished";
       if ((response as { name: string }).name) {
+        setIsPublished(!isPublished); // Toggle the local state
         // Handle successful submission
+
         toast({
-          title: "Published Successfully",
-          description: "workflow has been published.",
+          title: `${result} Successfully`,
+          description: `Workflow has been ${result}.`,
           variant: "success",
         });
         form.reset();
@@ -965,7 +998,7 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
         // Handle submission failure
         toast({
           title: "Failed",
-          description: "Failed to publish workflow",
+          description: `Failed to ${result} workflow`,
           variant: "destructive",
         });
       }
@@ -1059,14 +1092,15 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
             <Switch
               className="bg-primary"
               defaultChecked={isPublished}
-              onCheckedChange={() => {
+              /*              onCheckedChange={() => {
                 setIsPublished(!isPublished);
-              }}
+              }}*/
+              checked={isPublished}
               onClick={handlePublish}
             />
           </div>
         </div>
-        <p className="font-semibold">New Workflow: {workflowName}</p>
+        <p className="font-semibold">Workflow: {workName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
             <Edit className="cursor-pointer" />
@@ -1076,7 +1110,7 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
 
             <DialogDescription className="hidden" />
             <Separator />
-            <Input placeholder={workflowName} onChange={handleInputChange} />
+            <Input placeholder={workName} onChange={handleInputChange} />
             <Button onClick={handleSave}>Save</Button>
           </DialogContent>
         </Dialog>

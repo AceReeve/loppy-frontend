@@ -6,15 +6,35 @@ import {
   FormItem,
   FormLabel,
   Input,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
   Separator,
+  Textarea,
 } from "@repo/ui/components/ui";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { IActionNode } from "@repo/redux-utils/src/endpoints/types/nodes";
+import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
+import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateUpdateOpportunitySchema } from "@/src/schemas";
+
+/*interface ContentPayload {
+  pipeline_id: string;
+  stage_id: string;
+  user: string;
+  description: string;
+  category: string;
+  status: string;
+  lead_value: string;
+}*/
 
 export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
   const formSchema = CreateUpdateOpportunitySchema;
@@ -24,17 +44,27 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
     defaultValues: prop.node
       ? {
           title: prop.node.data.title,
-          pipeline: prop.node.data.content.pipeline,
-          opportunity_name: prop.node.data.content.opportunity_name,
-          opportunity_source: prop.node.data.content.opportunity_source,
-          status: prop.node.data.content.status,
+          content: {
+            pipeline_id: prop.node.data.content.pipeline_id,
+            stage_id: prop.node.data.content.stage_id,
+            user: prop.node.data.content.user,
+            opportunity_name: prop.node.data.content.opportunity_name,
+            opportunity_source: prop.node.data.content.opportunity_source,
+            status: prop.node.data.content.status,
+            lead_value: prop.node.data.content.lead_value,
+          },
         }
       : {
           title: "",
-          pipeline: "",
-          opportunity_name: "",
-          opportunity_source: "",
-          status: "",
+          content: {
+            pipeline_id: "",
+            stage_id: "",
+            user: "",
+            opportunity_name: "",
+            opportunity_source: "",
+            status: "",
+            lead_value: "",
+          },
         },
   });
   const {
@@ -42,24 +72,34 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
   } = form;
 
   const createUpdateOpportunityNode = {
-    id: prop.node ? prop.node.id : "1",
+    id: prop.node ? prop.node.id : "13",
     type: "actionNode",
     data: {
       title: form.getValues("title"),
       node_name: "Create Update Opportunity",
       node_type_id: "Create Update Opportunity",
-      content: {
-        pipeline: form.getValues("pipeline"),
-        opportunity_name: form.getValues("opportunity_name"),
-        opportunity_source: form.getValues("opportunity_source"),
-        status: form.getValues("status"),
-      },
+      content: form.getValues("content"),
     },
   };
+
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
     prop.onHandleClick(createUpdateOpportunityNode as IActionNode, isEditMode);
   };
+
+  const { pipeline } = useWorkflow();
+
+  // Watch the selected pipeline ID
+  const selectedPipelineId = useWatch({
+    control: form.control,
+    name: "content.pipeline_id", // Adjust this based on your form structure
+  });
+
+  // Find the selected pipeline
+  const selectedPipeline = pipeline?.find((p) => p._id === selectedPipelineId);
+  const availableOpportunities = selectedPipeline
+    ? selectedPipeline.opportunities
+    : [];
 
   return (
     <div className="space-y-4 rounded ">
@@ -97,44 +137,118 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
           />
           <FormField
             control={form.control}
-            name="pipeline"
+            name="content.pipeline_id"
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col">
                   <FormLabel>In Pipeline</FormLabel>
-                  <FormControl>
-                    <Input
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      {/*                    <Input
                       className="resize-none bg-slate-100/50 font-light leading-7"
                       placeholder="ServiHero"
                       {...field}
-                    />
-                  </FormControl>
-                  {errors.pipeline ? (
+                    />*/}
+                      <SelectTrigger variant="outline">
+                        <SelectValue placeholder="Select a pipeline" />
+                      </SelectTrigger>
+                    </FormControl>
+
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Pipelines</SelectLabel>
+                        {pipeline?.map((pip: GetAllPipelinesResponse) => (
+                          <SelectItem key={pip._id} value={pip._id}>
+                            {pip.title}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  {errors.content?.pipeline_id ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.pipeline.message}
+                      {errors.content.pipeline_id.message}
                     </p>
                   ) : null}
                 </FormItem>
               );
             }}
-          />{" "}
+          />
           <FormField
             control={form.control}
-            name="opportunity_name"
+            name="content.stage_id"
+            render={({ field }) => {
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Pipeline Stage</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger variant="outline">
+                          <SelectValue placeholder="Select an opportunity" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Opportunities</SelectLabel>
+                          {availableOpportunities.map((opp) => (
+                            <SelectItem key={opp._id} value={opp._id}>
+                              {opp.title}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  {errors.content?.stage_id ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.content.stage_id.message}
+                    </p>
+                  ) : null}
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="content.user"
+            render={({ field }) => {
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>User</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="resize-none bg-slate-100/50 font-light leading-7"
+                      placeholder="User"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.content?.user ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.content.user.message}
+                    </p>
+                  ) : null}
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="content.opportunity_name"
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col">
                   <FormLabel>Opportunity Name</FormLabel>
                   <FormControl>
-                    <Input
-                      className="resize-none bg-slate-100/50 font-light leading-7"
-                      placeholder="Name"
+                    <Textarea
+                      className="mt-2 h-[140px] resize-none bg-slate-100/50 font-light leading-7"
+                      placeholder="Write your description here..."
                       {...field}
                     />
                   </FormControl>
-                  {errors.opportunity_name ? (
+                  {errors.content?.opportunity_name ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.opportunity_name.message}
+                      {errors.content.opportunity_name.message}
                     </p>
                   ) : null}
                 </FormItem>
@@ -143,7 +257,7 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
           />{" "}
           <FormField
             control={form.control}
-            name="opportunity_source"
+            name="content.opportunity_source"
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col">
@@ -155,9 +269,40 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
                       {...field}
                     />
                   </FormControl>
-                  {errors.opportunity_source ? (
+                  {errors.content?.opportunity_source ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.opportunity_source.message}
+                      {errors.content.opportunity_source.message}
+                    </p>
+                  ) : null}
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="content.status"
+            render={({ field }) => {
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger variant="outline">
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Good">Good</SelectItem>
+                      <SelectItem value="Stalled">Stalled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.content?.status ? (
+                    <p className="mt-2 text-[0.8rem] font-medium text-error">
+                      {errors.content.status.message}
                     </p>
                   ) : null}
                 </FormItem>
@@ -166,21 +311,22 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
           />{" "}
           <FormField
             control={form.control}
-            name="status"
+            name="content.lead_value"
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>Lead Value</FormLabel>
                   <FormControl>
                     <Input
+                      type="number"
                       className="resize-none bg-slate-100/50 font-light leading-7"
                       placeholder="Status"
                       {...field}
                     />
                   </FormControl>
-                  {errors.status ? (
+                  {errors.content?.lead_value ? (
                     <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.status.message}
+                      {errors.content.lead_value.message}
                     </p>
                   ) : null}
                 </FormItem>

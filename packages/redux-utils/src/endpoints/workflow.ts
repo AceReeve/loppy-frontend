@@ -9,6 +9,7 @@ import {
   type SaveWorkflowPayload,
   type CreateFolderPayload,
   type GetEditFolderPayload,
+  type GetWorkflowDropDownResponse,
 } from "./types/workflow";
 
 const api = baseApi
@@ -137,6 +138,19 @@ const api = baseApi
         },
         invalidatesTags: ["workflow"],
       }),
+
+      getWorkflowDropdown: builder.query<
+        GetWorkflowDropDownResponse,
+        undefined
+      >({
+        query: () => {
+          return {
+            url: `/react-flow/workflows-dropdown-list`,
+            method: "GET",
+          };
+        },
+        providesTags: ["workflow"],
+      }),
     }),
   });
 
@@ -149,4 +163,5 @@ export const {
   useSaveWorkflowMutation,
   useLazyGetWorkflowListQuery,
   useGetWorkflowQuery,
+  useGetWorkflowDropdownQuery,
 } = api;

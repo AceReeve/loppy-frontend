@@ -257,15 +257,20 @@ export const CreateEmailActionSchema = z.object({
 });
 export const CreateUpdateOpportunitySchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
-  pipeline: z.string().min(1, { message: "Pipline is required" }),
-  opportunity_name: z
-    .string()
-    .min(1, { message: "Opportunity name is required" }),
-  opportunity_source: z
-    .string()
-    .min(1, { message: "Opportunity source is required" }),
-  status: z.string().min(1, {
-    message: "Status is Required",
+  content: z.object({
+    pipeline_id: z.string().min(1, { message: "Pipeline is required" }),
+    stage_id: z.string().min(1, { message: "Stage is required" }),
+    user: z.string().min(1, { message: "User is required" }),
+    opportunity_name: z
+      .string()
+      .min(1, { message: "Opportunity Name is required" }),
+    opportunity_source: z
+      .string()
+      .min(1, { message: "Opportunity Source is required" }),
+    status: z.string().min(1, {
+      message: "Status is Required",
+    }),
+    lead_value: z.string().min(1, { message: "Lead Value is required" }),
   }),
 });
 

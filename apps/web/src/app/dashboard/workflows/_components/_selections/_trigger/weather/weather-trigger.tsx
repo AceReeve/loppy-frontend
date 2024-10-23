@@ -20,36 +20,25 @@ import type { z } from "zod";
 import { TrashIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
-import { TriggerContentSchema } from "@/src/schemas";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
-import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
+import { CreateBirthReminderSchema } from "@/src/schemas";
 
-export default function CustomerReplied(prop: CustomTriggerProps) {
-  const { workflow } = useWorkflow();
-  const tags = workflow?.tags;
-  const workflows = workflow?.workflows;
+export default function WeatherReminder(prop: CustomTriggerProps) {
+  //const [selectedDate, setSelectedDate] = useState<Date>();
 
-  const filterSelections = [
-    {
-      id: 0,
-      filter: "Has Tags",
-      value: "Has a Tags",
-      selections: tags,
-    },
-    {
-      id: 1,
-      filter: "Replied to Workflow",
-      value: "Replied to  Workflow",
-      selections: workflows,
-    },
-  ];
+  /*
+    const handleDateChange = (date: Date) => {
+      setSelectedDate(date);
+      setCalendarOpen(false); // Close the calendar after selecting a date
+    };
+  */
 
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
-    prop.onHandleClick(customerRepliedNode as ITriggerNode, isEditMode);
+    prop.onHandleClick(birthdayNode as ITriggerNode, isEditMode);
   };
 
-  const formSchema = TriggerContentSchema;
+  const formSchema = CreateBirthReminderSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,6 +66,7 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
     control: form.control,
     name: "filters",
   });
+  const filterWatch = form.watch("filters");
 
   useEffect(() => {
     // This effect will trigger whenever filters are updated in the form
@@ -84,27 +74,30 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
     // You can perform other actions here to update your UI with the new form values
   }, [watchedFilters]);
 
-  const customerRepliedNode = {
+  const birthdayNode = {
     id: prop.node ? prop.node.id : "1",
     type: "triggerNode",
     data: {
       title: form.getValues("title"),
-      node_name: "Customer Replied",
-      node_type_id: "Customer Replied",
+      node_name: "Weather Reminder",
+      node_type_id: "Weather Reminder",
       content: {
         filters: form.getValues("filters"),
       },
     },
   };
 
-  const filterWatch = form.watch("filters");
+  const today = new Date(Date.now());
+  today.setHours(0, 0, 0, 0);
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col justify-start">
-        <p>Customer Replied Trigger</p>
+        <p>Weather Reminder Trigger</p>
         <p className="content-center font-nunito text-sm text-gray-500">
-          Sets a Workflow that adds the contact upon execution.
+          Initiates a workflow that adds a contact when specific weather
+          conditions are met, streamlining engagement and ensuring timely
+          interactions.
         </p>
       </div>
       <Separator className="my-5" />
@@ -129,15 +122,17 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
           <div className="space-y-2">
             <div className="mt-2 flex items-center justify-between ">
               <p className="font-semibold">Filters</p>
-              <Button
-                type="button"
-                onClick={() => {
-                  append({ filter: "", value: "" });
-                }}
-                variant="outline"
-              >
-                Add Filter
-              </Button>
+              {filterWatch.length ? (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    append({ filter: "", value: "" });
+                  }}
+                  variant="outline"
+                >
+                  Add Filter
+                </Button>
+              ) : null}
             </div>
             <Separator />
             {fields.map((filterField, index) => (
@@ -165,14 +160,23 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
                         </p>
                       ) : null}*/}
                           <SelectContent>
-                            {filterSelections.map((filter) => (
-                              <SelectItem
-                                key={filter.id}
-                                value={filter.id.toString()}
-                              >
-                                {filter.value}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="Below Temp">Below °F</SelectItem>
+                            <SelectItem value="Above Temp">Above °F</SelectItem>
+                            <SelectItem value="Above Wind">
+                              Above Wind Speed
+                            </SelectItem>
+                            <SelectItem value="Below Wind">
+                              Above Wind Speed
+                            </SelectItem>
+                            <SelectItem value="Above Pressure">
+                              Above Pressure
+                            </SelectItem>
+                            <SelectItem value="Below Pressure">
+                              Below Pressure
+                            </SelectItem>
+                            <SelectItem value="Weather Type">
+                              Weather Type
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         {errors.filters?.[index]?.filter ? (
@@ -190,40 +194,47 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
                   name={`filters.${index}.value`}
                   control={form.control}
                   render={({ field }) => {
+                    function FilterType() {
+                      switch (filterWatch[index].filter) {
+                        case "WeatherType":
+                          return (
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger
+                                className="h-[40px] text-slate-500"
+                                variant="outline"
+                              >
+                                <SelectValue placeholder="Select Filter" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Clear">Clear</SelectItem>
+                                <SelectItem value="Sun">Sun</SelectItem>
+                                <SelectItem value="Clouds">Clouds</SelectItem>
+                                <SelectItem value="Rain">Rain</SelectItem>
+                                <SelectItem value="Drizzle">Drizzle</SelectItem>
+                                <SelectItem value="Thunderstorm">
+                                  Thunderstorm
+                                </SelectItem>
+                                <SelectItem value="Snow">Snow</SelectItem>
+                                <SelectItem value="Atmosphere">
+                                  Atmosphere
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          );
+                        default:
+                          return <Input placeholder="Value" {...field} />;
+                      }
+                    }
+
                     return (
                       <div className="w-full">
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger
-                            className="h-[40px] text-slate-500"
-                            variant="outline"
-                          >
-                            <SelectValue placeholder="Select Value" />
-                          </SelectTrigger>
-                          {/* {errors.filters.filter?.[index]?.value ? (
-                        <p className="mt-2 text-[0.8rem] font-medium text-error">
-                          {errors.users[index].role.message}
-                        </p>
-                      ) : null}*/}
-
-                          <SelectContent>
-                            {filterSelections[
-                              Number(filterWatch[index].filter)
-                            ]?.selections?.map((selection) => (
-                              <SelectItem
-                                key={selection.id}
-                                value={selection.id.toString()}
-                              >
-                                {selection.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {errors.filters?.[index]?.filter ? (
+                        <FilterType />
+                        {errors.filters?.[index]?.value ? (
                           <p className="mt-2 text-[0.8rem] font-medium text-error">
-                            {errors.filters[index].filter.message}
+                            {errors.filters[index].value.message}
                           </p>
                         ) : null}
                       </div>

@@ -24,24 +24,24 @@ import { TriggerContentSchema } from "@/src/schemas";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 
-export default function CustomerReplied(prop: CustomTriggerProps) {
+export default function ContactCreated(prop: CustomTriggerProps) {
   const { workflow } = useWorkflow();
   const tags = workflow?.tags;
-  const workflows = workflow?.workflows;
+  //const workflows = workflow?.workflows;
 
   const filterSelections = [
     {
       id: 0,
       filter: "Has Tags",
-      value: "Has a Tags",
+      value: "Has a Tag",
       selections: tags,
     },
-    {
+    /*    {
       id: 1,
       filter: "Replied to Workflow",
-      value: "Replied to  Workflow",
+      value: "Has a Tag",
       selections: workflows,
-    },
+    },*/
   ];
 
   const onSubmit = () => {
@@ -89,8 +89,8 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
     type: "triggerNode",
     data: {
       title: form.getValues("title"),
-      node_name: "Customer Replied",
-      node_type_id: "Customer Replied",
+      node_name: "Contact Created",
+      node_type_id: "Contact Created",
       content: {
         filters: form.getValues("filters"),
       },
@@ -102,7 +102,7 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col justify-start">
-        <p>Customer Replied Trigger</p>
+        <p>Contact Created</p>
         <p className="content-center font-nunito text-sm text-gray-500">
           Sets a Workflow that adds the contact upon execution.
         </p>
@@ -207,7 +207,6 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
                           {errors.users[index].role.message}
                         </p>
                       ) : null}*/}
-
                           <SelectContent>
                             {filterSelections[
                               Number(filterWatch[index].filter)
