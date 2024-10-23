@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   DropdownMenu,
@@ -8,8 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
 import moment from "moment";
-import { EllipsisVertical, Folder, Workflow } from "lucide-react";
+import { EllipsisVertical, Folder, SaveIcon, Workflow } from "lucide-react";
 import type { GetFolderResponse } from "@repo/redux-utils/src/endpoints/types/workflow.d.ts";
+import { CheckIcon } from "@heroicons/react/16/solid";
 import DeleteActionCell from "@/src/app/dashboard/workflows/_view/_columns/action-cells/delete-action.tsx";
 
 type OnEditFunction = (id: string) => void;
@@ -65,6 +66,44 @@ export const workFolders = (
       );
     },
   },
+
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      //  const name = `${row.original.first_name} ${row.original.last_name}`;
+      // const email = row.original.email;
+      function StatusIcon() {
+        switch (row.original.status) {
+          case "Published":
+            return {
+              icon: <CheckIcon className="h-5 w-5" />,
+              color: "bg-green-300",
+            };
+          case "Saved":
+            return {
+              icon: <SaveIcon className="h-5 w-5" />,
+              color: "bg-gray-200",
+            }; // Example color
+          default:
+            return {
+              icon: <SaveIcon />,
+              color: "bg-gray-100",
+            }; // Example color
+        }
+      }
+      const { icon, color } = StatusIcon();
+      return (
+        <div className={`${color} flex w-[130px] items-center  rounded-full`}>
+          {row.original.type === "Workflow" ? (
+            <div className="flex justify-start gap-2 px-3 py-1 text-[12px] font-medium text-gray-700">
+              {icon} {row.original.status}
+            </div>
+          ) : null}
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "lastUpdated",
     header: "Last Updated",
@@ -87,7 +126,7 @@ export const workFolders = (
       // const email = row.original.email;
       return (
         <div className="text-gray-700">
-          {moment(row.original.updated_at).format("ll")}
+          {moment(row.original.created_at).format("ll")}
         </div>
       );
     },

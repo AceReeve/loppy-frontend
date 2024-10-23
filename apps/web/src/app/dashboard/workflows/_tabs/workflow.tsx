@@ -37,6 +37,7 @@ import {
   usePublishWorkflowMutation,
   useSaveWorkflowMutation,
 } from "@repo/redux-utils/src/endpoints/workflow.ts";
+import type { GetEditFolderPayload } from "@repo/redux-utils/src/endpoints/types/workflow";
 import StartNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/start-node.tsx";
 import ActionEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/action-edge.tsx";
 import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigation/sidebar-trigger-selection.tsx";
@@ -45,7 +46,6 @@ import EndNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/end
 import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/action-node.tsx";
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
-import type { GetEditFolderPayload } from "@repo/redux-utils/src/endpoints/types/workflow";
 
 export interface WorkflowProp {
   workflowID: string;
@@ -968,17 +968,23 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
       }
     }
   };
+  useEffect(() => {
+    setIsPublished(workflow?.isPublished);
+  }, [workflow]);
 
   const [publishWorkflow] = usePublishWorkflowMutation();
-  const [isPublished, setIsPublished] = useState(false);
+  const [isPublished, setIsPublished] = useState(workflow?.isPublished);
+
   const handlePublish = async () => {
     try {
       const response = await publishWorkflow({
         id: workflowID,
-        published: isPublished ? "false" : "true",
+        //published: isPublished ? "false" : "true",
+        published: !workflow?.isPublished,
       }).unwrap();
 
       if ((response as { name: string }).name) {
+        setIsPublished(!isPublished); // Toggle the local state
         // Handle successful submission
         toast({
           title: "Published Successfully",
@@ -1084,14 +1090,15 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
             <Switch
               className="bg-primary"
               defaultChecked={isPublished}
-              onCheckedChange={() => {
+              /*              onCheckedChange={() => {
                 setIsPublished(!isPublished);
-              }}
+              }}*/
+              checked={isPublished}
               onClick={handlePublish}
             />
           </div>
         </div>
-        <p className="font-semibold">New Workflow: {workName}</p>
+        <p className="font-semibold">Workflow: {workName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
             <Edit className="cursor-pointer" />

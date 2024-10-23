@@ -22,42 +22,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
 import { TriggerContentSchema } from "@/src/schemas";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
+import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 
 export default function CustomerReplied(prop: CustomTriggerProps) {
+  const { workflow } = useWorkflow();
+  const tags = workflow?.tags;
+  const workflows = workflow?.workflows;
+
   const filterSelections = [
     {
       id: 0,
-      filter: "Replied to Workflow",
-      value: "Replied to Workflow",
-      selections: [
-        {
-          id: 0,
-          title: "12inf12923basx",
-          value: "12inf12923basx",
-        },
-        {
-          id: 1,
-          title: "910254nasjgf1",
-          value: "910254nasjgf1",
-        },
-      ],
+      filter: "Has Tags",
+      value: "Has a Tags",
+      selections: tags,
     },
     {
       id: 1,
-      filter: "Has a Tag",
-      value: "Has a Tag",
-      selections: [
-        {
-          id: 2,
-          title: "ChatGPT",
-          value: "ChatGPT",
-        },
-        {
-          id: 3,
-          title: "Facebook",
-          value: "Facebook",
-        },
-      ],
+      filter: "Replied to Workflow",
+      value: "Replied to  Workflow",
+      selections: workflows,
     },
   ];
 
@@ -224,12 +207,16 @@ export default function CustomerReplied(prop: CustomTriggerProps) {
                           {errors.users[index].role.message}
                         </p>
                       ) : null}*/}
+
                           <SelectContent>
                             {filterSelections[
                               Number(filterWatch[index].filter)
-                            ]?.selections.map((filter) => (
-                              <SelectItem key={filter.id} value={filter.value}>
-                                {filter.title}
+                            ]?.selections?.map((selection) => (
+                              <SelectItem
+                                key={selection.id}
+                                value={selection.id.toString()}
+                              >
+                                {selection.name}
                               </SelectItem>
                             ))}
                           </SelectContent>

@@ -37,6 +37,7 @@ import OpportunitiesStatusChanged from "@/src/app/dashboard/workflows/_component
 import CreateUpdateOpportunity from "@/src/app/dashboard/workflows/_components/_selections/_action/opportunities/create-update-opportunity.tsx";
 import WorkflowProvider from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import WeatherReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/weather/weather-trigger.tsx";
+import ContactCreated from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contacts/contact-created.tsx";
 
 interface SheetProps {
   openSheet: boolean;
@@ -78,50 +79,6 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
         },
       };
     }, []);
-    /*  const triggerNodeData = [
-    {
-      id: "1",
-      data: {
-        title: "Birthday Reminder",
-        content: "",
-        icon: <CakeIcon />,
-      },
-      position: { x: 0, y: 0 },
-    },
-    {
-      id: "2",
-      data: {
-        title: "Send Email",
-        content: "",
-        icon: <MailIcon />,
-      },
-      position: { x: 0, y: 0 },
-    },
-  ];*/
-
-    /*  const triggerComponents = [
-    {
-      id: "1",
-      component: (
-        <BirthdayReminder
-          onHandleClick={props.addTriggerNode}
-          onAddNodes={closeTriggerView}
-          icon={<CakeIcon />}
-        />
-      ),
-    },
-
-
-      id: "2",
-      component: (
-        <SendEmail
-          onHandleClick={props.addActionNode}
-          onAddNodes={closeTriggerView}
-          icon={<MailIcon />}
-        />
-      ),
-    },
-  ];*/
 
     const onHandleAddNode = (
       node: ITriggerNode | IActionNode,
@@ -139,6 +96,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       "Customer Replied": CustomerReplied,
       "Opportunity Status Changed": OpportunitiesStatusChanged,
       "Contact Changed": ContactChange,
+      "Contact Created": ContactCreated,
       "Weather Reminder": WeatherReminder,
       /*      "Custom Date Reminder": (
         <CustomDateReminder
@@ -153,24 +111,6 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       "Send Email": SendEmail,
       "Create Update Opportunity": CreateUpdateOpportunity,
     };
-
-    /*  const birthdayNode = {
-    id: "1",
-    type: "triggerNode",
-    data: {
-      title: "BLACKALS",
-      node_name: "Birthday Reminder",
-      node_type_id: "Birthday Reminder",
-      content: {
-        filters: [
-          {
-            filter: "Test",
-            value: "TEst",
-          },
-        ],
-      },
-    },z
-  };*/
 
     const triggers = [
       {
@@ -194,7 +134,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             id: 3,
             name: "Contact Created",
             icon: <UserPlus />,
-            component: <ContactChange />,
+            component: <ContactCreated onHandleClick={onHandleAddNode} />,
           },
           {
             id: 4,

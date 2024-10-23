@@ -1,4 +1,5 @@
 "use client";
+/*
 import { useGetWorkflowQuery } from "@repo/redux-utils/src/endpoints/workflow.ts";
 
 export default function Page() {
@@ -8,3 +9,4 @@ export default function Page() {
 
   console.log(workflow?._id);
 }
+*/
