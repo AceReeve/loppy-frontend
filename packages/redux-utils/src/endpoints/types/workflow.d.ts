@@ -53,7 +53,8 @@ export interface SaveWorkflowPayload {
 export interface PublishWorkflowPayload {
   id: string;
   published: boolean;
-  [key: string]: any;
+  //[key: string]: string;
+  //[key: boolean]: boolean;
 }
 
 export interface GetCreateWorkflowResponse {
@@ -108,7 +109,6 @@ export interface GetWorkflowListPayload {
 }
 
 interface Workflow {
-  z;
   name: string;
   id: string;
 }

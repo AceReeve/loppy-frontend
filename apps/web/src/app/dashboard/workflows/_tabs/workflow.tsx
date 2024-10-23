@@ -983,12 +983,14 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
         published: !workflow?.isPublished,
       }).unwrap();
 
+      const result: string = !isPublished ? "Published" : "Unpublished";
       if ((response as { name: string }).name) {
         setIsPublished(!isPublished); // Toggle the local state
         // Handle successful submission
+
         toast({
-          title: "Published Successfully",
-          description: "workflow has been published.",
+          title: `${result} Successfully`,
+          description: `Workflow has been ${result}.`,
           variant: "success",
         });
         form.reset();
@@ -996,7 +998,7 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
         // Handle submission failure
         toast({
           title: "Failed",
-          description: "Failed to publish workflow",
+          description: `Failed to ${result} workflow`,
           variant: "destructive",
         });
       }

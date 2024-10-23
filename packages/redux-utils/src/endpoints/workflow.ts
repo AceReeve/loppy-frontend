@@ -9,7 +9,7 @@ import {
   type SaveWorkflowPayload,
   type CreateFolderPayload,
   type GetEditFolderPayload,
-  GetWorkflowDropDownResponse,
+  type GetWorkflowDropDownResponse,
 } from "./types/workflow";
 
 const api = baseApi
