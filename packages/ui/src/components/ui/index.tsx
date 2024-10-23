@@ -9,6 +9,7 @@ export * from "./card.tsx";
 export * from "./checkbox.tsx";
 export * from "./collapsible.tsx";
 export * from "./command.tsx";
+export * from "./date-range-picker.tsx";
 export * from "./dialog.tsx";
 export * from "./drawer.tsx";
 export * from "./dropdown-menu.tsx";
