@@ -387,7 +387,7 @@ export default function RegisterDetails() {
                   //onValueChange={props.setFiles}
                   // value={props.files}
                 >
-                  <FileInput className="py-10 outline-dashed outline-1 outline-gray-500">
+                  <FileInput className="py-10">
                     <div className="flex w-full flex-col items-center justify-center pb-4 pt-3">
                       <FileSvgDraw />
                     </div>

@@ -10,7 +10,6 @@ import {
   AlertTitle,
   Button,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -79,6 +78,7 @@ function FileUploadDropzone(props: {
       ],
     },
     maxSize: 4 * 1024 * 1024,
+    multiple: false,
   } satisfies DropzoneOptions;
 
   return (
@@ -89,7 +89,7 @@ function FileUploadDropzone(props: {
         onValueChange={props.setFiles}
         value={props.files}
       >
-        <FileInput className="py-10 outline-dashed outline-1 outline-gray-500">
+        <FileInput className="py-10">
           <div className="flex w-full flex-col items-center justify-center pb-4 pt-3">
             <FileSvgDraw />
           </div>
@@ -152,10 +152,10 @@ export default function ImportContactsDialogContent(
         <>
           <DialogHeader>
             <DialogTitle>Import contacts</DialogTitle>
-            <DialogDescription>
+            <div>
               <FileUploadDropzone files={files} setFiles={setFiles} />
               <button
-                className="text-primary -mt-5 underline"
+                className="-mt-5 text-primary underline"
                 onClick={() => {
                   handleDownloadTemplate(
                     csvFileTemplate.fileName,
@@ -166,7 +166,7 @@ export default function ImportContactsDialogContent(
               >
                 Download Template
               </button>
-            </DialogDescription>
+            </div>
           </DialogHeader>
           <DialogFooter>
             <Button

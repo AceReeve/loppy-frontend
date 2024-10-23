@@ -15,16 +15,22 @@ import { LoadingOverlay } from "@repo/ui/loading-overlay.tsx";
 import { useCreateInboxMutation } from "@repo/redux-utils/src/endpoints/inboxes.ts";
 import { InboxAssignmentType } from "@repo/redux-utils/src/endpoints/enums/inbox.enums.ts";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  type assignInboxSchema,
-  type chooseNumberSchema,
+  assignInboxSchema,
+  chooseNumberSchema,
 } from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
 import AssignInbox from "@/src/app/dashboard/settings/numbers/_components/modals/buy-number-steps/2-assign-inbox.tsx";
 import { type StepItem } from "@/src/types/settings";
+import StepForm from "@/src/app/dashboard/settings/_components/step-form.tsx";
+import { StepsEnum } from "@/src/app/dashboard/settings/numbers/_components/enums/settings-numbers.enums.ts";
 import ChooseNumber from "./buy-number-steps/1-choose-number.tsx";
 
+type NamedStepItem = Record<StepsEnum, StepItem>;
+
 function BuyNumberModal() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [saveEnabled, setSaveEnabled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,31 +42,41 @@ function BuyNumberModal() {
 
   const isLoading = isCreateInboxLoading || isBuyNumberLoading;
 
-  const steps: StepItem[] = [
-    {
+  const steps: NamedStepItem = {
+    [StepsEnum.ChooseNumber]: {
       title: "Choose Number",
-      id: "choose-number",
       component: ChooseNumber,
       footerNote:
         "* Due to A2P 10DLC regulations, registration is required and additional fees will apply.",
       onSubmit: onSetNumberSubmit as (data: unknown) => void,
+      form: useForm({
+        resolver: zodResolver(chooseNumberSchema),
+      }),
     },
-    {
+    [StepsEnum.AssignInbox]: {
       title: "Assign Inbox",
-      id: "assign-inbox",
       component: AssignInbox,
       footerNote:
         "* Due to A2P 10DLC regulations, registration is required and additional fees will apply.",
       onSubmit: onAssignInboxSubmit as (data: unknown) => void,
+      form: useForm({
+        resolver: zodResolver(assignInboxSchema),
+        defaultValues: {
+          inbox_name: "",
+        },
+      }),
     },
-  ];
+  };
+
+  const stepsEntries = Object.entries(steps);
+  const currentStep = Object.values(steps)[currentIndex];
 
   const onPrevStep = () => {
-    setCurrentStep(currentStep - 1);
+    setCurrentIndex(currentIndex - 1);
   };
 
   const onNextStep = () => {
-    setCurrentStep(currentStep + 1);
+    setCurrentIndex(currentIndex + 1);
     setSaveEnabled(false);
   };
 
@@ -120,23 +136,29 @@ function BuyNumberModal() {
         {isLoading ? <LoadingOverlay /> : null}
 
         <DialogHeader>
-          <DialogTitle>{steps[currentStep].title}</DialogTitle>
+          <DialogTitle>{currentStep.title}</DialogTitle>
         </DialogHeader>
 
-        {steps.map((step, index) => {
+        {stepsEntries.map(([key, step], index) => {
           const StepComponent = step.component;
+          const props = {
+            setSaveEnabled,
+            id: key,
+            onSubmit: step.onSubmit,
+            isActive: index === currentIndex,
+            form: step.form as never,
+            onNextStep,
+          };
           return (
             <div
-              key={step.id}
+              key={step.title}
               style={{
-                display: index !== currentStep ? "none" : "block",
+                display: index !== currentIndex ? "none" : "block",
               }}
             >
-              <StepComponent
-                setSaveEnabled={setSaveEnabled}
-                id={step.id}
-                onSubmit={step.onSubmit}
-              />
+              <StepForm {...props}>
+                <StepComponent {...props} />
+              </StepForm>
             </div>
           );
         })}
@@ -152,14 +174,14 @@ function BuyNumberModal() {
             className="w-full"
             type="submit"
             disabled={!saveEnabled}
-            form={steps[currentStep].id}
+            form={stepsEntries[currentIndex][0]}
           >
             {currentStep < steps.length - 1 ? "Next" : "Purchase Number"}
           </Button>
         </DialogFooter>
-        {steps[currentStep].footerNote ? (
+        {currentStep.footerNote ? (
           <p className="text-center text-xs text-gray-500">
-            {steps[currentStep].footerNote}
+            {currentStep.footerNote}
           </p>
         ) : null}
       </DialogContent>

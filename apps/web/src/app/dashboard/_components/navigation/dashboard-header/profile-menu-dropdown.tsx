@@ -16,6 +16,7 @@ import React, { Fragment } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useGetAllOrganizationsQuery } from "@repo/redux-utils/src/endpoints/organization.ts";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 
 interface ProfileMenuItems {
   key: string;
@@ -42,6 +43,7 @@ export function ProfileMenuDropdown({
   onOpenChange,
   children,
 }: ProfileMenuDropdownProps) {
+  const { currentOrg } = useDashboardState();
   const { data: organizations } = useGetAllOrganizationsQuery(undefined);
 
   const profileMenuItems: ProfileMenuItem[] = [
@@ -69,7 +71,7 @@ export function ProfileMenuDropdown({
 
   const organizationMenuItems: ProfileMenuItem[] = [
     {
-      title: organizations?.[0].organization_name ?? "Servihero",
+      title: currentOrg?.organization_name ?? "ServiHero",
       children: organizations
         ? [
             ...organizations.map((organization) => ({

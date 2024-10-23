@@ -8,12 +8,14 @@ import {
 import { AddCircle, Hashtag } from "iconsax-react";
 import type { FormComponentProps } from "@/src/types/settings";
 import ChooseNumberForm from "@/src/app/dashboard/settings/numbers/_components/forms/choose-number-form.tsx";
+import type { chooseNumberSchema } from "@/src/app/dashboard/settings/numbers/_components/schemas/buy-number-schemas.ts";
 
 export default function AssignNumber({
-  setSaveEnabled,
   id,
-  onSubmit,
-}: FormComponentProps) {
+  isActive,
+  form,
+  onNextStep,
+}: FormComponentProps<chooseNumberSchema>) {
   const tabs = [
     {
       icon: AddCircle,
@@ -48,9 +50,10 @@ export default function AssignNumber({
           return (
             <TabsContent key={tab.id} value={tab.id}>
               <TabComponent
-                onSubmit={onSubmit}
-                setSaveEnabled={setSaveEnabled}
                 id={id}
+                isActive={isActive}
+                form={form}
+                onNextStep={onNextStep}
               />
             </TabsContent>
           );

@@ -55,7 +55,7 @@ interface FileUploaderProps {
   value: File[] | null;
   reSelect?: boolean;
   onValueChange: (value: File[] | null) => void;
-  dropzoneOptions: DropzoneOptions;
+  dropzoneOptions?: DropzoneOptions;
   orientation?: "horizontal" | "vertical";
 }
 
@@ -86,8 +86,8 @@ export const FileUploader = forwardRef<
       },
       maxFiles = 1,
       maxSize = 4 * 1024 * 1024,
-      multiple = true,
-    } = dropzoneOptions;
+      multiple = false,
+    } = dropzoneOptions ?? {};
 
     const reSelectAll = maxFiles === 1 ? true : reSelect;
     const direction: DirectionOptions = dir === "rtl" ? "rtl" : "ltr";
@@ -353,13 +353,13 @@ export const FileInput = forwardRef<
     >
       <div
         className={cn(
-          `w-full rounded-lg duration-300 ease-in-out
+          `w-full rounded-lg duration-300 ease-in-out outline-dashed outline-1 outline-gray-500
          ${
            dropzoneState.isDragAccept
-             ? "border-green-500"
+             ? "outline-green-500 bg-green-200"
              : dropzoneState.isDragReject || isFileTooBig
-               ? "border-red-500"
-               : "border-gray-300"
+               ? "outline-red-500 bg-red-200"
+               : "outline-gray-500"
          }`,
           className,
         )}
