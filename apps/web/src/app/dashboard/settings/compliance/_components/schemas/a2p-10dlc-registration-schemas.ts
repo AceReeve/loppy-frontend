@@ -6,13 +6,29 @@ export const campaignUseCaseSchema = z.object({
 });
 
 export const sampleMessagesSchema = z.object({
-  message: z.string().min(1, "Sample message is required"),
+  message1: z.string().min(1, "Sample message 1 is required"),
+  message2: z.string().min(1, "Sample message 2 is required"),
 });
 
 export const optInMethodSchema = z.object({
   method: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one item.",
   }),
+  messageFlow: z
+    .array(z.string())
+    .refine((value) => value.every((item) => item.trim()), {
+      message: "Message should not be empty",
+    }),
+  imageUrl: z.array(z.array(z.any())).refine((value) =>
+    value.every((item) => item.length > 0, {
+      message: "Image should not be empty",
+    }),
+  ),
+  // imageUrl: z.array(z.string().url("Invalid URL")).refine((value) =>
+  //   value.every((item) => item.trim(), {
+  //     message: "Image should not be empty",
+  //   }),
+  // ),
 });
 
 export const optInImageSchema = z.object({

@@ -184,7 +184,7 @@ const states = {
   ],
 };
 
-const cities = {
+const cities: Record<string, Record<string, string[]>> = {
   US: {
     AL: ["Birmingham", "Montgomery", "Huntsville", "Mobile", "Tuscaloosa"],
     AK: ["Anchorage", "Fairbanks", "Juneau", "Sitka", "Ketchikan"],

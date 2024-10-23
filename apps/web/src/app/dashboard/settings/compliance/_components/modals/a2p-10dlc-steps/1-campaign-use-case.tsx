@@ -1,92 +1,208 @@
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import {
-  Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-  Input,
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
+  Textarea,
 } from "@repo/ui/components/ui";
-import type { z } from "zod";
-import { campaignUseCaseSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/a2p-10dlc-registration-schemas";
+import { type campaignUseCaseSchema } from "@/src/app/dashboard/settings/compliance/_components/schemas/a2p-10dlc-registration-schemas";
 import type { FormComponentProps } from "@/src/types/settings";
 
 export default function CampaignUseCase({
-  setFormData,
-  setSaveEnabled,
-}: FormComponentProps) {
-  const form = useForm<z.infer<typeof campaignUseCaseSchema>>({
-    resolver: zodResolver(campaignUseCaseSchema),
-  });
+  form,
+}: FormComponentProps<typeof campaignUseCaseSchema>) {
+  if (!form) return null;
 
-  const onSubmit = (data: z.infer<typeof campaignUseCaseSchema>) => {
-    setFormData?.((prevState) => ({ ...prevState, ...data }));
-  };
-
-  useEffect(() => {
-    setSaveEnabled(form.formState.isValid);
-  }, [form.formState.isValid]);
+  // TODO: fetch use cases from API
+  const useCases = [
+    {
+      code: "2FA",
+      name: "Two-Factor authentication (2FA)",
+      description:
+        "Two-Factor authentication, one-time use password, password reset",
+      post_approval_required: false,
+    },
+    {
+      code: "ACCOUNT_NOTIFICATION",
+      name: "Account Notification",
+      description:
+        "All reminders, alerts, and notifications. (Examples include: flight delayed, hotel booked, appointment reminders.)",
+      post_approval_required: false,
+    },
+    {
+      code: "AGENTS_FRANCHISES",
+      name: "Agents and Franchises",
+      description:
+        "For brands that have multiple agents, franchises or offices in the same brand vertical, but require individual localised numbers per agent/location/office.",
+      post_approval_required: true,
+    },
+    {
+      code: "CHARITY",
+      name: "Charity",
+      description:
+        "Includes:  5013C Charity\nDoes not include: Religious organizations",
+      post_approval_required: false,
+    },
+    {
+      code: "PROXY",
+      name: "Proxy",
+      description:
+        "Peer-to-peer app-based group messaging with proxy/pooled numbers (For example: GroupMe)\nSupporting personalized services and non-exposure of personal numbers for enterprise or A2P communications. (Examples include: Uber and AirBnb.)",
+      post_approval_required: true,
+    },
+    {
+      code: "CUSTOMER_CARE",
+      name: "Customer Care",
+      description:
+        "All customer care messaging, including account management and support",
+      post_approval_required: false,
+    },
+    {
+      code: "DELIVERY_NOTIFICATION",
+      name: "Delivery Notification",
+      description:
+        "Information about the status of the delivery of a product or service",
+      post_approval_required: false,
+    },
+    {
+      code: "EMERGENCY",
+      name: "Emergency",
+      description:
+        "Notification services designed to support public safety / health during natural disasters, armed conflicts, pandemics and other national or regional emergencies",
+      post_approval_required: true,
+    },
+    {
+      code: "FRAUD_ALERT",
+      name: "Fraud Alert Messaging",
+      description: "Fraud alert notification",
+      post_approval_required: false,
+    },
+    {
+      code: "HIGHER_EDUCATION",
+      name: "Higher Education",
+      description:
+        'For campaigns created on behalf of Colleges or Universities and will also include School Districts etc that fall outside of any "free to the consumer" messaging model',
+      post_approval_required: false,
+    },
+    {
+      code: "K12_EDUCATION",
+      name: "K-12 Education",
+      description:
+        "Campaigns created for messaging platforms that support schools from grades K-12 and distance learning centers. This is not for Post-Secondary schools.",
+      post_approval_required: true,
+    },
+    {
+      code: "LOW_VOLUME",
+      name: "Low Volume Mixed",
+      description:
+        "Low throughput, any combination of use-cases. Examples include:  test, demo accounts",
+      post_approval_required: false,
+    },
+    {
+      code: "MARKETING",
+      name: "Marketing",
+      description:
+        "Any communication with marketing and/or promotional content",
+      post_approval_required: false,
+    },
+    {
+      code: "MIXED",
+      name: "Mixed",
+      description:
+        "Mixed messaging reserved for specific consumer service industry",
+      post_approval_required: false,
+    },
+    {
+      code: "POLITICAL",
+      name: "Political",
+      description:
+        "Part of organized effort to influence decision making of specific group. All campaigns to be verified",
+      post_approval_required: false,
+    },
+    {
+      code: "POLLING_VOTING",
+      name: "Polling and voting",
+      description: "Polling and voting",
+      post_approval_required: false,
+    },
+    {
+      code: "PUBLIC_SERVICE_ANNOUNCEMENT",
+      name: "Public Service Announcement",
+      description:
+        "An informational message that is meant to raise the audience awareness about an important issue",
+      post_approval_required: false,
+    },
+    {
+      code: "SECURITY_ALERT",
+      name: "Security Alert",
+      description:
+        "A notification that the security of a system, either software or hardware, has been compromised in some way and there is an action you need to take",
+      post_approval_required: false,
+    },
+    {
+      code: "SOCIAL",
+      name: "Social",
+      description:
+        "Communication within or between closed communities (For example: influencers alerts)",
+      post_approval_required: true,
+    },
+    {
+      code: "SWEEPSTAKE",
+      name: "Sweepstake",
+      description: "Sweepstake",
+      post_approval_required: true,
+    },
+  ];
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
-        <FormField
-          control={form.control}
-          name="useCase"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select the use case for your account</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger variant="outline">
-                    <SelectValue placeholder="Select use case" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low_volume_mixed">
-                      Low Volume Mixed
+    <>
+      <FormField
+        control={form.control}
+        name="useCase"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Select the use case for your account</FormLabel>
+            <FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger variant="outline">
+                  <SelectValue placeholder="Select use case" />
+                </SelectTrigger>
+                <SelectContent>
+                  {useCases.map((item) => (
+                    <SelectItem key={item.code} value={item.code}>
+                      {item.name}
                     </SelectItem>
-                    <SelectItem value="high_volume_mixed">
-                      High Volume Mixed
-                    </SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Use Case Description</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Add a detailed description of how the use case you selected applies for your business."
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Use Case Description</FormLabel>
+            <FormControl>
+              <Textarea
+                {...field}
+                placeholder="Provide a clear and comprehensive overview of the campaign's objectives and interactions the end-user would experience after opting in."
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </>
   );
 }

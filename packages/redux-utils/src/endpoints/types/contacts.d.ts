@@ -89,3 +89,8 @@ export interface ExportContactsPayload {
   dateTo: Date;
   all: boolean;
 }
+
+export interface ContactSelect {
+  value: string;
+  label: string;
+}

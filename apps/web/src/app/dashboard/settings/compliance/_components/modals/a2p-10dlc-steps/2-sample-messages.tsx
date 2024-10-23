@@ -1,55 +1,76 @@
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import {
-  Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-  Input,
+  Textarea,
+  Alert,
+  AlertDescription,
 } from "@repo/ui/components/ui";
-import type { z } from "zod";
+import { AlertCircle } from "lucide-react";
 import type { FormComponentProps } from "@/src/types/settings";
-import { sampleMessagesSchema } from "../../schemas/a2p-10dlc-registration-schemas.ts";
+import { type sampleMessagesSchema } from "../../schemas/a2p-10dlc-registration-schemas.ts";
 
 export default function SampleMessages({
-  setFormData,
-  setSaveEnabled,
-}: FormComponentProps) {
-  const form = useForm<z.infer<typeof sampleMessagesSchema>>({
-    resolver: zodResolver(sampleMessagesSchema),
-  });
-
-  const onSubmit = (data: z.infer<typeof sampleMessagesSchema>) => {
-    setFormData?.((prevState) => ({ ...prevState, ...data }));
-  };
-
-  useEffect(() => {
-    setSaveEnabled(form.formState.isValid);
-  }, [form.formState.isValid]);
+  form,
+}: FormComponentProps<typeof sampleMessagesSchema>) {
+  if (!form) return null;
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sample Message</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="Enter a sample message" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
+    <>
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Maintain consistency in sample messages and use cases. If you register
+          a <b>Marketing</b> campaign, but sample messages say “Here’s your
+          one-time passcode: 123456”, your campaign will be rejected.
+          <br />
+          <br />
+          The following is needed:
+          <ul>
+            <li> - Identify message sender (brand)</li>
+            <li> - Indicate templated fields with brackets</li>
+            <li>
+              - Please consider adding language such as “Please reply STOP to
+              opt out” in one of your sample messages
+            </li>
+          </ul>
+        </AlertDescription>
+      </Alert>
+      <FormField
+        control={form.control}
+        name="message1"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Sample Message 1</FormLabel>
+            <FormControl>
+              <Textarea
+                {...field}
+                placeholder="Provide message example highlighting use case"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="message2"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Sample Message 2</FormLabel>
+            <FormControl>
+              <Textarea
+                {...field}
+                placeholder="Provide another message example highlighting use case"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </>
   );
 }

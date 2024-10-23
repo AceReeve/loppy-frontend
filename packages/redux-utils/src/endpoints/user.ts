@@ -9,6 +9,8 @@ import type {
   SaveUserInfoPayload,
   SaveUserInfoResponse,
   CreatePasswordPayload,
+  User,
+  UserSelect,
 } from "./types/user";
 import type {
   GetInviteUserResponse,
@@ -20,6 +22,7 @@ const api = baseApi
     addTagTypes: ["user"],
   })
   .injectEndpoints({
+    overrideExisting: true,
     endpoints: (builder) => ({
       inviteUser: builder.mutation<InviteUserResponse, InviteUserPayload>({
         query: (payload) => {
@@ -99,6 +102,20 @@ const api = baseApi
           };
         },
       }),
+      getAllUsers: builder.query<UserSelect[], undefined>({
+        query: () => {
+          return {
+            url: `/user/get-all-users`,
+          };
+        },
+        transformResponse: (response: User[]) => {
+          return response.map((u) => ({
+            value: u._id,
+            label: u.email,
+          }));
+        },
+        providesTags: ["user"],
+      }),
       changePassword: builder.mutation<undefined, ChangePasswordPayload>({
         query: (payload) => {
           return {
@@ -129,6 +146,7 @@ export const {
   useGetUserProfileQuery,
   useUpdateUserInfoMutation,
   useUploadProfileMutation,
+  useGetAllUsersQuery,
   useChangePasswordMutation,
   useCreatePasswordMutation,
 } = api;

@@ -10,7 +10,7 @@ interface ContextType {
   notificationsOpened: boolean;
   toggleNotifications: (isOpened?: boolean) => void;
   session: Session | null;
-  currentOrg: GetOrganizationResponse;
+  currentOrg: GetOrganizationResponse | undefined;
 }
 
 const DashboardContext = createContext<ContextType | null>(null);
@@ -22,7 +22,7 @@ export default function DashboardProvider({
 }: {
   children: React.ReactNode;
   session: Session | null;
-  currentOrg: GetOrganizationResponse;
+  currentOrg: GetOrganizationResponse | undefined;
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [notificationsOpened, setNotificationsOpened] = useState(false);
