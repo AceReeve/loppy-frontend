@@ -6,6 +6,7 @@ export * from "./breadcrumb.tsx";
 export * from "./button.tsx";
 export * from "./calendar.tsx";
 export * from "./card.tsx";
+export * from "./carousel.tsx";
 export * from "./checkbox.tsx";
 export * from "./collapsible.tsx";
 export * from "./command.tsx";
