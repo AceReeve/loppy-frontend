@@ -21,7 +21,7 @@ export default function SidebarHandler(props: SidebarHandlerProps) {
         collapsed ? "w-auto" : "w-[250px]",
       )}
     >
-      <div className="bg-light-darker mt-7 flex items-center justify-between gap-4 pr-2">
+      <div className="bg-light-darker mt-3 flex items-center justify-between gap-4 pr-2">
         {/* <!-- TITLE --> */}
         <Link
           className="z-50 flex items-center gap-2 text-lg font-bold text-primary"
@@ -32,7 +32,7 @@ export default function SidebarHandler(props: SidebarHandlerProps) {
             alt=""
             width={138}
             height={141}
-            className="size-[65px] w-[65px] object-contain transition-all duration-500"
+            className="size-20 object-contain transition-all duration-500"
           />
           <div
             className={`flex-col text-black transition-opacity duration-500 ${collapsed ? "hidden opacity-0" : "opacity-1 flex"}`}

@@ -7,8 +7,12 @@ import { type GetOrganizationResponse } from "@repo/redux-utils/src/endpoints/ty
 interface ContextType {
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
+  messagesOpened: boolean;
+  searchOpened: boolean;
   notificationsOpened: boolean;
+  toggleMessages: (isOpened?: boolean) => void;
   toggleNotifications: (isOpened?: boolean) => void;
+  toggleSearch: (isOpened?: boolean) => void;
   session: Session | null;
   currentOrg: GetOrganizationResponse | undefined;
 }
@@ -26,6 +30,8 @@ export default function DashboardProvider({
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [notificationsOpened, setNotificationsOpened] = useState(false);
+  const [messagesOpened, setMessagesOpened] = useState(false);
+  const [searchOpened, setSearchOpened] = useState(false);
 
   // Toggle sidebar and preserve state to local storage
   const toggleSidebar = useCallback(() => {
@@ -43,6 +49,22 @@ export default function DashboardProvider({
     }
   }, []);
 
+  const toggleMessages = useCallback((isOpened?: boolean) => {
+    if (isOpened === undefined) {
+      setMessagesOpened((prev) => !prev);
+    } else {
+      setMessagesOpened(isOpened);
+    }
+  }, []);
+
+  const toggleSearch = useCallback((isOpened?: boolean) => {
+    if (isOpened === undefined) {
+      setSearchOpened((prev) => !prev);
+    } else {
+      setSearchOpened(isOpened);
+    }
+  }, []);
+
   // Set initial value of sidebar collapse with local storage
   // useEffect(() => {
   //   if (typeof window !== "undefined") {
@@ -54,10 +76,14 @@ export default function DashboardProvider({
     <DashboardContext.Provider
       value={{
         currentOrg,
+        messagesOpened,
         notificationsOpened,
         session,
         sidebarCollapsed,
+        searchOpened,
+        toggleMessages,
         toggleNotifications,
+        toggleSearch,
         toggleSidebar,
       }}
     >

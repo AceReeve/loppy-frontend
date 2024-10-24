@@ -18,14 +18,13 @@ import {
 import { Mail } from "lucide-react";
 import ColumnChart from "@/src/components/charts/column-chart";
 import LineChart from "@/src/components/charts/line-chart";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import FunnelChart from "@/src/components/charts/funnel-chart";
 import UnsoldTicketsTable from "@/src/components/table/unsold-tickets-table";
 import StatCards from "@/src/app/dashboard/_components/dashboard/stat-cards.tsx";
+import { DashboardOverviewHeader } from "@/src/app/dashboard/_components/dashboard/sections/dashboard-overview/dashboard-overview-header.tsx";
 
 export default function Page() {
   const [leadSubmissionsValue, setLeadSubmissionsValue] = useState("1D");
-  const { session } = useDashboardState();
 
   const customerLeads = [
     {
@@ -52,62 +51,17 @@ export default function Page() {
   // if (error) return <p>{error?.message}</p>;
 
   return (
-    <div className="p-10">
+    <div className="p-6">
       {/* Dashboard Header */}
-      <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
-          <div className="inline-flex h-[68px] w-[171px] flex-col items-start justify-center">
-            <div className="font-poppins text-xl font-normal text-slate-500">
-              Service Hero
-            </div>
-            <div className="w-[171px] font-poppins text-4xl font-semibold text-black">
-              Overview
-            </div>
-          </div>
-          <div className="h-[76px] w-[462px] font-['Poppins'] text-sm font-semibold leading-[30px]">
-            <span className="font-poppins font-semibold text-slate-500">
-              Hello{" "}
-            </span>
-            <span className="font-poppins font-semibold text-orange-500/70">
-              {session?.user.name ?? ""}
-            </span>
-            <span className="font-poppins font-normal text-slate-500">
-              , welcome to the Service Hero Dashboard, we hope you always see
-              updated business statistics for yourself.{" "}
-            </span>
-          </div>
-        </div>
-        <div className="flex gap-4 self-end lg:gap-3">
-          <Select defaultValue="month">
-            <SelectTrigger className="w-[138px]">
-              <SelectValue placeholder="Select range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">This Month</SelectItem>
-              <SelectItem value="year">This Year</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select defaultValue="all_sources">
-            <SelectTrigger className="w-[138px]" variant="outline">
-              <SelectValue placeholder="Select range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all_sources">All Sources</SelectItem>
-              <SelectItem value="option2">Option 2</SelectItem>
-              <SelectItem value="option3">Option 3</SelectItem>
-              <SelectItem value="option4">Option 4</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <DashboardOverviewHeader />
       {/*  First Row Components */}
-      <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3 xl:grid-cols-5">
-        <StatCards />
-      </div>
+      <Card className="bg-card/60">
+        <CardContent className="mt-3 grid grid-cols-2 gap-x-8 gap-y-12 px-6 pb-5 pt-12 md:grid-cols-3 xl:grid-cols-5">
+          <StatCards />
+        </CardContent>
+      </Card>
       {/* Second Row Components */}
-      <div className="mt-11 grid grid-cols-12 gap-[22px]">
+      <div className="mt-6 grid grid-cols-12 gap-[22px]">
         <Card className="relative col-span-full">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle>Priority Customers</CardTitle>
@@ -154,7 +108,7 @@ export default function Page() {
       </div>
 
       {/* Third Row Components */}
-      <div className="mt-11 grid grid-cols-12 gap-[22px]">
+      <div className="mt-6 grid grid-cols-12 gap-[22px]">
         <Card className="relative col-span-full xl:col-span-4">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle>Salesman Leaderboard</CardTitle>
@@ -232,7 +186,7 @@ export default function Page() {
       </div>
 
       {/* Fourth Row Components */}
-      <div className="mt-11 grid grid-cols-12 gap-6">
+      <div className="mt-6 grid grid-cols-12 gap-6">
         <Card className="relative col-span-full lg:col-span-7">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle>Sales Funnel Analytics</CardTitle>

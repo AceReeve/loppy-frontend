@@ -1,4 +1,4 @@
-import { Check, CreditCard, LogOut, Settings, User, Users } from "lucide-react";
+import { LogOut, Settings, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,10 @@ import React, { Fragment } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useGetAllOrganizationsQuery } from "@repo/redux-utils/src/endpoints/organization.ts";
+import { Card } from "iconsax-react";
+import { CheckIcon } from "@heroicons/react/16/solid";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import IconAccountProfile from "@/src/app/dashboard/_components/navigation/dashboard-header/icons/icon-account-profile.tsx";
 
 interface ProfileMenuItems {
   key: string;
@@ -48,23 +51,23 @@ export function ProfileMenuDropdown({
 
   const profileMenuItems: ProfileMenuItem[] = [
     {
-      title: "Profile",
-      icon: <User className="mr-2 h-4 w-4" />,
+      title: "Account Profile",
+      icon: <IconAccountProfile className="size-5" />,
       url: "/dashboard/settings/personal-settings",
     },
     {
       title: "Billing",
-      icon: <CreditCard className="mr-2 h-4 w-4" />,
+      icon: <Card className="size-6 " />,
       url: "/dashboard/settings/billing-overview",
     },
     {
       title: "Users",
-      icon: <Users className="mr-2 h-4 w-4" />,
+      icon: <Users className="size-5" />,
       url: "/dashboard/settings/users",
     },
     {
       title: "Settings",
-      icon: <Settings className="mr-2 h-4 w-4" />,
+      icon: <Settings className="size-5" />,
       url: "/dashboard/settings",
     },
   ];
@@ -76,22 +79,21 @@ export function ProfileMenuDropdown({
         ? [
             ...organizations.map((organization) => ({
               title: organization.organization_name,
-              icon: <Check className="mr-2 h-4 w-4" />,
+              icon: <CheckIcon className="size-5 text-primary" />,
             })),
             // {
             //   title: "Add New Workspace",
-            //   icon: <Plus className="mr-2 h-4 w-4" />,
+            //   icon: <Plus className="mr-2 size-5" />,
             // },
           ]
         : undefined,
-      icon: <Check className="mr-2 h-4 w-4" />,
+      icon: <CheckIcon className="size-5 text-primary" />,
     },
   ];
 
   const menuItems: ProfileMenuItems[] = [
     {
       key: "profile",
-      title: "Profile",
       items: profileMenuItems,
     },
     {
@@ -104,8 +106,8 @@ export function ProfileMenuDropdown({
       items: [
         {
           title: "Log out",
-          icon: <LogOut className="mr-2 h-4 w-4" />,
-          onClick: () => void signOut({ callbackUrl: "/" }),
+          icon: <LogOut className="size-5" />,
+          onClick: () => void signOut({ redirectTo: "/" }),
         },
       ],
     },
@@ -119,15 +121,15 @@ export function ProfileMenuDropdown({
       className="cursor-pointer"
     >
       {item.url ? (
-        <Link href={item.url} className="flex gap-2 font-normal">
+        <Link href={item.url} className="flex gap-3">
           {item.icon}
           <span>{item.title}</span>
         </Link>
       ) : (
-        <>
+        <div className="flex gap-3">
           {item.icon}
           <span>{item.title}</span>
-        </>
+        </div>
       )}
     </DropdownMenuItem>
   );
@@ -135,7 +137,7 @@ export function ProfileMenuDropdown({
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-56" align="end">
         {menuItems.map((menuItem, index) => (
           <Fragment key={menuItem.key}>
             {menuItem.title ? (
@@ -145,7 +147,7 @@ export function ProfileMenuDropdown({
               {menuItem.items.map((item) =>
                 item.children ? (
                   <DropdownMenuSub key={item.title}>
-                    <DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger className="flex gap-3">
                       {item.icon}
                       <span>{item.title}</span>
                     </DropdownMenuSubTrigger>

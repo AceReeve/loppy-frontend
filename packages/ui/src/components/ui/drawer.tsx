@@ -61,11 +61,11 @@ const DrawerContent = React.forwardRef<
   let grabberClasses = "";
   switch (dir) {
     case "right":
-      dirClasses = "inset-y-0 right-0 pl-10 h-full rounded-l-2xl";
+      dirClasses = "inset-y-0 right-0 pl-7 pr-3 h-full rounded-l-2xl";
       grabberClasses = "left-4 top-[50%] w-2 h-[100px] -mt-[50px]";
       break;
     case "left":
-      dirClasses = "inset-y-0 left-0 pr-5 h-full rounded-r-2xl";
+      dirClasses = "inset-y-0 left-0 pr-7 pl-3 h-full rounded-r-2xl";
       grabberClasses = "right-4 top-[50%] w-2 h-[100px] -mt-[50px]";
       break;
     case "top":

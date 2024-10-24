@@ -20,7 +20,7 @@ export default function SidebarContent(props: SidebarContentProps) {
   const menus = props.menuItems.items;
   const rootSlug = props.menuItems.slug;
 
-  const menuItemClass = `relative mt-1 flex w-full items-center rounded-full p-2 text-base font-medium bg-gray-100 hover:bg-primary/60 whitespace-nowrap gap-[10px]`;
+  const menuItemClass = `relative mt-1 flex w-full items-center rounded-2xl p-2 text-base font-medium hover:bg-primary-light/60 whitespace-nowrap gap-[10px]`;
   const collapsedMenuItemClass = `!size-[50px] items-center justify-center`;
 
   const activeClass = "pointer-events-none !font-bold";
@@ -32,10 +32,10 @@ export default function SidebarContent(props: SidebarContentProps) {
   const activeTitleClass = "text-white";
 
   const iconClass = "text-black";
-  const activeIconClass = "!text-white";
+  const activeIconClass = "";
 
   const imageIconClass = "relative h-6 w-6 dark:invert dark:hue-rotate-180";
-  const activeImageIconClass = "invert hue-rotate-180";
+  const activeImageIconClass = "";
 
   function getPath(path: string[] | string) {
     if (typeof path === "string") {
@@ -84,7 +84,7 @@ export default function SidebarContent(props: SidebarContentProps) {
           >
             {isActive(menuItem.url) && (
               <span
-                className="absolute inset-0 animate-sidebar-select rounded-full bg-primary"
+                className="absolute inset-0 animate-sidebar-select rounded-2xl bg-primary-light"
                 aria-hidden="true"
               />
             )}
@@ -151,7 +151,7 @@ export default function SidebarContent(props: SidebarContentProps) {
                   >
                     {isActive([menuItem.url, subItem.url]) && (
                       <span
-                        className="absolute inset-0 animate-sidebar-select rounded-full bg-primary"
+                        className="absolute inset-0 animate-sidebar-select rounded-2xl bg-primary-light"
                         aria-hidden="true"
                       />
                     )}
@@ -190,7 +190,7 @@ export default function SidebarContent(props: SidebarContentProps) {
             "bg-card px-3 pb-10 pt-5",
             index && "mt-6",
             collapsed
-              ? "flex flex-col items-center gap-6 rounded-full"
+              ? "flex flex-col items-center gap-6 rounded-[26px] shadow-soft"
               : "rounded-3xl",
           )}
         >
