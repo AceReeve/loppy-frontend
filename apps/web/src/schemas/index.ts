@@ -273,6 +273,22 @@ export const CreateUpdateOpportunitySchema = z.object({
     lead_value: z.string().min(1, { message: "Lead Value is required" }),
   }),
 });
+export const OpportunityStatusChangedSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  content: z.object({
+    pipeline_id: z.string().min(1, { message: "Pipeline is required" }),
+    assigned_to: z.string().min(1, { message: "Assigned To is required" }),
+    stage_id: z.string().min(1, { message: "Stage is required" }),
+    lost_reason: z.string().min(1, { message: "Opportunity Name is required" }),
+    moved_from: z
+      .string()
+      .min(1, { message: "Opportunity Source is required" }),
+    moved_to: z.string().min(1, {
+      message: "Status is Required",
+    }),
+    lead_value: z.string().min(1, { message: "Lead Value is required" }),
+  }),
+});
 
 export const SendInviteUserSchema = z.object({
   email: z.string().min(1, {
