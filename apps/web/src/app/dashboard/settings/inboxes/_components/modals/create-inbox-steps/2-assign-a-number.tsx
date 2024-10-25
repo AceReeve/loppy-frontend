@@ -15,7 +15,7 @@ export default function AssignNumber({
   isActive,
   form,
   onNextStep,
-}: FormComponentProps<chooseNumberSchema>) {
+}: FormComponentProps<typeof chooseNumberSchema>) {
   const tabs = [
     {
       icon: AddCircle,
@@ -38,7 +38,7 @@ export default function AssignNumber({
           const Icon = tab.icon;
           return (
             <TabsTrigger key={tab.id} value={tab.id} className="flex-col py-4">
-              <Icon className="size-8" />
+              <Icon className="size-8 stroke-current" />
               {tab.label}
             </TabsTrigger>
           );

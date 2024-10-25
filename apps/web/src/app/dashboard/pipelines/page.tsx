@@ -744,7 +744,11 @@ export default function Home() {
                 disabled={!selectedPipelineId}
               >
                 Actions
-                <ArrowDown2 size={12} variant="Bold" />
+                <ArrowDown2
+                  size={12}
+                  variant="Bold"
+                  className="stroke-current"
+                />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

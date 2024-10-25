@@ -17,7 +17,7 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
   const bottomItems: MenuLinkItem[] = [
     {
       title: "Settings",
-      icon: <Setting2 className="relative size-6" />,
+      icon: <Setting2 className="relative size-6 stroke-current" />,
       url: "/settings",
       id: 0,
     },

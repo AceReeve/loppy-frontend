@@ -57,7 +57,7 @@ export function ProfileMenuDropdown({
     },
     {
       title: "Billing",
-      icon: <Card className="size-6 " />,
+      icon: <Card className="size-6 stroke-current" />,
       url: "/dashboard/settings/billing-overview",
     },
     {

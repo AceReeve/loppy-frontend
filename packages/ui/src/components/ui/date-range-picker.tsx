@@ -61,4 +61,4 @@ function DateRangePicker({ className }: React.HTMLAttributes<HTMLDivElement>) {
   );
 }
 
-export { DateRangePicker };
+export { DateRangePicker, type DateRange };
