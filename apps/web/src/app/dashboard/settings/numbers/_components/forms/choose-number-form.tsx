@@ -100,7 +100,10 @@ export default function ChooseNumberForm({
               refetch();
             }}
           >
-            <Refresh size={12} className={cn(isFetching && "animate-spin")} />
+            <Refresh
+              size={12}
+              className={cn(isFetching && "animate-spin", "stroke-current")}
+            />
             Refresh
           </Button>
         </div>

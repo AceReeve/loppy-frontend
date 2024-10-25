@@ -192,7 +192,11 @@ function Page() {
             <DropdownMenuTrigger asChild>
               <Button className="gap-2 rounded-xl" variant="outline">
                 Action
-                <ArrowDown2 size={12} variant="Bold" />
+                <ArrowDown2
+                  size={12}
+                  variant="Bold"
+                  className="stroke-current"
+                />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

@@ -88,7 +88,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <>
+    <div className="relative w-full">
+      {isFetching ? <LoadingOverlay className="bg-white/50" /> : null}
       <Table className={cn("w-full", className)}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -109,7 +110,6 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {isFetching ? <LoadingOverlay className="bg-white/50" /> : null}
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -157,6 +157,6 @@ export function DataTable<TData, TValue>({
           row(s) selected.
         </div>
       ) : null}
-    </>
+    </div>
   );
 }

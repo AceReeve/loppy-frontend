@@ -90,7 +90,7 @@ export default function Page() {
               <div className="font-poppins text-sm font-semibold text-gray-500">
                 View All
               </div>
-              <ArrowCircleRight className="relative size-[18px] text-primary" />
+              <ArrowCircleRight className="relative size-[18px] stroke-current text-primary" />
             </button>
           </CardHeader>
           <CardContent className="flex gap-4">
@@ -169,7 +169,10 @@ export default function Page() {
                       className="col-span-1 flex h-[46px] w-[46px] items-center justify-center rounded-[9px] bg-opacity-10"
                       style={{ backgroundColor: `${colors[index]}1A` }}
                     >
-                      <Icon className="text-[#2CD8CE]" size={24} />
+                      <Icon
+                        className="stroke-current text-[#2CD8CE]"
+                        size={24}
+                      />
                     </div>
                     <div className="col-span-3 text-center text-sm font-medium text-black">
                       {lead.lead}

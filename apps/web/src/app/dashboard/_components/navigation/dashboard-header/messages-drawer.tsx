@@ -50,9 +50,10 @@ export default function MessagesDrawer({ open, setOpen }: MessagesDrawerProps) {
           <DrawerTitle>Messages</DrawerTitle>
         </DrawerHeader>
         <div>
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <div
-              key={message.title}
+              // eslint-disable-next-line react/no-array-index-key -- temporary
+              key={index}
               className="mb-2 grid grid-cols-[50px_1fr] items-start rounded-md bg-gray-100 p-2"
             >
               <span className="flex size-8 translate-y-1 rounded-full bg-primary" />

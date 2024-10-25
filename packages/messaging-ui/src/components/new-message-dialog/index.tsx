@@ -99,7 +99,7 @@ export default function NewMessageDialog() {
         }}
         type="button"
       >
-        <MessageAdd className="relative h-5 w-5" />
+        <MessageAdd className="relative h-5 w-5 stroke-current" />
       </button>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

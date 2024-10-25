@@ -27,7 +27,7 @@ export default function AppliedFilter({ filter, deleteFilter }: FilterProps) {
         <div className="flex w-auto">
           <Pen className="cursor-pointer p-1" />
           <Trash
-            className="cursor-pointer rounded-sm p-1 hover:bg-gray-600"
+            className="cursor-pointer rounded-sm stroke-current p-1 hover:bg-gray-600"
             onClick={() => {
               deleteFilter();
             }}
