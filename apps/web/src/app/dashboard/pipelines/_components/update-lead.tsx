@@ -202,6 +202,7 @@ export default function UpdateLead({
                         <ReactSelect
                           options={users}
                           styles={{
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- temp
                             control: (provided) => ({
                               ...provided,
                               borderRadius: "12px",
@@ -216,6 +217,7 @@ export default function UpdateLead({
                             (option) => option.value === field.value,
                           )}
                           onChange={(selectedOption) => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- temp
                             field.onChange(selectedOption?.value);
                           }}
                           onBlur={field.onBlur}
@@ -277,6 +279,7 @@ export default function UpdateLead({
                       <FormControl>
                         <ReactSelectCreate
                           styles={{
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- temp
                             control: (provided) => ({
                               ...provided,
                               borderRadius: "12px",
@@ -293,7 +296,9 @@ export default function UpdateLead({
                             label: tag,
                           }))}
                           onChange={(selectedOptions) => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment -- temp,
                             const values = selectedOptions.map(
+                              // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access -- temp
                               (option) => option.value,
                             );
                             field.onChange(values);
@@ -319,6 +324,7 @@ export default function UpdateLead({
                         <ReactSelect
                           options={contacts}
                           styles={{
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- temp
                             control: (provided) => ({
                               ...provided,
                               borderRadius: "12px",
@@ -333,6 +339,7 @@ export default function UpdateLead({
                             (option) => option.value === field.value,
                           )}
                           onChange={(selectedOption) => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- temp
                             field.onChange(selectedOption?.value);
                           }}
                           onBlur={field.onBlur}
