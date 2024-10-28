@@ -14,23 +14,21 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { IActionNode } from "@repo/redux-utils/src/endpoints/types/nodes";
-import { CreateEmailActionSchema } from "@/src/schemas";
+import { CreateSMSActionSchema } from "@/src/schemas";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 
-export default function SendEmail(prop: CustomTriggerProps) {
-  const formSchema = CreateEmailActionSchema;
+export default function SendSMS(prop: CustomTriggerProps) {
+  const formSchema = CreateSMSActionSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: prop.node
       ? {
           title: prop.node.data.title,
-          subject: prop.node.data.content.subject,
           message: prop.node.data.content.message,
         }
       : {
           title: "",
-          subject: "",
           message: "",
         },
   });
@@ -38,28 +36,27 @@ export default function SendEmail(prop: CustomTriggerProps) {
     formState: { errors },
   } = form;
 
-  const emailNode = {
-    id: prop.node ? prop.node.id : "1",
+  const smsNode = {
+    id: prop.node ? prop.node.id : "100",
     type: "actionNode",
     data: {
       title: form.getValues("title"),
-      node_name: "Send Email",
-      node_type_id: "Send Email",
+      node_name: "Send SMS",
+      node_type_id: "Send SMS",
       content: {
         message: form.getValues("message"),
-        subject: form.getValues("subject"),
       },
     },
   };
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
-    prop.onHandleClick(emailNode as IActionNode, isEditMode);
+    prop.onHandleClick(smsNode as IActionNode, isEditMode);
   };
 
   return (
     <div className="space-y-4 rounded ">
       <div className="flex flex-col justify-start">
-        <p>Send Email Action</p>
+        <p>Send SMS Action</p>
         <p className="content-center font-nunito text-sm text-gray-500">
           Sets a Workflow that adds the contact upon execution.
         </p>
@@ -90,29 +87,6 @@ export default function SendEmail(prop: CustomTriggerProps) {
               );
             }}
           />
-          <FormField
-            control={form.control}
-            name="subject"
-            render={({ field }) => {
-              return (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Subject</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="resize-none bg-slate-100/50 font-light leading-7"
-                      placeholder="Subject"
-                      {...field}
-                    />
-                  </FormControl>
-                  {errors.message ? (
-                    <p className="mt-2 text-[0.8rem] font-medium text-error">
-                      {errors.message.message}
-                    </p>
-                  ) : null}
-                </FormItem>
-              );
-            }}
-          />{" "}
           <FormField
             control={form.control}
             name="message"

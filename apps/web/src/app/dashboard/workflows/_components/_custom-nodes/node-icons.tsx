@@ -12,6 +12,7 @@ import React from "react";
 const nodeIcons: Record<string, React.ReactNode> = {
   "Birthday Reminder": <CakeIcon />,
   "Send Email": <MailIcon />,
+  "Send SMS": <MailIcon />,
   "Customer Replied": <Message />,
   "Contact Created": <UserPlus />,
   "Opportunity Status Changed": <ArrowLeftRight />,

@@ -255,6 +255,12 @@ export const CreateEmailActionSchema = z.object({
     message: "Message is Required",
   }),
 });
+export const CreateSMSActionSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  message: z.string().min(1, {
+    message: "Message is Required",
+  }),
+});
 export const CreateUpdateOpportunitySchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   content: z.object({
