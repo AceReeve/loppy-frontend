@@ -112,7 +112,7 @@ function InsertEmojiButton() {
       }}
       type="button"
     >
-      <EmojiNormal />
+      <EmojiNormal className="stroke-current" />
     </button>
   );
 }

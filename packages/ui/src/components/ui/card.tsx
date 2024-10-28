@@ -5,7 +5,7 @@ import { cn } from "../../lib/utils.ts";
 const buttonVariants = cva("shadow-soft rounded-xl", {
   variants: {
     variant: {
-      default: "bg-card text-white",
+      default: "bg-card",
       "gradient-primary":
         "bg-gradient-to-b from-primary/60 to-primary text-white",
     },

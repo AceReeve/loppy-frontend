@@ -1,6 +1,6 @@
 "use client";
 import { Setting2 } from "iconsax-react";
-import { CloudDrizzle } from "lucide-react";
+import { CircleHelp, Sun } from "lucide-react";
 import SidebarHandler from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-handler";
 import SidebarContent from "@/src/app/dashboard/_components/navigation/dashboard-sidebar/sidebar-content";
 import { type MenuItem, type MenuLinkItem } from "@/src/types/types";
@@ -17,13 +17,13 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
   const bottomItems: MenuLinkItem[] = [
     {
       title: "Settings",
-      icon: <Setting2 className="relative size-6" />,
+      icon: <Setting2 className="relative size-6 stroke-current" />,
       url: "/settings",
       id: 0,
     },
     {
       title: "Help",
-      imageIcon: "/assets/icons/sidebar-icons/icon-help.svg",
+      icon: <CircleHelp className="relative size-6" />,
       url: "/help",
       id: 1,
     },
@@ -88,7 +88,7 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
     // },
     {
       title: "Weather",
-      icon: <CloudDrizzle className="relative size-6" />,
+      icon: <Sun className="relative size-6" />,
       url: "/weather-forecasting",
       id: 9,
     },

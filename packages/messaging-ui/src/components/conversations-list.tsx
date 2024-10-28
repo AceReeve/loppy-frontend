@@ -265,7 +265,7 @@ export default function ConversationsList() {
             }}
             type="button"
           >
-            <MessageAdd className="relative h-5 w-5" />
+            <MessageAdd className="relative h-5 w-5 stroke-current" />
           </button>
           <button
             className="hidden h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white hover:bg-gray-200 group-hover:flex md:flex"

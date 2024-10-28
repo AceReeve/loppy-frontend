@@ -7,27 +7,24 @@ import {
   DrawerTrigger,
 } from "@repo/ui/components/ui";
 import React from "react";
-import { Bell } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
-interface NotificationsDrawerProps {
+interface MessagesDrawerProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
-export default function NotificationsDrawer({
-  open,
-  setOpen,
-}: NotificationsDrawerProps) {
-  const notifications = [
+export default function MessagesDrawer({ open, setOpen }: MessagesDrawerProps) {
+  const messages = [
     {
-      title: "Finish setting up your number",
+      title: "Garrett Elmore",
       description: "20 seconds ago",
     },
     {
-      title: "You have a new lead!",
+      title: "Garrett Elmore",
       description: "1 hour ago",
     },
     {
-      title: "Your subscription is expiring soon!",
+      title: "Garrett Elmore",
       description: "4 hours ago",
     },
   ];
@@ -42,7 +39,7 @@ export default function NotificationsDrawer({
             setOpen(!open);
           }}
         >
-          <Bell className="size-6" />
+          <MessageSquare className="size-6" />
           <div className="absolute -top-1 right-0 flex size-5 flex-col items-center justify-center rounded-full bg-red-500">
             <div className="font-inter text-xs font-bold text-white">3</div>
           </div>
@@ -50,21 +47,22 @@ export default function NotificationsDrawer({
       </DrawerTrigger>
       <DrawerContent className="w-full max-w-[400px]">
         <DrawerHeader>
-          <DrawerTitle>Notifications</DrawerTitle>
+          <DrawerTitle>Messages</DrawerTitle>
         </DrawerHeader>
         <div>
-          {notifications.map((notification) => (
+          {messages.map((message, index) => (
             <div
-              key={notification.title}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
+              // eslint-disable-next-line react/no-array-index-key -- temporary
+              key={index}
+              className="mb-2 grid grid-cols-[50px_1fr] items-start rounded-md bg-gray-100 p-2"
             >
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+              <span className="flex size-8 translate-y-1 rounded-full bg-primary" />
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {notification.title}
+                  {message.title}
                 </p>
                 <p className="text-muted-foreground text-sm">
-                  {notification.description}
+                  {message.description}
                 </p>
               </div>
             </div>

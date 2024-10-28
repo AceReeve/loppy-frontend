@@ -107,7 +107,7 @@ export default function PaymentView({ plan, prevProcess }: Plan) {
               <DialogContent className="py-15 max-h-[1000px] max-w-[800px] px-6 text-slate-600">
                 <DialogHeader>
                   <div className="flex gap-2 text-lg text-slate-600">
-                    <Card />
+                    <Card className="stroke-current" />
                     Add Debit/Credit Card
                   </div>
                   <Separator className="m-0" />

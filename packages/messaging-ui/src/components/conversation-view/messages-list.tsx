@@ -163,7 +163,7 @@ export default function MessagesList(props: MessageListProps) {
   const contextMenuItems = [
     {
       key: "more",
-      icon: <More />,
+      icon: <More className="stroke-current" />,
       onClick: () => null,
     },
     {

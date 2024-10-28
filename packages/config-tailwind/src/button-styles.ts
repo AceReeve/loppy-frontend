@@ -2,6 +2,7 @@ import plugin from "tailwindcss/plugin";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment -- disregard error,
 const flattenColorPalette = require("tailwindcss/lib/util/flattenColorPalette");
 
+// eslint-disable-next-line @typescript-eslint/unbound-method -- fix later
 const buttonStyles = plugin(({ addComponents, matchComponents, theme }) => {
   const colorPrimary = "rgb(var(--color-primary))";
   const colorPrimaryLight = "rgb(var(--color-primary-light))";

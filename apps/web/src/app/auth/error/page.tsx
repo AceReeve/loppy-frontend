@@ -38,11 +38,12 @@ const errorMap = {
 };
 
 // TODO: Utilize the error returned from searchparams
-export default function AuthError({
-  searchParams,
-}: {
-  searchParams?: { error: keyof typeof errorMap };
-}) {
+export default async function AuthError(
+  props: {
+    searchParams?: Promise<{ error: keyof typeof errorMap }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const error = searchParams?.error ?? Error.Default;
 
   return (

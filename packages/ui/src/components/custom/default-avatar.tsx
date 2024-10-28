@@ -10,8 +10,11 @@ interface DefaultAvatarProps {
 function DefaultAvatar(props: DefaultAvatarProps) {
   return (
     <Avatar className={props.className ?? ""}>
-      <AvatarImage className="bg-primary object-cover" src={props.image} />
-      <AvatarFallback className="bg-primary-light border-2 border-white font-bold text-inherit">
+      <AvatarImage
+        className="bg-primary object-cover select-none"
+        src={props.image}
+      />
+      <AvatarFallback className="bg-primary-light border-2 border-white font-bold text-inherit select-none">
         {props.children ??
           props.name?.split(" ").map((n) => n[0].toUpperCase())}
       </AvatarFallback>

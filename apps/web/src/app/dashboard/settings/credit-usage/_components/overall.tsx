@@ -24,7 +24,6 @@ import {
 } from "@repo/ui/components/ui";
 import { CalendarIcon } from "lucide-react";
 import { addDays, format } from "date-fns";
-import { type DateRange } from "react-day-picker";
 import { cn } from "@repo/ui/utils";
 
 // Define types for data structure
