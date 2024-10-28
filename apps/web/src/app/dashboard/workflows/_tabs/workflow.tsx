@@ -1103,7 +1103,7 @@ export default function Workflow({ workflowID, workflowName }: WorkflowProp) {
         <p className="font-semibold">Workflow: {workName}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
-            <Edit className="cursor-pointer" />
+            <Edit className="cursor-pointer stroke-current" />
           </DialogTrigger>
           <DialogContent>
             <DialogTitle>Change Workflow Name</DialogTitle>

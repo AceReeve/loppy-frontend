@@ -166,7 +166,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 7,
             name: "Customer Replied",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <CustomerReplied onHandleClick={onHandleAddNode} />,
           },
         ],
@@ -188,25 +188,25 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 9,
             name: "Opportunity Created",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
           {
             id: 10,
             name: "Opportunity Changed",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
           {
             id: 11,
             name: "Pipeline Stage Changed",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
           {
             id: 12,
             name: "Stale Opportunities",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
         ],
@@ -219,7 +219,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 13,
             name: "Weather Reminder",
-            icon: <CloudRainIcon />,
+            icon: nodeIcons["Weather Reminder"],
             component: <WeatherReminder onHandleClick={onHandleAddNode} />,
           },
         ],
@@ -260,7 +260,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 3,
             name: "Update Contact Field",
-            icon: <UserEdit />,
+            icon: <UserEdit className="stroke-current" />,
             component: <ContactChange />,
           },
           {

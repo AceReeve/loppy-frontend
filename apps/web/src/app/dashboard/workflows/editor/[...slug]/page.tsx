@@ -718,7 +718,6 @@ export default function Page({
               index === self.findIndex((e) => e.id === edge.id),
           );
         };
-
         // Usage
         return combinedEdges();
       });
