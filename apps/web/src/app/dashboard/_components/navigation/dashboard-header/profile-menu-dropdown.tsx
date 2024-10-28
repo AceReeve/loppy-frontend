@@ -18,7 +18,11 @@ import Link from "next/link";
 import { useGetAllOrganizationsQuery } from "@repo/redux-utils/src/endpoints/organization.ts";
 import { Card } from "iconsax-react";
 import { CheckIcon } from "@heroicons/react/16/solid";
-import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import {
+  accentColorMap,
+  accentColors,
+  useDashboardState,
+} from "@/src/providers/dashboard-provider.tsx";
 import IconAccountProfile from "@/src/app/dashboard/_components/navigation/dashboard-header/icons/icon-account-profile.tsx";
 
 interface ProfileMenuItems {
@@ -49,6 +53,14 @@ export function ProfileMenuDropdown({
   const { currentOrg } = useDashboardState();
   const { data: organizations } = useGetAllOrganizationsQuery(undefined);
 
+  const setAccentColor = (colorVariableName: string) => {
+    localStorage.setItem("servihero-accent-color", colorVariableName);
+    document.documentElement.style.setProperty(
+      "--color-primary",
+      accentColorMap[colorVariableName].value,
+    );
+  };
+
   const profileMenuItems: ProfileMenuItem[] = [
     {
       title: "Account Profile",
@@ -69,6 +81,25 @@ export function ProfileMenuDropdown({
       title: "Settings",
       icon: <Settings className="size-5" />,
       url: "/dashboard/settings",
+    },
+    {
+      title: "Accent Color",
+      icon: (
+        <div className="flex size-5 items-center justify-center">
+          <div className=" size-2 rounded-full bg-primary" />
+        </div>
+      ),
+      children: accentColors.map((item) => ({
+        title: item.title,
+        icon: (
+          <div className="flex size-5 items-center justify-center">
+            <div className={`size-2 rounded-full ${item.color}`} />
+          </div>
+        ),
+        onClick: () => {
+          setAccentColor(item.color);
+        },
+      })),
     },
   ];
 

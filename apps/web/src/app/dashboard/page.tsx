@@ -107,7 +107,7 @@ export default function Page() {
 
             <div className="flex gap-4">
               <ToggleGroup
-                className="inline-flex w-auto flex-row items-center justify-start gap-[5px] rounded-[20px] border border-gray-100 bg-neutral-100 px-[5px] text-[#3A3F51]"
+                className="inline-flex w-auto flex-row items-center justify-start gap-[5px] rounded-[20px] bg-gray-100 px-[5px] text-black"
                 defaultValue="1D"
                 onValueChange={(value) => {
                   if (value) setLeadSubmissionsValue(value);
