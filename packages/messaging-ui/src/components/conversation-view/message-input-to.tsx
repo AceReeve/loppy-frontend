@@ -77,7 +77,7 @@ export default function MessageInputTo({
           {contacts.map((address) => (
             <button
               type="button"
-              className="bg-primary-light font-nunito flex cursor-pointer items-center gap-1 rounded-lg px-2 py-0.5 text-sm"
+              className="bg-primary/30 font-nunito flex cursor-pointer items-center gap-1 rounded-lg px-2 py-0.5 text-sm"
               key={address}
               onClick={() => {
                 setContacts((existing) =>
@@ -117,7 +117,7 @@ export default function MessageInputTo({
             <ComboboxOptions className="shadow-xs max-h-60 overflow-auto rounded-md p-2 text-base leading-6 focus:outline-none sm:text-sm sm:leading-5">
               {contactsListFiltered.map((contact) => (
                 <ComboboxOption
-                  className="data-[focus]:bg-primary-light group flex items-center gap-2 rounded-md bg-white p-1.5 data-[disabled]:opacity-50"
+                  className="data-[focus]:bg-primary/30 group flex items-center gap-2 rounded-md bg-white p-1.5 data-[disabled]:opacity-50"
                   key={contact.value}
                   value={contact.value}
                   disabled={contact.disabled}

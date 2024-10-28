@@ -165,7 +165,7 @@ export default function ResetPassword() {
           <div className="m-auto flex h-[38px] w-full content-center">
             <a
               href="/auth/login"
-              className=" m-auto h-[38px] w-full bg-primary p-2 text-white hover:bg-primary-light"
+              className=" m-auto h-[38px] w-full bg-primary p-2 text-white hover:bg-primary/30"
             >
               Continue
             </a>
