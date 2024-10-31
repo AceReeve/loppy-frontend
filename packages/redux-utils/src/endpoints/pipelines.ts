@@ -12,6 +12,7 @@ import {
   type ImportPipelinesResponse,
   type GetAllOpportunitiesPaginatedPayload,
   type GetAllOpportunitiesPaginatedResponse,
+  GetAllPipelineListResponse,
 } from "./types/pipelines";
 
 const api = baseApi
@@ -25,6 +26,14 @@ const api = baseApi
         query: () => {
           return {
             url: `/pipelines`,
+          };
+        },
+        providesTags: ["pipelines"],
+      }),
+      getPipelineList: builder.query<GetAllPipelineListResponse, undefined>({
+        query: () => {
+          return {
+            url: `/pipelines/all-pipelines-list`,
           };
         },
         providesTags: ["pipelines"],
@@ -205,6 +214,7 @@ export const {
   useImportPipelinesMutation,
   useDeletePipelineMutation,
   useGetAllOpportunitiesQuery,
+  useGetPipelineListQuery,
   useCreateOpportunityMutation,
   useUpdateOpportunitiesMutation,
   useUpdateOpportunityMutation,

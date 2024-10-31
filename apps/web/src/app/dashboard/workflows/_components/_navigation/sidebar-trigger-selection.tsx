@@ -10,7 +10,6 @@ import React, {
 import {
   ArrowLeft,
   CalendarClockIcon,
-  CloudRainIcon,
   ContactRound,
   MailIcon,
   UserPlus,

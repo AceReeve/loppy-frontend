@@ -37,8 +37,8 @@ import { workFolders } from "@/src/app/dashboard/workflows/_view/_columns/workli
 import { WorkFoldersDataTable } from "@/src/app/dashboard/workflows/_view/_data-table/worklist-folder-data-table.tsx";
 import { CreateWorkFolderSchema, EditWorkFolderSchema } from "@/src/schemas";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
+import { useRouter } from "next/navigation";
 import type { WorkflowProp } from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
-
 interface WorkflowListProp {
   switchToWorkflowView: (workflowData: WorkflowProp) => void;
 }
@@ -181,6 +181,7 @@ export default function WorkflowList({
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  const router = useRouter();
   const onRowClickSubmit = (_id: string, _name: string, type: string) => {
     if (type !== "Workflow") {
       setCurrentPath(_id);
@@ -193,8 +194,10 @@ export default function WorkflowList({
         return [...currentPaths, newPath];
       });
     } else {
-      const workflowData = data(_id, _name);
-      switchToWorkflowView(workflowData);
+      //const workflowData = data(_id, _name);
+      //switchToWorkflowView(workflowData);
+      router.push(`workflows/editor/${_id}`);
+
       // console.log("This is a workflow");
     }
   };

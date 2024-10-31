@@ -21,7 +21,6 @@ import { useForm, useWatch } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { IActionNode } from "@repo/redux-utils/src/endpoints/types/nodes";
-import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateUpdateOpportunitySchema } from "@/src/schemas";
@@ -95,8 +94,10 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
     name: "content.pipeline_id", // Adjust this based on your form structure
   });
 
-  // Find the selected pipeline
-  const selectedPipeline = pipeline?.find((p) => p._id === selectedPipelineId);
+  const selectedPipeline = pipeline?.pipelines.find(
+    (p) => p._id === selectedPipelineId,
+  );
+
   const availableOpportunities = selectedPipeline
     ? selectedPipeline.opportunities
     : [];
@@ -157,7 +158,7 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Pipelines</SelectLabel>
-                        {pipeline?.map((pip: GetAllPipelinesResponse) => (
+                        {pipeline?.pipelines.map((pip) => (
                           <SelectItem key={pip._id} value={pip._id}>
                             {pip.title}
                           </SelectItem>

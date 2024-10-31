@@ -1,12 +1,17 @@
 import React, { createContext, useContext } from "react";
-import { useGetAllPipelinesQuery } from "@repo/redux-utils/src/endpoints/pipelines.ts";
+import {
+  useGetAllPipelinesQuery,
+  useGetPipelineListQuery,
+} from "@repo/redux-utils/src/endpoints/pipelines.ts";
 import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 import { useGetWorkflowDropdownQuery } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import type { GetWorkflowDropDownResponse } from "@repo/redux-utils/src/endpoints/types/workflow";
+import { GetAllPipelineListResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 
 // Define the context type
 interface WorkflowContextType {
-  pipeline: GetAllPipelinesResponse[] | undefined; // Allow undefined if data isn't loaded
+  //  pipeline: GetAllPipelinesResponse[] | undefined; // Allow undefined if data isn't loaded
+  pipeline: GetAllPipelineListResponse | undefined; // Allow undefined if data isn't loaded
   workflow: GetWorkflowDropDownResponse | undefined;
 }
 
@@ -19,8 +24,9 @@ export default function WorkflowProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const pipeline = useGetAllPipelinesQuery(undefined);
+  //const pipeline = useGetAllPipelinesQuery(undefined);
   const workflow = useGetWorkflowDropdownQuery(undefined);
+  const pipeline = useGetPipelineListQuery(undefined);
 
   // Handle loading and error states
   if (pipeline.isLoading) {

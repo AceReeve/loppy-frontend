@@ -177,7 +177,7 @@ export default function PipelineOpportunity({
     >
       <div className="flex items-center justify-between">
         <div
-          className="mb-auto mt-2 min-h-[70px] w-full content-center rounded-2xl border-4 bg-white px-5 py-2 shadow-xl drop-shadow-lg"
+          className="shadow- mb-auto mt-2 min-h-[70px] w-full content-center rounded-2xl border-4 bg-white px-5 py-2 drop-shadow-lg"
           style={{
             borderTopColor: opportunity?.color ?? "#03a9f4",
           }}

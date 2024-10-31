@@ -168,6 +168,7 @@ export default function Home() {
   const [preservedOpportunities, setPreservedOpportunities] = useState<
     Opportunity[]
   >([]);
+  const [isDragging, setIsDragging] = useState(false);
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
@@ -369,7 +370,7 @@ export default function Home() {
     const { active } = event;
     const { id } = active;
     setActiveId(id);
-
+    setIsDragging(true);
     setPreservedOpportunities(structuredClone(opportunities));
   }
 
@@ -593,6 +594,7 @@ export default function Home() {
     if (output.updated_items.length > 0) {
       void updateOpps(output);
     }
+    setIsDragging(false);
   }
 
   const getUpdatedOpportunities = (
@@ -999,6 +1001,19 @@ export default function Home() {
         ) : (
           NoResultsComponent
         )}
+      </div>
+      <div
+        className={`flex h-40 w-full justify-between ${isDragging ? "flex" : "hidden"} gap-5`}
+      >
+        <div className="flex w-full content-center items-center justify-center rounded-md border-2 border-dashed border-blue-500 bg-blue-200 font-semibold">
+          In Progress
+        </div>
+        <div className="flex w-full content-center items-center justify-center  rounded-md border-2 border-dashed border-green-500 bg-green-200 font-semibold">
+          Good
+        </div>
+        <div className="flex w-full content-center items-center justify-center rounded-md border-2  border-dashed border-red-500 bg-red-200 font-semibold">
+          Stalled
+        </div>
       </div>
     </div>
   );

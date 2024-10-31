@@ -9,20 +9,16 @@ import {
   Input,
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
   Separator,
-  Textarea,
 } from "@repo/ui/components/ui";
-import React, { useEffect } from "react";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import React from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
-import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateBirthReminderSchema } from "@/src/schemas";
@@ -44,20 +40,35 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
   const { workflow } = useWorkflow();
   const tags = workflow?.tags;
   const workflows = workflow?.workflows;
-  //const { pipeline } = useWorkflow();
+  const { pipeline } = useWorkflow();
+
+  const statusSelection = [
+    {
+      _id: 0,
+      title: "In Progress",
+    },
+    {
+      _id: 1,
+      title: "Good",
+    },
+    {
+      _id: 2,
+      title: "Stalled",
+    },
+  ];
   const filterSelections = [
     {
       id: 0,
       filter: "In Pipeline",
       value: "In Pipeline",
-      selections: tags,
+      selections: pipeline?.pipelines,
     },
-    {
+    /*    {
       id: 1,
       filter: "Has a Tag",
       value: "Has a Tag",
       selections: tags,
-    },
+    },*/
     /* {
       id: 1,
       filter: "Lead Value",
@@ -74,19 +85,25 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
       id: 2,
       filter: "Moved from status",
       value: "Moved from status",
-      selections: tags,
+      selections: statusSelection,
     },
     {
       id: 3,
       filter: "Moved to status",
       value: "Moved to status",
-      selections: tags,
+      selections: statusSelection,
     },
     {
       id: 4,
       filter: "Lost Reason",
       value: "Lost Reason",
-      selections: tags,
+      selections: statusSelection,
+    },
+    {
+      id: 5,
+      filter: "Assigned To",
+      value: "Assigned To",
+      selections: pipeline?.members,
     },
   ];
 
@@ -125,6 +142,18 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
 
   const filterWatch = form.watch("filters");
 
+  /*  const opportunityStatusChangedNode = {
+    id: prop.node ? prop.node.id : "1",
+    type: "triggerNode",
+    data: {
+      title: form.getValues("title"),
+      node_name: "Opportunity Status Changed",
+      node_type_id: "Opportunity Status Changed",
+      content: {
+        filters: form.getValues("filters"),
+      },
+    },
+  };*/
   const opportunityStatusChangedNode = {
     id: prop.node ? prop.node.id : "1",
     type: "triggerNode",
@@ -137,7 +166,14 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
       },
     },
   };
-
+  /*  filters: [
+    //67210553edf3b4e54a0f7ed5
+    { filter: "In Pipeline", value: "67210553edf3b4e54a0f7ed5" },
+    { filter: "Has a Tag", value: "Facebook" },
+    { filter: "Lead Value", value: "1" },
+    { filter: "Moved from status", value: "In Progress" },
+    { filter: "Moved to status", value: "Good" },
+  ],*/
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
     prop.onHandleClick(
@@ -272,10 +308,10 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                               Number(filterWatch[index].filter)
                             ]?.selections?.map((selection) => (
                               <SelectItem
-                                key={selection.id}
-                                value={selection.id.toString()}
+                                key={selection._id}
+                                value={selection._id.toString()}
                               >
-                                {selection.name}
+                                {selection.title}
                               </SelectItem>
                             ))}
                           </SelectContent>

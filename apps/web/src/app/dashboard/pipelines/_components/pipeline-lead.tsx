@@ -56,10 +56,15 @@ export default function PipelineLead({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
 
   // Define the background color based on the lead's status
-  const backgroundColorClass = clsx({
+  /*  const bgColorClass = clsx({
     "bg-blue-200": lead?.status === "In Progress",
     "bg-green-200": lead?.status === "Good",
     "bg-red-200": lead?.status === "Stalled",
+  });*/
+  const backgroundColorClass = clsx({
+    "border-blue-500": lead?.status === "In Progress",
+    "border-green-500": lead?.status === "Good",
+    "border-red-500": lead?.status === "Stalled",
   });
 
   return (
@@ -70,21 +75,23 @@ export default function PipelineLead({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={isDragging ? "opacity-50" : ""}
+      /*      className={`${isDragging ? " opacity-50" : ""}""`}*/
     >
       <div
         className={clsx(
-          "min-h-[80px] w-full cursor-default overflow-hidden rounded-2xl px-3 py-2 shadow-xl drop-shadow-md",
-          backgroundColorClass,
+          `min-h-[80px] w-full overflow-hidden rounded-md border bg-white px-3 py-2 shadow-md drop-shadow-md`,
         )}
+
+        //          backgroundColorClass,
       >
         <div className="mb-2 flex h-auto flex-wrap items-center justify-between gap-2">
           <div className="flex content-center items-center font-roboto font-medium">
-            <span className="cursor-move" {...listeners}>
-              <GripVerticalIcon size={16} />
+            <span className="cursor-move">
+              <GripVerticalIcon size={16} {...listeners} />
             </span>
             {/* {item?.created_by} */}
-            {lead?.owner_id?.email}
+            {/*  {lead?.owner_id?.email}*/}
+            {lead?.opportunity_name}
           </div>
 
           <DropdownMenu>
@@ -116,23 +123,33 @@ export default function PipelineLead({
           </DropdownMenu>
         </div>
         <div className="flex justify-between">
-          <h1 className="content-center font-roboto text-[12px] font-medium text-gray-500 ">
-            {/* {lead.description} */}
-            {lead?.opportunity_name}
-          </h1>
-          <div className="rounded-md bg-blue-500 px-2 py-1 font-roboto text-[10px] font-medium text-white">
+          <div className="max-w-[200px] content-center space-y-1 whitespace-nowrap text-sm font-light text-gray-500">
+            <h1 className="overflow-hidden overflow-ellipsis font-roboto font-light">
+              {/* {lead.description} */}
+              <span className="text-gray-600 ">Contact: </span>
+              {lead?.owner_id?.email}
+            </h1>
+            <h1 className="overflow-hidden overflow-ellipsis font-roboto font-medium">
+              {/* {lead.description} */}
+              <span className="text-gray-600 ">Company: </span>
+              {lead?.business_name}
+            </h1>
+            <h1 className="overflow-hidden overflow-ellipsis font-roboto font-medium">
+              {/* {lead.description} */}
+              <span className="text-gray-600 ">Value: </span>$
+              {lead?.opportunity_value}
+            </h1>
+          </div>
+
+          <div className="h-6 rounded-md bg-blue-500 px-2 py-1 font-roboto text-[10px] font-medium text-white">
             {/* {lead.category} */}
             {lead?.opportunity_source}
           </div>
         </div>
-        <div className="my-1 border-b-2" />
-
+        <div className={`${backgroundColorClass} my-1 border-b-2`} />
         <div className="flex h-auto justify-between py-1">
           <div className="flex gap-1">
             <div className="h-5 w-5 rounded-full bg-gray-950" />
-            <div className="content-center font-roboto text-[14px] font-medium">
-              {/* ${lead.amount} */}${lead?.opportunity_value}
-            </div>
           </div>
           <div className="font-robotorounded-md flex items-center gap-1 text-[12px] font-medium text-orange-600">
             {/* Submitted {lead.timeframe} Days Ago */}
@@ -140,11 +157,11 @@ export default function PipelineLead({
           </div>
         </div>
 
-        <div className="flex justify-start">
+        {/*        <div className="flex justify-start">
           <Link href="/dashboard/contacts" title="View Contact">
             <Contact size={16} />
           </Link>
-        </div>
+        </div>*/}
 
         <UpdateLead
           lead={lead}

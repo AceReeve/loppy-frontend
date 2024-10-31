@@ -8,7 +8,7 @@ import {
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useRef, useState } from "react";
 import "@xyflow/react/dist/style.css";
 import { Edit } from "iconsax-react";
 import {
@@ -47,24 +47,26 @@ import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
 
-export interface WorkflowProp {
+/*export interface WorkflowProp {
   workflowID: string;
   workflowName: string;
-}
+}*/
 export interface SidebarRefProp {
   showNodeData: (node: IActionNode | ITriggerNode) => void;
 }
-export default function Page({
-  params,
-}: {
-  params: { workflowID: string; workflowName: string };
-}) {
+export default function Page({ params }: { params: { workflowID: string } }) {
+  const { workflowID } = use(params);
+
   const nodeTypes = {
     startNode: StartNode,
     triggerNode: TriggerNode,
     actionNode: ActionNode,
     endNode: EndNode,
   };
+
+  const { data: workflow, isLoading } = useGetWorkflowQuery({
+    id: workflowID,
+  });
 
   const [openSheet, setOpenSheet] = useState(false);
   const [openWorkName, setOpenWorkName] = useState(false);
@@ -93,8 +95,8 @@ export default function Page({
     }, [selectedEdge]);*/
 
   const sidebarRef = useRef<HTMLDivElement & SidebarRefProp>(null);
-  const [workName, setWorkName] = useState(params);
-  const [inputValue, setInputValue] = useState(workName);
+  const [workName, setWorkName] = useState(workflow ? workflow.name : "");
+  const [inputValue, setInputValue] = useState<string>(workName);
   const showNodeData = (node: IActionNode | ITriggerNode) => {
     if (sidebarRef.current) {
       sidebarRef.current.showNodeData(node);
@@ -245,15 +247,6 @@ export default function Page({
         const existingNodes = currentNodes.filter(
           (n) => n.type === "triggerNode",
         );
-
-        /*        const isDuplicate = existingNodes.some(
-                  (n: Node) => n.data.title === node.data.title,
-                );
-
-                if (isDuplicate) {
-                  setDuplicateNode(true);
-                  return currentNodes;
-                }*/
 
         lastNodeId =
           currentNodes.length > 0
@@ -500,9 +493,9 @@ export default function Page({
         );
 
         /*        lastNodeId =
-                    existingActionNodes.length > 0
-                      ? extractNumericId(existingActionNodes[0].id)
-                      : 0;*/
+                      existingActionNodes.length > 0
+                        ? extractNumericId(existingActionNodes[0].id)
+                        : 0;*/
         //newNodeId = `a${(lastNodeId + 1).toString()}`;
         newNodeId = `a${(Number(existingActionNodes.length) + deletedCount.current).toString()}`;
 
@@ -622,13 +615,13 @@ export default function Page({
         );
 
         /*        const isDuplicate = existingActionNodes.some(
-                  (n: Node) => n.data.title === node.data.title,
-                );
+                    (n: Node) => n.data.title === node.data.title,
+                  );
 
-                if (isDuplicate) {
-                  setDuplicateNode(true);
-                  return currentNodes;
-                }*/
+                  if (isDuplicate) {
+                    setDuplicateNode(true);
+                    return currentNodes;
+                  }*/
 
         lastNodeId =
           existingActionNodes.length > 0
@@ -637,11 +630,11 @@ export default function Page({
         newNodeId = `a${(lastNodeId + 1).toString()}`;
 
         /*        const newNode: Node = {
-                      ...node,
-                      id: newNodeId,
-                      type: "actionNode",
-                      position: { x: 0, y: 0 },
-                    };*/
+                        ...node,
+                        id: newNodeId,
+                        type: "actionNode",
+                        position: { x: 0, y: 0 },
+                      };*/
 
         const newNode: Node = {
           ...node,
@@ -681,15 +674,15 @@ export default function Page({
         }));
 
         /*        const startEdge = {
-                    id: `n0-${primaryActionID.current}`,
-                    source: "n0",
-                    target: primaryActionID.current,
-                    type: "actionEdge",
-                    animated: false,
-                    data: {
-                      onButtonClick: handleOpenSheet,
-                    },
-                  };*/
+                      id: `n0-${primaryActionID.current}`,
+                      source: "n0",
+                      target: primaryActionID.current,
+                      type: "actionEdge",
+                      animated: false,
+                      data: {
+                        onButtonClick: handleOpenSheet,
+                      },
+                    };*/
 
         initialEdge.id = `n0-${primaryActionID.current}`;
         initialEdge.target = primaryActionID.current;
@@ -734,7 +727,7 @@ export default function Page({
   const handleSave = async () => {
     try {
       const workflowData: GetEditFolderPayload = {
-        id: params.workflowID,
+        id: workflowID,
         name: inputValue,
       };
       await editWorkFolder(workflowData).unwrap();
@@ -819,7 +812,7 @@ export default function Page({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: params.workflowID,
+      id: workflowID,
       trigger: [
         {
           id: "",
@@ -909,9 +902,6 @@ export default function Page({
   };
 
   const hasInitialized = useRef(false);
-  const { data: workflow, isLoading } = useGetWorkflowQuery({
-    id: params.workflowID,
-  });
 
   useEffect(() => {
     // && !hasInitialized.current add this to condition --default
@@ -983,7 +973,7 @@ export default function Page({
   const handlePublish = async () => {
     try {
       const response = await publishWorkflow({
-        id: params.workflowID,
+        id: workflowID,
         //published: isPublished ? "false" : "true",
         published: !workflow?.isPublished,
       }).unwrap();
@@ -1015,70 +1005,6 @@ export default function Page({
       });
     }
   };
-  /* const onNodesDelete = useCallback(
-      (dNode: Node) => {
-        const deleted = [dNode];
-        setEdges((prevEdges) => {
-          return deleted.reduce((acc, node) => {
-            const incomers = getIncomers(node, nodes, edges);
-            const outgoers = getOutgoers(node, nodes, edges);
-            const connectedEdges = getConnectedEdges([node], edges);
-
-            console.log(deleted, incomers, outgoers, connectedEdges);
-
-            // Filter out connected edges from the accumulator
-            const remainingEdges = acc.filter(
-              (edge) => !connectedEdges.includes(edge),
-            );
-
-            // Create new edges from incomers and outgoers
-            const createdEdges = incomers.flatMap(({ id: source }) =>
-              outgoers.map(({ id: target }) => ({
-                id: `${source}->${target}`,
-                source,
-                target,
-              })),
-            );
-
-            return [...remainingEdges, ...createdEdges];
-          }, prevEdges);
-        });
-      },
-      [nodes, edges],
-    );*/
-
-  /*const onNodesDelete = useCallback(
-      (deleted: Node[]) => {
-        setEdges((prevEdges) => {
-          console.log("OnNodeDelete called");
-          return deleted.reduce((acc, node) => {
-            const incomers = getIncomers(node, nodes, prevEdges);
-            const outgoers = getOutgoers(node, nodes, prevEdges);
-            const connectedEdges = getConnectedEdges([node], prevEdges);
-
-            const remainingEdges = acc.filter(
-              (edge) => !connectedEdges.includes(edge),
-            );
-
-            const createdEdges = incomers.flatMap(({ id: source }) =>
-              outgoers.map(({ id: target }) => ({
-                id: `${source}->${target}`,
-                source,
-                target,
-              })),
-            );
-
-            return [...remainingEdges, ...createdEdges];
-          }, prevEdges);
-        });
-
-        // Update nodes state to remove deleted nodes
-        setNodes((prevNodes) =>
-          prevNodes.filter((node) => !deleted.some((d) => d.id === node.id)),
-        );
-      },
-      [nodes],
-    );*/
 
   return (
     <div className="border-5 h-[725px] w-full border-gray-900">
@@ -1098,17 +1024,17 @@ export default function Page({
               className="bg-primary"
               defaultChecked={isPublished}
               /*              onCheckedChange={() => {
-                              setIsPublished(!isPublished);
-                            }}*/
+                                  setIsPublished(!isPublished);
+                                }}*/
               checked={isPublished}
               onClick={handlePublish}
             />
           </div>
         </div>
-        <p className="font-semibold">Workflow: {params.workflowName}</p>
+        <p className="font-semibold">Workflow: {workflow?.name}</p>
         <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
           <DialogTrigger>
-            <Edit className="cursor-pointer" />
+            <Edit className="h-5 w-5 cursor-pointer stroke-current" />
           </DialogTrigger>
           <DialogContent>
             <DialogTitle>Change Workflow Name</DialogTitle>
@@ -1120,14 +1046,9 @@ export default function Page({
           </DialogContent>
         </Dialog>
       </div>
-      {/* <SelectionBar openSheet={openSheet} setOpenSheet={setOpenSheet} /> */}
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        /*        onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}*/
-        /*        onConnect={onConnect}*/
-        //onNodesDelete={onNodesDelete}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         fitView
