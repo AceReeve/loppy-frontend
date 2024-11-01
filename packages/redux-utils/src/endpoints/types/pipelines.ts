@@ -10,11 +10,11 @@ export interface GetAllPipelinesResponse {
 
 export interface GetAllPipelineListResponse {
   pipelines: {
-    _id: string;
-    title: string;
+    id: string;
+    name: string;
     opportunities: {
-      _id: string;
-      title: string;
+      id: string;
+      name: string;
     }[];
   }[];
   members: {
@@ -134,4 +134,9 @@ export interface CreateLeadPayload {
 export interface UpdateLeadPayload {
   leadId: string;
   payload: CreateLeadPayload;
+}
+
+export interface UpdateLeadStatusPayload {
+  id: string;
+  status: string;
 }

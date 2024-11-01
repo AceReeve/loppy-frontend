@@ -1,8 +1,5 @@
 import React, { createContext, useContext } from "react";
-import {
-  useGetAllPipelinesQuery,
-  useGetPipelineListQuery,
-} from "@repo/redux-utils/src/endpoints/pipelines.ts";
+import { useGetPipelineListQuery } from "@repo/redux-utils/src/endpoints/pipelines.ts";
 import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 import { useGetWorkflowDropdownQuery } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import type { GetWorkflowDropDownResponse } from "@repo/redux-utils/src/endpoints/types/workflow";

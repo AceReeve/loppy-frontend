@@ -39,23 +39,25 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
 
   const { workflow } = useWorkflow();
   const tags = workflow?.tags;
-  const workflows = workflow?.workflows;
+  //const workflows = workflow?.workflows;
   const { pipeline } = useWorkflow();
 
   const statusSelection = [
     {
-      _id: 0,
-      title: "In Progress",
+      id: "10",
+      name: "In Progress",
     },
     {
-      _id: 1,
-      title: "Good",
+      id: "11",
+      name: "Good",
     },
     {
-      _id: 2,
-      title: "Stalled",
+      id: "12",
+      name: "Stalled",
     },
   ];
+
+  console.log(pipeline?.pipelines);
   const filterSelections = [
     {
       id: 0,
@@ -63,48 +65,42 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
       value: "In Pipeline",
       selections: pipeline?.pipelines,
     },
-    /*    {
+    /*{
       id: 1,
       filter: "Has a Tag",
       value: "Has a Tag",
       selections: tags,
-    },*/
-    /* {
-      id: 1,
+    },
+    {
+      id: 2,
       filter: "Lead Value",
       value: "Lead Value",
       selections: [],
     },
     {
-      id: 1,
+      id: 3,
       filter: "Assigned To",
       value: "Assigned To",
-      selections: [],
-    },*/
+      selections: pipeline?.members,
+    },
     {
-      id: 2,
+      id: 4,
       filter: "Moved from status",
       value: "Moved from status",
       selections: statusSelection,
     },
     {
-      id: 3,
+      id: 5,
       filter: "Moved to status",
       value: "Moved to status",
       selections: statusSelection,
     },
     {
-      id: 4,
+      id: 6,
       filter: "Lost Reason",
       value: "Lost Reason",
       selections: statusSelection,
-    },
-    {
-      id: 5,
-      filter: "Assigned To",
-      value: "Assigned To",
-      selections: pipeline?.members,
-    },
+    },*/
   ];
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -280,42 +276,57 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                     );
                   }}
                 />
+
                 <Controller
                   /* eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- will check later */
                   name={`filters.${index}.value`}
                   control={form.control}
                   render={({ field }) => {
+                    function FieldType() {
+                      switch (filterWatch[index].filter) {
+                        case "Lead Value":
+                          return <Input type="text" />;
+
+                        default:
+                          return (
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger
+                                className="h-[40px] text-slate-500"
+                                variant="outline"
+                              >
+                                <SelectValue placeholder="Select Value" />
+                              </SelectTrigger>
+
+                              {/* Uncomment if you want to display errors */}
+                              {/* {errors.filters.filter?.[index]?.value && (
+            <p className="mt-2 text-[0.8rem] font-medium text-error">
+              {errors.users[index].role.message}
+            </p>
+          )} */}
+
+                              <SelectContent>
+                                {filterSelections[
+                                  Number(filterWatch[index].filter)
+                                ]?.selections?.map((selection) => (
+                                  <SelectItem
+                                    key={selection.id}
+                                    value={selection.id.toString()}
+                                  >
+                                    {selection.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          );
+                      }
+                    }
+
                     return (
                       <div className="w-full">
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger
-                            className="h-[40px] text-slate-500"
-                            variant="outline"
-                          >
-                            <SelectValue placeholder="Select Value" />
-                          </SelectTrigger>
-                          {/* {errors.filters.filter?.[index]?.value ? (
-                        <p className="mt-2 text-[0.8rem] font-medium text-error">
-                          {errors.users[index].role.message}
-                        </p>
-                      ) : null}*/}
-
-                          <SelectContent>
-                            {filterSelections[
-                              Number(filterWatch[index].filter)
-                            ]?.selections?.map((selection) => (
-                              <SelectItem
-                                key={selection._id}
-                                value={selection._id.toString()}
-                              >
-                                {selection.title}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FieldType />
                         {errors.filters?.[index]?.filter ? (
                           <p className="mt-2 text-[0.8rem] font-medium text-error">
                             {errors.filters[index].filter.message}

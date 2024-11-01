@@ -59,6 +59,7 @@ import {
   useCreateOpportunityMutation,
   useGetAllPipelinesQuery,
   useGetPipelineQuery,
+  useUpdateLeadStatusMutation,
   useUpdateOpportunitiesMutation,
 } from "@repo/redux-utils/src/endpoints/pipelines";
 import {
@@ -73,6 +74,7 @@ import CreatePipeline from "./_components/create-pipeline";
 import ExportPipelines from "./_components/export-pipelines";
 import ImportPipelines from "./_components/import-pipelines";
 import DeletePipeline from "./_components/delete-pipeline";
+import PipelineStatus from "@/src/app/dashboard/pipelines/_components/pipeline-status.tsx";
 
 const PipelineOpportunity = dynamic(
   () => import("./_components/pipeline-opportunity"),
@@ -171,6 +173,21 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+
+  const pipelineStatus = [
+    {
+      id: "status-area-1",
+      description: "Good",
+    },
+    {
+      id: "status-area-2",
+      description: "Stalled",
+    },
+    {
+      id: "status-area-3",
+      description: "In Progress",
+    },
+  ];
 
   // Handle the select change event
   const handlePipelineChange = (value: string) => {
@@ -356,6 +373,17 @@ export default function Home() {
     const opportunity = findValueOfItems(id, "opportunity");
     if (!opportunity) return [];
     return opportunity.leads;
+  };
+
+  const [updateLeadStatus] = useUpdateLeadStatusMutation();
+  const updateStatus = async (_id: string, leadStatus: string) => {
+    const update = { id: _id, status: leadStatus };
+    try {
+      const response = updateLeadStatus(update).unwrap(); // Use unwrap to handle success/error
+      console.log("Update successful:", response);
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
   };
 
   // DND Handlers
@@ -551,12 +579,55 @@ export default function Home() {
         currentOpportunities = newItems;
       }
     }
-    // Handling item dropping into Opportunity
+
+    // Handling item dropping into status
+    if (
+      active.id.toString().includes("item") &&
+      over?.id.toString().includes("status") &&
+      active.id !== over.id
+    ) {
+      console.log("DROPPED IN AREA", active.id, over.id);
+      // Find the active and over opportunity
+      const activeOpportunity = findValueOfItems(active.id, "item");
+
+      // If the active or over opportunity is not found, return
+      if (!activeOpportunity) return;
+      // Find the index of the active and over opportunity
+      const activeOpportunityIndex = opportunities.findIndex(
+        (opportunity) => opportunity.id === activeOpportunity.id,
+      );
+
+      // Find the index of the active and over item
+      const activeitemIndex = activeOpportunity.leads.findIndex(
+        (item) => item.id === active.id,
+      );
+
+      const removeItemPrefix = (itemId: string) => {
+        return itemId.replace(/^item-/, "");
+      };
+
+      /*      const lead = updateStatus(active.id.toString(), over.id.toString());
+      console.log(lead);*/
+
+      const getStatusDescription = (id: string) => {
+        const status = pipelineStatus.find((item) => item.id === id);
+        return status ? status.description : null; // Return the description or null if not found
+      };
+
+      const overDescription = getStatusDescription(over.id.toString());
+      if (overDescription !== null) {
+        const cleanId: string = removeItemPrefix(active.id.toString());
+        updateStatus(cleanId, overDescription);
+        activeOpportunity.leads[activeitemIndex].status = overDescription;
+      }
+      // setOpportunities(updatedOpportunities);
+    }
     if (
       active.id.toString().includes("item") &&
       over?.id.toString().includes("opportunity") &&
       active.id !== over.id
     ) {
+      // Handling item dropping into Opportunity
       // Find the active and over opportunity
       const activeOpportunity = findValueOfItems(active.id, "item");
       const overOpportunity = findValueOfItems(over.id, "opportunity");
@@ -993,6 +1064,17 @@ export default function Home() {
                       )
                     : null}
                 </DragOverlay>
+                <div
+                  className={`absolute bottom-10 flex h-[200px] w-full ${isDragging ? "flex" : "hidden"} gap-5`}
+                >
+                  {pipelineStatus.map((status) => (
+                    <PipelineStatus
+                      key={status.id}
+                      id={status.id}
+                      status={status.description}
+                    />
+                  ))}
+                </div>
               </DndContext>
             ) : (
               NoOpportunitiesComponent
@@ -1001,19 +1083,6 @@ export default function Home() {
         ) : (
           NoResultsComponent
         )}
-      </div>
-      <div
-        className={`flex h-40 w-full justify-between ${isDragging ? "flex" : "hidden"} gap-5`}
-      >
-        <div className="flex w-full content-center items-center justify-center rounded-md border-2 border-dashed border-blue-500 bg-blue-200 font-semibold">
-          In Progress
-        </div>
-        <div className="flex w-full content-center items-center justify-center  rounded-md border-2 border-dashed border-green-500 bg-green-200 font-semibold">
-          Good
-        </div>
-        <div className="flex w-full content-center items-center justify-center rounded-md border-2  border-dashed border-red-500 bg-red-200 font-semibold">
-          Stalled
-        </div>
       </div>
     </div>
   );
