@@ -1,4 +1,4 @@
-import { Switch } from "@repo/ui/components/ui";
+import { Button } from "@repo/ui/components/ui";
 import Image from "next/image";
 import React from "react";
 
@@ -6,15 +6,11 @@ interface AccountProp {
   image: string;
   name: string;
   description: string;
-  isConnected: boolean;
   index: number;
-  toggleIsConnected: (index: number) => void;
+  button?: React.ReactNode;
 }
 
 export default function AccountComponent(accountProp: AccountProp) {
-  const handleToggleSwitch = () => {
-    accountProp.toggleIsConnected(accountProp.index);
-  };
   return (
     <div className="col-span-5">
       <div className="flex h-[90px] gap-3 p-4">
@@ -36,11 +32,11 @@ export default function AccountComponent(accountProp: AccountProp) {
             <p className="text-sm text-gray-500">{accountProp.description}</p>
           </div>
           <div className="flex items-center justify-center ">
-            <Switch
-              className="bg-primary"
-              checked={accountProp.isConnected}
-              onChange={handleToggleSwitch}
-            />
+            {accountProp.button ?? (
+              <Button variant="outline" disabled>
+                Coming Soon
+              </Button>
+            )}
           </div>
         </div>
       </div>

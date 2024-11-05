@@ -1,7 +1,7 @@
 import type { ThunkAction, Middleware, Action } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { baseApi } from "./api";
+import { baseApi, nextApi } from "./api";
 import { conversationsSlice } from "./slices/messaging/conversation-slice.ts";
 import { currentConversationSlice } from "./slices/messaging/current-conversation-slice.ts";
 import { participantsSlice } from "./slices/messaging/participants-slice.ts";
@@ -12,13 +12,14 @@ import { typingDataSlice } from "./slices/messaging/typing-data-slice.ts";
 import { unreadMessageSlice } from "./slices/messaging/unread-messages-slice.ts";
 import { usersSlice } from "./slices/messaging/users-slice.ts";
 
-const middlewares: Middleware[] = [baseApi.middleware];
+const middlewares: Middleware[] = [baseApi.middleware, nextApi.middleware];
 
 const makeStore = () =>
   configureStore({
     reducer: {
       // Add the generated reducer as a specific top-level slice
       [baseApi.reducerPath]: baseApi.reducer,
+      [nextApi.reducerPath]: nextApi.reducer,
       attachment: attachmentSlice.reducer,
       conversations: conversationsSlice.reducer,
       currentConversation: currentConversationSlice.reducer,

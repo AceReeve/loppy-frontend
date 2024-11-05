@@ -9,6 +9,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { handleCredentialsSignIn } from "@/src/actions/login-actions";
 import { LoginSchema } from "@/src/schemas";
 import GoogleSignInButton from "../_components/google-sign-in-button";
@@ -48,7 +49,9 @@ export default function Login() {
           }
         })
         .catch((e: unknown) => {
-          setError(getErrorMessage(e));
+          if (!isRedirectError(e)) {
+            setError(getErrorMessage(e));
+          }
         });
     });
   };

@@ -7,7 +7,7 @@ const buttonVariants = cva("shadow-soft rounded-xl", {
     variant: {
       default: "bg-card",
       "gradient-primary":
-        "bg-gradient-to-b from-primary/60 to-primary text-white",
+        "bg-gradient-to-b from-primary to-primary/70 text-white",
     },
   },
   defaultVariants: {
