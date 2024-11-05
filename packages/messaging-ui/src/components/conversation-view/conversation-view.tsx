@@ -56,7 +56,7 @@ export default function ConversationView() {
           <div className="flex">
             {participants.map((participant, index) => (
               <div
-                className={`bg-primary-light size-10 rounded-full ${index !== 0 ? "-ml-2" : "ml-4"}`}
+                className={`bg-primary/30 size-10 rounded-full ${index !== 0 ? "-ml-2" : "ml-4"}`}
                 key={participant.sid}
               >
                 <DefaultAvatar

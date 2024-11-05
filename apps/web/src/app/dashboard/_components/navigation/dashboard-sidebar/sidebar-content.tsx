@@ -20,7 +20,7 @@ export default function SidebarContent(props: SidebarContentProps) {
   const menus = props.menuItems.items;
   const rootSlug = props.menuItems.slug;
 
-  const menuItemClass = `relative mt-1 flex w-full items-center rounded-2xl p-2 text-base font-medium hover:bg-primary-light/60 whitespace-nowrap gap-[10px]`;
+  const menuItemClass = `relative mt-1 flex w-full items-center rounded-2xl p-2 text-base font-medium hover:bg-primary/30/60 whitespace-nowrap gap-[10px]`;
   const collapsedMenuItemClass = `!size-[50px] items-center justify-center`;
 
   const activeClass = "pointer-events-none !font-bold";
@@ -84,7 +84,7 @@ export default function SidebarContent(props: SidebarContentProps) {
           >
             {isActive(menuItem.url) && (
               <span
-                className="absolute inset-0 animate-sidebar-select rounded-2xl bg-primary-light"
+                className="absolute inset-0 animate-sidebar-select rounded-2xl bg-primary/30"
                 aria-hidden="true"
               />
             )}
@@ -151,7 +151,7 @@ export default function SidebarContent(props: SidebarContentProps) {
                   >
                     {isActive([menuItem.url, subItem.url]) && (
                       <span
-                        className="absolute inset-0 animate-sidebar-select rounded-2xl bg-primary-light"
+                        className="absolute inset-0 animate-sidebar-select rounded-2xl bg-primary/30"
                         aria-hidden="true"
                       />
                     )}

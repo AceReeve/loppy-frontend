@@ -14,7 +14,7 @@ function DefaultAvatar(props: DefaultAvatarProps) {
         className="bg-primary object-cover select-none"
         src={props.image}
       />
-      <AvatarFallback className="bg-primary-light border-2 border-white font-bold text-inherit select-none">
+      <AvatarFallback className="bg-primary/30 border-2 border-white font-bold text-inherit select-none">
         {props.children ??
           props.name?.split(" ").map((n) => n[0].toUpperCase())}
       </AvatarFallback>
