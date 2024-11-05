@@ -1,21 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import "@xyflow/react/dist/style.css";
-import {
-  Button,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@repo/ui/components/ui";
 import WorkflowList from "@/src/app/dashboard/workflows/_view/workflow-list.tsx";
-import Workflow, {
+/*import Workflow, {
   type WorkflowProp,
-} from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
+} from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";*/
+
 /*import WorkflowSettings from "@/src/app/dashboard/workflows/_tabs/settings.tsx";
 import ExecutionLogs from "@/src/app/dashboard/workflows/_tabs/execution-logs.tsx";*/
 
 export default function Page() {
+  /*
   const [workflowID, setWorkflowID] = useState("");
   const [workflowName, setWorkflowName] = useState("");
 
@@ -27,7 +22,7 @@ export default function Page() {
         <Workflow workflowID={workflowID} workflowName={workflowName} />
       ),
     },
-    /*    {
+    /!*    {
       label: "Settings",
       id: "settings",
       component: <WorkflowSettings />,
@@ -36,20 +31,21 @@ export default function Page() {
       label: "Execution Logs",
       id: "execution-logs",
       component: <ExecutionLogs />,
-    },*/
+    },*!/
   ];
+*/
 
-  const [isWorkList, setIsWorkList] = useState(true);
+  // const [isWorkList, setIsWorkList] = useState(true);
 
-  const handleViewState = (workflowData: WorkflowProp) => {
+  /*  const handleViewState = (workflowData: WorkflowProp) => {
     setIsWorkList(!isWorkList);
     setWorkflowID(workflowData.workflowID);
     setWorkflowName(workflowData.workflowName);
-  };
+  };*/
 
   //INTEGRATION
 
-  const WorkflowView = (
+  /*  const WorkflowView = (
     <Tabs className="mt-8 w-full" defaultValue={tabs[0].id}>
       <TabsList className="flex justify-between">
         <div className="relative h-full">
@@ -65,15 +61,15 @@ export default function Page() {
             onClick={() => {
               window.location.reload();
             }}
-            /*            onClick={() => {
+            /!*            onClick={() => {
               setIsWorkList(!isWorkList); 
-            }}*/
+            }}*!/
           >
             Return Hub
           </Button>
-          {/*<Button className="mr-2 rounded-md px-2 px-5 dark:text-slate-100">
+          {/!*<Button className="mr-2 rounded-md px-2 px-5 dark:text-slate-100">
             Save
-          </Button>*/}
+          </Button>*!/}
         </div>
       </TabsList>
       <div className="mt-2 h-[800px] w-full ">
@@ -89,15 +85,18 @@ export default function Page() {
     </Tabs>
   );
 
+*/
+
   const WorkflowHub = (
     <div className="p-10">
-      <WorkflowList switchToWorkflowView={handleViewState} />
+      <WorkflowList />
     </div>
   );
 
   return (
     <div className="rounded-xl bg-white px-4">
-      {isWorkList ? WorkflowHub : WorkflowView}
+      {WorkflowHub}
+      {/* {isWorkList ? WorkflowHub : WorkflowView}*/}
     </div>
   );
 }

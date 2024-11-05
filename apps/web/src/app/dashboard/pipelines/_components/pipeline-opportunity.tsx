@@ -44,6 +44,7 @@ import { useCreateLeadMutation } from "@repo/redux-utils/src/endpoints/pipelines
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useGetAllUsersQuery } from "@repo/redux-utils/src/endpoints/user";
 import { useGetAllContactQuery } from "@repo/redux-utils/src/endpoints/contacts";
+import { pipelineItems } from "@/src/app/dashboard/pipelines/_components/pipeline-items.tsx";
 import { type Lead, type Opportunity } from "../page";
 import DeleteOpportunity from "./delete-opportunity";
 import UpdateOpportunity from "./update-opportunity";
@@ -177,7 +178,7 @@ export default function PipelineOpportunity({
     >
       <div className="flex items-center justify-between">
         <div
-          className="mb-auto mt-2 min-h-[70px] w-full content-center rounded-2xl border-4 bg-white px-5 py-2 shadow-xl drop-shadow-lg"
+          className="shadow- mb-auto mt-2 min-h-[70px] w-full content-center rounded-2xl border-4 bg-white px-5 py-2 drop-shadow-lg"
           style={{
             borderTopColor: opportunity?.color ?? "#03a9f4",
           }}
@@ -292,11 +293,11 @@ export default function PipelineOpportunity({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="In Progress">
-                              In Progress
-                            </SelectItem>
-                            <SelectItem value="Good">Good</SelectItem>
-                            <SelectItem value="Stalled">Stalled</SelectItem>
+                            {pipelineItems.map((item) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {item.id}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />

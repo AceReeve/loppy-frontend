@@ -12,6 +12,8 @@ import {
   type ImportPipelinesResponse,
   type GetAllOpportunitiesPaginatedPayload,
   type GetAllOpportunitiesPaginatedResponse,
+  type GetAllPipelineListResponse,
+  type UpdateLeadStatusPayload,
 } from "./types/pipelines";
 
 const api = baseApi
@@ -25,6 +27,14 @@ const api = baseApi
         query: () => {
           return {
             url: `/pipelines`,
+          };
+        },
+        providesTags: ["pipelines"],
+      }),
+      getPipelineList: builder.query<GetAllPipelineListResponse, undefined>({
+        query: () => {
+          return {
+            url: `/pipelines/pipelines-list`,
           };
         },
         providesTags: ["pipelines"],
@@ -186,6 +196,17 @@ const api = baseApi
           };
         },
       }),
+      updateLeadStatus: builder.mutation<undefined, UpdateLeadStatusPayload>({
+        query: (payload) => {
+          const queryParams = new URLSearchParams(payload).toString();
+          return {
+            url: `/opportunities/status-change?${queryParams}`,
+            method: "PUT",
+          };
+        },
+        //invalidatesTags: ["pipelines"],
+      }),
+
       deleteLead: builder.mutation<undefined, string>({
         query: (leadId: string) => {
           return {
@@ -205,6 +226,8 @@ export const {
   useImportPipelinesMutation,
   useDeletePipelineMutation,
   useGetAllOpportunitiesQuery,
+  useUpdateLeadStatusMutation,
+  useGetPipelineListQuery,
   useCreateOpportunityMutation,
   useUpdateOpportunitiesMutation,
   useUpdateOpportunityMutation,

@@ -33,18 +33,20 @@ import { useForm } from "react-hook-form";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { workFolders } from "@/src/app/dashboard/workflows/_view/_columns/worklist-folder.tsx";
 import { WorkFoldersDataTable } from "@/src/app/dashboard/workflows/_view/_data-table/worklist-folder-data-table.tsx";
 import { CreateWorkFolderSchema, EditWorkFolderSchema } from "@/src/schemas";
 import WorkflowTemplate from "@/src/app/dashboard/workflows/_components/_cards/workflow-template-card.tsx";
-import type { WorkflowProp } from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
-
-interface WorkflowListProp {
+//import type { WorkflowProp } from "@/src/app/dashboard/workflows/_tabs/workflow.tsx";
+/*interface WorkflowListProp {
   switchToWorkflowView: (workflowData: WorkflowProp) => void;
-}
-export default function WorkflowList({
-  switchToWorkflowView,
-}: WorkflowListProp) {
+}*/
+
+//{
+//   switchToWorkflowView,
+// }: WorkflowListProp add as parameter
+export default function WorkflowList() {
   const [currentPath, setCurrentPath] = useState("");
 
   interface PathProps {
@@ -95,9 +97,10 @@ export default function WorkflowList({
       id: currentPath,
       template_id: template,
     }).unwrap();
-    if (response.name) {
-      const workflowData = data(response._id, response.name);
-      switchToWorkflowView(workflowData);
+    if (response._id) {
+      // const workflowData = data(response._id, response.name);
+      router.push(`workflows/editor/${response._id}`);
+      //switchToWorkflowView(workflowData);
       //  console.log(currentPath, template);
     }
   };
@@ -163,12 +166,12 @@ export default function WorkflowList({
   const [fetchWorkflowList, { data: workFolderLists, error, isLoading }] =
     useLazyGetWorkflowListQuery();
 
-  const data = (_id: string, _name: string): WorkflowProp => {
+  /*  const data = (_id: string, _name: string): WorkflowProp => {
     return {
       workflowID: _id,
       workflowName: _name,
     };
-  };
+  };*/
 
   useEffect(() => {
     fetchWorkflowList({ id: currentPath })
@@ -181,6 +184,7 @@ export default function WorkflowList({
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  const router = useRouter();
   const onRowClickSubmit = (_id: string, _name: string, type: string) => {
     if (type !== "Workflow") {
       setCurrentPath(_id);
@@ -193,8 +197,10 @@ export default function WorkflowList({
         return [...currentPaths, newPath];
       });
     } else {
-      const workflowData = data(_id, _name);
-      switchToWorkflowView(workflowData);
+      //const workflowData = data(_id, _name);
+      //switchToWorkflowView(workflowData);
+      router.push(`workflows/editor/${_id}`);
+
       // console.log("This is a workflow");
     }
   };

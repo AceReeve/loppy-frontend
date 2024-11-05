@@ -8,6 +8,21 @@ export interface GetAllPipelinesResponse {
   opportunities: GetAllOpportunitiesResponse[];
 }
 
+export interface GetAllPipelineListResponse {
+  pipelines: {
+    id: string;
+    name: string;
+    opportunities: {
+      id: string;
+      name: string;
+    }[];
+  }[];
+  members: {
+    name: string;
+    id: string;
+  }[];
+}
+
 export interface CreatePipelinePayload {
   title: string;
 }
@@ -119,4 +134,9 @@ export interface CreateLeadPayload {
 export interface UpdateLeadPayload {
   leadId: string;
   payload: CreateLeadPayload;
+}
+
+export interface UpdateLeadStatusPayload {
+  id: string;
+  status: string;
 }

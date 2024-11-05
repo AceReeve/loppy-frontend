@@ -18,7 +18,7 @@ export interface ITriggerNode extends Node {
       opportunity_source?: string;
       opportunity_name?: string;
       status?: string;
-      lead_value: string;
+      lead_value?: string;
       // Trigger
       filters?: { filter: string; value: string }[];
     };

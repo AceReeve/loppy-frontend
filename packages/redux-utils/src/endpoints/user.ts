@@ -111,7 +111,7 @@ const api = baseApi
         transformResponse: (response: User[]) => {
           return response.map((u) => ({
             value: u._id,
-            label: u.email,
+            label: u.name,
           }));
         },
         providesTags: ["user"],

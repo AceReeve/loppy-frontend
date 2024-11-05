@@ -123,6 +123,7 @@ export interface User {
   login_by: string;
   login_count: number;
   role: Role;
+  name: string;
 }
 
 export interface UserSelect {

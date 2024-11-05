@@ -10,7 +10,6 @@ import React, {
 import {
   ArrowLeft,
   CalendarClockIcon,
-  CloudRainIcon,
   ContactRound,
   MailIcon,
   UserPlus,
@@ -38,6 +37,7 @@ import CreateUpdateOpportunity from "@/src/app/dashboard/workflows/_components/_
 import WorkflowProvider from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import WeatherReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/weather/weather-trigger.tsx";
 import ContactCreated from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contacts/contact-created.tsx";
+import SendSMS from "@/src/app/dashboard/workflows/_components/_selections/_action/contacts/send-sms.tsx";
 
 interface SheetProps {
   openSheet: boolean;
@@ -109,6 +109,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
 
     const actionComponents: Record<string, React.FC<CustomTriggerProps>> = {
       "Send Email": SendEmail,
+      "Send SMS": SendSMS,
       "Create Update Opportunity": CreateUpdateOpportunity,
     };
 
@@ -164,7 +165,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 7,
             name: "Customer Replied",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <CustomerReplied onHandleClick={onHandleAddNode} />,
           },
         ],
@@ -186,25 +187,25 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 9,
             name: "Opportunity Created",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
           {
             id: 10,
             name: "Opportunity Changed",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
           {
             id: 11,
             name: "Pipeline Stage Changed",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
           {
             id: 12,
             name: "Stale Opportunities",
-            icon: <Message />,
+            icon: <Message className="stroke-current" />,
             component: <ContactChange />,
           },
         ],
@@ -217,7 +218,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 13,
             name: "Weather Reminder",
-            icon: <CloudRainIcon />,
+            icon: nodeIcons["Weather Reminder"],
             component: <WeatherReminder onHandleClick={onHandleAddNode} />,
           },
         ],
@@ -241,6 +242,12 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             name: "Send Email",
             icon: <MailIcon />,
             component: <SendEmail onHandleClick={onHandleAddNode} />,
+          },
+          {
+            id: 2,
+            name: "Send SMS",
+            icon: <MailIcon />,
+            component: <SendSMS onHandleClick={onHandleAddNode} />,
           } /*
     {
       id: 2,
@@ -250,25 +257,25 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       component: <BirthdayReminder onHandleClick={props.addNode} />,
     },*/,
           {
-            id: 2,
+            id: 3,
             name: "Update Contact Field",
-            icon: <UserEdit />,
+            icon: <UserEdit className="stroke-current" />,
             component: <ContactChange />,
           },
           {
-            id: 3,
+            id: 4,
             name: "Add Contact Tag",
             icon: <UserRoundPlus />,
             component: <ContactChange />,
           },
           {
-            id: 4,
+            id: 5,
             name: "Assign to User",
             icon: <UserRoundCog />,
             component: <ContactChange />,
           },
           {
-            id: 5,
+            id: 6,
             name: "Remove Assigned User",
             icon: <UserRoundX />,
             component: <ContactChange />,
@@ -281,7 +288,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
         color: "bg-blue-500/30",
         children: [
           {
-            id: 6,
+            id: 7,
             name: "Create/Update Opportunities",
             icon: nodeIcons["Create Update Opportunity"],
             component: (
@@ -292,27 +299,6 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       },
     ];
     const [displayedTriggers, setDisplayedTriggers] = useState(triggers);
-
-    /*
-  const handleDisplayNodeInfo = useCallback(
-    (node: CustomNode) => {
-      let filtered;
-      if (node.type === "triggerNode") {
-        filtered = triggers.filter(
-          (trigger) => trigger.name === node.data.title,
-        );
-      } else {
-        filtered = actionTriggers.filter(
-          (trigger) => trigger.name === node.data.title,
-        );
-      }
-      setIsTriggerDetailsView(true);
-      setDisplayedTriggers(filtered);
-      setIsTriggerDetailsView(true);
-    },
-    [isTriggerDetailsView, displayedTriggers],
-  );
-*/
 
     const handleClose = () => {
       isTriggerDetailsView
