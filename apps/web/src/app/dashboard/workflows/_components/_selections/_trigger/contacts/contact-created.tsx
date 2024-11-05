@@ -166,10 +166,7 @@ export default function ContactCreated(prop: CustomTriggerProps) {
                       ) : null}*/}
                           <SelectContent>
                             {filterSelections.map((filter) => (
-                              <SelectItem
-                                key={filter.id}
-                                value={filter.id.toString()}
-                              >
+                              <SelectItem key={filter.id} value={filter.filter}>
                                 {filter.value}
                               </SelectItem>
                             ))}
@@ -208,16 +205,25 @@ export default function ContactCreated(prop: CustomTriggerProps) {
                         </p>
                       ) : null}*/}
                           <SelectContent>
-                            {filterSelections[
-                              Number(filterWatch[index].filter)
-                            ]?.selections?.map((selection) => (
-                              <SelectItem
-                                key={selection.id}
-                                value={selection.id.toString()}
-                              >
-                                {selection.name}
-                              </SelectItem>
-                            ))}
+                            {filterSelections
+                              .filter(
+                                (selection) =>
+                                  selection.filter ===
+                                  filterWatch[index]?.filter,
+                              ) // Match by filter name
+                              .map((filteredSelection) =>
+                                filteredSelection.selections?.map(
+                                  (selection) => (
+                                    <SelectItem
+                                      key={selection.id}
+                                      value={selection.id.toString()} // Use `selection.id` as the value (converted to string)
+                                    >
+                                      {selection.name}{" "}
+                                      {/* Display the name of the selection */}
+                                    </SelectItem>
+                                  ),
+                                ),
+                              )}
                           </SelectContent>
                         </Select>
                         {errors.filters?.[index]?.filter ? (
