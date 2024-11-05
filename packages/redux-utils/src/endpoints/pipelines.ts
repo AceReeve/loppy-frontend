@@ -12,9 +12,8 @@ import {
   type ImportPipelinesResponse,
   type GetAllOpportunitiesPaginatedPayload,
   type GetAllOpportunitiesPaginatedResponse,
-  GetAllPipelineListResponse,
-  UpdateLeadStatusPayloiad,
-  UpdateLeadStatusPayload,
+  type GetAllPipelineListResponse,
+  type UpdateLeadStatusPayload,
 } from "./types/pipelines";
 
 const api = baseApi
@@ -203,9 +202,9 @@ const api = baseApi
           return {
             url: `/opportunities/status-change?${queryParams}`,
             method: "PUT",
-            body: payload,
           };
         },
+        //invalidatesTags: ["pipelines"],
       }),
 
       deleteLead: builder.mutation<undefined, string>({

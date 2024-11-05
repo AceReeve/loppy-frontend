@@ -92,15 +92,18 @@ export interface GetFolderResponse {
 export interface CreateFolderPayload {
   id: string;
   name: string;
+  [key: string]: string;
 }
 
 export interface GetIDPayload {
   id: string;
+  [key: string]: string;
 }
 
 export interface GetEditFolderPayload {
   id: string;
   name: string;
+  [key: string]: string;
 }
 
 export interface GetWorkflowListPayload {

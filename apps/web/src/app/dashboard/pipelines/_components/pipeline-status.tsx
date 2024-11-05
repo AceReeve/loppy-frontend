@@ -1,27 +1,10 @@
 import { type UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
-import React, { useState } from "react";
+import React from "react";
 import { CSS } from "@dnd-kit/utilities";
-import { clsx } from "clsx";
-import {
-  ClockIcon,
-  Contact,
-  EllipsisVertical,
-  GripVerticalIcon,
-} from "lucide-react";
-import moment from "moment";
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/ui";
-import Link from "next/link";
+import { cn } from "@repo/ui/utils";
 import { type Lead } from "../page";
+
 interface PipelineStatusType {
   id: UniqueIdentifier;
   lead?: Lead | null;
@@ -31,7 +14,7 @@ interface PipelineStatusType {
 
 export default function PipelineStatus({
   id,
-  lead,
+  //lead,
   status,
   //onDrop,
 }: PipelineStatusType) {
@@ -53,12 +36,12 @@ export default function PipelineStatus({
     id,
   });
 
-  const backgroundColorClass = clsx({
-    blue: status === "In Progress",
-    green: status === "Good",
-    red: status === "Stalled",
+  const backgroundColorClass = cn({
+    "border-2": true, // Add a common class for the border width
+    "border-blue-500 bg-blue-200": status === "Abandoned",
+    "border-green-500 bg-green-200": status === "Won",
+    "border-red-500 bg-red-200": status === "Lost",
   });
-
   const handleDrop = (event: React.DragEvent) => {
     const leadId = event.dataTransfer.getData("text/plain");
     if (leadId) {
@@ -79,12 +62,12 @@ export default function PipelineStatus({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={`relative flex h-full w-full content-center items-center justify-center rounded-md border-2 border-dashed border-${backgroundColorClass}-500 bg-${backgroundColorClass}-200 font-semibold ${isDragging ? "opacity-50" : ""}`}
+      className={`relative flex h-full w-full content-center items-center justify-center rounded-md border-2 border-dashed ${backgroundColorClass}  font-semibold ${isDragging ? "opacity-50" : ""}`}
     >
       {status}
-      {isOver && (
+      {isOver ? (
         <div className="absolute inset-0 border-2 border-dotted border-black" />
-      )}{" "}
+      ) : null}
     </div>
   );
 }

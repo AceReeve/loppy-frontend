@@ -19,10 +19,10 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
+import { TrashIcon } from "lucide-react";
 import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateBirthReminderSchema } from "@/src/schemas";
-import { TrashIcon } from "lucide-react";
 
 /*interface ContentPayload {
   pipeline_id: string;
@@ -44,20 +44,23 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
 
   const statusSelection = [
     {
+      id: "9",
+      name: "Open",
+    },
+    {
       id: "10",
-      name: "In Progress",
+      name: "Lost",
     },
     {
       id: "11",
-      name: "Good",
+      name: "Abandoned",
     },
     {
       id: "12",
-      name: "Stalled",
+      name: "Open",
     },
   ];
 
-  console.log(pipeline?.pipelines);
   const filterSelections = [
     {
       id: 0,
@@ -65,7 +68,7 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
       value: "In Pipeline",
       selections: pipeline?.pipelines,
     },
-    /*{
+    {
       id: 1,
       filter: "Has a Tag",
       value: "Has a Tag",
@@ -95,7 +98,7 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
       value: "Moved to status",
       selections: statusSelection,
     },
-    {
+    /*    {
       id: 6,
       filter: "Lost Reason",
       value: "Lost Reason",
@@ -284,8 +287,10 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                   render={({ field }) => {
                     function FieldType() {
                       switch (filterWatch[index].filter) {
-                        case "Lead Value":
-                          return <Input type="text" />;
+                        case "2":
+                          return (
+                            <Input autoComplete="off" type="text" {...field} />
+                          );
 
                         default:
                           return (
@@ -299,14 +304,6 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                               >
                                 <SelectValue placeholder="Select Value" />
                               </SelectTrigger>
-
-                              {/* Uncomment if you want to display errors */}
-                              {/* {errors.filters.filter?.[index]?.value && (
-            <p className="mt-2 text-[0.8rem] font-medium text-error">
-              {errors.users[index].role.message}
-            </p>
-          )} */}
-
                               <SelectContent>
                                 {filterSelections[
                                   Number(filterWatch[index].filter)

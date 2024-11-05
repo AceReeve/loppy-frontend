@@ -1,9 +1,9 @@
 import React, { createContext, useContext } from "react";
 import { useGetPipelineListQuery } from "@repo/redux-utils/src/endpoints/pipelines.ts";
-import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
+//import type { GetAllPipelinesResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 import { useGetWorkflowDropdownQuery } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import type { GetWorkflowDropDownResponse } from "@repo/redux-utils/src/endpoints/types/workflow";
-import { GetAllPipelineListResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
+import { type GetAllPipelineListResponse } from "@repo/redux-utils/src/endpoints/types/pipelines.ts";
 
 // Define the context type
 interface WorkflowContextType {
@@ -26,9 +26,14 @@ export default function WorkflowProvider({
   const pipeline = useGetPipelineListQuery(undefined);
 
   // Handle loading and error states
-  if (pipeline.isLoading) {
-    return <div>Loading...</div>;
+  /*  if (workflow.isLoading) {
+    return <div>Loading workflow data...</div>; // Show loading for workflow
   }
+
+  // Now, if the workflow is loaded, check the pipeline
+  if (pipeline.isLoading) {
+    return <div>Loading pipeline data...</div>; // Show loading for pipeline
+  }*/
 
   /*  if (pipelineData.isError) {
     return <div>Error: {pipelineData.error.message}</div>;

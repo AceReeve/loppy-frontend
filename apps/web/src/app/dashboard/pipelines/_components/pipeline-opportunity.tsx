@@ -44,6 +44,7 @@ import { useCreateLeadMutation } from "@repo/redux-utils/src/endpoints/pipelines
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { useGetAllUsersQuery } from "@repo/redux-utils/src/endpoints/user";
 import { useGetAllContactQuery } from "@repo/redux-utils/src/endpoints/contacts";
+import { pipelineItems } from "@/src/app/dashboard/pipelines/_components/pipeline-items.tsx";
 import { type Lead, type Opportunity } from "../page";
 import DeleteOpportunity from "./delete-opportunity";
 import UpdateOpportunity from "./update-opportunity";
@@ -292,11 +293,11 @@ export default function PipelineOpportunity({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="In Progress">
-                              In Progress
-                            </SelectItem>
-                            <SelectItem value="Good">Good</SelectItem>
-                            <SelectItem value="Stalled">Stalled</SelectItem>
+                            {pipelineItems.map((item) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {item.id}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />

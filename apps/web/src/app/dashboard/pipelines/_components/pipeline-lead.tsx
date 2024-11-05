@@ -3,12 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import React, { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { clsx } from "clsx";
-import {
-  ClockIcon,
-  Contact,
-  EllipsisVertical,
-  GripVerticalIcon,
-} from "lucide-react";
+import { ClockIcon, EllipsisVertical, GripVerticalIcon } from "lucide-react";
 import moment from "moment";
 import {
   Button,
@@ -20,8 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui";
-import Link from "next/link";
-import { type Lead } from "../page";
+import { leadIcons } from "@/src/app/dashboard/pipelines/_components/lead-icons.tsx";
+import { type Lead } from "../page.tsx";
 import DeleteLead from "./delete-lead";
 import UpdateLead from "./update-lead";
 
@@ -44,7 +39,7 @@ export default function PipelineLead({
     setNodeRef,
     transform,
     transition,
-    isDragging,
+    //  isDragging,
   } = useSortable({
     id,
     data: {
@@ -55,17 +50,24 @@ export default function PipelineLead({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
 
-  // Define the background color based on the lead's status
-  /*  const bgColorClass = clsx({
-    "bg-blue-200": lead?.status === "In Progress",
-    "bg-green-200": lead?.status === "Good",
-    "bg-red-200": lead?.status === "Stalled",
-  });*/
-  const backgroundColorClass = clsx({
-    "border-blue-500": lead?.status === "In Progress",
-    "border-green-500": lead?.status === "Good",
-    "border-red-500": lead?.status === "Stalled",
-  });
+  let backgroundColorClass;
+
+  switch (lead?.status) {
+    case "Abandoned":
+      backgroundColorClass = "border-blue-400";
+      break;
+    case "Won":
+      backgroundColorClass = "border-green-400";
+      break;
+    case "Lost":
+      backgroundColorClass = "border-red-400";
+      break;
+    case "Open":
+      backgroundColorClass = "border-gray-400";
+      break;
+    default:
+      backgroundColorClass = ""; // Default case if needed
+  }
 
   return (
     <div
@@ -75,7 +77,6 @@ export default function PipelineLead({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      /*      className={`${isDragging ? " opacity-50" : ""}""`}*/
     >
       <div
         className={clsx(
@@ -91,7 +92,7 @@ export default function PipelineLead({
             </span>
             {/* {item?.created_by} */}
             {/*  {lead?.owner_id?.email}*/}
-            {lead?.opportunity_name}
+            {lead?.owner_id?.name}
           </div>
 
           <DropdownMenu>
@@ -127,7 +128,7 @@ export default function PipelineLead({
             <h1 className="overflow-hidden overflow-ellipsis font-roboto font-light">
               {/* {lead.description} */}
               <span className="text-gray-600 ">Contact: </span>
-              {lead?.owner_id?.email}
+              {lead?.primary_contact_name}
             </h1>
             <h1 className="overflow-hidden overflow-ellipsis font-roboto font-medium">
               {/* {lead.description} */}
@@ -149,7 +150,8 @@ export default function PipelineLead({
         <div className={`${backgroundColorClass} my-1 border-b-2`} />
         <div className="flex h-auto justify-between py-1">
           <div className="flex gap-1">
-            <div className="h-5 w-5 rounded-full bg-gray-950" />
+            {/* <div className="h-5 w-5 rounded-full bg-gray-950" />*/}
+            {lead?.tags?.map((tag) => <div key={tag}>{leadIcons[tag]}</div>)}
           </div>
           <div className="font-robotorounded-md flex items-center gap-1 text-[12px] font-medium text-orange-600">
             {/* Submitted {lead.timeframe} Days Ago */}

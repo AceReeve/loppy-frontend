@@ -31,6 +31,8 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { type UniqueIdentifier } from "@dnd-kit/core";
 import { useGetAllUsersQuery } from "@repo/redux-utils/src/endpoints/user";
 import { useGetAllContactQuery } from "@repo/redux-utils/src/endpoints/contacts";
+import React from "react";
+import { pipelineItems } from "@/src/app/dashboard/pipelines/_components/pipeline-items.tsx";
 import { type Lead } from "../page";
 
 interface UpdateLeadType {
@@ -144,7 +146,7 @@ export default function UpdateLead({
                       <FormLabel>Status *</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={lead?.status}
                       >
                         <FormControl>
                           <SelectTrigger variant="outline">
@@ -152,11 +154,11 @@ export default function UpdateLead({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="In Progress">
-                            In Progress
-                          </SelectItem>
-                          <SelectItem value="Good">Good</SelectItem>
-                          <SelectItem value="Stalled">Stalled</SelectItem>
+                          {pipelineItems.map((item) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item.id}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

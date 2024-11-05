@@ -24,6 +24,7 @@ import type { IActionNode } from "@repo/redux-utils/src/endpoints/types/nodes";
 import { useWorkflow } from "@/src/app/dashboard/workflows/providers/workflow-provider.tsx";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateUpdateOpportunitySchema } from "@/src/schemas";
+import { pipelineItems } from "@/src/app/dashboard/pipelines/_components/pipeline-items.tsx";
 
 /*interface ContentPayload {
   pipeline_id: string;
@@ -95,7 +96,7 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
   });
 
   const selectedPipeline = pipeline?.pipelines.find(
-    (p) => p._id === selectedPipelineId,
+    (p) => p.id === selectedPipelineId,
   );
 
   const availableOpportunities = selectedPipeline
@@ -159,8 +160,8 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
                       <SelectGroup>
                         <SelectLabel>Pipelines</SelectLabel>
                         {pipeline?.pipelines.map((pip) => (
-                          <SelectItem key={pip._id} value={pip._id}>
-                            {pip.title}
+                          <SelectItem key={pip.id} value={pip.id}>
+                            {pip.name}
                           </SelectItem>
                         ))}
                       </SelectGroup>
@@ -193,8 +194,8 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
                         <SelectGroup>
                           <SelectLabel>Opportunities</SelectLabel>
                           {availableOpportunities.map((opp) => (
-                            <SelectItem key={opp._id} value={opp._id}>
-                              {opp.title}
+                            <SelectItem key={opp.id} value={opp.id}>
+                              {opp.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -296,9 +297,11 @@ export default function CreateUpdateOpportunity(prop: CustomTriggerProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="In Progress">In Progress</SelectItem>
-                      <SelectItem value="Good">Good</SelectItem>
-                      <SelectItem value="Stalled">Stalled</SelectItem>
+                      {pipelineItems.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.id}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {errors.content?.status ? (

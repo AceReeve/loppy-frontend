@@ -38,6 +38,7 @@ import {
   useSaveWorkflowMutation,
 } from "@repo/redux-utils/src/endpoints/workflow.ts";
 import type { GetEditFolderPayload } from "@repo/redux-utils/src/endpoints/types/workflow";
+import Link from "next/link";
 import StartNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/start-node.tsx";
 import ActionEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/action-edge.tsx";
 import SidebarSelection from "@/src/app/dashboard/workflows/_components/_navigation/sidebar-trigger-selection.tsx";
@@ -54,8 +55,10 @@ import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nod
 export interface SidebarRefProp {
   showNodeData: (node: IActionNode | ITriggerNode) => void;
 }
+
 export default function Page({ params }: { params: { workflowID: string } }) {
-  const { workflowID } = use(params);
+  //@ts-expect-error -- ignore data for now.
+  const { workflowID }: { workflowID: string } = use(params);
 
   const nodeTypes = {
     startNode: StartNode,
@@ -63,6 +66,26 @@ export default function Page({ params }: { params: { workflowID: string } }) {
     actionNode: ActionNode,
     endNode: EndNode,
   };
+
+  /*  const tabs = [
+    {
+      label: "Workflow",
+      id: "workflow",
+      component: (
+        <Workflow workflowID={workflowID} workflowName={workflowName} />
+      ),
+    },
+    /!*    {
+      label: "Settings",
+      id: "settings",
+      component: <WorkflowSettings />,
+    },
+    {
+      label: "Execution Logs",
+      id: "execution-logs",
+      component: <ExecutionLogs />,
+    },*!/
+  ];*/
 
   const { data: workflow, isLoading } = useGetWorkflowQuery({
     id: workflowID,
@@ -1007,65 +1030,73 @@ export default function Page({ params }: { params: { workflowID: string } }) {
   };
 
   return (
-    <div className="border-5 h-[725px] w-full border-gray-900">
-      <div className="flex w-full items-center justify-center gap-2 rounded-md bg-white p-4">
-        <div className="absolute right-5 flex items-center space-x-4">
-          <Button className="rounded px-4" onClick={SaveWorkflow}>
-            Save
-          </Button>
-          {/*          <Button className="rounded px-4" onClick={SaveWorkflow}>
+    <div className="rounded-xl bg-white px-4">
+      <div className="border-5 h-[725px] w-full border-gray-900">
+        <div className="flex w-full items-center justify-between gap-2 rounded-md bg-white p-4">
+          <Link href="/dashboard/workflows" passHref>
+            <Button variant="outline">Return Hub</Button>
+          </Link>
+          <div className="flex space-x-2">
+            <p className="font-semibold">Workflow: {workflow?.name}</p>
+            <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
+              <DialogTrigger>
+                <Edit className="size-6 cursor-pointer stroke-current" />
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Change Workflow Name</DialogTitle>
+
+                <DialogDescription className="hidden" />
+                <Separator />
+                <Input placeholder={workName} onChange={handleInputChange} />
+                <Button onClick={handleSave}>Save</Button>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="right-5 flex items-center space-x-4">
+            <Button className="rounded px-4" onClick={SaveWorkflow}>
+              Save
+            </Button>
+            {/*          <Button className="rounded px-4" onClick={SaveWorkflow}>
             Publish
           </Button>*/}
-          <div className="flex items-center space-x-2">
-            <p className="font-poppins text-[14px] font-semibold text-slate-600">
-              Publish
-            </p>
-            <Switch
-              className="bg-primary"
-              defaultChecked={isPublished}
-              /*              onCheckedChange={() => {
-                                  setIsPublished(!isPublished);
-                                }}*/
-              checked={isPublished}
-              onClick={handlePublish}
-            />
+            <div className="flex items-center space-x-2">
+              <p className="font-poppins text-[14px] font-semibold text-slate-600">
+                Publish
+              </p>
+              <Switch
+                className="bg-primary"
+                defaultChecked={isPublished}
+                /*                onCheckedChange={() => {
+                  setIsPublished(!isPublished);
+                }}*/
+                checked={isPublished}
+                onClick={handlePublish}
+              />
+            </div>
           </div>
         </div>
-        <p className="font-semibold">Workflow: {workflow?.name}</p>
-        <Dialog open={openWorkName} onOpenChange={setOpenWorkName}>
-          <DialogTrigger>
-            <Edit className="h-5 w-5 cursor-pointer stroke-current" />
-          </DialogTrigger>
-          <DialogContent>
-            <DialogTitle>Change Workflow Name</DialogTitle>
-
-            <DialogDescription className="hidden" />
-            <Separator />
-            <Input placeholder={workName} onChange={handleInputChange} />
-            <Button onClick={handleSave}>Save</Button>
-          </DialogContent>
-        </Dialog>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          fitView
+        >
+          <SidebarSelection
+            ref={sidebarRef}
+            openSheet={openSheet}
+            isTriggers={isTriggers}
+            setOpenSheet={setOpenSheet}
+            addActionNode={handleAddActionNodeClick}
+            addTriggerNode={handleAddNodeClick}
+            deleteNode={deleteNode}
+          />
+          <Background className="rounded-xl !bg-slate-200" />
+          <Controls />
+          <MiniMap />
+        </ReactFlow>
       </div>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        fitView
-      >
-        <SidebarSelection
-          ref={sidebarRef}
-          openSheet={openSheet}
-          isTriggers={isTriggers}
-          setOpenSheet={setOpenSheet}
-          addActionNode={handleAddActionNodeClick}
-          addTriggerNode={handleAddNodeClick}
-          deleteNode={deleteNode}
-        />
-        <Background className="rounded-xl !bg-slate-200" />
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
     </div>
   );
 }

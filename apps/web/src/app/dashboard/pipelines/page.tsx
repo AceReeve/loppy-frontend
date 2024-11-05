@@ -70,11 +70,13 @@ import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { Pipette } from "lucide-react";
 import { ArrowDown2 } from "iconsax-react";
+// eslint-disable-next-line import/no-named-as-default -- Using exported name 'ReactConfetti' as identifier for default import.(import/no-named-as-default)
+import ReactConfetti from "react-confetti";
+import PipelineStatus from "@/src/app/dashboard/pipelines/_components/pipeline-status.tsx";
 import CreatePipeline from "./_components/create-pipeline";
 import ExportPipelines from "./_components/export-pipelines";
 import ImportPipelines from "./_components/import-pipelines";
 import DeletePipeline from "./_components/delete-pipeline";
-import PipelineStatus from "@/src/app/dashboard/pipelines/_components/pipeline-status.tsx";
 
 const PipelineOpportunity = dynamic(
   () => import("./_components/pipeline-opportunity"),
@@ -115,6 +117,7 @@ export interface Lead {
   opportunity_source: string;
   status: string;
   opportunity_value: number;
+  primary_contact_name?: string;
   primary_email?: string;
   primary_phone?: string;
   additional_contacts?: string;
@@ -127,6 +130,7 @@ export interface Lead {
 interface Owner {
   _id: string;
   email: string;
+  name: string;
 }
 
 // schemas
@@ -139,7 +143,7 @@ export default function Home() {
   const [isPipelineImportOpen, setIsPipelineImportOpen] = useState(false);
   const [isPipelineExportOpen, setIsPipelineExportOpen] = useState(false);
   const [isPipelineDeleteOpen, setIsPipelineDeleteOpen] = useState(false);
-
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const {
     data: pipelines = [],
     isFetching: pipelinesIsLoading,
@@ -177,15 +181,15 @@ export default function Home() {
   const pipelineStatus = [
     {
       id: "status-area-1",
-      description: "Good",
+      description: "Lost",
     },
     {
       id: "status-area-2",
-      description: "Stalled",
+      description: "Abandoned",
     },
     {
       id: "status-area-3",
-      description: "In Progress",
+      description: "Won",
     },
   ];
 
@@ -224,6 +228,19 @@ export default function Home() {
       setOpportunities(mutableData);
     }
   }, [pipeline]);
+
+  useEffect(() => {
+    if (showConfetti) {
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 3000); // Wait for 3 seconds
+
+      // Cleanup function to clear the timer if the component unmounts or showConfetti changes
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [showConfetti, setShowConfetti]);
 
   const onAddOpportunity = (data: Opportunity) => {
     setOpportunities([...opportunities, data]);
@@ -379,10 +396,15 @@ export default function Home() {
   const updateStatus = async (_id: string, leadStatus: string) => {
     const update = { id: _id, status: leadStatus };
     try {
-      const response = updateLeadStatus(update).unwrap(); // Use unwrap to handle success/error
-      console.log("Update successful:", response);
+      //const response = await updateLeadStatus(update).unwrap(); // Use unwrap to handle success/error
+      await updateLeadStatus(update).unwrap(); // Use unwrap to handle success/error
+
+      //console.log("Update successful:", response);
+      if (leadStatus === "Won") {
+        setShowConfetti(true);
+      }
     } catch (error) {
-      console.error("Failed to update status:", error);
+      //console.error("Failed to update status:", error);
     }
   };
 
@@ -586,16 +608,12 @@ export default function Home() {
       over?.id.toString().includes("status") &&
       active.id !== over.id
     ) {
-      console.log("DROPPED IN AREA", active.id, over.id);
       // Find the active and over opportunity
       const activeOpportunity = findValueOfItems(active.id, "item");
 
       // If the active or over opportunity is not found, return
       if (!activeOpportunity) return;
       // Find the index of the active and over opportunity
-      const activeOpportunityIndex = opportunities.findIndex(
-        (opportunity) => opportunity.id === activeOpportunity.id,
-      );
 
       // Find the index of the active and over item
       const activeitemIndex = activeOpportunity.leads.findIndex(
@@ -617,8 +635,34 @@ export default function Home() {
       const overDescription = getStatusDescription(over.id.toString());
       if (overDescription !== null) {
         const cleanId: string = removeItemPrefix(active.id.toString());
-        updateStatus(cleanId, overDescription);
-        activeOpportunity.leads[activeitemIndex].status = overDescription;
+        updateStatus(cleanId, overDescription)
+          .then(() => {
+            //Set handling
+            const lead = activeOpportunity.leads[activeitemIndex];
+            lead.status = overDescription;
+            // const newItems = [...opportunities];
+            //onUpdateLead(lead.id, lead);
+            setOpportunities([...opportunities]);
+
+            currentOpportunities = [...opportunities];
+          })
+          .catch(() => {
+            // Handle the error appropriately here
+          });
+        /*  const activeOpportunityIndex = opportunities.findIndex(
+          (opportunity) => opportunity.id === activeOpportunity.id,
+        );*/
+
+        /*    const newItems = [...opportunities];
+
+
+        newItems[activeOpportunityIndex].leads[activeitemIndex].status =
+          overDescription;
+
+        setOpportunities(newItems);
+        currentOpportunities = newItems;
+
+        console.log(newItems, opportunities);*/
       }
       // setOpportunities(updatedOpportunities);
     }
@@ -782,9 +826,18 @@ export default function Home() {
       </div>
     );
   }
+  const ConfettiWon = (
+    <>
+      <ReactConfetti className="w-full" />
+      <h1 className="absolute inset-0 z-[100] flex items-center justify-center text-center text-7xl font-bold text-gray-400">
+        Congratulations
+      </h1>
+    </>
+  );
 
   return (
     <div className="m-10 rounded-xl bg-card p-10">
+      {showConfetti ? ConfettiWon : null}
       <div className="flex w-full items-center justify-between">
         <div className="flex items-end gap-3">
           <div className="font-poppins text-4xl font-medium text-gray-800">
@@ -965,7 +1018,6 @@ export default function Home() {
           </Dialog>
         </div>
       </div>
-
       {/* loading pipeline */}
       {pipelineIsLoading ? (
         <div className="m-auto flex h-full flex-col items-center justify-center space-y-6">
@@ -973,7 +1025,6 @@ export default function Home() {
           <p>Loading, please wait...</p>
         </div>
       ) : null}
-
       {/* pipeline loaded */}
       <div className="mx-auto w-full py-10" hidden={pipelineIsLoading}>
         {pipelines.length > 0 ? (
@@ -1002,7 +1053,7 @@ export default function Home() {
                       >
                         {opportunity.leads
                           .filter((i) => {
-                            if (
+                            return (
                               i.opportunity_name
                                 .toLowerCase()
                                 .includes(searchQuery.toLowerCase()) ||
@@ -1010,10 +1061,7 @@ export default function Home() {
                                 .toLowerCase()
                                 .includes(searchQuery.toLowerCase()) ||
                               i.tags?.includes(searchQuery)
-                            ) {
-                              return true;
-                            }
-                            return false;
+                            );
                           })
                           .map((i) => (
                             <PipelineLead
@@ -1065,7 +1113,7 @@ export default function Home() {
                     : null}
                 </DragOverlay>
                 <div
-                  className={`absolute bottom-10 flex h-[200px] w-full ${isDragging ? "flex" : "hidden"} gap-5`}
+                  className={` absolute bottom-10 right-0 flex h-[200px] w-full justify-center ${isDragging ? "flex" : "hidden"} gap-5`}
                 >
                   {pipelineStatus.map((status) => (
                     <PipelineStatus
