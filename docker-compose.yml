@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   development-fe:
-    container_name: frontend
+    container_name: servihero-frontend
     image: development-version-1.0.0
     build:
       context: .
@@ -14,8 +14,8 @@ services:
     volumes:
       - ./src:/usr/src/app/src
     networks:
-      - servihero-backend_frontend
+      - frontend-network
 
 networks:
-  servihero-backend_frontend:
+  frontend-network:
     external: true
