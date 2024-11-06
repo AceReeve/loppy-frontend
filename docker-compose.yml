@@ -14,17 +14,8 @@ services:
     volumes:
       - ./src:/usr/src/app/src
     networks:
-      - service-hero-backend_frontend
-  mongodb:
-    image: mongo:latest
-    container_name: mongo-fe
-    ports:
-      - 27018:27017
-    networks:
-      - service-hero-backend_frontend
-    volumes:
-      - ./src:/usr/src/app/src
+      - servihero-backend_frontend
 
 networks:
-  service-hero-backend_frontend:
+  servihero-backend_frontend:
     external: true
