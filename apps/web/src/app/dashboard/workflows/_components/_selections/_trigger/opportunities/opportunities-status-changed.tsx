@@ -261,10 +261,7 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                       ) : null}*/}
                           <SelectContent>
                             {filterSelections.map((filter) => (
-                              <SelectItem
-                                value={filter.id.toString()}
-                                key={filter.id}
-                              >
+                              <SelectItem value={filter.filter} key={filter.id}>
                                 {filter.value}
                               </SelectItem>
                             ))}
@@ -305,16 +302,25 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                                 <SelectValue placeholder="Select Value" />
                               </SelectTrigger>
                               <SelectContent>
-                                {filterSelections[
-                                  Number(filterWatch[index].filter)
-                                ]?.selections?.map((selection) => (
-                                  <SelectItem
-                                    key={selection.id}
-                                    value={selection.id.toString()}
-                                  >
-                                    {selection.name}
-                                  </SelectItem>
-                                ))}
+                                {filterSelections
+                                  .filter(
+                                    (selection) =>
+                                      selection.filter ===
+                                      filterWatch[index]?.filter,
+                                  ) // Match by filter name
+                                  .map((filteredSelection) =>
+                                    filteredSelection.selections?.map(
+                                      (selection) => (
+                                        <SelectItem
+                                          key={selection.id}
+                                          value={selection.id.toString()} // Use `selection.id` as the value (converted to string)
+                                        >
+                                          {selection.name}{" "}
+                                          {/* Display the name of the selection */}
+                                        </SelectItem>
+                                      ),
+                                    ),
+                                  )}
                               </SelectContent>
                             </Select>
                           );
