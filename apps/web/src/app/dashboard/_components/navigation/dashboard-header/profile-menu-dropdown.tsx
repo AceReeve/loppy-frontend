@@ -11,19 +11,20 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  toast,
 } from "@repo/ui/components/ui";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useGetAllOrganizationsQuery } from "@repo/redux-utils/src/endpoints/organization.ts";
 import { Card } from "iconsax-react";
 import { CheckIcon } from "@heroicons/react/16/solid";
-import {
-  accentColorMap,
-  accentColors,
-  useDashboardState,
-} from "@/src/providers/dashboard-provider.tsx";
+import { useGetAccentColorQuery } from "@repo/redux-utils/src/endpoints/dashboard.ts";
+import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import IconAccountProfile from "@/src/app/dashboard/_components/navigation/dashboard-header/icons/icon-account-profile.tsx";
+import ColorPicker from "@/src/components/color-picker/color-picker.tsx";
+import { type ColorPickerSchemaFormValues } from "@/src/components/color-picker/schemas/color-picker-schemas.ts";
 
 interface ProfileMenuItems {
   key: string;
@@ -33,6 +34,7 @@ interface ProfileMenuItems {
 
 interface ProfileMenuItem {
   title: string;
+  customContent?: React.ReactNode;
   url?: string;
   onClick?: () => void;
   children?: ProfileMenuItem[];
@@ -43,23 +45,46 @@ interface ProfileMenuDropdownProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
+  setAccentColor: (
+    accentColor: ColorPickerSchemaFormValues,
+  ) => Promise<ColorPickerSchemaFormValues>;
 }
 
 export function ProfileMenuDropdown({
   open,
   onOpenChange,
   children,
+  setAccentColor,
 }: ProfileMenuDropdownProps) {
   const { currentOrg } = useDashboardState();
   const { data: organizations } = useGetAllOrganizationsQuery(undefined);
+  const { data: accentColor, refetch: refetchAccentColor } =
+    useGetAccentColorQuery(undefined);
 
-  const setAccentColor = (colorVariableName: string) => {
-    localStorage.setItem("servihero-accent-color", colorVariableName);
-    document.documentElement.style.setProperty(
-      "--color-primary",
-      accentColorMap[colorVariableName].value,
-    );
-  };
+  const [isLoading, setIsLoading] = useState(false);
+
+  // const setAccentColor = (colorVariableName: string) => {
+  //   localStorage.setItem("servihero-accent-color", colorVariableName);
+  //   document.documentElement.style.setProperty(
+  //     "--color-primary",
+  //     accentColorMap[colorVariableName].value,
+  //   );
+  // };
+
+  async function onColorSelect(colorName: string, customColor?: string) {
+    setIsLoading(true);
+    try {
+      await setAccentColor({ colorName, customColor });
+      await refetchAccentColor();
+    } catch (err: unknown) {
+      toast({
+        title: "Can't set accent color",
+        description: getErrorMessage(err),
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
+  }
 
   const profileMenuItems: ProfileMenuItem[] = [
     {
@@ -89,17 +114,18 @@ export function ProfileMenuDropdown({
           <div className=" size-2 rounded-full bg-primary" />
         </div>
       ),
-      children: accentColors.map((item) => ({
-        title: item.title,
-        icon: (
-          <div className="flex size-5 items-center justify-center">
-            <div className={`size-2 rounded-full ${item.color}`} />
-          </div>
-        ),
-        onClick: () => {
-          setAccentColor(item.color);
+      children: [
+        {
+          title: "Color Picker",
+          customContent: (
+            <ColorPicker
+              onColorSelect={onColorSelect}
+              defaultData={accentColor}
+              isLoading={isLoading}
+            />
+          ),
         },
-      })),
+      ],
     },
   ];
 
@@ -144,26 +170,30 @@ export function ProfileMenuDropdown({
     },
   ];
 
-  const renderMenuItem = (item: ProfileMenuItem) => (
-    <DropdownMenuItem
-      key={item.title}
-      onClick={item.onClick}
-      asChild={item.url !== undefined}
-      className="cursor-pointer"
-    >
-      {item.url ? (
-        <Link href={item.url} className="flex gap-3">
-          {item.icon}
-          <span>{item.title}</span>
-        </Link>
-      ) : (
-        <div className="flex gap-3">
-          {item.icon}
-          <span>{item.title}</span>
-        </div>
-      )}
-    </DropdownMenuItem>
-  );
+  const renderMenuItem = (item: ProfileMenuItem) => {
+    return (
+      <DropdownMenuItem
+        key={item.title}
+        onClick={item.onClick}
+        asChild={item.url !== undefined || item.customContent !== undefined}
+        className="cursor-pointer"
+      >
+        {item.url ? (
+          <Link href={item.url} className="flex gap-3">
+            {item.icon}
+            <span>{item.title}</span>
+          </Link>
+        ) : (
+          (item.customContent ?? (
+            <div className="flex gap-3">
+              {item.icon}
+              <span>{item.title}</span>
+            </div>
+          ))
+        )}
+      </DropdownMenuItem>
+    );
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>

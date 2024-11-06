@@ -4,20 +4,38 @@ import { useTheme } from "@repo/ui/hooks";
 import React, { useEffect, useState } from "react";
 import { DefaultAvatar } from "@repo/ui/components/custom";
 import { useGetUserProfileQuery } from "@repo/redux-utils/src/endpoints/user";
-import { Button } from "@repo/ui/components/ui";
-import { Moon, Sun } from "lucide-react";
+import { Button, buttonVariants } from "@repo/ui/components/ui";
+import { Moon, Sun, TriangleAlert } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@repo/ui/utils";
+import {
+  useGetCredentialsQuery,
+  useGetServiceTitanSyncStatusQuery,
+} from "@repo/redux-utils/src/endpoints/service-titan.ts";
+import moment from "moment";
+import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 import NotificationsDrawer from "@/src/app/dashboard/_components/navigation/dashboard-header/notifications-drawer.tsx";
 import { ProfileMenuDropdown } from "@/src/app/dashboard/_components/navigation/dashboard-header/profile-menu-dropdown.tsx";
 import MessagesDrawer from "@/src/app/dashboard/_components/navigation/dashboard-header/messages-drawer.tsx";
 import SearchDialog from "@/src/app/dashboard/_components/navigation/dashboard-header/search-dialog.tsx";
+import { type ColorPickerSchemaFormValues } from "@/src/components/color-picker/schemas/color-picker-schemas.ts";
 
-export default function DashboardHeader() {
+interface DashboardHeaderProps {
+  setAccentColor: (
+    accentColor: ColorPickerSchemaFormValues,
+  ) => Promise<ColorPickerSchemaFormValues>;
+}
+
+export default function DashboardHeader({
+  setAccentColor,
+}: DashboardHeaderProps) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-
-  // const pathname = usePathname();
+  const { data: credentialsData, isLoading } =
+    useGetCredentialsQuery(undefined);
+  const { data: syncStatus } = useGetServiceTitanSyncStatusQuery(undefined);
 
   const {
     session,
@@ -43,20 +61,35 @@ export default function DashboardHeader() {
     <nav className="relative z-30 w-full">
       <div className="px-3 py-3 lg:px-10">
         <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            className="flex items-center gap-3 rounded-full border-none p-3"
+          <Link
+            href="/dashboard/settings/integrations"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "flex min-h-14 items-center gap-3 rounded-full border-none px-4 py-3",
+            )}
           >
-            <div className="size-4 rounded-full bg-[#28C66F]" />
+            {/* eslint-disable-next-line no-nested-ternary -- this is easy to read */}
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : credentialsData ? (
+              <div className="size-4 rounded-full bg-[#28C66F]" />
+            ) : (
+              <TriangleAlert className="size-5 stroke-current text-yellow-500" />
+            )}
             <div className="flex flex-col items-center">
               <div className="font-open-sans text-sm font-semibold">
-                ServiceTitan API Connected
+                ServiceTitan API{" "}
+                {credentialsData ? "Connected" : "Disconnected"}
               </div>
-              <div className="font-open-sans text-xs font-bold italic text-gray-400">
-                Last Synced 5:54pm
-              </div>
+              {credentialsData ? (
+                <div className="font-open-sans text-xs font-bold italic text-gray-400">
+                  {syncStatus?.lastSync
+                    ? `Synced ${moment(syncStatus.lastSync).calendar()}`
+                    : "Requires Sync"}
+                </div>
+              ) : null}
             </div>
-          </Button>
+          </Link>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 rounded-full bg-white px-5 py-2 shadow-soft">
@@ -89,6 +122,7 @@ export default function DashboardHeader() {
             <ProfileMenuDropdown
               open={profileDropdownOpen}
               onOpenChange={setProfileDropdownOpen}
+              setAccentColor={setAccentColor}
             >
               <Button
                 variant="outline"

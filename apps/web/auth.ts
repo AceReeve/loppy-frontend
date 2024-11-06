@@ -57,6 +57,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             ...token,
             jwt: res.access_token,
             role: res.userData.role.role_name,
+            id: res.userData._id,
             profile,
           };
         } else if (account.provider === "credentials") {
@@ -64,6 +65,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             ...token,
             jwt: user.access_token,
             role: user.role.role_name,
+            id: user._id,
             profile: {
               given_name: user.email?.split("@")[0] ?? "",
             },
@@ -77,6 +79,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.profile = token.profile as Profile;
       session.user.name = token.email?.split("@")[0] ?? "";
       session.role = token.role as string;
+      session.user.id = token.id as string;
 
       return session;
     },
@@ -118,6 +121,7 @@ interface ResponseType {
     role: {
       role_name: string;
     };
+    _id: string;
   };
 }
 

@@ -21,5 +21,6 @@ declare module "next-auth" {
     role: {
       role_name: string;
     };
+    _id: string;
   }
 }

@@ -15,6 +15,7 @@ import { auth } from "@/auth.ts";
 import PaywallProcessingPayment from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-processing-payment";
 import PaywallTeamSetup from "@/src/app/dashboard/_components/paywall/paywall-sections/paywall-steps/steps/paywall-team-setup.tsx";
 import { getOrganizationsList } from "@/src/actions/organization-actions.ts";
+import { setAccentColor } from "@/src/actions/dashboard-actions.ts";
 
 async function getPaymentStatus(
   session: Session,
@@ -102,7 +103,7 @@ export default async function Layout({
         <div className="relative z-0 flex min-h-screen items-stretch bg-background">
           <DashboardSidebar className="relative z-40 h-screen flex-shrink-0 select-none" />
           <div className="relative flex h-screen w-full flex-1 flex-col overflow-hidden rounded-tl-[48px]">
-            <DashboardHeader />
+            <DashboardHeader setAccentColor={setAccentColor} />
             <div className="custom-scrollbar relative flex w-full flex-1 flex-col overflow-y-auto">
               {children}
             </div>

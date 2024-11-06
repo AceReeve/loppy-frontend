@@ -47,3 +47,11 @@ export const baseApi = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
 });
+
+export const nextApi = createApi({
+  reducerPath: "nextApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "/api",
+  }),
+  endpoints: () => ({}),
+});

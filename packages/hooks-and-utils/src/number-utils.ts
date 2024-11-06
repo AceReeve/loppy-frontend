@@ -6,8 +6,8 @@ export const formatDecimal = (num: number, decimals: number) => {
 // if prev value is 0 and current value is 0, there's no change (0%)
 // if prev value is 0 and current value is non-zero, consider it 100% change
 export const calculatePercentage = (
-  prevValue: number,
   currentValue: number,
+  prevValue: number,
   decimalPlaces?: number,
 ) => {
   if (prevValue - currentValue === 0) {
@@ -33,7 +33,7 @@ export const formatWithCurrencyShortened = (value: number) => {
   // (formatNumber(value3); // "$987.12"
 
   if (value >= 1000000) {
-    return `$${(value / 1000000).toFixed(1).replace(/\.0$/, "")}M`;
+    return `$${(value / 1000000).toFixed(2).replace(/\.0$/, "")}M`;
   } else if (value >= 1000) {
     return `$${(value / 1000).toFixed(0)}k`;
   }
