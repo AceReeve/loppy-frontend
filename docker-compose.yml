@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   development-fe:
-    container_name: frontend
+    container_name: servihero-frontend
     image: development-version-1.0.0
     build:
       context: .
@@ -14,17 +14,8 @@ services:
     volumes:
       - ./src:/usr/src/app/src
     networks:
-      - service-hero-backend_frontend
-  mongodb:
-    image: mongo:latest
-    container_name: mongo-fe
-    ports:
-      - 27018:27017
-    networks:
-      - service-hero-backend_frontend
-    volumes:
-      - ./src:/usr/src/app/src
+      - frontend-network
 
 networks:
-  service-hero-backend_frontend:
+  frontend-network:
     external: true
