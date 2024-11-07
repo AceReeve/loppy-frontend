@@ -35,7 +35,7 @@ import statusSelection from "@/src/app/dashboard/workflows/_components/status-se
   lead_value: string;
 }*/
 
-export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
+export default function OpportunityChanged(prop: CustomTriggerProps) {
   const formSchema = CreateBirthReminderSchema;
 
   const { workflow } = useWorkflow();
@@ -81,11 +81,11 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
       selections: statusSelection,
     },
     /*    {
-      id: 6,
-      filter: "Lost Reason",
-      value: "Lost Reason",
-      selections: statusSelection,
-    },*/
+          id: 6,
+          filter: "Lost Reason",
+          value: "Lost Reason",
+          selections: statusSelection,
+        },*/
   ];
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -106,15 +106,15 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
   } = form;
 
   /*  const watchedFilters = useWatch({
-    control: form.control,
-    name: "filters",
-  });
+      control: form.control,
+      name: "filters",
+    });
 
-  useEffect(() => {
-    // This effect will trigger whenever filters are updated in the form
-    // console.log("Updated filters:", watchedFilters);
-    // You can perform other actions here to update your UI with the new form values
-  }, [watchedFilters]);*/
+    useEffect(() => {
+      // This effect will trigger whenever filters are updated in the form
+      // console.log("Updated filters:", watchedFilters);
+      // You can perform other actions here to update your UI with the new form values
+    }, [watchedFilters]);*/
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -124,37 +124,37 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
   const filterWatch = form.watch("filters");
 
   /*  const opportunityStatusChangedNode = {
-    id: prop.node ? prop.node.id : "1",
-    type: "triggerNode",
-    data: {
-      title: form.getValues("title"),
-      node_name: "Opportunity Status Changed",
-      node_type_id: "Opportunity Status Changed",
-      content: {
-        filters: form.getValues("filters"),
+      id: prop.node ? prop.node.id : "1",
+      type: "triggerNode",
+      data: {
+        title: form.getValues("title"),
+        node_name: "Opportunity Status Changed",
+        node_type_id: "Opportunity Status Changed",
+        content: {
+          filters: form.getValues("filters"),
+        },
       },
-    },
-  };*/
+    };*/
   const opportunityStatusChangedNode = {
     id: prop.node ? prop.node.id : "1",
     type: "triggerNode",
     data: {
       title: form.getValues("title"),
-      node_name: "Opportunity Status Changed",
-      node_type_id: "Opportunity Status Changed",
+      node_name: "Opportunity Changed",
+      node_type_id: "Opportunity Changed",
       content: {
         filters: form.getValues("filters"),
       },
     },
   };
   /*  filters: [
-    //67210553edf3b4e54a0f7ed5
-    { filter: "In Pipeline", value: "67210553edf3b4e54a0f7ed5" },
-    { filter: "Has a Tag", value: "Facebook" },
-    { filter: "Lead Value", value: "1" },
-    { filter: "Moved from status", value: "In Progress" },
-    { filter: "Moved to status", value: "Good" },
-  ],*/
+      //67210553edf3b4e54a0f7ed5
+      { filter: "In Pipeline", value: "67210553edf3b4e54a0f7ed5" },
+      { filter: "Has a Tag", value: "Facebook" },
+      { filter: "Lead Value", value: "1" },
+      { filter: "Moved from status", value: "In Progress" },
+      { filter: "Moved to status", value: "Good" },
+    ],*/
   const onSubmit = () => {
     const isEditMode = Boolean(prop.node);
     prop.onHandleClick(
@@ -166,16 +166,16 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
   // const { pipeline } = useWorkflow();
 
   /*
-  const selectedPipeline = pipeline?.find((p) => p._id === selectedPipelineId);
-  const availableOpportunities = selectedPipeline
-    ? selectedPipeline.opportunities
-    : [];
-*/
+    const selectedPipeline = pipeline?.find((p) => p._id === selectedPipelineId);
+    const availableOpportunities = selectedPipeline
+      ? selectedPipeline.opportunities
+      : [];
+  */
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col justify-start">
-        <p>Opportunity Status Changed</p>
+        <p>Opportunity Changed</p>
         <p className="content-center font-nunito text-sm text-gray-500">
           Initiates a workflow that adds a contact when specific weather
           conditions are met, streamlining engagement and ensuring timely
