@@ -83,7 +83,7 @@ export default function Page({ params }: { params: { workflowID: string } }) {
     },*!/
   ];*/
 
-  const { data: workflow, isLoading } = useGetWorkflowQuery({
+  const { data: workflow } = useGetWorkflowQuery({
     id: workflowID,
   });
 
