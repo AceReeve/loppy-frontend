@@ -1,13 +1,12 @@
 import React from "react";
-import { type StatCardResponse } from "@repo/redux-utils/src/endpoints/types/dashboard";
-import { calculatePercentage } from "@repo/hooks-and-utils/number-utils";
+import { type DashboardMetric } from "@repo/redux-utils/src/endpoints/types/service-titan";
 import { Card, type CardProps } from "../ui";
 import { cn } from "../../lib/utils.ts";
 import { LoadingSpinner } from "../../loading/loading-spinner.tsx";
 
 export interface StatCardProps extends CardProps {
   name: string;
-  data: StatCardResponse | undefined;
+  data: DashboardMetric | undefined;
   className?: string;
   icon?: string | React.ReactNode;
   formattedValue?: (value: number) => string;
@@ -19,10 +18,9 @@ function StatCard(props: StatCardProps) {
   const iconClass = "text-white";
   const imageIconClass = "relative h-6 w-6";
 
-  const prevValue = props.data?.previousValue ?? 0;
-  const currentValue = props.data?.currentValue ?? 0;
-
-  const percentage = calculatePercentage(prevValue, currentValue);
+  const currentValue = props.data?.value ?? 0;
+  const previousPeriodText = props.data?.previousPeriodText;
+  const percentage = props.data?.growth ?? 0;
 
   const renderValue = () => {
     if (props.loading) return <LoadingSpinner />;
@@ -31,7 +29,7 @@ function StatCard(props: StatCardProps) {
       const formattedValue = props.formattedValue(currentValue);
 
       // Regular expression to match the numeric part
-      const numericPart = /\d+/.exec(formattedValue)?.[0] ?? "0";
+      const numericPart = /\d+(?:\.\d+)?/.exec(formattedValue)?.[0] ?? "0";
 
       // Extract the non-numeric parts
       const splitText = formattedValue.split(numericPart);
@@ -131,7 +129,7 @@ function StatCard(props: StatCardProps) {
               props.variant !== "gradient-primary" && "text-gray-600",
             )}
           >
-            vs. previous month
+            vs. {previousPeriodText}
           </span>
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowCircleRight, Call, Global } from "iconsax-react";
+import { ArrowCircleRight, Call, Global, Facebook } from "iconsax-react";
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -14,36 +14,48 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  type DateRange,
 } from "@repo/ui/components/ui";
 import { Mail } from "lucide-react";
+import { endOfMonth, startOfMonth } from "date-fns";
 import ColumnChart from "@/src/components/charts/column-chart";
 import UnsoldTicketsTable from "@/src/components/table/unsold-tickets-table";
-import StatCards from "@/src/app/dashboard/_components/dashboard/stat-cards.tsx";
+import DashboardMetrics from "@/src/app/dashboard/_components/dashboard/dashboard-metrics.tsx";
 import { DashboardOverviewHeader } from "@/src/app/dashboard/_components/dashboard/sections/dashboard-overview/dashboard-overview-header.tsx";
 import LatestBookingsSection from "@/src/app/dashboard/_components/dashboard/sections/latest-bookings/latest-bookings-section.tsx";
 import UnsoldJobsSection from "@/src/app/dashboard/_components/dashboard/sections/unsold-jobs/unsold-jobs-section.tsx";
 
 export default function Page() {
   const [leadSubmissionsValue, setLeadSubmissionsValue] = useState("1D");
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
 
   const customerLeads = [
     {
-      key: "social_media",
+      key: "Google",
       icon: Global,
       lead: "Social Media",
-      value: 50.342,
+      value: 50,
+    },
+    {
+      key: "facebook",
+      icon: Facebook,
+      lead: "Facebook",
+      value: 34,
     },
     {
       key: "email",
       icon: Mail,
       lead: "Email",
-      value: 34.342,
+      value: 34,
     },
     {
       key: "call",
       icon: Call,
       lead: "Call",
-      value: 18.342,
+      value: 18,
     },
   ];
   const colors = ["#4CAF50", "#2196F3", "#9C27B0"];
@@ -53,12 +65,12 @@ export default function Page() {
   return (
     <div className="p-6">
       {/* Dashboard Header */}
-      <DashboardOverviewHeader />
+      <DashboardOverviewHeader setDateRange={setDateRange} />
 
       {/*  First Row Components */}
       <Card className="bg-card/60">
-        <CardContent className="mt-3 grid grid-cols-2 gap-x-8 gap-y-12 px-6 pb-5 pt-12 md:grid-cols-3 xl:grid-cols-5">
-          <StatCards />
+        <CardContent className="mt-3 grid grid-cols-2 gap-x-8 gap-y-8 px-6 pb-5 pt-12 md:grid-cols-3 xl:grid-cols-5">
+          <DashboardMetrics dateRange={dateRange} />
         </CardContent>
       </Card>
 
@@ -76,12 +88,7 @@ export default function Page() {
       <div className="mt-6 grid grid-cols-12 gap-[22px]">
         <Card className="relative col-span-full">
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle>
-              Marketed Sold Leads{" "}
-              <span className="text-sm font-semibold text-gray-800/60">
-                (Rehash Department)
-              </span>
-            </CardTitle>
+            <CardTitle>Marketed Sold Leads</CardTitle>
 
             <button
               type="button"

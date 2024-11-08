@@ -1,5 +1,4 @@
 "use server";
-// import { getSession } from "next-auth/react";
 import type { z } from "zod";
 import { AuthError } from "next-auth";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";

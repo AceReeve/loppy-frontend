@@ -1,11 +1,29 @@
 import * as React from "react";
-import { Card, CardContent, DateRangePicker } from "@repo/ui/components/ui";
+import {
+  Card,
+  CardContent,
+  type DateRange,
+  DateRangePicker,
+} from "@repo/ui/components/ui";
+import { type JSX, useState } from "react";
 import { DashboardGoalProgress } from "@/src/app/dashboard/_components/dashboard/sections/dashboard-overview/dashboard-goal-progress.tsx";
 import IconOverview from "@/src/app/dashboard/_components/icons/icon-overview.tsx";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
 
-export function DashboardOverviewHeader() {
+interface DashboardOverviewHeaderProps {
+  setDateRange: (dateRange: DateRange) => void;
+}
+
+export function DashboardOverviewHeader({
+  setDateRange,
+}: DashboardOverviewHeaderProps): JSX.Element {
   const { session } = useDashboardState();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDateRangeChange = (range: DateRange) => {
+    setDateRange(range);
+    setShowDatePicker(false);
+  };
 
   return (
     <Card>
@@ -51,7 +69,13 @@ export function DashboardOverviewHeader() {
               </div>
             </div>
             {/*  Date Filter */}
-            <DateRangePicker className="h-12" />
+            <DateRangePicker
+              className="h-12 min-w-[150px]"
+              onChange={handleDateRangeChange}
+              open={showDatePicker}
+              setOpen={setShowDatePicker}
+              usePeriodText
+            />
           </section>
         </div>
       </CardContent>
