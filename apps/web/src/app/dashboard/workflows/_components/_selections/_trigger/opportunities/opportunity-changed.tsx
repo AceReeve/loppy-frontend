@@ -264,54 +264,44 @@ export default function OpportunityChanged(prop: CustomTriggerProps) {
                   name={`filters.${index}.value`}
                   control={form.control}
                   render={({ field }) => {
-                    function FieldType() {
-                      switch (filterWatch[index].filter) {
-                        case "Lead Value":
-                          return (
-                            <Input autoComplete="off" type="text" {...field} />
-                          );
-
-                        default:
-                          return (
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger
-                                className="h-[40px] text-slate-500"
-                                variant="outline"
-                              >
-                                <SelectValue placeholder="Select Value" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {filterSelections
-                                  .filter(
-                                    (selection) =>
-                                      selection.filter ===
-                                      filterWatch[index]?.filter,
-                                  ) // Match by filter name
-                                  .map((filteredSelection) =>
-                                    filteredSelection.selections?.map(
-                                      (selection) => (
-                                        <SelectItem
-                                          key={selection.id}
-                                          value={selection.id.toString()} // Use `selection.id` as the value (converted to string)
-                                        >
-                                          {selection.name}{" "}
-                                          {/* Display the name of the selection */}
-                                        </SelectItem>
-                                      ),
-                                    ),
-                                  )}
-                              </SelectContent>
-                            </Select>
-                          );
-                      }
-                    }
-
                     return (
                       <div className="w-full">
-                        <FieldType />
+                        {filterWatch[index].filter === "Lead Value" ? (
+                          <Input autoComplete="off" type="text" {...field} />
+                        ) : (
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger
+                              className="h-[40px] text-slate-500"
+                              variant="outline"
+                            >
+                              <SelectValue placeholder="Select Value" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {filterSelections
+                                .filter(
+                                  (selection) =>
+                                    selection.filter ===
+                                    filterWatch[index]?.filter,
+                                ) // Match by filter name
+                                .map((filteredSelection) =>
+                                  filteredSelection.selections?.map(
+                                    (selection) => (
+                                      <SelectItem
+                                        key={selection.id}
+                                        value={selection.id.toString()} // Use `selection.id` as the value (converted to string)
+                                      >
+                                        {selection.name}{" "}
+                                        {/* Display the name of the selection */}
+                                      </SelectItem>
+                                    ),
+                                  ),
+                                )}
+                            </SelectContent>
+                          </Select>
+                        )}
                         {errors.filters?.[index]?.filter ? (
                           <p className="mt-2 text-[0.8rem] font-medium text-error">
                             {errors.filters[index].filter.message}

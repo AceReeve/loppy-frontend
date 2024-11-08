@@ -48,10 +48,6 @@ import ActionNode from "@/src/app/dashboard/workflows/_components/_custom-nodes/
 import DefaultEdge from "@/src/app/dashboard/workflows/_components/_custom-edges/default-edges.tsx";
 import { nodeIcons } from "@/src/app/dashboard/workflows/_components/_custom-nodes/node-icons.tsx";
 
-/*export interface WorkflowProp {
-  workflowID: string;
-  workflowName: string;
-}*/
 export interface SidebarRefProp {
   showNodeData: (node: IActionNode | ITriggerNode) => void;
 }
@@ -151,17 +147,6 @@ export default function Page({ params }: { params: { workflowID: string } }) {
     ...triggerNodes,
   ]);
 
-  /*  const initialEdge = {
-      id: `n0-${primaryActionID.current}`,
-      source: "n0",
-      target: primaryActionID.current,
-      type: "actionEdge",
-      animated: false,
-      data: {
-        onButtonClick: handleOpenSheet,
-      },
-    };*/
-
   const initialEdge = {
     id: `n0-a0`,
     source: "n0",
@@ -175,45 +160,6 @@ export default function Page({ params }: { params: { workflowID: string } }) {
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments -- (description)
   const [edges, setEdges] = useEdgesState<Edge>([]);
-
-  /*
-    useEffect(() => {
-      initialEdge.id = `n0-${primaryActionID.current}`;
-    }, [primaryActionID.current]);
-  */
-
-  /*
-    useEffect(() => {
-      /!*    setNodes([...actionNodes, ...triggerNodes]);*!/
-
-      // Define the new edge
-      const newEdge = {
-        id: `n0-${primaryActionID.current}`,
-        source: "n0",
-        target: primaryActionID.current,
-        type: "actionEdge",
-        animated: false,
-        data: {
-          onButtonClick: handleOpenSheet,
-        },
-      };
-
-      // Update edges
-      setEdges((currentEdges) => {
-        // Find the index of the existing edge
-        const existingEdgeIndex = currentEdges.findIndex(
-          (edge) => edge.id === newEdge.id,
-        );
-
-        if (existingEdgeIndex >= 0) {
-          const updatedEdges = [...currentEdges];
-          updatedEdges[existingEdgeIndex] = newEdge;
-          return updatedEdges;
-        }
-        return [...currentEdges, newEdge];
-      });
-    }, [primaryActionID.current, nodes]);
-  */
 
   function calculatePositions(tNodes: Node[]): Node[] {
     const baseOffset = 250;
@@ -238,28 +184,10 @@ export default function Page({ params }: { params: { workflowID: string } }) {
       const yPosition = startOffset + index * baseOffset;
       return {
         ...node,
-        /*        data: {
-                  /!* title: `Action ID: ${node.id}`,*!/
-                  onButtonClick: () => {
-                    AddActionNode(nodeSample);
-                  },
-                },*/
         position: { x: 0, y: yPosition },
       };
     });
   }
-
-  /*  const nodeSample: Node = {
-      id: "1",
-      type: "triggerNode",
-      data: {
-        title: "Trigger Title",
-        onButtonClick: handleOpenSheet,
-      },
-      position: { x: 200, y: 0 },
-    };*/
-
-  /*  useEffect(() => {}, [primaryActionID.current]);*/
 
   const AddNode = useCallback(
     (node: Node) => {
@@ -319,7 +247,7 @@ export default function Page({ params }: { params: { workflowID: string } }) {
         return [...currentEdges, newEdge];
       });
     },
-    [handleOpenSheet],
+    [], //handleOpenSheet
   );
 
   function extractNumericId(id: string): number {
@@ -535,10 +463,6 @@ export default function Page({ params }: { params: { workflowID: string } }) {
         };
         (newNode as IActionNode).data.icon =
           nodeIcons[(node as IActionNode).data.node_name];
-        //existingActionNodes.length <= 1
-
-        /*        existingActionNodes.unshift(newNode);
-         */
 
         const sideNodes = selectedEdge.current.split("-");
 
@@ -624,7 +548,7 @@ export default function Page({ params }: { params: { workflowID: string } }) {
 
       setEdges(updateEdges);
     },
-    [handleOpenSheet],
+    [], //handleOpenSheet
   );
 
   const InitializeActionNode = useCallback(
@@ -696,17 +620,6 @@ export default function Page({ params }: { params: { workflowID: string } }) {
           target: primaryActionID.current,
         }));
 
-        /*        const startEdge = {
-                      id: `n0-${primaryActionID.current}`,
-                      source: "n0",
-                      target: primaryActionID.current,
-                      type: "actionEdge",
-                      animated: false,
-                      data: {
-                        onButtonClick: handleOpenSheet,
-                      },
-                    };*/
-
         initialEdge.id = `n0-${primaryActionID.current}`;
         initialEdge.target = primaryActionID.current;
 
@@ -738,7 +651,7 @@ export default function Page({ params }: { params: { workflowID: string } }) {
         return combinedEdges();
       });
     },
-    [handleOpenSheet],
+    [], //handleOpenSheet old
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -924,7 +837,7 @@ export default function Page({ params }: { params: { workflowID: string } }) {
     }
   };
 
-  const hasInitialized = useRef(false);
+  /*  const hasInitialized = useRef(false);
 
   useEffect(() => {
     // && !hasInitialized.current add this to condition --default
@@ -932,7 +845,7 @@ export default function Page({ params }: { params: { workflowID: string } }) {
       initializeSampleData();
       hasInitialized.current = true; // Mark as initialized
     }
-  }, [workflow, isLoading]);
+  }, [workflow, isLoading]);*/
 
   /*  const clearWorkflow = () => {
       setEdges([]); // Clear edges
@@ -942,6 +855,9 @@ export default function Page({ params }: { params: { workflowID: string } }) {
   const initializeSampleData = () => {
     if (workflow) {
       // Handle triggers
+      setNodes([...triggerNodes, ...actionNodes]);
+      setEdges([initialEdge]);
+
       workflow.trigger.map((trigger) => {
         const triggerTemplate: Node = {
           id: trigger.id,
@@ -981,13 +897,16 @@ export default function Page({ params }: { params: { workflowID: string } }) {
         return actionTemplate;
       });
 
-      if (workflow.action.length === 0) {
-        setEdges((prevState) => [...prevState, initialEdge]);
-      }
+      /*      if (workflow.action.length === 0) {
+       setEdges((prevState) => [...prevState, initialEdge]);
+      }*/
     }
   };
+
+  // this certain code is for publish
   useEffect(() => {
     setIsPublished(workflow?.isPublished);
+    initializeSampleData();
   }, [workflow]);
 
   const [publishWorkflow] = usePublishWorkflowMutation();
@@ -1028,9 +947,12 @@ export default function Page({ params }: { params: { workflowID: string } }) {
       });
     }
   };
+  // console.log(hasInitialized);
+
+  //console.log(nodes, edges);
 
   return (
-    <div className="rounded-xl bg-white px-4">
+    <div className="m-4 h-full rounded-xl bg-white px-4">
       <div className="border-5 h-[725px] w-full border-gray-900">
         <div className="flex w-full items-center justify-between gap-2 rounded-md bg-white p-4">
           <Link href="/dashboard/workflows" passHref>
