@@ -38,6 +38,11 @@ import WorkflowProvider from "@/src/app/dashboard/workflows/providers/workflow-p
 import WeatherReminder from "@/src/app/dashboard/workflows/_components/_selections/_trigger/weather/weather-trigger.tsx";
 import ContactCreated from "@/src/app/dashboard/workflows/_components/_selections/_trigger/contacts/contact-created.tsx";
 import SendSMS from "@/src/app/dashboard/workflows/_components/_selections/_action/contacts/send-sms.tsx";
+import OpportunityCreated from "@/src/app/dashboard/workflows/_components/_selections/_trigger/opportunities/opportunity-created.tsx";
+import RemoveOpportunity from "@/src/app/dashboard/workflows/_components/_selections/_action/opportunities/remove-opportunity.tsx";
+import OpportunityChanged from "@/src/app/dashboard/workflows/_components/_selections/_trigger/opportunities/opportunity-changed.tsx";
+import PipelineStageChanged from "@/src/app/dashboard/workflows/_components/_selections/_trigger/opportunities/pipeline-stage-changed.tsx";
+import StaleOpportunity from "@/src/app/dashboard/workflows/_components/_selections/_trigger/opportunities/stale-opportunity.tsx";
 
 interface SheetProps {
   openSheet: boolean;
@@ -95,6 +100,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       "Birthday Reminder": BirthdayReminder,
       "Customer Replied": CustomerReplied,
       "Opportunity Status Changed": OpportunitiesStatusChanged,
+      "Opportunity Created": OpportunityCreated,
       "Contact Changed": ContactChange,
       "Contact Created": ContactCreated,
       "Weather Reminder": WeatherReminder,
@@ -111,6 +117,7 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
       "Send Email": SendEmail,
       "Send SMS": SendSMS,
       "Create Update Opportunity": CreateUpdateOpportunity,
+      "Remove Opportunity": RemoveOpportunity,
     };
 
     const triggers = [
@@ -187,26 +194,26 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
           {
             id: 9,
             name: "Opportunity Created",
-            icon: <Message className="stroke-current" />,
-            component: <ContactChange />,
+            icon: nodeIcons["Opportunity Created"],
+            component: <OpportunityCreated onHandleClick={onHandleAddNode} />,
           },
           {
             id: 10,
             name: "Opportunity Changed",
             icon: <Message className="stroke-current" />,
-            component: <ContactChange />,
+            component: <OpportunityChanged onHandleClick={onHandleAddNode} />,
           },
           {
             id: 11,
             name: "Pipeline Stage Changed",
             icon: <Message className="stroke-current" />,
-            component: <ContactChange />,
+            component: <PipelineStageChanged onHandleClick={onHandleAddNode} />,
           },
           {
             id: 12,
             name: "Stale Opportunities",
             icon: <Message className="stroke-current" />,
-            component: <ContactChange />,
+            component: <StaleOpportunity onHandleClick={onHandleAddNode} />,
           },
         ],
       },
@@ -294,6 +301,12 @@ const SidebarSelection = forwardRef<SidebarRefProp, SheetProps>(
             component: (
               <CreateUpdateOpportunity onHandleClick={onHandleAddNode} />
             ),
+          },
+          {
+            id: 8,
+            name: "Remove Opportunity",
+            icon: nodeIcons["Remove Opportunity"],
+            component: <RemoveOpportunity onHandleClick={onHandleAddNode} />,
           },
         ],
       },

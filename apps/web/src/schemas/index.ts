@@ -279,6 +279,14 @@ export const CreateUpdateOpportunitySchema = z.object({
     lead_value: z.string().min(1, { message: "Lead Value is required" }),
   }),
 });
+
+export const RemoveOpportunitySchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+  content: z.object({
+    pipeline_id: z.string().min(1, { message: "Pipeline is required" }),
+  }),
+});
+
 export const OpportunityStatusChangedSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   content: z.object({
