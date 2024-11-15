@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { ITriggerNode } from "@repo/redux-utils/src/endpoints/types/nodes";
 import type { CustomTriggerProps } from "@/src/app/dashboard/workflows/_components/_custom-nodes/trigger-node.tsx";
 import { CreateBirthReminderSchema } from "@/src/schemas";
+import MonthSelector from "@/src/app/dashboard/workflows/_components/month-selection.tsx";
 
 export default function BirthdayReminder(prop: CustomTriggerProps) {
   //const [selectedDate, setSelectedDate] = useState<Date>();
@@ -183,9 +184,39 @@ export default function BirthdayReminder(prop: CustomTriggerProps) {
                   name={`filters.${index}.value`}
                   control={form.control}
                   render={({ field }) => {
+                    const selectedValue = filterWatch[index].filter;
                     return (
                       <div className="w-full">
-                        <Input placeholder="Value" {...field} />
+                        {selectedValue === "After" && (
+                          <div>
+                            {/* Input for 'After no. of days' */}
+                            <Input
+                              placeholder="Enter number of days after"
+                              {...field}
+                            />
+                          </div>
+                        )}
+                        {selectedValue === "Before" && (
+                          <div>
+                            {/* Input for 'Before no. of days' */}
+                            <Input
+                              placeholder="Enter number of days before"
+                              {...field}
+                            />
+                          </div>
+                        )}
+                        {selectedValue === "Day" && (
+                          <div>
+                            {/* Input for 'Day is' */}
+                            <Input placeholder="Enter day" {...field} />
+                          </div>
+                        )}
+                        {selectedValue === "Month" && (
+                          <div>
+                            <MonthSelector {...field} />
+                          </div>
+                        )}
+                        {/*<Input placeholder="Value" {...field} />*/}
                         {errors.filters?.[index]?.value ? (
                           <p className="mt-2 text-[0.8rem] font-medium text-error">
                             {errors.filters[index].value.message}

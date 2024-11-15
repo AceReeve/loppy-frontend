@@ -855,8 +855,12 @@ export default function Page({ params }: { params: { workflowID: string } }) {
   const initializeSampleData = () => {
     if (workflow) {
       // Handle triggers
-      setNodes([...triggerNodes, ...actionNodes]);
-      setEdges([initialEdge]);
+      const combinedNodes = [...triggerNodes, ...actionNodes];
+      setNodes(combinedNodes);
+
+      if (workflow.trigger.length + workflow.action.length === 0) {
+        setEdges([initialEdge]);
+      }
 
       workflow.trigger.map((trigger) => {
         const triggerTemplate: Node = {

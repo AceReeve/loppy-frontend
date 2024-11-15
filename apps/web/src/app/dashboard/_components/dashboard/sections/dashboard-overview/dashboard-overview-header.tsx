@@ -4,11 +4,16 @@ import {
   CardContent,
   type DateRange,
   DateRangePicker,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
 } from "@repo/ui/components/ui";
 import { type JSX, useState } from "react";
 import { DashboardGoalProgress } from "@/src/app/dashboard/_components/dashboard/sections/dashboard-overview/dashboard-goal-progress.tsx";
 import IconOverview from "@/src/app/dashboard/_components/icons/icon-overview.tsx";
 import { useDashboardState } from "@/src/providers/dashboard-provider.tsx";
+import LeadsCard from "@/src/app/dashboard/_components/dashboard/dashboard-lead-cards.tsx";
 
 interface DashboardOverviewHeaderProps {
   setDateRange: (dateRange: DateRange) => void;
@@ -61,9 +66,17 @@ export function DashboardOverviewHeader({
               </div>
               <div className="flex flex-auto gap-3">
                 <div className="my-auto flex flex-col items-center gap-1 text-xs tracking-wider max-lg:flex-row">
-                  <div className="min-h-[30px] rounded-2xl bg-primary px-5 py-2 font-bold text-white">
-                    80 Leads
-                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="min-h-[30px] rounded-2xl bg-primary px-5 py-2 font-bold text-white">
+                        80 Leads
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[1100px] max-w-[1300px]">
+                      <DialogTitle />
+                      <LeadsCard />
+                    </DialogContent>
+                  </Dialog>
                   <div className="font-medium text-black">77% complete</div>
                 </div>
               </div>
