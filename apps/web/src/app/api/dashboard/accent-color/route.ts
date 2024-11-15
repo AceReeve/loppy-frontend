@@ -35,12 +35,12 @@ export async function POST(request: Request) {
       "accent-color",
       {},
       // {
-      //   user_id: session.user.id,
+      //   new ObjectId(session.user.id),
       // },
       {
         $set: {
           ...validatedData,
-          // user_id: session.user.id,
+          // new ObjectId(session.user.id),
         },
       },
       {

@@ -20,6 +20,8 @@ import { ProfileMenuDropdown } from "@/src/app/dashboard/_components/navigation/
 import MessagesDrawer from "@/src/app/dashboard/_components/navigation/dashboard-header/messages-drawer.tsx";
 import SearchDialog from "@/src/app/dashboard/_components/navigation/dashboard-header/search-dialog.tsx";
 import { type ColorPickerSchemaFormValues } from "@/src/components/color-picker/schemas/color-picker-schemas.ts";
+import { RoleBasedComponent } from "@/src/components/role-based-component/role-based-component";
+import { adminRoles } from "@/src/constants/roles.ts";
 
 interface DashboardHeaderProps {
   setAccentColor: (
@@ -27,9 +29,7 @@ interface DashboardHeaderProps {
   ) => Promise<ColorPickerSchemaFormValues>;
 }
 
-export default function DashboardHeader({
-  setAccentColor,
-}: DashboardHeaderProps) {
+function DashboardHeader({ setAccentColor }: DashboardHeaderProps) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -61,35 +61,37 @@ export default function DashboardHeader({
     <nav className="relative z-30 w-full">
       <div className="px-3 py-3 lg:px-10">
         <div className="flex items-center justify-between">
-          <Link
-            href="/dashboard/settings/integrations"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "flex min-h-14 items-center gap-3 rounded-full border-none px-4 py-3",
-            )}
-          >
-            {/* eslint-disable-next-line no-nested-ternary -- this is easy to read */}
-            {isLoading ? (
-              <LoadingSpinner />
-            ) : credentialsData ? (
-              <div className="size-4 rounded-full bg-[#28C66F]" />
-            ) : (
-              <TriangleAlert className="size-5 stroke-current text-yellow-500" />
-            )}
-            <div className="flex flex-col items-center">
-              <div className="font-open-sans text-sm font-semibold">
-                ServiceTitan API{" "}
-                {credentialsData ? "Connected" : "Disconnected"}
-              </div>
-              {credentialsData ? (
-                <div className="font-open-sans text-xs font-bold italic text-gray-400">
-                  {syncStatus?.lastSync
-                    ? `Synced ${moment(syncStatus.lastSync).calendar()}`
-                    : "Requires Sync"}
+          <RoleBasedComponent allowedRoles={adminRoles} fallback={<div />}>
+            <Link
+              href="/dashboard/settings/integrations"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "flex min-h-14 items-center gap-3 rounded-full border-none px-4 py-3",
+              )}
+            >
+              {/* eslint-disable-next-line no-nested-ternary -- this is easy to read */}
+              {isLoading ? (
+                <LoadingSpinner />
+              ) : credentialsData ? (
+                <div className="size-4 rounded-full bg-[#28C66F]" />
+              ) : (
+                <TriangleAlert className="size-5 stroke-current text-yellow-500" />
+              )}
+              <div className="flex flex-col items-center">
+                <div className="font-open-sans text-sm font-semibold">
+                  ServiceTitan API{" "}
+                  {credentialsData ? "Connected" : "Disconnected"}
                 </div>
-              ) : null}
-            </div>
-          </Link>
+                {credentialsData ? (
+                  <div className="font-open-sans text-xs font-bold italic text-gray-400">
+                    {syncStatus?.lastSync
+                      ? `Synced ${moment(syncStatus.lastSync).calendar()}`
+                      : "Requires Sync"}
+                  </div>
+                ) : null}
+              </div>
+            </Link>
+          </RoleBasedComponent>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 rounded-full bg-white px-5 py-2 shadow-soft">
@@ -152,3 +154,5 @@ export default function DashboardHeader({
     </nav>
   );
 }
+
+export default DashboardHeader;

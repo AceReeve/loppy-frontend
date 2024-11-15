@@ -38,11 +38,13 @@ export default function MessageInputTo({
   });
 
   const contactsList =
-    data?.data.map((contact) => ({
-      label: `${contact.first_name} ${contact.last_name} (+${contact.phone_number.toString()})`,
-      value: `+${contact.phone_number.toString()}`,
-      disabled: false,
-    })) ?? [];
+    data?.data
+      .filter((contact) => contact.phone_number)
+      .map((contact) => ({
+        label: `${contact.name} (+${contact.phone_number?.toString() ?? ""})`,
+        value: `+${contact.phone_number?.toString() ?? ""}`,
+        disabled: false,
+      })) ?? [];
 
   const contactsListFiltered = useMemo(() => {
     let invitedUsersList: typeof contactsList = [];

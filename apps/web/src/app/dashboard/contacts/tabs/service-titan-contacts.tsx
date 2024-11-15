@@ -1,11 +1,16 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { useGetContactsQuery } from "@repo/redux-utils/src/endpoints/contacts.ts";
-import { LoadingSpinner } from "@repo/ui/loading-spinner.tsx";
-import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
 import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
+import { LoadingTable } from "@repo/ui/loading-table.tsx";
+import { useDebounce } from "use-debounce";
 import { DataTable } from "@/src/components/data-table";
-import { unsoldTicketsColumns } from "@/src/components/table/unsold-tickets-table/columns/unsold-tickets-columns.tsx";
+import { columns } from "@/src/app/dashboard/contacts/columns";
+import ContactFilters from "@/src/app/dashboard/contacts/filters";
+import { type Filter } from "@/src/types/types";
 
 const NoResultsComponent = (
   <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -25,31 +30,29 @@ const NoResultsComponent = (
   </div>
 );
 
-export default function UnsoldTicketsTable() {
+function ServiceTitanContacts() {
+  //const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
+  const [filters, setFilters] = useState<Filter>({
+    search_key: "",
+    status: "",
+    sort_dir: "desc",
+    filter: { source: "ServiceTitan" },
+  });
+  const [page, setPage] = useState(1);
+  const [searchTerm] = useDebounce(filters.search_key, 500);
+
   const {
     data: contacts,
     error,
     isLoading,
+    isFetching,
   } = useGetContactsQuery({
-    search_key: "",
-    status: "",
-    skip: "0",
-    limit: "3",
-    sort_dir: "desc",
+    ...filters,
+    page,
+    limit: 10,
+    search_key: searchTerm,
+    filter: JSON.stringify(filters.filter),
   });
-
-  if (isLoading) {
-    return (
-      <div className="m-auto h-[500px] w-full content-center">
-        <div className="m-auto h-[50px] w-[15px] content-center">
-          <LoadingSpinner />
-        </div>
-        <p className="text-center font-nunito text-lg">
-          Loading please wait...
-        </p>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -61,13 +64,22 @@ export default function UnsoldTicketsTable() {
     );
   }
 
-  if (!contacts) return null;
-  return (
+  return contacts ? (
     <DataTable
-      columns={unsoldTicketsColumns}
-      data={contacts.data} // Just use 'contacts' directly
+      columns={columns}
+      data={contacts.data}
+      paginationProps={{
+        meta: contacts.meta,
+        page,
+        setPage,
+      }}
       noResultsComponent={NoResultsComponent}
-      enablePagination={false}
+      isFetching={isFetching}
+      filterProps={{ component: ContactFilters, filters, setFilters }}
     />
+  ) : (
+    <LoadingTable loading={isLoading} />
   );
 }
+
+export default ServiceTitanContacts;

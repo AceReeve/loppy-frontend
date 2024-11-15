@@ -7,8 +7,9 @@ import { LoadingSpinner } from "../../loading/loading-spinner.tsx";
 export interface StatCardProps extends CardProps {
   name: string;
   data: DashboardMetric | undefined;
-  className?: string;
   icon?: string | React.ReactNode;
+  iconClass?: string;
+  iconWrapperClass?: string;
   formattedValue?: (value: number) => string;
   loading?: boolean;
   editable?: boolean;
@@ -59,9 +60,13 @@ function StatCard(props: StatCardProps) {
     return (
       <>
         {typeof icon === "string" ? (
-          <img src={icon} alt="" className={cn(imageIconClass)} />
+          <img
+            src={icon}
+            alt=""
+            className={cn(imageIconClass, props.iconClass)}
+          />
         ) : (
-          <div className={cn(iconClass)}>{icon}</div>
+          <div className={cn(iconClass, props.iconClass)}>{icon}</div>
         )}
       </>
     );
@@ -69,12 +74,20 @@ function StatCard(props: StatCardProps) {
 
   return (
     <Card
-      className={cn("px-5 pt-6 pb-3 relative text-center", props.className)}
+      className={cn(
+        "flex flex-col items-center justify-center px-5 pt-6 pb-3 relative text-center",
+        props.className,
+      )}
       variant={props.variant}
     >
       {props.icon ? (
         <div className="absolute left-0 -top-[32px] w-full flex items-center justify-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-primary/80 text-white px-2">
+          <div
+            className={cn(
+              "flex size-12 items-center justify-center rounded-full bg-primary/80 text-white px-2",
+              props.iconWrapperClass,
+            )}
+          >
             {renderMenuIcon(props.icon)}
           </div>
         </div>

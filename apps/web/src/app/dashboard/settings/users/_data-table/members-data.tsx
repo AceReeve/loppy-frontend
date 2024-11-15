@@ -21,6 +21,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
   Form,
   FormControl,
@@ -241,6 +242,7 @@ export function MemberDataTable<TData, TValue>({
                         <SelectItem value="Manager">Manager</SelectItem>
                         <SelectItem value="Member">Member</SelectItem>
                         <SelectItem value="Observer">Observer</SelectItem>
+                        <SelectItem value="Agency">Agency</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -333,12 +335,12 @@ export function MemberDataTable<TData, TValue>({
                 <Button className="px-5">Invite User</Button>
               </DialogTrigger>
               <DialogContent className="max-w-[800px]  font-poppins">
-                <div className=" flex justify-between ">
+                <DialogTitle className=" flex justify-between ">
                   <div className="text-2xl">Invite Member</div>
                   <p className="text-[12px]">
                     <b>3</b> of <b>3</b> seats used
                   </p>
-                </div>
+                </DialogTitle>
                 <Separator />
 
                 {isLoading

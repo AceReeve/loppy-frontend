@@ -63,14 +63,6 @@ export function ProfileMenuDropdown({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // const setAccentColor = (colorVariableName: string) => {
-  //   localStorage.setItem("servihero-accent-color", colorVariableName);
-  //   document.documentElement.style.setProperty(
-  //     "--color-primary",
-  //     accentColorMap[colorVariableName].value,
-  //   );
-  // };
-
   async function onColorSelect(colorName: string, customColor?: string) {
     setIsLoading(true);
     try {

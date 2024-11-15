@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { type SyncStatus } from "@repo/redux-utils/src/endpoints/types/service-titan";
+import { ObjectId } from "mongodb";
 import { db } from "@/src/lib/db.ts";
 import { serviceTitanAuth } from "@/src/lib/service-titan-auth.ts";
 import { auth } from "@/auth.ts";
@@ -11,9 +12,9 @@ export async function GET() {
 
     if (!session) return;
 
-    const syncStatus = await db.find<SyncStatus>("sync-status", {
+    const syncStatus = await db.find<SyncStatus & Document>("sync-status", {
       tenant_id: tenantId,
-      user_id: session.user.id,
+      user_id: new ObjectId(session.user.id),
     });
 
     const statusByEntity = syncStatus.reduce<

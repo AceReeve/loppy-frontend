@@ -11,90 +11,109 @@ import {
 } from "@repo/ui/components/ui";
 import AutoScroll from "embla-carousel-auto-scroll";
 import { ArrowRight, Wrench } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useGetUnsoldJobsQuery } from "@repo/redux-utils/src/endpoints/service-titan.ts";
 import moment from "moment";
+import { type Job } from "@repo/redux-utils/src/endpoints/types/service-titan-entities/jobs";
+import ContactCardModal from "@/src/components/contact-card/contact-card-modal.tsx";
 
 export default function LatestBookingsSection() {
-  const { data = [], isLoading } = useGetUnsoldJobsQuery();
-  return (
-    <Card className="relative col-span-full">
-      <CardHeader className="flex-row items-center justify-between">
-        <CardTitle>Latest Bookings</CardTitle>
+  const { data = [], isLoading } = useGetUnsoldJobsQuery(undefined);
+  const [selectedData, setSelectedData] = useState<Job>();
 
-        <Button className="w-[100px]" variant="outline" size="sm">
-          View All
-        </Button>
-      </CardHeader>
-      <CardContent>
-        {!isLoading && data.length === 0 ? (
-          <div className="flex h-40 w-full items-center justify-center">
-            No data available
-          </div>
-        ) : null}
-        <Carousel
-          opts={{
-            dragFree: true,
-            loop: true,
-          }}
-          plugins={[
-            AutoScroll({
-              playOnInit: true,
-              speed: 0.75,
-              stopOnInteraction: false,
-            }),
-          ]}
-        >
-          <CarouselContent>
-            {isLoading
-              ? Array.from({ length: 6 }, (_, i) => i + 1).map((item) => (
-                  <CarouselItem
-                    key={item}
-                    className="min-w-[250px] basis-1/2 md:basis-1/3 xl:basis-1/5"
-                  >
-                    <div className="flex w-full flex-col gap-2 rounded-lg px-3 py-2 font-inter">
-                      <Skeleton className="h-4 w-[250px]" />
-                      <Skeleton className="h-4 w-[200px]" />
-                    </div>
-                  </CarouselItem>
-                ))
-              : data.map((item) => (
-                  <CarouselItem
-                    key={item.id}
-                    className="min-w-[250px] basis-1/2 md:basis-1/3 xl:basis-1/5"
-                  >
-                    <Button
-                      variant="outline"
-                      className="flex w-full flex-col gap-2 rounded-lg border border-gray-300 px-3 py-2 font-inter"
+  return (
+    <>
+      <Card className="relative col-span-full">
+        <CardHeader className="flex-row items-center justify-between">
+          <CardTitle>Latest Bookings</CardTitle>
+
+          <Button className="w-[100px]" variant="outline" size="sm">
+            View All
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {!isLoading && data.length === 0 ? (
+            <div className="flex h-40 w-full items-center justify-center">
+              No data available
+            </div>
+          ) : null}
+          <Carousel
+            opts={{
+              dragFree: true,
+              loop: true,
+            }}
+            plugins={[
+              AutoScroll({
+                playOnInit: true,
+                speed: 0.75,
+                stopOnInteraction: false,
+              }),
+            ]}
+          >
+            <CarouselContent>
+              {isLoading
+                ? Array.from({ length: 6 }, (_, i) => i + 1).map((item) => (
+                    <CarouselItem
+                      key={item}
+                      className="min-w-[250px] basis-1/2 md:basis-1/3 xl:basis-1/5"
                     >
-                      <div className="inline-flex w-full items-center justify-between">
-                        <div className="inline-flex flex-col items-start justify-start">
-                          <div className="whitespace-nowrap text-sm font-medium text-gray-900">
-                            {item.customerName}
-                          </div>
-                          <div className="flex items-center gap-1 text-xs font-semibold text-gray-500">
-                            {item.name}
-                            <Wrench className="size-4 text-primary-light" />
-                          </div>
-                        </div>
-                        <div className="flex h-6 w-8 items-center justify-center rounded-full bg-primary">
-                          <ArrowRight className="size-5 text-white" />
-                        </div>
+                      <div className="flex w-full flex-col gap-2 rounded-lg px-3 py-2 font-inter">
+                        <Skeleton className="h-4 w-[250px]" />
+                        <Skeleton className="h-4 w-[200px]" />
                       </div>
-                      <div className="flex w-full justify-between">
-                        <div className="text-xs font-normal text-gray-900/50">
-                          Generated by Service Titan
+                    </CarouselItem>
+                  ))
+                : data.map((item) => (
+                    <CarouselItem
+                      key={item.id}
+                      className="min-w-[250px] basis-1/2 md:basis-1/3 xl:basis-1/5"
+                    >
+                      <Button
+                        variant="outline"
+                        className="flex w-full flex-col gap-2 rounded-lg border border-gray-300 px-3 py-2 font-inter"
+                      >
+                        <div className="inline-flex w-full items-center justify-between">
+                          <div className="inline-flex flex-col items-start justify-start">
+                            <div className="whitespace-nowrap text-sm font-medium text-gray-900">
+                              {item.customerName}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs font-semibold text-gray-500">
+                              {item.name}
+                              <Wrench className="size-4 text-primary-light" />
+                            </div>
+                          </div>
+                          <Button
+                            asChild
+                            onClick={() => {
+                              setSelectedData(item);
+                            }}
+                          >
+                            <div className="flex h-6 w-8 items-center justify-center rounded-full bg-primary">
+                              <ArrowRight className="size-5 text-white" />
+                            </div>
+                          </Button>
                         </div>
-                        <div className="text-xs font-normal text-gray-900/50">
-                          {moment(item.createdOn).format("L")}
+                        <div className="flex w-full justify-between">
+                          <div className="text-xs font-normal text-gray-900/50">
+                            Generated by Service Titan
+                          </div>
+                          <div className="text-xs font-normal text-gray-900/50">
+                            {moment(item.createdOn).format("L")}
+                          </div>
                         </div>
-                      </div>
-                    </Button>
-                  </CarouselItem>
-                ))}
-          </CarouselContent>
-        </Carousel>
-      </CardContent>
-    </Card>
+                      </Button>
+                    </CarouselItem>
+                  ))}
+            </CarouselContent>
+          </Carousel>
+        </CardContent>
+      </Card>
+      <ContactCardModal
+        open={Boolean(selectedData)}
+        onOpenChange={() => {
+          setSelectedData(undefined);
+        }}
+      />
+    </>
   );
 }

@@ -104,7 +104,7 @@ export default async function Layout({
           <DashboardSidebar className="relative z-40 h-screen flex-shrink-0 select-none" />
           <div className="relative flex h-screen w-full flex-1 flex-col overflow-hidden rounded-tl-[48px]">
             <DashboardHeader setAccentColor={setAccentColor} />
-            <div className="custom-scrollbar relative flex w-full flex-1 flex-col overflow-y-auto">
+            <div className="custom-scrollbar relative flex w-full flex-1 flex-col overflow-y-auto pb-6 pr-4">
               {children}
             </div>
           </div>

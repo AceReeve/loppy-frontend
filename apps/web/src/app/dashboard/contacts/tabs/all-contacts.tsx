@@ -6,8 +6,11 @@ import { AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/ui";
 import { LoadingTable } from "@repo/ui/loading-table.tsx";
+import { useDebounce } from "use-debounce";
 import { DataTable } from "@/src/components/data-table";
 import { columns } from "@/src/app/dashboard/contacts/columns";
+import ContactFilters from "@/src/app/dashboard/contacts/filters";
+import { type Filter } from "@/src/types/types";
 
 const NoResultsComponent = (
   <div className="flex w-full flex-col items-center justify-center px-4 py-28">
@@ -29,27 +32,25 @@ const NoResultsComponent = (
 
 function AllContacts() {
   //const { data: contacts, error, isLoading } = useGetContactsQuery(undefined);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filter>({
     search_key: "",
     status: "",
-    skip: 0,
-    limit: 10,
     sort_dir: "desc",
   });
+  const [page, setPage] = useState(1);
+  const [searchTerm] = useDebounce(filters.search_key, 500);
 
   const {
     data: contacts,
     error,
     isLoading,
     isFetching,
-  } = useGetContactsQuery(filters);
-
-  const onPageChange = (page: number) => {
-    setFilters((prev) => ({
-      ...prev,
-      skip: page * 10,
-    }));
-  };
+  } = useGetContactsQuery({
+    ...filters,
+    page,
+    limit: 10,
+    search_key: searchTerm,
+  });
 
   if (error) {
     return (
@@ -62,17 +63,18 @@ function AllContacts() {
   }
 
   return contacts ? (
-    <>
-      {/*<ContactFilters setFilters={setFilters} />*/}
-      <DataTable
-        columns={columns}
-        data={contacts.data} // Just use 'contacts' directly
-        apiPagination={contacts.meta}
-        onPageChange={onPageChange}
-        noResultsComponent={NoResultsComponent}
-        isFetching={isFetching}
-      />
-    </>
+    <DataTable
+      columns={columns}
+      data={contacts.data}
+      paginationProps={{
+        meta: contacts.meta,
+        page,
+        setPage,
+      }}
+      noResultsComponent={NoResultsComponent}
+      isFetching={isFetching}
+      filterProps={{ component: ContactFilters, filters, setFilters }}
+    />
   ) : (
     <LoadingTable loading={isLoading} />
   );

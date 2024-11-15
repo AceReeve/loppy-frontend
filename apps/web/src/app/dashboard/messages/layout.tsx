@@ -39,7 +39,7 @@ export default async function Layout({
   if (!activeInbox || !activeOrganization) return;
 
   return (
-    <div className="flex h-full w-full items-center justify-center pr-4">
+    <div className="flex h-full w-full items-center justify-center">
       <MessagesProvider
         session={session}
         organization={activeOrganization}

@@ -14,7 +14,7 @@ export const unsoldTicketsColumns: ColumnDef<GetContactsResponse["data"][0]>[] =
       accessorKey: "name",
       header: "Name of Customer",
       cell: ({ row }) => {
-        const name = `${row.original.first_name} ${row.original.last_name}`;
+        const name = row.original.name;
         const email = row.original.email;
         return (
           <div className="flex items-center gap-3">

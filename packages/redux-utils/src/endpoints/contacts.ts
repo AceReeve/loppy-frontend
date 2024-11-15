@@ -1,4 +1,4 @@
-import { baseApi } from "../api";
+import { baseApi, nextApi } from "../api";
 import { type SearchParamsType } from "../index.tsx";
 import type {
   ContactSelect,
@@ -85,10 +85,30 @@ const api = baseApi
   });
 
 export const {
-  useGetContactsQuery,
+  // useGetContactsQuery,
   useGetAllContactQuery,
   useGetContactsListQuery,
   useCreateContactMutation,
   useImportContactsMutation,
   useLazyExportContactsQuery,
 } = api;
+
+const newApi = nextApi
+  .enhanceEndpoints({
+    addTagTypes: ["contacts"],
+  })
+  .injectEndpoints({
+    endpoints: (builder) => ({
+      getContacts: builder.query<GetContactsResponse, SearchParamsType>({
+        query: (params) => {
+          const queryParams = new URLSearchParams(params).toString();
+          return {
+            url: `/contacts?${queryParams}`,
+          };
+        },
+        providesTags: ["contacts"],
+      }),
+    }),
+  });
+
+export const { useGetContactsQuery } = newApi;

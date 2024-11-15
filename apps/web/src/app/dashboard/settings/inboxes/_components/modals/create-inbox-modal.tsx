@@ -93,7 +93,9 @@ function CreateInboxModal() {
         createInbox({
           inbox_name: createInboxFormData.inbox_name,
           description: createInboxFormData.inbox_name,
-          purchased_number: data.selectedNumber,
+          purchased_number:
+            process.env.NEXT_PUBLIC_TEST_TWILIO_BUY_NUMBER ??
+            data.selectedNumber,
         })
           .unwrap()
           .then(() => {

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { db } from "@/src/lib/db.ts";
 import { auth } from "@/auth.ts";
 import { type ServiceTitanFormValues } from "@/src/app/dashboard/settings/integrations/schemas/integrations-schemas.ts";
@@ -40,7 +41,7 @@ class ServiceTitanAuth {
       const serviceTitanData = await db.findOne<ServiceTitanDocument>(
         "servicetitan-credentials",
         {
-          user_id: session?.user.id,
+          user_id: new ObjectId(session?.user.id),
         },
       );
 

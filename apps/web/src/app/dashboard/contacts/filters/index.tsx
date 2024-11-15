@@ -40,19 +40,19 @@ import LastNameFilter from "@/src/app/dashboard/contacts/filters/last-name-filte
 import EmailFilter from "@/src/app/dashboard/contacts/filters/email-filter.tsx";
 import WildCardNameFilter from "@/src/app/dashboard/contacts/filters/wild-card-name-filter.tsx";
 import AppliedFilter from "@/src/app/dashboard/contacts/filters/applied-filter.tsx";
-
-interface ContactFiltersProps {
-  setFilters: (filter: any) => void;
-}
+import { FiltersProps } from "@/src/types/types";
 
 interface FilterObject {
   label: string;
   value: string[];
 }
 
-export default function ContactFilters({ setFilters }: ContactFiltersProps) {
+export default function ContactFilters<TData>({
+  filters,
+  setFilters,
+  table,
+}: FiltersProps<TData>) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("name");
   const [isFilterMode, setIsFilterMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<FilterObject[]>([]);
@@ -145,51 +145,17 @@ export default function ContactFilters({ setFilters }: ContactFiltersProps) {
             <Input
               className="max-w-60 pl-10"
               onChange={(event) =>
-                table.getColumn(value)?.setFilterValue(event.target.value)
+                setFilters((prev) => ({
+                  ...prev,
+                  search_key: event.target.value,
+                  skip: 0,
+                  limit: 10,
+                }))
               }
               placeholder="Search name, phone, etc..."
               type="search"
-              value={(table.getColumn(value)?.getFilterValue() as string) ?? ""}
+              value={filters.search_key}
             />
-
-            <div className="flex h-auto flex-row place-items-center space-x-2">
-              <p className="font-nunito text-sm font-bold">Filter by:</p>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-[200px] justify-between"
-                  >
-                    {value}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandList>
-                      <CommandEmpty>No framework found.</CommandEmpty>
-                      <CommandGroup>
-                        {table
-                          .getAllColumns()
-                          .filter((column) => column.getCanHide())
-                          .map((column, index) => (
-                            <CommandItem
-                              key={index}
-                              onSelect={(currentValue) => {
-                                setValue(currentValue);
-                                setOpen(false);
-                              }}
-                            >
-                              {column.id}
-                            </CommandItem>
-                          ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
           </div>
 
           <div className="flex items-end gap-4">

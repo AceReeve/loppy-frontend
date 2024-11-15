@@ -16,7 +16,7 @@ export const chooseNumberSchema = z.object({
 export const businessLocationSchema = z.object({
   business_locations: z
     .array(z.string())
-    .refine((value) => value.some((item) => item), {
+    .refine((value) => value.some((item) => Boolean(item)), {
       message: "You have to select at least one item.",
     }),
 });
