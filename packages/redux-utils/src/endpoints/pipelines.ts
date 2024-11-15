@@ -186,6 +186,7 @@ const api = baseApi
             body: payload,
           };
         },
+        invalidatesTags: ["pipelines"],
       }),
       updateLead: builder.mutation<undefined, UpdateLeadPayload>({
         query: ({ leadId, payload }) => {
@@ -195,6 +196,7 @@ const api = baseApi
             body: payload,
           };
         },
+        invalidatesTags: ["pipelines"],
       }),
       updateLeadStatus: builder.mutation<undefined, UpdateLeadStatusPayload>({
         query: (payload) => {

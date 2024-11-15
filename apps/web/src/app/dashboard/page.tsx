@@ -58,6 +58,7 @@ export default function Page() {
       value: 18,
     },
   ];
+
   const colors = ["#4CAF50", "#2196F3", "#9C27B0"];
   // if (loading) return <p>Loading users...</p>;
   // if (error) return <p>{error?.message}</p>;
@@ -89,7 +90,6 @@ export default function Page() {
         <Card className="relative col-span-full">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle>Marketed Sold Leads</CardTitle>
-
             <button
               type="button"
               className="inline-flex items-center justify-start gap-[5px]"

@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 
 const leadIcons: Record<string, React.ReactNode> = {
-  Facebook: (
+  "Facebook Advertising": (
     <Image
       src="/assets/icons/icon-fb-colored.svg"
       width={15}

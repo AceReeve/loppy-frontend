@@ -293,7 +293,8 @@ export default function OpportunitiesStatusChanged(prop: CustomTriggerProps) {
                                         key={selection.id}
                                         value={selection.id.toString()} // Use `selection.id` as the value (converted to string)
                                       >
-                                        {selection.name}{" "}
+                                        {selection.name}
+
                                         {/* Display the name of the selection */}
                                       </SelectItem>
                                     ),

@@ -1,19 +1,19 @@
 const statusSelection = [
   {
-    id: "9",
+    id: "Open",
     name: "Open",
   },
   {
-    id: "10",
+    id: "Lost",
     name: "Lost",
   },
   {
-    id: "11",
+    id: "Abandoned",
     name: "Abandoned",
   },
   {
-    id: "12",
-    name: "Open",
+    id: "Won",
+    name: "Won",
   },
 ];
 
