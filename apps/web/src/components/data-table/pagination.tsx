@@ -7,31 +7,26 @@ import {
 import { Button } from "@repo/ui/components/ui";
 import { useEffect, useState } from "react";
 import { cn } from "@repo/ui/utils";
+import { type PageProps } from "@/src/types/types";
 
-interface PaginationProps {
+interface PaginationProps extends PageProps {
   pages: number;
   maxRows: number;
   length: number;
-  onPageChange: (page: number) => void;
   sides?: number;
   isShowDots?: boolean;
 }
 export default function Pagination({
+  page: current,
   pages,
   maxRows,
   length,
-  onPageChange,
+  setPage,
   sides = 3,
 }: PaginationProps) {
-  const [current, setCurrent] = useState(1);
   const [isShowDots, setIsShowDots] = useState(false);
   const [leftSide, setLeftSide] = useState<number[]>([]);
   const [rightSide, setRightSide] = useState<number[]>([]);
-
-  const changePage = (page: number) => {
-    setCurrent(page);
-    onPageChange(page - 1); // page starts from zero
-  };
 
   useEffect(() => {
     setLeftSide([]);
@@ -63,7 +58,7 @@ export default function Pagination({
     for (let i = rightStart; i <= rightEnd; i++) {
       setRightSide((prev) => [...prev, i]);
     }
-  }, [current]);
+  }, [current, pages]);
 
   if (length === 0) return null;
 
@@ -73,7 +68,7 @@ export default function Pagination({
         <div className="flex flex-1 items-center justify-between sm:hidden">
           <Button
             onClick={() => {
-              changePage(current - 1);
+              setPage(current - 1);
             }}
             variant="outline"
             disabled={current === 1}
@@ -86,7 +81,7 @@ export default function Pagination({
           </p>
           <Button
             onClick={() => {
-              changePage(current + 1);
+              setPage(current + 1);
             }}
             variant="outline"
             disabled={current === pages}
@@ -114,7 +109,7 @@ export default function Pagination({
         >
           <Button
             onClick={() => {
-              changePage(1);
+              setPage(1);
             }}
             variant="outline"
             disabled={current === 1}
@@ -125,7 +120,7 @@ export default function Pagination({
           </Button>
           <Button
             onClick={() => {
-              changePage(current - 1);
+              setPage(current - 1);
             }}
             variant="outline"
             disabled={current === 1}
@@ -140,7 +135,7 @@ export default function Pagination({
               variant={current === page ? "default" : "outline"}
               key={page}
               onClick={() => {
-                changePage(page);
+                setPage(page);
               }}
               className={cn(
                 "rounded-none",
@@ -167,7 +162,7 @@ export default function Pagination({
                   variant="outline"
                   key={page}
                   onClick={() => {
-                    changePage(page);
+                    setPage(page);
                   }}
                   className="rounded-none"
                 >
@@ -179,7 +174,7 @@ export default function Pagination({
 
           <Button
             onClick={() => {
-              changePage(current + 1);
+              setPage(current + 1);
             }}
             variant="outline"
             disabled={current === pages}
@@ -190,7 +185,7 @@ export default function Pagination({
           </Button>
           <Button
             onClick={() => {
-              changePage(pages);
+              setPage(pages);
             }}
             variant="outline"
             disabled={current === pages}

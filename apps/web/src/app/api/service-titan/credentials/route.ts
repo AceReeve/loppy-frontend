@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { type SyncStatus } from "@repo/redux-utils/src/endpoints/types/service-titan";
+import { ObjectId } from "mongodb";
 import {
   type ServiceTitanFormValues,
   serviceTitanSchema,
@@ -15,7 +16,7 @@ export async function GET() {
     if (!session) return;
 
     const credentials = await db.findOne("servicetitan-credentials", {
-      user_id: session.user.id,
+      user_id: new ObjectId(session.user.id),
     });
 
     if (!credentials) {
@@ -45,12 +46,12 @@ export async function POST(request: Request) {
     await db.updateOne(
       "servicetitan-credentials",
       {
-        user_id: session.user.id,
+        user_id: new ObjectId(session.user.id),
       },
       {
         $set: {
           ...validatedData,
-          user_id: session.user.id,
+          user_id: new ObjectId(session.user.id),
         },
       },
       {
@@ -80,21 +81,21 @@ export async function DELETE() {
     const tenantId = (await serviceTitanAuth()).getTenant();
     const syncStatus = await db.find<SyncStatus>("sync-status", {
       tenant_id: tenantId,
-      user_id: session.user.id,
+      user_id: new ObjectId(session.user.id),
     });
 
     for (const item of syncStatus) {
       await db.deleteMany(`synced-${item.entityType}`, {
-        user_id: session.user.id,
+        user_id: new ObjectId(session.user.id),
       });
     }
 
     await db.deleteOne("servicetitan-credentials", {
-      user_id: session.user.id,
+      user_id: new ObjectId(session.user.id),
     });
 
     await db.deleteMany("sync-status", {
-      user_id: session.user.id,
+      user_id: new ObjectId(session.user.id),
     });
 
     return NextResponse.json(

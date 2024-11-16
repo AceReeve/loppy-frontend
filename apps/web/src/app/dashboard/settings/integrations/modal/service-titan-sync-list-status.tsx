@@ -8,7 +8,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  toast,
 } from "@repo/ui/components/ui";
 import { RefreshCcw, Check, X } from "lucide-react";
 import { format } from "date-fns";
@@ -16,7 +15,6 @@ import {
   useGetServiceTitanSyncStatusQuery,
   useSyncServiceTitanMutation,
 } from "@repo/redux-utils/src/endpoints/service-titan.ts";
-import { getErrorMessage } from "@repo/hooks-and-utils/error-utils";
 
 const syncItems: string[] = [
   "invoices",
@@ -28,6 +26,7 @@ const syncItems: string[] = [
   "memberships",
   "jobs",
   "job-types",
+  "campaigns",
   "campaign-costs",
 ];
 
@@ -64,21 +63,21 @@ export default function ServiceTitanSyncListStatus() {
     setSyncProgress(initialSyncProgress);
     setIsSyncing(true);
 
-    try {
-      const promise = syncItems.map((item) => {
-        setSyncProgress((prev) => ({
-          ...prev,
-          [item]: {
-            isSyncing: true,
-            syncedItems: 0,
-            success: false,
-          },
-        }));
-        const syncPromise = sync({
-          entity: item,
-        }).unwrap();
+    const promise = syncItems.map((item) => {
+      setSyncProgress((prev) => ({
+        ...prev,
+        [item]: {
+          isSyncing: true,
+          syncedItems: 0,
+          success: false,
+        },
+      }));
+      const syncPromise = sync({
+        entity: item,
+      }).unwrap();
 
-        void syncPromise.then((res) => {
+      void syncPromise
+        .then((res) => {
           setSyncProgress((prev) => ({
             ...prev,
             [item]: {
@@ -87,19 +86,23 @@ export default function ServiceTitanSyncListStatus() {
               success: res.success,
             },
           }));
+        })
+        .catch(() => {
+          setSyncProgress((prev) => ({
+            ...prev,
+            [item]: {
+              isSyncing: false,
+              syncedItems: 0,
+              success: false,
+            },
+          }));
         });
 
-        return syncPromise;
-      });
-      await Promise.all(promise);
+      return syncPromise;
+    });
+    await Promise.all(promise).finally(() => {
       setIsSyncing(false);
-    } catch (err: unknown) {
-      toast({
-        title: "Sync Error",
-        description: getErrorMessage(err),
-        variant: "destructive",
-      });
-    }
+    });
   };
 
   const getSyncStatus = (item: string) => {
@@ -119,7 +122,12 @@ export default function ServiceTitanSyncListStatus() {
       );
     }
 
-    return <span>Sync failed</span>;
+    return (
+      <>
+        <X className="mr-1 inline-block h-4 w-4 text-red-500" />
+        Sync failed
+      </>
+    );
   };
 
   const getSyncProgress = (item: string) => {

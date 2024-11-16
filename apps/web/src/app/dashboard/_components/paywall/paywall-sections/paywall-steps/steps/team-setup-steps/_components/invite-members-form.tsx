@@ -88,6 +88,7 @@ function InviteMembersForm(props: InviteMembersFormProps) {
                           <SelectItem value="Manager">Manager</SelectItem>
                           <SelectItem value="Member">Member</SelectItem>
                           <SelectItem value="Observer">Observer</SelectItem>
+                          <SelectItem value="Agency">Agency</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- allow any */
-import {
-  type Collection,
-  type Db,
-  type OptionalUnlessRequiredId,
-} from "mongodb";
+import { type Db, type OptionalUnlessRequiredId } from "mongodb";
 import clientPromise from "./mongodb";
 
 export class Database {
   private static instance: Database | undefined;
   private db: Db | null = null;
+  private initPromise: Promise<void>;
+
+  private constructor() {
+    this.initPromise = this.initialize();
+  }
 
   public static getInstance(): Database {
     if (!Database.instance) {
@@ -17,105 +18,102 @@ export class Database {
     return Database.instance;
   }
 
-  private async getDb(): Promise<Db> {
+  private async initialize(): Promise<void> {
+    const client = await clientPromise;
+    this.db = client.db();
+  }
+
+  public async ready(): Promise<void> {
+    await this.initPromise;
+  }
+
+  public collection<T extends Document>(name: string) {
     if (!this.db) {
-      const client = await clientPromise;
-      this.db = client.db();
+      throw new Error(
+        "Database not initialized. Call ready() before using the database.",
+      );
     }
-    return this.db;
+    return this.db.collection<T>(name);
   }
 
-  public async collection<T extends Document>(
-    name: string,
-  ): Promise<Collection<T>> {
-    const db = await this.getDb();
-    return db.collection<T>(name);
-  }
-
-  public async findOne<T extends Document>(
+  public findOne<T extends Document>(
     collectionName: string,
     query: Record<string, any>,
-  ): Promise<T | null> {
-    const collection = await this.collection<T>(collectionName);
-    return collection.findOne<T>(query);
+  ) {
+    return this.collection<T>(collectionName).findOne(query);
   }
 
-  public async find<T extends Document>(
+  public find<T extends Document>(
     collectionName: string,
     query: Record<string, any>,
     options: {
       sort?: Record<string, 1 | -1>;
       skip?: number;
       limit?: number;
+      collation?: { locale: string; strength: number };
     } = {},
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection
+    return this.collection<T>(collectionName)
       .find(query)
       .sort(options.sort ?? {})
       .skip(options.skip ?? 0)
       .limit(options.limit ?? 0)
+      .collation(options.collation ?? {})
       .toArray();
   }
 
-  public async updateOne<T extends Document>(
+  public updateOne<T extends Document>(
     collectionName: string,
     filter: Record<string, any>,
     update: Record<string, any>,
     options: { upsert?: boolean } = {},
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection.updateOne(filter, update, options);
+    return this.collection<T>(collectionName).updateOne(
+      filter,
+      update,
+      options,
+    );
   }
 
-  public async bulkWrite<T extends Document>(
+  public bulkWrite<T extends Document>(
     collectionName: string,
     operations: any[],
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection.bulkWrite(operations);
+    return this.collection<T>(collectionName).bulkWrite(operations);
   }
 
-  public async countDocuments(
-    collectionName: string,
-    query: Record<string, any>,
-  ) {
-    const collection = await this.collection(collectionName);
-    return collection.countDocuments(query);
+  public countDocuments(collectionName: string, query: Record<string, any>) {
+    return this.collection(collectionName).countDocuments(query);
   }
 
-  public async deleteOne<T extends Document>(
+  public deleteOne<T extends Document>(
     collectionName: string,
     filter: Record<string, any>,
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection.deleteOne(filter);
+    return this.collection<T>(collectionName).deleteOne(filter);
   }
 
-  public async deleteMany<T extends Document>(
+  public deleteMany<T extends Document>(
     collectionName: string,
     filter: Record<string, any>,
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection.deleteMany(filter);
+    return this.collection<T>(collectionName).deleteMany(filter);
   }
 
-  public async insertOne<T extends Document>(
+  public insertOne<T extends Document>(
     collectionName: string,
     document: OptionalUnlessRequiredId<T>,
     options: { writeConcern?: any } = {},
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection.insertOne(document, options);
+    return this.collection<T>(collectionName).insertOne(document, options);
   }
 
-  public async insertMany<T extends Document>(
+  public insertMany<T extends Document>(
     collectionName: string,
     documents: OptionalUnlessRequiredId<T>[],
     options: { ordered?: boolean; writeConcern?: any } = {},
   ) {
-    const collection = await this.collection<T>(collectionName);
-    return collection.insertMany(documents, options);
+    return this.collection<T>(collectionName).insertMany(documents, options);
   }
 }
 

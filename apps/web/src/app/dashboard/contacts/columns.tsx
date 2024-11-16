@@ -53,11 +53,11 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       );
     },
     cell: ({ row }) => {
-      const name = `${row.original.first_name} ${row.original.last_name}`;
+      const name = row.original.name;
       const email = row.original.email;
       return (
         <div className="flex items-center gap-3">
-          <div className="bg-primary h-10 w-10 rounded-full" />
+          <div className="h-10 w-10 rounded-full bg-primary" />
           <div className="flex flex-col">
             <div className="font-medium">{name}</div>
             <div className="text-gray-700">{email}</div>
@@ -167,14 +167,14 @@ export const columns: ColumnDef<GetContactsResponse["data"][0]>[] = [
       return moment(date).format("ll");
     },
   },
-  {
-    accessorKey: "tags",
-    header: "Tags",
-    cell: ({ row }) => {
-      if (row.original.tags?.length) {
-        return row.original.tags.map((tag) => tag.tag_name).join(", "); // Join tag_name values into a single-line string
-      }
-      return "NONE"; // Return "NONE" if the array is empty or undefined
-    },
-  },
+  // {
+  //   accessorKey: "tags",
+  //   header: "Tags",
+  //   cell: ({ row }) => {
+  //     if (row.original.tags?.length) {
+  //       return row.original.tags.map((tag) => tag.tag_name).join(", "); // Join tag_name values into a single-line string
+  //     }
+  //     return "NONE"; // Return "NONE" if the array is empty or undefined
+  //   },
+  // },
 ];

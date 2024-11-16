@@ -16,7 +16,7 @@ import { useGetUnsoldJobsQuery } from "@repo/redux-utils/src/endpoints/service-t
 import moment from "moment";
 
 export default function UnsoldJobsSection() {
-  const { data = [], isLoading } = useGetUnsoldJobsQuery();
+  const { data = [], isLoading } = useGetUnsoldJobsQuery(undefined);
   return (
     <Card className="relative col-span-full">
       <CardHeader className="flex-row items-center justify-between">

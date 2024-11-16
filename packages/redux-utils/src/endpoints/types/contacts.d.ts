@@ -11,10 +11,9 @@ export interface GetContactsResponse {
   data: {
     _id: string;
     user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone_number: number;
+    name: string;
+    email: string | null;
+    phone_number: number | null;
     source: string;
     //lifetime_value: number;
     last_campaign_ran: string;
@@ -93,4 +92,22 @@ export interface ExportContactsPayload {
 export interface ContactSelect {
   value: string;
   label: string;
+}
+
+export interface MergedContacts {
+  _id: string;
+  name: string;
+  email: string;
+  phone_number: string;
+  source: string;
+  last_campaign_ran: null | string;
+  last_interaction: string; // ISO string for date-time
+  tags: string[];
+  original_id: string;
+  original_collection: string;
+  created_at: null | string; // ISO string or null
+  updated_at: string;
+  customer_id: number;
+  sync_hash: string;
+  user_id: string;
 }

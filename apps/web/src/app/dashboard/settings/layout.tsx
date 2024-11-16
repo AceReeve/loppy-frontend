@@ -158,7 +158,7 @@ export default function Layout({
   ) => <div className={cn(iconClass, active && activeIconClass)}>{icon}</div>;
 
   return (
-    <div className="relative mr-10 mt-10 flex gap-3">
+    <div className="relative flex gap-3">
       <div className="flex flex-col gap-2">
         <VerticalMenu>
           {menuItems.map((menu) => (

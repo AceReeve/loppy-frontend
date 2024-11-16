@@ -106,7 +106,6 @@ function BusinessProfileModal() {
         defaultValues: {
           business_locations: [],
         },
-        mode: "onBlur",
       }),
     },
     [BusinessProfileSteps.GeneralInfo]: {
@@ -114,7 +113,6 @@ function BusinessProfileModal() {
       component: GeneralInfo,
       form: useForm({
         resolver: zodResolver(generalInfoSchema),
-        mode: "onBlur",
       }),
     },
     [BusinessProfileSteps.BusinessInfo]: {
@@ -122,7 +120,6 @@ function BusinessProfileModal() {
       component: BusinessInfo,
       form: useForm({
         resolver: zodResolver(businessInfoSchema),
-        mode: "onBlur",
       }),
     },
     [BusinessProfileSteps.PeopleToContact]: {
@@ -130,7 +127,6 @@ function BusinessProfileModal() {
       component: PeopleToContact,
       form: useForm({
         resolver: zodResolver(peopleToContactSchema),
-        mode: "onBlur",
       }),
     },
     [BusinessProfileSteps.TermsOfService]: {
@@ -138,7 +134,6 @@ function BusinessProfileModal() {
       component: TermsOfService,
       form: useForm({
         resolver: zodResolver(termsOfServiceSchema),
-        mode: "onBlur",
       }),
       onSubmit,
     },

@@ -1,8 +1,11 @@
 import { startOfYear } from "date-fns";
 import { type SyncStatus } from "@repo/redux-utils/src/endpoints/types/service-titan";
+import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 import { db } from "@/src/lib/db.ts";
 import { serviceTitanClient } from "@/src/lib/service-titan-client.ts";
 import { auth } from "@/auth.ts";
+import { syncMergeContacts } from "@/src/lib/sync-merged-contacts-utils.ts";
 
 export interface SyncConfig {
   entityType:
@@ -15,6 +18,7 @@ export interface SyncConfig {
     | "customers"
     | "jobs"
     | "job-types"
+    | "campaigns"
     | "campaign-costs";
   endpoint: string;
   collection: string;
@@ -71,6 +75,11 @@ export const SYNC_CONFIGS: Record<string, SyncConfig | null> = {
     endpoint: "/jpm/v2/tenant/{tenant}/job-types",
     collection: "synced-job-types",
   },
+  campaigns: {
+    entityType: "campaigns",
+    endpoint: "/marketing/v2/tenant/{tenant}/campaigns",
+    collection: "synced-campaigns",
+  },
   "campaign-costs": {
     entityType: "campaign-costs",
     endpoint: "/marketing/v2/tenant/{tenant}/costs",
@@ -91,7 +100,7 @@ export async function handleSync(
   const lastSync = await db.findOne<SyncStatus & Document>("sync-status", {
     entityType: entityConfig.entityType,
     tenant_id: tenantId,
-    user_id: session.user.id,
+    user_id: new ObjectId(session.user.id),
   });
 
   const fromDate = lastSync?.lastSyncedAt;
@@ -99,82 +108,114 @@ export async function handleSync(
   let totalRecords = 0;
   let res;
 
-  do {
-    // Build endpoint URL
-    const params = new URLSearchParams({
-      from:
-        continuationToken ??
-        (fromDate
-          ? fromDate.toISOString()
-          : startOfYear(new Date()).toISOString()),
-      includeRecentChanges: includeRecentChanges ? "true" : "",
-    }).toString();
-    const endpoint = `${entityConfig.endpoint.replace("{tenant}", tenantId)}?${params}`;
+  try {
+    do {
+      // Build endpoint URL
+      const params = new URLSearchParams({
+        from:
+          continuationToken ??
+          (fromDate
+            ? fromDate.toISOString()
+            : startOfYear(new Date()).toISOString()),
+        includeRecentChanges: includeRecentChanges ? "true" : "",
+      }).toString();
+      const endpoint = `${entityConfig.endpoint.replace("{tenant}", tenantId)}?${params}`;
 
-    // Fetch data from ServiceTitan
-    res = await serviceTitanClient.fetch<{
-      hasMore: boolean;
-      continueFrom: string;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- allow any
-      data: any[];
-    }>(endpoint);
+      // Fetch data from ServiceTitan
+      res = await serviceTitanClient.fetch<{
+        hasMore: boolean;
+        continueFrom: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- allow any
+        data: any[];
+      }>(endpoint);
 
-    if (res.data.length > 0) {
-      // Bulk upsert records
-      await db.bulkWrite(
-        entityConfig.collection,
-        res.data.map((record) => ({
-          updateOne: {
-            filter: {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment -- allow
-              id: record.id,
-              tenant_id: tenantId,
-            },
-            update: {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- allow
-              $set: {
-                ...record,
+      if (res.data.length > 0) {
+        // Bulk upsert records
+        await db.bulkWrite(
+          entityConfig.collection,
+          res.data.map((record) => ({
+            updateOne: {
+              filter: {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment -- allow
+                id: record.id,
                 tenant_id: tenantId,
-                last_synced: new Date(),
-                user_id: session.user.id,
               },
+              update: {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- allow
+                $set: {
+                  ...record,
+                  tenant_id: tenantId,
+                  last_synced: new Date(),
+                  user_id: new ObjectId(session.user.id),
+                },
+              },
+              upsert: true,
             },
-            upsert: true,
+          })),
+        );
+      }
+
+      totalRecords += res.data.length;
+      continuationToken = res.continueFrom;
+
+      // Update sync status with final continuation token
+      await db.updateOne<SyncStatus & Document>(
+        "sync-status",
+        {
+          entityType: entityConfig.entityType,
+          tenant_id: tenantId,
+          user_id: new ObjectId(session.user.id),
+        },
+        {
+          $set: {
+            lastSyncedAt: new Date(),
+            lastContinuationToken: continuationToken,
+            success: true,
+            record_count: totalRecords,
+            tenant_id: tenantId,
+            user_id: new ObjectId(session.user.id),
           },
-        })),
+        },
+        { upsert: true },
       );
+    } while (res.hasMore);
+
+    // refresh contacts materialized view
+    if (entityConfig.entityType === "contacts") {
+      await syncMergeContacts(session.user.id ?? "");
     }
 
-    totalRecords += res.data.length;
-    continuationToken = res.continueFrom;
-
-    // Update sync status with final continuation token
+    return {
+      success: true,
+      count: totalRecords,
+      message: `Successfully synced ${totalRecords.toString()} ${entityConfig.entityType}`,
+    };
+  } catch (error) {
+    // Update sync status to failed
     await db.updateOne<SyncStatus & Document>(
       "sync-status",
       {
         entityType: entityConfig.entityType,
         tenant_id: tenantId,
-        user_id: session.user.id,
+        user_id: new ObjectId(session.user.id),
       },
       {
         $set: {
           lastSyncedAt: new Date(),
           lastContinuationToken: continuationToken,
-          success: true,
-          record_count: totalRecords,
+          success: false,
+          record_count: 0,
           tenant_id: tenantId,
-          user_id: session.user.id,
+          user_id: new ObjectId(session.user.id),
         },
       },
       { upsert: true },
     );
-  } while (res.hasMore);
-
-  return {
-    success: true,
-    count: totalRecords,
-    message: `Successfully synced ${totalRecords.toString()} ${entityConfig.entityType}`,
-  };
+    return NextResponse.json(
+      { success: false, error: error instanceof Error && error.message },
+      { status: 500 },
+    );
+  }
 }
 
 export async function handleQuery<T extends Document>(

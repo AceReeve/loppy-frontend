@@ -47,9 +47,9 @@ import moment from "moment";
 import ExportContactsDialogForm from "@/src/app/dashboard/contacts/_components/export-contacts-dialog.tsx";
 import { CreateContactsFormSchema } from "@/src/schemas";
 import ImportContactsDialogContent from "@/src/app/dashboard/contacts/_components/import-contacts-dialog.tsx";
+import ServiceTitanContacts from "@/src/app/dashboard/contacts/tabs/service-titan-contacts.tsx";
 import AllContacts from "./tabs/all-contacts";
 import MyContacts from "./tabs/my-contacts";
-import UnassignedContacts from "./tabs/unassigned-contacts";
 
 function Page() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -68,10 +68,15 @@ function Page() {
       component: MyContacts,
     },
     {
-      label: "Unassigned contacts",
-      id: "unassigned-contacts",
-      component: UnassignedContacts,
+      label: "Service Titan",
+      id: "service-titan",
+      component: ServiceTitanContacts,
     },
+    // {
+    //   label: "Unassigned contacts",
+    //   id: "unassigned-contacts",
+    //   component: UnassignedContacts,
+    // },
   ];
 
   const formSchema = CreateContactsFormSchema;
@@ -176,7 +181,7 @@ function Page() {
 */
 
   return (
-    <div className="m-10 rounded-xl bg-card p-10">
+    <div className="rounded-xl bg-card p-10">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-end gap-3">
           <div className="font-poppins text-4xl font-medium text-gray-800">

@@ -49,6 +49,10 @@ export interface Job {
   membershipId: number;
   total: number;
   active: boolean;
+
+  //   Added props
+  name: string;
+  customerName: string;
 }
 
 export interface JobType {

@@ -1,5 +1,7 @@
 import { type DefaultSession, type Profile } from "next-auth";
 
+export type Role = "Owner" | "Admin" | "Guest" | "Observer" | "Agency";
+
 export type ExtendedUser = DefaultSession["user"] & {
   status: string;
   access_token: string;

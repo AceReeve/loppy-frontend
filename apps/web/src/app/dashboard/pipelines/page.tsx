@@ -836,7 +836,7 @@ export default function Home() {
   );
 
   return (
-    <div className="m-10 rounded-xl bg-card p-10">
+    <div className="rounded-xl bg-card p-10">
       {showConfetti ? ConfettiWon : null}
       <div className="flex w-full items-center justify-between">
         <div className="flex items-end gap-3">
