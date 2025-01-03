@@ -273,7 +273,7 @@ export default function BillingInformationTab() {
           <div className="flex justify-between rounded border p-4 ">
             <div className="flex gap-2">
               <Image
-                src="/assets/images/logo.png"
+                src="/assets/images/logo-loppy.png"
                 alt=""
                 width={75}
                 height={75}

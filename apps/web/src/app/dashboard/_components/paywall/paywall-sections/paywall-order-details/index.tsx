@@ -16,7 +16,7 @@ export default function PaywallOrderDetails() {
 
       <div className="mt-8 flex items-center gap-4">
         <Image
-          src="/assets/images/logo.png"
+          src="/assets/images/logo-loppy.png"
           width={138}
           height={141}
           className="h-[104.98px] w-[105px] object-contain"

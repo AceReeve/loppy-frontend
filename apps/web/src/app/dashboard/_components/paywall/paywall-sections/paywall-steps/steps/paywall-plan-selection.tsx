@@ -18,7 +18,7 @@ export default function PaywallPlanSelection() {
         alt=""
         className="absolute left-[50%] top-0 -ml-[66px] -mt-[60px] size-32 object-contain"
         height={141}
-        src="/assets/images/logo.png"
+        src="/assets/images/logo-loppy.png"
         width={138}
       />
       <div className="mt-14 flex flex-col items-center gap-3 text-center">

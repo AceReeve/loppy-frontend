@@ -28,7 +28,7 @@ export default function SidebarHandler(props: SidebarHandlerProps) {
           href="/"
         >
           <Image
-            src="/assets/images/logo.png"
+            src="/assets/images/logo-loppy.png"
             alt=""
             width={138}
             height={141}
